@@ -1,0 +1,151 @@
+#header{
+	min-width:1000px;width:expression((documentElement.clientWidth < 1000) ? "1000px" : "100%" ); margin: 0 auto;
+}
+#header .tools{
+	height:25px; background:url(../img/tools.gif) repeat-x; position:relative;
+}
+.tools img.left{
+	position:absolute;left:0;top:0;
+}
+.tools img.right{
+	position:absolute;right:0;top:0;
+}
+.tools .logo{
+	padding:2px 0 0 10px;float:left;
+}
+.tools .toolsbar{
+	text-align:right;float:right;padding:4px 10px 0 0;font-family:tahoma;color:#fff;
+}
+.tools .toolsbar a{
+	color:#fff;
+}
+.tools .toolsbar span{
+	margin:0 3px;
+}
+/*menu*/
+.main_nav{
+	background:url(../img/main_nav.gif) repeat-x;height:26px; margin:0 0 0 0;padding-left:10px;border-left:1px solid #ccc;border-right:1px solid #ccc;
+}
+.main_nav li{
+	float:left;width:100px;text-align:center;font-weight:bold;background:url(../img/main_li.gif) no-repeat right 1px;height:21px;margin:4px 0 0 0;line-height:21px;
+}
+.svcart-skin-g00 .yuimenubaritem-selected{
+	background:url(../img/over_menu.gif) repeat-x;
+}
+.svcart-skin-g00 .yuimenubaritem-selected a.svcartmenubaritemlabel{color:#fff}
+.svcart-skin-g00 .yuimenuitem{
+	border-bottom:solid 1px #D8D8D8; background:url(../img/menu2.gif) no-repeat; font-weight:normal;height:24px; line-height:24px;*margin-top:px;/*opacity:.8;*filter:alpha(opacity=80);*/
+}
+.svcart-skin-g00 .yuimenuitem-selected{
+	background:url(../img/over_menu2.gif) no-repeat;opacity:1;*filter:alpha(opacity=100);
+}
+.svcart-skin-g00 .yuimenuitem-selected a{
+	color:#fff;
+}
+/*============ ur_here ================*/
+#ur_here{
+	padding:10px 25px;
+}
+/*============ Footer ================*/
+#footer{
+	bottom:30px;margin:5px auto 0;min-width:1000px;width:expression((documentElement.clientWidth < 1000) ? "1000px" : "100%" );
+}
+#footer p{
+	text-align:center; font-family:Arial;color:#337E4B;padding:2px 0;
+}
+#footer p a{color:#337E4B;}
+#footer p a:hover{ text-decoration:underline;}
+#footer p.pwoered a{margin-left:5px;}
+/*ÑÕÉ«Ñ¡ÔñÆ÷*/
+#button-container {
+
+	padding: .5em;
+
+}
+
+#color-picker-button {
+
+	vertical-align: baseline;
+
+}
+
+#color-picker-button button {
+
+	outline: none;  /* Safari */
+	line-height: 1.5;
+
+}
+
+
+/*
+	Style the Button instance's label as a square whose background color 
+	represents the current value of the ColorPicker instance.
+*/
+
+#current-color {
+
+	display: block;
+	display: inline-block;
+	*display: block;    /* For IE */
+	margin-top: .5em;
+	*margin: .25em 0;    /* For IE */
+	width: 1em;
+	height: 1em;
+	overflow: hidden;
+	text-indent: 1em;
+	background-color: #fff;
+	white-space: nowrap;
+	border: solid 1px #000;
+
+}
+
+
+/* Hide default colors for the ColorPicker instance. */
+
+#color-picker-container .yui-picker-controls,
+#color-picker-container .yui-picker-swatch,
+#color-picker-container .yui-picker-websafe-swatch {
+
+	display: none;
+
+}
+
+
+/*
+	Size the body element of the Menu instance to match the dimensions of 
+	the ColorPicker instance.
+*/
+		
+#color-picker-menu .bd {
+
+	width: 220px;    
+	height: 190px;
+
+}
+
+#photo {
+
+	background: #fff url(.. tton/assets bridge.png) top left no-repeat;
+	
+	/*
+		Hide the alpha PNG from IE 6 and make the background image transparent via the use of 
+		the AlphaImageLoader that is applied by the filter property.
+	*/
+
+	_background-image: none;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='.. tton/assets bridge.png', sizingMethod='image');;
+
+	border: solid 1px #000;
+	width: 400px;
+	height: 300px;
+	
+	_width: 398px;	/* For IE 6 */
+	_height: 298px;	/* For IE 6 */
+
+}
+
+#button-container {
+	padding:0;
+	margin-top: .5em;
+
+}

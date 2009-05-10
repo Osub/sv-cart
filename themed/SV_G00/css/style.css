@@ -1,0 +1,95 @@
+/*****************************************************************************
+ * SV-CART 式样表
+ *===========================================================================
+ * 版权所有上海实玮网络科技有限公司，并保留所有权利。
+ * 网站地址: http://www.seevia.cn
+ *---------------------------------------------------------------------------
+ *这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用；
+ *不允许对程序代码以任何形式任何目的的再发布。
+ *===========================================================================
+ * $开发: 上海实玮$
+ * $Id: style.css 1232 2009-05-06 12:14:41Z huangbo $
+*****************************************************************************/
+
+@import url(layout.css); /*布局*/
+@import url(component.css); /*模块部分*/
+@import url(login.css); /*用户*/
+@import url(menu.css); /*左列菜单特效*/
+@import url(containers.css); /*弹出登录框和搜索框*/
+@import url(autocomplete.css);
+body {margin: 0 auto;background:#fff;}
+img{
+	border:0px;
+}
+ul {
+	padding: 0px; display: block; font-weight: normal;margin: 0px; border-style: none;  list-style-type: none;
+}
+li {
+	padding:0px; display: block;font-weight: normal;margin:0px; border-style: none;   list-style-type: none;
+}
+dl {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+dt {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+dd {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+h1 {
+	padding: 0px;margin: 0px;display:block;
+}
+h2 {
+	padding: 0px;margin: 0px;
+}
+h3 {
+	margin: 0px;padding: 0px;display:block;
+}
+h4 {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+h5 {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+h6 {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+p {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+a{text-decoration:none;color:#8A8B8B;}
+form{padding:0;margin:0;}
+.float_l{float:left;}.float_r{float:right}
+body, h1 { margin:0;padding:0; } /* needed for known issue with Dom.getXY() in safari for absolute elements in positioned containers */
+.green_border{border:1px solid #659B77;}
+.border_green_6{border:1px solid #699F7D;}
+.height_5{height:5px;clear:both;line-height:0;}
+input.text_input{border:1px solid #008833;padding-top:1px;padding-bottom:1px;font-family:arial;}
+.text_input{border:1px solid #008833;}
+select.selects{border:1px solid #008833;}
+.radio{margin:-4px 3px 0 0;vertical-align:middle;position:relative;}
+/*Border*/
+.border{border:1px solid #8F9593}
+.border_b{border:1px solid #BBEBA5}
+.border_bottom{border-bottom:1px solid #4BC679;}
+.border_side{border-left:1px solid #909592;border-right:1px solid #909592;background:#fff;}
+.bgcolor_e{background:#E9FFDF;}
+.cursor{cursor:pointer;}
+.vmiddle{vertical-align:middle;}
+/*Color*/
+.green_3{color:#34AC61;}
+.color_4{color:#40A564;}
+.color_5{color:#535353;}
+.color_f9{color:#FF9000;}
+.color_53{color:#535353;}
+.color_6d{color:#6D6D6D}
+.color_083{color:#008833;}
+.fff{color:#fff}
+#ysearch { text-align:center; }
+#ysearchinput { position:static;width:20em; } /* to center, set static and explicit width: */
+#ysearchcontainer_search { text-align:left;width:20em;} /* to center, set left-align and explicit width: */
+#ysearchinput_search { position:static;width:20em; } /* to center, set static and explicit width: */
+#ysearchcontainer { text-align:left;width:20em;} /* to center, set left-align and explicit width: */
+#product{border:1px solid blue}
+.font_14{font-size:14px;}
+ img, div, input,ul ,h1,span,a{behavior:url("img/iepngfix.htc")}

@@ -1,0 +1,39 @@
+﻿@import url(install.css);
+body {
+	font-size: 12px; margin: 0 auto;position:relative;
+
+}
+img{
+	border:0px;
+}
+ul {
+	padding: 0px; display: block; font-weight: normal; font-size: 12px;margin: 0px; border-style: none;  list-style-type: none;
+}
+li {
+	padding:0px; display: block;font-weight: normal; font-size: 12px; margin:0px; border-style: none;   list-style-type: none;
+}
+dl {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal; font-size: 12px;padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+dt {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal; font-size: 12px; float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+dd {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal; font-size: 12px; float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+h1,h2,h3,h4,h5,h6,form{
+	padding: 0px;margin: 0px;
+}
+
+p {
+	padding-right: 0px; display: block; padding-left: 0px; font-size: 12px; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+a{
+	text-decoration:none;color:#333333;
+}
+select{border:1px solid #699F7D;}
+.pointer{cursor:pointer;font-size:12px;}
+.radio{vertical-align:middle;margin:0 4px 0 0;}
+.green{color:#228948;}
+.text_input{border:1px solid #78828D;}
+.border_green_6{border:1px solid #699F7D;}

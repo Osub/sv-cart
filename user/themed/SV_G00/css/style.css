@@ -1,0 +1,88 @@
+/*****************************************************************************
+ * SV-CART CSS
+ * ===========================================================================
+ * 版权所有  上海实玮网络科技有限公司，并保留所有权利。
+ * 网站地址: http://www.seevia.cn
+ * ---------------------------------------------------------------------------
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用；
+ * 不允许对程序代码以任何形式任何目的的再发布。
+ * ===========================================================================
+ * $开发: 上海实玮$
+ * $Id: style.css 1028 2009-04-24 12:23:26Z huangbo $
+*****************************************************************************/
+@import url(layout.css); /*布局*/
+@import url(component.css); /*模块部分*/
+@import url(login.css); /*用户*/
+@import url(menu.css); /*左列菜单特效*/
+@import url(containers.css); /*弹出登录框和搜索框*/
+@import url(autocomplete.css);
+@import url(calendar.css);
+@import url(treeview.css);
+@import url(container.css);
+body {
+	margin: 0 auto;background:#fff;
+}
+img{
+	border:0px;
+}
+ul {
+	padding: 0px; display: block; font-weight: normal;margin: 0px; border-style: none;  list-style-type: none;
+}
+li {
+	padding:0px; display: block;font-weight: normal;margin:0px; border-style: none;   list-style-type: none;
+}
+dl {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+dt {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+dd {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+h1 {
+	padding:0px;margin: 0px;display:block;
+}
+h2 {
+	padding: 0px;margin: 0px;
+}
+h3 {
+	margin: 0px;padding: 0px;display:block;
+}
+h4 {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+h5 {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+h6 {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+p {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+a{text-decoration:none;color:#666;}
+.float_l{float:left;}.float_r{float:right}
+.margin_sid{margin-left:5px;margin-right:5px;}
+.radio{margin:-5px 3px 0 0;vertical-align:middle;position:relative;}
+input.text_input{border:1px solid #008833;padding-top:1px;padding-bottom:1px;font-family:arial;}
+form{padding:0;margin:0;}
+.font_14{font-size:14px;}
+.green_8{color:#889D95;}
+.color_e{color:#E9FFDF;}
+body, h1 { margin:0;padding:0; } /* needed for known issue with Dom.getXY() in safari for absolute elements in positioned containers */
+.clear{clear:both;line-height:0;height:0;overflow:hidden;display:block;}
+.cursor{cursor:pointer;}
+.vmiddle{vertical-align:middle;}
+/*Color*/
+.green_3{color:#34AC61;}
+.color_4{color:#40A564;}
+.color_5{color:#535353;}
+.color_f9{color:#FF9000;}
+.color_53{color:#535353;}
+.color_e{color:#E9FFDF;}
+.color_67{color:#66765B}
+#ysearch { text-align:center; }
+#ysearchinput { position:static;width:20em; } /* to center, set static and explicit width: */
+#ysearchcontainer { text-align:left;width:20em;font-family:arial;} /* to center, set left-align and explicit width: */
+img, div, input,ul ,h1,span{behavior:url("../../img/iepngfix.htc")}

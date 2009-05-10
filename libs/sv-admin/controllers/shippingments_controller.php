@@ -1,0 +1,268 @@
+<?php
+/*****************************************************************************
+ * SV-Cart 配送管理
+ * ===========================================================================
+ * 版权所有  上海实玮网络科技有限公司，并保留所有权利。
+ * 网站地址: http://www.seevia.cn
+ * ---------------------------------------------------------------------------
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用；
+ * 不允许对程序代码以任何形式任何目的的再发布。
+ * ===========================================================================
+ * $开发: 上海实玮$
+ * $Id: shippingments_controller.php 1201 2009-05-05 13:30:17Z huangbo $
+*****************************************************************************/
+class ShippingmentsController extends AppController {
+	var $name = 'Shippingments';
+
+	var $helpers = array('Html','Pagination');
+
+	var $components = array('Pagination','RequestHandler');
+	
+	var $uses = array('ShippingI18n','Shipping','ShippingArea','ShippingAreaI18n','ShippingAreaRegion','Region');
+
+	function index(){
+		$this->pageTitle = '配送方式'." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'配送方式','url'=>'/shippingments/');
+		$this->set('navigations',$this->navigations);
+		
+		$this->Shipping->hasOne = array();
+		$this->Shipping->hasOne = array('ShippingI18n' =>   
+                        array('className'    => 'ShippingI18n', 
+                              'conditions'    =>  '',
+                              'order'        => '',   
+                              'dependent'    =>  true,   
+                              'foreignKey'   => 'shipping_id'  
+                        )
+                  );
+        
+        $this->Shipping->set_locale($this->locale);
+		$condition = '';
+		$page = 1;
+		$rownum=isset($this->configs['show_count']) ? $this->configs['show_count']:((!empty($rownum)) ?$rownum:20);
+		$parameters = array($rownum,$page);		
+		$options = array();
+		$total = $this->Shipping->findCount($condition,0);
+		$sortClass = 'Shipping';
+		$page = $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass);
+		
+		$data = $this->Shipping->find('all',array('page'=>$page,'limit'=>$rownum,'conditions'=>$condition,'order'=>'Shipping.created,Shipping.id'));
+	/*	foreach($data as $k=>$v){
+			$v['Shipping']['name'] = '';
+			$v['Shipping']['description'] = '';
+			if(!empty($v['ShippingI18n']))foreach($v['ShippingI18n'] as $vv){
+				$v['Shipping']['name'] .= $vv['name']."|";
+				$v['Shipping']['description'] .= $vv['description']."|";
+			}
+			$data[$k] = $v;
+		}*/
+		$this->set('shippings',$data);
+	}
+	function edit($id){
+		$this->pageTitle = "编辑配送方式- 配送方式"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'配送方式','url'=>'/shippingments/');
+		$this->navigations[] = array('name'=>'编辑配送方式','url'=>'');
+		$this->set('navigations',$this->navigations);
+		
+		if($this->RequestHandler->isPost()){
+			$this->Shipping->updateAll(
+				array('Shipping.insure_fee' =>$this->data['Shipping']['insure_fee']),
+				array('Shipping.id' =>$id)
+			);
+			$this->Shipping->updateAll(
+				array('Shipping.support_cod' =>$this->data['Shipping']['support_cod']),
+				array('Shipping.id' =>$id)
+			);
+			
+			$this->ShippingI18n->updateAll(
+				array('name' =>"'".$this->data['ShippingI18n']['name']."'"),
+				array('id' =>$this->data['ShippingI18n']['id'])
+			);
+			$this->ShippingI18n->updateAll(
+				array('description' =>"'".$this->data['ShippingI18n']['description']."'"),
+				array('id' =>$this->data['ShippingI18n']['id'])
+			);
+			$this->flash("编辑成功",'/shippingments/edit/'.$id,10);
+		}
+		$this->Shipping->set_locale($this->locale);
+		$Shipping_info = $this->Shipping->findById($id);
+		$this->set('Shipping_info',$Shipping_info);
+		
+	}
+	function area_edit($id,$ids=""){
+		$this->pageTitle = "编辑配送方式- 配送方式"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'配送方式','url'=>'/shippingments/');
+		$this->Shipping->set_locale($this->locale);
+		$Shipping_info = $this->Shipping->findById($ids);
+		$this->navigations[] = array('name'=>$Shipping_info['ShippingI18n']['name'],'url'=>'/shippingments/area/'.$ids);
+		$this->set('navigations',$this->navigations);
+		if($this->RequestHandler->isPost()){
+			$this->data['ShippingArea']['orderby'] = !empty($this->data['ShippingArea']['orderby'])?$this->data['ShippingArea']['orderby']:50;
+			if( isset( $_REQUEST['items'] ) ){
+				foreach($_REQUEST['items'] as $kv=>$vs){
+					$datas[$kv]['ShippingAreaRegion']['shipping_area_id']=$id;
+					$datas[$kv]['ShippingAreaRegion']['region_id']=$vs;
+				
+				}
+
+				$this->ShippingAreaRegion->deleteall("shipping_area_id = '".$id."'",false);
+				$this->ShippingAreaRegion->saveAll( $datas );
+			}
+        	$money = serialize( $_REQUEST['money'] );
+        	$this->data['ShippingArea']['fee_configures'] = $money;
+        	$this->ShippingAreaI18n->deleteall("shipping_area_id = '".$this->data['ShippingArea']['id']."'",false);
+    	   	$this->ShippingArea->saveAll($this->data);
+    	   	//pr($this->data);
+        	$this->flash("编辑成功",'/shippingments/area/'.$_REQUEST['re_id'],10);
+
+        }
+        $shippingarearegion_edit = $this->ShippingAreaRegion->findall(array("shipping_area_id"=>$id));
+        foreach( $shippingarearegion_edit as $kd=>$vd ){
+        	$region_edit[] = $this->Region->locales_formated($vd['ShippingAreaRegion']['region_id']);
+		}
+		$shippingarea = $this->ShippingArea->findById( $id );
+		foreach( $shippingarea['ShippingAreaI18n'] as $k=>$v ){
+			$shippingarea['ShippingAreaI18n'][$v['locale']] = $v;
+		}
+		//pr($shippingarea);
+		$money = unserialize($shippingarea['ShippingArea']['fee_configures']); 
+		$this->set( "money",$money );
+		$region_country = $this->Region->getarealist(0,$this->locale);
+		//pr($region_country);
+		$region = $this->Region->getarealist(1,$this->locale);
+		ksort($region);
+		if( isset( $region_edit ) ){
+			$this->set('region_edit',$region_edit);
+		}
+		$this->set('area_id',$ids);
+		$this->set('shippingarea',$shippingarea);
+		//pr($shippingarea);
+		$this->set('region',$region);
+		$this->set('region_country',$region_country);
+	}
+	function remove($id){
+		$this->ShippingArea->deleteAll("ShippingArea.id='$id'");
+		$this->flash("删除成功",'/shippingments/area/'.$_REQUEST['re_id'],10);
+	
+	}
+	function province( $id ){
+		$regions = $this->Region->getarealist($id,$this->locale);
+		$i=0;ksort($regions);
+	
+		$number = count($regions);
+		$this->set('regions',$regions);
+		if( !empty($regions) ){
+			foreach($regions as $k=>$v){
+				Configure::write('debug',0);
+		        $results['number'] = $number+$k;
+		        $results['first_key'] =$k;
+		        $results['message'] =$regions;
+		       
+		        die(json_encode($results));
+		    }
+	    }else{
+	    		Configure::write('debug',0);
+		        $results['number'] = $number+$k;
+		        $results['first_key'] =$k;
+		        $results['message'] =$regions;
+		       
+		        die(json_encode($results));
+		    
+	    }
+	}
+	function area( $id ){
+		$this->pageTitle = "编辑配送方式- 配送方式"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'配送方式','url'=>'/shippingments/');
+		$this->Shipping->set_locale($this->locale);
+		$Shipping_info = $this->Shipping->findById($id);
+		$this->navigations[] = array('name'=>$Shipping_info['ShippingI18n']['name'],'url'=>'');
+		$this->set('navigations',$this->navigations);
+		
+		$shippingarea = $this->ShippingArea->findAll(array("shipping_id"=>$id));
+		//pr($shippingarea);
+		foreach( $shippingarea as $k=>$v ){
+			$shippingarea[$k]['ShippingArea']['name'] = "";
+			$shippingarea[$k]['ShippingArea']['areaname'] = "";
+			
+			foreach( $v['ShippingAreaI18n'] as $kk=>$vv ){
+				if($vv['locale'] == $this->locale){
+					$shippingarea[$k]['ShippingArea']['name'] = $vv['name'];
+					$shippingarea[$k]['ShippingArea']['description'] = $vv['description'];
+				}
+			}
+			$condition["shipping_area_id"] = $v["ShippingArea"]["id"];
+			$shippingarearegion = $this->ShippingAreaRegion->findAll( $condition );
+			//pr($shippingarearegion);
+			foreach( $shippingarearegion as $kkk=>$vvv ){
+				 $region_id = $vvv["ShippingAreaRegion"]["region_id"];
+				$region = $this->Region->findAll(array("Region.id"=>$region_id));
+				//pr($region);
+				foreach( $region as $ka=>$val ){
+						$shippingarea[$k]['ShippingArea']['areaname'].= $val['RegionI18n']['name']."|";
+				}
+			}	
+		}
+		
+		$this->set( "ids",$id );
+		$this->set('shippingarea',$shippingarea);
+	}
+	
+	function area_add( $id ) {
+		$this->pageTitle = "编辑配送区域- 配送方式"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'配送方式','url'=>'/shippingments/');
+		$this->Shipping->set_locale($this->locale);
+		$Shipping_info = $this->Shipping->findById($id);
+		$this->navigations[] = array('name'=>$Shipping_info['ShippingI18n']['name'],'url'=>'/shippingments/area/'.$id);
+		$this->set('navigations',$this->navigations);
+	
+		if($this->RequestHandler->isPost()){
+			$this->data['ShippingArea']['orderby'] = !empty($this->data['ShippingArea']['orderby'])?$this->data['ShippingArea']['orderby']:50;
+			$money = serialize( $_REQUEST['money'] );
+        	$this->data['ShippingArea']['fee_configures'] = !empty($money)?$money:0;
+			$this->data['ShippingArea']['free_subtotal'] = !empty($this->data['ShippingArea']['free_subtotal'])?$this->data['ShippingArea']['free_subtotal']:0;
+    	   	$this->ShippingArea->saveAll($this->data);
+			
+			if( isset( $_REQUEST['items'] ) ){
+				foreach($_REQUEST['items'] as $kv=>$vs){
+					$datas[$kv]['ShippingAreaRegion']['shipping_area_id']=$this->ShippingArea->getLastInsertID();
+					$datas[$kv]['ShippingAreaRegion']['region_id']=$vs;
+				
+				}
+					$this->ShippingAreaRegion->saveAll( $datas );
+			}
+			//pr($datas);
+			
+        	$this->flash("编辑成功",'/shippingments/area/'.$id,10);
+        	//pr($this->data);
+        }
+		
+		$region_country = $this->Region->getarealist(0,$this->locale);
+		//pr($region_country);
+		$region = $this->Region->getarealist(1);
+		ksort($region);
+		$this->set('region',$region);
+		$this->set('region_country',$region_country);
+		$this->set('ids',$id);
+	
+	}
+
+
+	
+	function install( $id ){
+		 $this->Shipping->updateAll(
+			              array('Shipping.status' => 1),
+			              array('Shipping.id' => $id)
+			           );
+         $this->flash("安装成功",'/shippingments/',10);
+	
+	}
+	function uninstall( $id ){
+		 $this->Shipping->updateAll(
+			              array('Shipping.status' => 0),
+			              array('Shipping.id' => $id)
+			           );
+         $this->flash("卸载成功",'/shippingments/',10);
+	
+	}
+}
+
+?>

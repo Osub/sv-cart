@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /sv-admin/
+Disallow: /install/
+Disallow: /user/
+Disallow: /libs/
+Disallow: /themed/
+Disallow: /js/

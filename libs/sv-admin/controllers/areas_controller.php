@@ -1,0 +1,125 @@
+<?php
+/*****************************************************************************
+ * SV-Cart 地区管理
+ * ===========================================================================
+ * 版权所有  上海实玮网络科技有限公司，并保留所有权利。
+ * 网站地址: http://www.seevia.cn
+ * ---------------------------------------------------------------------------
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用；
+ * 不允许对程序代码以任何形式任何目的的再发布。
+ * ===========================================================================
+ * $开发: 上海实玮$
+ * $Id: areas_controller.php 1261 2009-05-08 07:18:58Z huangbo $
+*****************************************************************************/
+class AreasController extends AppController {
+	var $name = 'Areas';
+	var $helpers = array('Html');
+	var $uses = array("Region","RegionI18n");
+
+	function index($pid=0){
+		$this->pageTitle = "地区管理" ." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'地区管理','url'=>'/areas/');
+
+		$area_list=$this->Region->getarealist($pid,$this->locale);
+		$region_parents = $this->Region->get_parents($pid);
+		$num = "1";
+		if(!empty($region_parents)){
+			$count = count($region_parents);
+			for($i=$count-1;$i>=0;$i--){
+				$num++;
+				$this->navigations[] = array('name'=>$region_parents[$i]['name'],'url'=>'/areas/index/'.$region_parents[$i]['id']);
+			}
+		}
+		switch ($num) {
+			  case 1:
+			    $num_name="一级地区";
+			    break;
+			  case 2:
+			    $num_name="二级地区";
+			    break;
+			  case 3:
+			    $num_name="三级地区";
+			    break;
+			  case 4:
+			    $num_name="四级地区";
+			    break;
+			  default:
+			    $num_name="未知地区";
+			    break;
+		}
+
+		$this->set('navigations',$this->navigations);
+		$this->set('num_name',$num_name);
+		$this->set('area_list',$area_list);
+		$this->set('pid',$pid);
+	}
+	function edit($region_id){
+		$edit_region = $this->RegionI18n->findAll(array("region_id"=>$region_id));
+	
+		foreach($edit_region as $k=>$v){
+			$arr[$k]['locale'] = $v['RegionI18n']['locale'];
+			$arr[$k]['name'] = $v['RegionI18n']['name'];
+			$arr[$k]['id'] = $v['RegionI18n']['id'];
+	
+		}	
+		Configure::write('debug',0);
+		die(json_encode($arr));
+	}
+/*------------------------------------------------------ */
+//-- 新增地区
+/*------------------------------------------------------ */
+    function add(){
+    	    
+		$this->pageTitle = "添加地区-地区管理"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'地区管理','url'=>'/areas/');
+		$this->navigations[] = array('name'=>'添加地区','url'=>'');
+			$region_info=array(
+    	    	          'parent_id'=>isset($this->params['form']['parent_id'])?$this->params['form']['parent_id']:0,
+    	    	'id'=>isset($this->params['form']['r_id'])?$this->params['form']['r_id']:0
+    	    	   );
+    	    
+    	    $this->Region->saveall(array('Region'=>$region_info));
+    	    $id=$this->Region->id;
+    	    if(is_array($this->data['RegionI18n']))
+			          foreach($this->data['RegionI18n'] as $k => $v){
+				            $v['region_id']=$id;
+				           // $this->RegionI18n->id='';
+				           $this->RegionI18n->saveall(array('RegionI18n'=>$v)); 
+			}
+    	    $this->flash("编辑成功",'/areas/index/'.$this->params['form']['parent_id'],10);
+     }
+     	
+/*------------------------------------------------------ */
+//-- 删除地区
+/*------------------------------------------------------ */
+    function remove($id){
+    	   //pr($this);
+    	   $this->pageTitle = "删除地区-地区管理"." - ".$this->configs['shop_name'];
+		   $this->navigations[] = array('name'=>'地区管理','url'=>'/areas/');
+		   $this->navigations[] = array('name'=>'删除地区','url'=>'');
+    	   $this->Region->deleteAll("Region.id = ".$id."",false);
+		   $this->RegionI18n->deleteAll("RegionI18n.region_id = ".$id."");
+    	   $this->flash("删除成功",'/areas/',10);
+    }
+/*------------------------------------------------------ */
+//-- ajax修改未命名的区域
+/*------------------------------------------------------ */
+    function ajaxeditregion($new_region_name,$regioni18n_id){
+    	    if($new_region_name != '' && $regioni18n_id > 0){
+    	    	   	$this->RegionI18n->updateAll(
+			                array('RegionI18n.name' => $new_region_name),
+			                array('RegionI18n.id' => $regioni18n_id)
+			        );
+			        $msg='区域新命名成功';
+    	    }
+    	    else{
+    	    	   $msg='请重新确认你填写的区域名称';
+    	    }
+    	    Configure::write('debug',0);
+            $result['type'] = "0";
+            $result['msg'] = $msg;
+            die(json_encode($result));
+    }
+}
+
+?>
