@@ -12,7 +12,7 @@
  * $Id: core.php 1329 2009-05-11 11:29:59Z huangbo $
 *****************************************************************************/
 
-	Configure::write('debug', 2);
+	Configure::write('debug', 0);
 	Configure::write('App.encoding', 'UTF-8');
 	//Configure::write('App.baseUrl', env('SCRIPT_NAME'));
 	Configure::write('Cache.disable', true);
