@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: procurement.ctp 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: procurement.ctp 1329 2009-05-11 11:29:59Z huangbo $
 *****************************************************************************/
 ?>
 <?=$javascript->link('/../js/yui/calendar-min.js');?>
@@ -37,12 +37,19 @@
 <!--Main Start-->
 <div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
 	<ul class="product_llist procurements">
-	<li class="item_number">货号</li><li class="name">商品名称</li><li class="profiles">属性</li><li class="number">数量</li><li class="units">单位</li><li class="supplier">供应商</li><li class="remark">备注</li></ul>
+	<li class="item_number">货号</li>
+	<li class="name"><p>商品名称</p></li>
+	<li class="profiles">属性</li>
+	<li class="number">数量</li>
+	<li class="units">单位</li>
+	<li class="supplier">供应商</li>
+	<li class="remark">备注</li>
+	</ul>
 	<?if(isset($orders) && sizeof($orders)){?>
 	<?php foreach($orders as $order){?>
 	<ul class="product_llist procurements procurements_list">
 	<li class="item_number"><?php echo $order['OrderProduct']['product_code']?></li>
-	<li class="name"><?php echo $order['OrderProduct']['product_name']?></li>
+	<li class="name"><p><?php echo $order['OrderProduct']['product_name']?></p></li>
 	<li class="profiles"><?php echo $order['OrderProduct']['product_attrbute']?></li>
 	<li class="number"><?php echo $order['OrderProduct']['product_quntity']?></li>
 	<li class="units">台</li>

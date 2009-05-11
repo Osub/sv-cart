@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: products_controller.php 1261 2009-05-08 07:18:58Z huangbo $
+ * $Id: products_controller.php 1329 2009-05-11 11:29:59Z huangbo $
 *****************************************************************************/
 class ProductsController extends AppController {
 
@@ -159,12 +159,30 @@ class ProductsController extends AppController {
 	    	$show_gallery_number = 4;
 	    }
 	    $galleries = array_slice($galleries,'0',$show_gallery_number);
+	    if(sizeof($galleries) < $show_gallery_number){
+	    	for($i=0;$i<$show_gallery_number - sizeof($galleries) ; $i++){
+	    		$galleries[] =  array('ProductGallery'=>array('img_thumb' => "/img/product_default.jpg",
+	    													'img_detail' => "/img/product_default.jpg",
+	    													'img_original' => "/img/product_default.jpg",
+	    													'description' => "/img/product_default.jpg"
+	    							));
+	    	}
+	    }
 	    
 	    $this->set("galleries",$galleries);
 	
 	//	相关商品
-	//	pr($this->configs['related_products_number']);
+
 		$relation_ids = $this->ProductRelation->find("list",array('conditions'=>"ProductRelation.Product_id = '$id' and Product.status =1 and Product.forsale =1",'recursive'=>1,'fields'=>'ProductRelation.related_product_id','order'=>'ProductRelation.orderby'));
+		$relation_ids_is_double = $this->ProductRelation->find("list",array('conditions'=>"ProductRelation.related_product_id = '$id' and ProductRelation.is_double = 1 and Product.status =1 and Product.forsale =1",'recursive'=>1,'fields'=>'ProductRelation.product_id','order'=>'ProductRelation.orderby'));
+		if(is_array($relation_ids_is_double) && sizeof($relation_ids_is_double)>0){
+			foreach($relation_ids_is_double as $k=>$v){
+				if(!in_array($v,$relation_ids)){
+					$relation_ids[] = $v;
+				}
+			}
+		}
+		//pr($relation_ids);
 		if(sizeof($relation_ids)>0){
 			$relation_products = $this->Product->findall(array("Product.id"=>$relation_ids));
 			if(isset($this->configs['related_products_number']) && $this->configs['related_products_number'] > 0){
@@ -172,9 +190,12 @@ class ProductsController extends AppController {
 			}
 			$this->set("relation_products",$relation_products);
 		}
+		
 	
 	//	相关文章
 		$article_ids = $this->ProductArticle->find("list",array('conditions'=>"ProductArticle.Product_id = '$id' and Article.status =1 ",'recursive'=>1,'fields'=>'ProductArticle.article_id','order'=>'ProductArticle.orderby'));
+		
+		
 		if(sizeof($article_ids)>0){
 			$this->Article->set_locale($this->locale);
 			$articles = $this->Article->findall(array("Article.id"=>$article_ids));

@@ -312,10 +312,10 @@ form{margin:0px;}
 	background:#4FC14D no-repeat;font-weight:normal;color:#fff;position:relative;height:32px;
 }
 #Edit_info p.note span.comment-left{
-	position:absolute;left:0;top:-1px;width:10px;background:#3A3A3A url(../img/comment.gif) 0 0 repeat-x;height:32px;
+	position:absolute;left:0;top:0;width:10px;background:#3A3A3A url(../img/comment.gif) 0 0 repeat-x;height:32px;
 }
 #Edit_info p.note span.comment-right{
-	position:absolute;right:-1px;top:-1px;width:10px;background:#3A3A3A url(../img/comment.gif) 0 -64px repeat-x;height:32px;
+	position:absolute;right:-1px;top:0;width:10px;background:#3A3A3A url(../img/comment.gif) 0 -64px repeat-x;height:32px;
 }
 /*  ==================== 用户中心我的评论 ====================  */
 #Edit_info .comment p{
@@ -328,14 +328,11 @@ form{margin:0px;}
 	margin:50px 0 10px 0;
 }
 /*  ==================== 用户中心文章详细 ====================  */
-#user_msg p.article{
-	padding:10px 0;line-height:normal;
-}
-#user_msg p.article span{
-	color:#9D9D9D;
+#user_msg .article{
+	padding:10px 10px;line-height:normal;color:#9D9D9D;
 }
 #user_msg p.article_time{
-	background:#EFF9E1;padding:2px 0;height:20px;line-height:20px;text-align:right;
+	background:#EFF9E1;padding:2px 10px;height:20px;line-height:20px;text-align:right;
 }
 #user_msg p.article_time span{
 	color:#9D9D9D;
@@ -406,20 +403,19 @@ form{margin:0px;}
 	padding:0px;height:27px;text-align:left;text-indent:0;
 }
 #user_msg p.article_title span{
-	color:#16A45A;float:left;border-bottom:1px solid #fff;border-right:1px solid #fff;height:25px;line-height:25px;text-align:center;
+	color:#16A45A;float:left;border-bottom:1px solid #fff;border-right:1px solid #fff;height:25px;line-height:25px;
 }
 #user_msg p.article_title span.title{
-	width:372px;
-	
+	width:77%;padding-left:24px;
 }
 #user_msg p.article_title span.user_name{
 	width:165px;
 }
 #user_msg p.article_title span.add_time{
-	width:197px;border-right:none;
+	width:19.6%;border-right:none;
 }
 #user_msg #article_box{
-	margin:20px 0;
+	margin:10px 0 0;
 }
 #user_msg #article_box p{
 	line-height:normal;padding:3px 0;height:auto;text-indent:0;color:#9D9D9D;overflow:hidden;clear:both;
@@ -428,18 +424,14 @@ form{margin:0px;}
 	float:left;
 }
 #article_box p.list .title{
-	width:350px;
-	padding-left:24px;
-	overflow-x:hidden;
+	width:77%;padding-left:24px;overflow-x:hidden;
 }
 #article_box p.list .title a{
 	color:#9D9D9D;
 }
 #article_box p.list span.name{
-	width:165px;
-	text-align:center;
+	width:165px;text-align:center;
 }
 #article_box p.list span.time{
-	width:197px;
-	text-align:center;
+	width:19.6%;text-align:center;
 }

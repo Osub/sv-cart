@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: pages_controller.php 1273 2009-05-08 16:49:08Z huangbo $
+ * $Id: pages_controller.php 1329 2009-05-11 11:29:59Z huangbo $
 *****************************************************************************/
 class PagesController extends AppController {
 	var $name = 'Pages';
@@ -377,6 +377,9 @@ class PagesController extends AppController {
 			$buff = "";
 			$rss_str="";
 			//打开rss地址，并读取，读取失败则中止
+			if(!@get_headers($rssfeed[$i])){
+				return array();
+			}
 			$fp = fopen($rssfeed[$i],"r") or die("can not open $rssfeed");
 			while ( !feof($fp) ) {
 				$buff .= fgets($fp,4096);

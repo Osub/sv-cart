@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: app_controller.php 1273 2009-05-08 16:49:08Z huangbo $
+ * $Id: app_controller.php 1327 2009-05-11 11:01:20Z huangbo $
 *****************************************************************************/
 class AppController extends Controller {
 	var $locale = '';
@@ -72,11 +72,11 @@ class AppController extends Controller {
 		if (isset($_REQUEST["PHPSESSID"]) && $this->params['controller']=="images" && $this->params['action']=="upload") {
 			//pr($_SESSION);
 			session_id($_REQUEST["PHPSESSID"]);
-			$_SESSION['Operator_Info'] 	= unserialize(stripslashes($_REQUEST["session_operator_str"]));
-			$_SESSION['Action_List'] = unserialize(stripslashes($_REQUEST["Action_List"]));
-			$_SESSION['Operator'] = unserialize(stripslashes($_REQUEST["Operator"]));
-			$_SESSION['Admin_Config'] = unserialize(stripslashes($_REQUEST["Admin_Config"]));
-			$_SESSION['Admin_Locale'] = unserialize(stripslashes($_REQUEST["Admin_Locale"]));
+			$_SESSION['Config'] 	= unserialize(stripslashes($_REQUEST["session_config_str"]));
+			$_SESSION['Operator_Info'] = unserialize(stripslashes($_REQUEST["session_operator_str"]));
+			$_SESSION['Admin_Config'] = unserialize(stripslashes($_REQUEST["session_admin_config_str"]));
+			$_SESSION['Action_List'] = unserialize(stripslashes($_REQUEST["session_action_list_str"]));
+			$_SESSION['Admin_Locale'] = unserialize(stripslashes($_REQUEST["session_admin_locale_str"]));
 			$_SESSION['cart_back_url'] = unserialize(stripslashes($_REQUEST["cart_back_url"]));
 			$this->Config->set_locale($_SESSION['Admin_Locale']);
 			$this->configs = $this->Config->getformatcode();

@@ -44,11 +44,12 @@
     		</ul> 
   				<?}?>
  			<?}else{?>
-        	<div class="not">
-		<br />		<br />
-		<?=$html->image("warning_img.gif",array("alt"=>""))?><strong>没有任何优惠券</strong><br /><br /></div> 				
- 				<?}?>
- 			</div>
+	        <div class="not">
+			<br /><br />
+			<?=$html->image("warning_img.gif",array("alt"=>""))?><strong><?=$SCLanguages['no_coupon'];?></strong><br /><br />
+			</div>
+ 			<?}?>
+ 		</div>
         </div>
 
   
@@ -58,32 +59,24 @@
    <?}?></div>
   <br />
 <div id="Products_box">
-<form  action="javascript:;" onsubmit="ActAmount(this);"method="post" enctype="multipart/form-data" name="ActAmountForm">
-        <div id="infos" style="width:739px;">
-        	<p class="sufficient"><b><?=$SCLanguages['add'];?><?=$SCLanguages['coupon'];?></b>:</p>
- <div class="btn_list" style="padding-top:10px;">
-            <p class="many_input"><?=$SCLanguages['please_enter'].$SCLanguages['coupon'].$SCLanguages['code'];?>：<input type="text" style="width:150px;" name="sn_code" id="sn_code" /> 
-<span id="sn_code_msg" style="color:red;"></span>
-<p class="float_l" style="padding:1px 4px 0 160px;*margin-top:-2px;">
-<a href="javascript:add_coupon()" class="float_l"><span><?=$SCLanguages['confirm']?></span></a></p></div>  
+	<div id="infos" style="width:739px;">
+<p class="sufficient"><b><?=$SCLanguages['add'];?><?=$SCLanguages['coupon'];?></b>:</p>
+            <ul class="integral_title">
+				<li class="time" style="width:50%"> 
+		<?=$SCLanguages['please_enter'].$SCLanguages['coupon'].$SCLanguages['code'];?> :<input type="text" style="width:150px;" name="sn_code" id="sn_code" /> 
+				</li>
+				<li class="handel btn_list">
+				<a href="javascript:add_coupon()" class="float_l"><span><?=$SCLanguages['confirm']?></span></a>
+				</li>
+				<li class="msg">
+				<span style="color:red;" id="sn_code_msg"></span>
+				</li>
+			</ul>  	
+
    </div>
-     </form>  	  
 </div>  	  
-  	  
-  	  
-  	  
-  	  
-  	  
-  	  
-  	  
-  	  
-  	  
-  	  
-  	  
-  	  
-  	  
-  	  
-  	  
-  	  
+  	  <br />
+  	  <br />
+  	  <br />
+
 <?php echo $this->element('news', array('cache'=>'+0 hour'));?>
-<?php echo $this->element('calendar', array('cache'=>'+0 hour'));?>

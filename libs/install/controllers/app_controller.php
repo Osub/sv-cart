@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: app_controller.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: app_controller.php 1314 2009-05-11 07:20:51Z huangbo $
 *****************************************************************************/
 class AppController extends Controller {
 	var $install_err = '';
@@ -422,6 +422,7 @@ function   xCopy($source,   $destination,   $child){
 	 }    
 	 if(!is_dir($destination)){    
 	     mkdir($destination,0777);    
+	     @chmod($destination, 0777);
 	 }    
    
    
@@ -433,7 +434,8 @@ function   xCopy($source,   $destination,   $child){
 		  			xCopy($source."/".$entry,$destination."/".$entry,$child);    
 		 	}    
 		 	else{
-		 		@copy($source."/".$entry,$destination."/".$entry);    
+		 		@copy($source."/".$entry,$destination."/".$entry);   
+		 		@chmod($destination."/".$entry, 0777); 
 		 	}    
 		   
 		 }    

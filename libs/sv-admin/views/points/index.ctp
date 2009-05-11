@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: index.ctp 1329 2009-05-11 11:29:59Z huangbo $
 *****************************************************************************/
 ?>
 <?=$javascript->link('/../js/yui/calendar-min.js');?>
@@ -25,13 +25,10 @@
 	类型：
 	<select name="log_type">
 	<option value="" >全部</option>
-	<option value="a"<?if(@$log_type=="a"){ echo "selected";}?>>注册赠送</option>
-	<option value="b"<?if(@$log_type=="b"){ echo "selected";}?>>购买赠送</option>
-	<option value="c"<?if(@$log_type=="c"){ echo "selected";}?>>购买消费</option>
-	<option value="d"<?if(@$log_type=="d"){ echo "selected";}?>>推荐注册赠送</option>
-	<option value="e"<?if(@$log_type=="e"){ echo "selected";}?>>推荐购买赠送</option>
-	<option value="f"<?if(@$log_type=="f"){ echo "selected";}?>>管理员增加</option>
-	<option value="g"<?if(@$log_type=="g"){ echo "selected";}?>>管理员扣除</option>
+	<option value="R"<?if(@$log_type=="R"){ echo "selected";}?>>注册赠送</option>
+	<option value="B"<?if(@$log_type=="B"){ echo "selected";}?>>购买赠送</option>
+	<option value="O"<?if(@$log_type=="O"){ echo "selected";}?>>购买消费</option>
+	<option value="A"<?if(@$log_type=="A"){ echo "selected";}?>>管理员操作</option>
 	</select>
 	&nbsp;&nbsp;会员名称：<input type="text" class="time" name="name" value="<?=@$names?>" style="width:120px;" /></p></dd>
 	<dt style="" class="curement"><input type="button" onclick="search_point()" value="查询" /> </dt>
@@ -47,8 +44,7 @@
 	<li class="member_name"><span>会员名称</span></li>
 	<li class="type">类型</li>
 	<li class="integral">积分</li>
-	<li class="payment_number"><!-- 去掉了 --></li>
-	<li class="order_number">订单号</li>
+	<li class="order_number"><p>备注</p></li>
 	<li class="handle_date" style="border-right:0;">操作日期</li></ul>
 <!--Menberleves List-->
 <?if(isset($UserPointLog_list) && sizeof($UserPointLog_list)>0){?>
@@ -57,8 +53,7 @@
 	<li class="member_name"><span><?=$v['UserPointLog']['name']?></span></li>
 	<li class="type"><?=$v['UserPointLog']['log_type']?></li>
 	<li class="integral"><?=$v['UserPointLog']['point']?></li>
-	<li class="payment_number"><!-- 去掉了 --></li>
-	<li class="order_number"><?=$v['UserPointLog']['order_code']?></li>
+	<li class="order_number"><p><?=$v['UserPointLog']['description']?></p></li>
 	<li class="handle_date"><?=$v['UserPointLog']['modified']?></li></ul>
 <? }} ?>	
 

@@ -114,10 +114,10 @@
 	color:#004B1C;
 }
 #Item_List ul li .info .Price{
-	display:block;color:#6D6D6D;margin-top:7px;
+	display:block;color:#6D6D6D;margin-top:2px;
 }
 #Item_List ul li .info .stow{
-	display:block;color:#20BE63;
+	display:block;color:#20BE63;margin-top:2px;
 }
 #Item_List ul li .info .stow a{
 	margin:0 5px;color:#20BE63;
@@ -559,7 +559,7 @@
 	color:#40AAFE;
 }
 #Products .Titles{
-	height:50px;width:auto;
+	height:15px;width:auto;
 }
 #Products .Title_list{
 	height:32px;font-size:13px;font-weight:bold;color:#20BE63;border-bottom:1px solid #909592;
@@ -1421,10 +1421,10 @@ ul.article_tab li.hover{
 }
 /*=========================Admin Iformations ==========================*/
 .contents{
-	width:950px;position:relative;border-top:0; padding-bottom:32px; height:100%;margin:0 auto;
+	width:98%;position:relative;border-top:0; padding-bottom:32px; height:100%;margin:0 auto;
 }
 .home_main{
-	border:1px solid #CCCCCC;width:934px; background:#F0F0F0; margin:0 auto; padding:15px 8px 25px; height:100%;overflow:hidden;
+	border:1px solid #CCCCCC;background:#F0F0F0; margin:0 auto; padding:15px 8px 25px; height:100%;overflow:hidden;
 }
 .informations{
 	border:1px solid #E0E0E0; background:#F9F9F9; margin:-5px 0 -15px;

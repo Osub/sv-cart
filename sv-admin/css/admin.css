@@ -1321,7 +1321,7 @@ ul.item_order li.ship_name{width:27%;}
 ul.item_order li.number{width:18%;}
 ul.item_order li.supplier{width:16%;}
 ul.item_order li.remark{width:16%;}
-
+ul.item_order li.remark p{padding-left:10px;}
 /*=========================Admin ConfigValues ==========================*/
 .configvalues{
 	overflow:inherit;
@@ -1405,14 +1405,15 @@ ul.unvalidate_list li.email span{margin-left:8px;}
 ul.unvalidate_list li.email{ text-align:left;}
 
 /*=========================Admin Points ==========================*/
+ul.memberlevels p{padding-left:10px;}
 ul.memberlevels li.member_name{width:21%;text-align:left}
 ul.memberlevels li.member_name span{margin-left:25px;}
 ul.memberlevels li a{ text-decoration:underline; cursor:default; font-family:Arial;}
-ul.memberlevels li.type{width:10%;}
+ul.memberlevels li.type{width:16%;}
 ul.memberlevels li.payment_number{width:18%;}
-ul.memberlevels li.order_number{width:18%;}
+ul.memberlevels li.order_number{width:24%;text-align:left}
 ul.memberlevels li.handle_date{width:22%;}
-ul.memberlevels li.integral{width:10%;}
+ul.memberlevels li.integral{width:16%;}
 ul.memberlevels li.payments{width:14%;}
 ul.memberlevels li.hadle_point{width:15%;border-right:0;}
 ul.memberlevels_list li.member_name,ul.memberlevels_list li.payments{ text-align:left;}

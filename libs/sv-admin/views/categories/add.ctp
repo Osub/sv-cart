@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 943 2009-04-23 10:38:44Z huangbo $
+ * $Id: add.ctp 1327 2009-05-11 11:01:20Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -25,6 +25,7 @@
 <tr>
 <td align="left" width="50%" valign="top" style="padding-right:5px">
 <!--Communication Stat-->
+<input type="hidden" id="categoryid" value="<?=$categories_id?>">
 	<div class="order_stat athe_infos">
 	  <div class="title"><h1>
 	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
@@ -63,7 +64,7 @@
 		<h2>上传图片01：</h2>
 <? if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input id="upload_img_text_1<?=$k?>" name="data[CategoryI18n][<?=$k;?>][img01]" type="text" size="50"  /></span> <?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(1".$k.",'product_categories')",'',false,false)?><input type="button" value="自动命名" onclick="change_img_name(1,'<?=$v['Language']['locale']?>',<?=$k?>)">
+		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input id="upload_img_text_1<?=$k?>" name="data[CategoryI18n][<?=$k;?>][img01]" type="text" size="50"  /></span> <?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(1".$k.",'product_categories')",'',false,false)?><input  type="button" value="自动命名" onclick="change_img_name(1,'<?=$v['Language']['locale']?>',1<?=$k?>)">
 <br />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
 			<?=@$html->image('',array('id'=>'logo_thumb_img_1'.$k,'height'=>'150','style'=>'display:none'))?>
 
@@ -74,7 +75,7 @@
 		<h2>上传图片02：</h2>
 <? if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input id="upload_img_text_2<?=$k?>" name="data[CategoryI18n][<?=$k;?>][img02]" type="text" size="50"  /></span> <?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(2".$k.",'product_categories')",'',false,false)?><input type="button" value="自动命名" onclick="change_img_name(2,'<?=$v['Language']['locale']?>',<?=$k?>)">
+		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input id="upload_img_text_2<?=$k?>" name="data[CategoryI18n][<?=$k;?>][img02]" type="text" size="50"  /></span> <?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(2".$k.",'product_categories')",'',false,false)?><input type="button" value="自动命名" onclick="change_img_name(2,'<?=$v['Language']['locale']?>',2<?=$k?>)">
 <br />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<?=@$html->image('',array('id'=>'logo_thumb_img_2'.$k,'height'=>'150','style'=>'display:none'))?>
 
 			</p>
@@ -86,7 +87,7 @@
 		<h2>上传图片01：</h2>
 <? if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input id="upload_img_text_1<?=$k?>" name="data[CategoryI18n][<?=$k;?>][img01]" type="text" size="50"  /></span><?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(1".$k.",'article_categories')",'',false,false)?><input type="button" value="自动命名" onclick="change_img_name_gif(1,'<?=$v['Language']['locale']?>',<?=$k?>)">
+		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input id="upload_img_text_1<?=$k?>" name="data[CategoryI18n][<?=$k;?>][img01]" type="text" size="50"  /></span><?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(1".$k.",'article_categories')",'',false,false)?><input type="button" value="自动命名" onclick="change_img_name_gif(1,'<?=$v['Language']['locale']?>',1<?=$k?>)">
 	<br />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<?=@$html->image('',array('id'=>'logo_thumb_img_1'.$k,'height'=>'150','style'=>'display:none'))?>
 
 
@@ -97,7 +98,7 @@
 		<h2>上传图片02：</h2>
 <? if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input id="upload_img_text_2<?=$k?>" name="data[CategoryI18n][<?=$k;?>][img02]" type="text" size="50"  /></span><?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(2".$k.",'article_categories')",'',false,false)?><input type="button" value="自动命名" onclick="change_img_name_gif(2,'<?=$v['Language']['locale']?>',<?=$k?>)">
+		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input id="upload_img_text_2<?=$k?>" name="data[CategoryI18n][<?=$k;?>][img02]" type="text" size="50"  /></span><?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(2".$k.",'article_categories')",'',false,false)?><input type="button" value="自动命名" onclick="change_img_name_gif(2,'<?=$v['Language']['locale']?>',2<?=$k?>)">
 				<br />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<?=@$html->image('',array('id'=>'logo_thumb_img_2'.$k,'height'=>'150','style'=>'display:none'))?>
 
 
@@ -178,11 +179,11 @@
 				  }?>
 			</select></dd></dl>
 		<dl><dt>排序：</dt><dd class="time"><!--<? echo $form->input('orderby',array('label'=>false,'div'=>false));?>--><input id="CategoryOrderby" name="data[Category][orderby]" type="text" class="text" style="width:108px;"   value=""/></dd></dl>
-		<dl><dt>FLASH幻灯片参数：</dt><dd class="time"><input id="CategoryFlashConfig" name="data[Category][flash_config]" type="text" class="text" value=""/></dd></dl>
-		<dl style="padding:5px 0;*padding:6px 0;"><dt style="padding-top:1px">是否显示：</dt><dd class="best_input"><input id="CategoryStatus" name="data[Category][status]" type="radio" value="1" checked >是<input id="CategoryStatus" name="data[Category][status]" type="radio" value="0"  >否</dd></dl>
-		<dl><dt>分类图片01：</dt><dd><input id="upload_img_text_3" name="data[Category][img01]" type="text" size="50" /><br /><br /><?=@$html->image('',array('id'=>'logo_thumb_img_3'.$k,'height'=>'150','style'=>'display:none'))?>
+		<span style="display:none"><dl><dt>FLASH幻灯片参数：</dt><dd class="time"><input id="CategoryFlashConfig" name="data[Category][flash_config]" type="text" class="text" value=""/></dd></dl>
+		</span><dl style="padding:5px 0;*padding:6px 0;"><dt style="padding-top:1px">是否显示：</dt><dd class="best_input"><input id="CategoryStatus" name="data[Category][status]" type="radio" value="1" checked >是<input id="CategoryStatus" name="data[Category][status]" type="radio" value="0"  >否</dd></dl>
+		<dl><dt>分类图片01：</dt><dd><input id="upload_img_text_3" name="data[Category][img01]" type="text" size="50" /><br /><br /><?=@$html->image('',array('id'=>'logo_thumb_img_3','height'=>'150','style'=>'display:none'))?>
 </dd><dd><?=@$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(3,'product_categories')",'',false,false)?></dd></dl>
-		<dl><dt>分类图片02：</dt><dd><input id="upload_img_text_4" name="data[Category][img02]" type="text" size="50" /><br /><br /><?=@$html->image('',array('id'=>'logo_thumb_img_4'.$k,'height'=>'150','style'=>'display:none'))?>
+		<dl><dt>分类图片02：</dt><dd><input id="upload_img_text_4" name="data[Category][img02]" type="text" size="50" /><br /><br /><?=@$html->image('',array('id'=>'logo_thumb_img_4','height'=>'150','style'=>'display:none'))?>
 </dd><dd><?=@$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(4,'product_categories')",'',false,false)?></dd></dl>
 		
 		<br /><br /><br /><br /><br /><br /><br />
@@ -238,16 +239,35 @@
 <!--Main Start End-->
 </div>
 <script>
+
+<?php if($type == 'A'){?>
 function change_img_name(nu,type,e_id){
-	var img_url = webroot_dir+"../img/article_categories/new_id/"+type+"_0"+nu+".jpg"
-	var get_id = "upload_img_text_"+nu+e_id;
+	var img_url = "/img/article_categories/{$new_id}/"+type+"_0"+nu+".jpg"
+	var get_id = "upload_img_text_"+e_id;
 	document.getElementById(get_id).value = img_url;
 
 }
 function change_img_name_gif(nu,type,e_id){
-	var img_url = webroot_dir+"../img/article_categories/new_id/"+type+"_0"+nu+".gif"
-	var get_id = "upload_img_text_"+nu+e_id;
+	var img_url = "/img/article_categories/{$new_id}/"+type+"_0"+nu+".gif"
+	var get_id = "upload_img_text_"+e_id;
+
 	document.getElementById(get_id).value = img_url;
 
 }
+<?}else{?>
+function change_img_name(nu,type,e_id){
+	var img_url = "/img/product_categories/{$new_id}/"+type+"_0"+nu+".jpg"
+	var get_id = "upload_img_text_"+e_id;
+	document.getElementById(get_id).value = img_url;
+
+}
+function change_img_name_gif(nu,type,e_id){
+	var img_url = "/img/product_categories/{$new_id}/"+type+"_0"+nu+".gif"
+	var get_id = "upload_img_text_"+e_id;
+
+	document.getElementById(get_id).value = img_url;
+
+}
+
+<?}?>
 </script>

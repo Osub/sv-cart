@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: shipments.ctp 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: shipments.ctp 1329 2009-05-11 11:29:59Z huangbo $
 *****************************************************************************/
 ?>
 <?=$javascript->link('/../js/yui/calendar-min.js');?>
@@ -58,17 +58,17 @@
 	<div class="show_all_order">
 		<ul class="product_llist procurements item_order">
 		<li class="item_number">货号</li>
-		<li class="name ship_name">商品名称</li>
+		<li class="name ship_name"><p>商品名称</p></li>
 		<li class="number">数量</li>
 		<li class="supplier">属性</li>
-		<li class="remark">价格</li></ul>
+		<li class="remark" style="text-align:left;"><p>价格</p></li></ul>
 		<?php if(isset($order['OrderProduct']) && sizeof($order['OrderProduct'])>0)foreach($order['OrderProduct'] as $op){?>
 		<ul class="product_llist procurements procurements_list item_order">
 		<li class="item_number ordernumber"><span><?php echo $op['product_code']?></span></li>
-		<li class="name ship_name"><?php echo $op['product_name']?></li>
+		<li class="name ship_name"><p><?php echo $op['product_name']?></p></li>
 		<li class="number"><?php echo $op['product_quntity']?></li>
 		<li class="supplier"><?php echo $op['product_attrbute']?></li>
-		<li class="remark"><?php echo $op['product_price']?></li></ul>
+		<li class="remark" style="text-align:left;"><p><?php echo $op['product_price']?></p></li></ul>
 		<?php }?>
 	</div>
 	<p style="clear:both">

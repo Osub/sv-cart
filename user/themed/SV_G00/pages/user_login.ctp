@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: user_login.ctp 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: user_login.ctp 1327 2009-05-11 11:01:20Z huangbo $
 *****************************************************************************/
 
 if(isset($user_info)){
@@ -22,7 +22,7 @@ ob_start();?>
 	<b><?=$SCLanguages['welcome'];?>，<? echo $user_info['User']['name']; ?>！</b>
 		</p>
 		<p class="btns">
-		<?if(isset($back_url)){?><?=$html->link($html->image('loginout-btn_right.gif').$SCLanguages['confirm'],"../../{$back_url}","",false,false);?><?}else{?><?=$html->link($html->image('loginout-btn_right.gif').$SCLanguages['continue'],"javascript:window.location.reload();","",false,false);?><?}?>
+		<?if(isset($back_url)){?><?=$html->link($html->image('loginout-btn_right.gif').$SCLanguages['confirm'],"{$back_url}","",false,false);?><?}else{?><?=$html->link($html->image('loginout-btn_right.gif').$SCLanguages['continue'],"javascript:window.location.reload();","",false,false);?><?}?>
 			<?=$html->link($html->image('loginout-btn_right.gif').$SCLanguages['user_center'],"/","",false,false);?>
 			<?=$html->link($html->image('loginout-btn_right.gif').$SCLanguages['home'],"../../","",false,false);?>
 		</p>

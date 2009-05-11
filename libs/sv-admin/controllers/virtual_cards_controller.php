@@ -16,6 +16,9 @@
 			$condition .=" and Product.status = 1 and Product.extension_code='virtual_card'";
 
 			//商品筛选查询条件
+			if(isset($this->params['url']['forsale']) && $this->params['url']['forsale'] != '99'){
+	   	   		$condition .=" and Product.forsale = '".$this->params['url']['forsale']."'";
+	   		}
 		   	if(isset($this->params['url']['quantity']) && $this->params['url']['quantity'] != 0){
 		   	   	$condition .=" and Product.quantity <= '".$this->params['url']['quantity']."'";
 		   	}
@@ -89,6 +92,7 @@
 	       //供应商列表
 	       $provides_tree=$this->Provider->findAll();
 	        //pr($types_tree);
+	        $forsale=isset($this->params['url']['forsale'])?$this->params['url']['forsale']:99;
 	       $category_id=isset($this->params['url']['category_id'])?$this->params['url']['category_id']:0;
 	   	   $brand_id=isset($this->params['url']['brand_id'])?$this->params['url']['brand_id']:0;
 	   	   $type_id=isset($this->params['url']['type_id'])?$this->params['url']['type_id']:0;
@@ -101,7 +105,7 @@
 	   	   $provider_id=isset($this->params['url']['provider_id'])?$this->params['url']['provider_id']:-1;
 	   	   //pr($products_list);
 	   	   
-	   	   
+	   	   $this->set('forsale',$forsale);
 	   	   $this->set('products_list',$products_list);
 	   	   $this->set('navigations',$this->navigations);
 	   	   $this->set('categories_tree',$categories_tree);
@@ -408,6 +412,7 @@
               	      	  
               	      	  $imgurl = $this->params['form']['img_url'];
               	      	  foreach($imgurl as $k=>$v){
+              	      	  	  if(!empty($v)){
               	      	  	  $image_name=basename($v);//basename($this->params['form']['img_url']);
 	              	      	  $dir_name=substr($v,0,strrpos($v,'/'));
 	              	      	  //echo $dir_name;
@@ -431,7 +436,7 @@
 			                                'id'=> $this->params['form']['product_id']
 			                         );
 			                        $this->Product->saveAll(array('Product'=>$product));
-		                        
+		                      }
 		                  }
 		                        
               	      }

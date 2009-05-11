@@ -705,10 +705,10 @@
 		argument: {}
 	};
 	
-	function confirm_shipping(shipping_id,shipping_fee,shipping_name,free_subtotal,support_cod,shipping_description){
+	function confirm_shipping(shipping_id,shipping_fee,free_subtotal,support_cod){
 		YAHOO.example.container.wait.show();
  		var sUrl = webroot_dir+"carts/confirm_shipping/";
-		var postData ="shipping_id="+ shipping_id + "&shipping_fee="+shipping_fee+ "&shipping_name="+shipping_name+"&free_subtotal="+free_subtotal+"&support_cod="+support_cod+"&shipping_description="+shipping_description;
+		var postData ="shipping_id="+ shipping_id + "&shipping_fee="+shipping_fee+"&free_subtotal="+free_subtotal+"&support_cod="+support_cod;
 //		alert(postData);
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, confirm_shipping_callback,postData);
 	}
@@ -786,10 +786,10 @@
 	}
 	
 //---
-	function confirm_payment(payment_id,payment_fee,payment_name,payment_description,is_cod,code){
+	function confirm_payment(payment_id){
 		YAHOO.example.container.wait.show();
  		var sUrl = webroot_dir+"carts/confirm_payment/";
-		var postData ="payment_id="+ payment_id + "&payment_fee="+payment_fee+"&payment_name="+payment_name+"&payment_description="+payment_description+"&is_cod="+is_cod+"&code="+code;
+		var postData ="payment_id="+ payment_id ;
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, confirm_payment_callback,postData);
 	}
 
@@ -1291,7 +1291,7 @@ function confirm_promotion(type,id,type_ext,title,meta_description){
     function checkout_order(){
 		YAHOO.example.container.wait.show();
 		var sUrl = webroot_dir+"carts/checkout_order/";
-		var postData ="";
+		var postData ="";				
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, checkout_order_callback,postData);
 	}
 
@@ -1458,10 +1458,18 @@ function confirm_promotion(type,id,type_ext,title,meta_description){
 		//	document.getElementById('remark_msg').innerHTML = order_note_not_empty;
 			return;
     	}
+    	
+		document.getElementById('change_remark').style.display = "";
+		document.getElementById('order_note_value').innerHTML = order_note;
+		document.getElementById('order_note_value').style.display = "";
+		document.getElementById('order_note_textarea').style.display = "none";
+    	/*
 		YAHOO.example.container.wait.show();
         var sUrl = webroot_dir+"carts/add_remark/";
         var postData = "order_note="+order_note;
-        var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, add_remark_callback,postData);
+        var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, add_remark_callback,postData);*/
+        
+        
 	}
 	
 	var add_remark_Success = function(o){
@@ -1490,10 +1498,16 @@ function confirm_promotion(type,id,type_ext,title,meta_description){
     
     //change_remark
         function change_remark(){
+      //  document.getElementById('order_note_value').innerHTML = "<textarea name='order_note' id='order_note_add' class='green_border'style='width:340px;overflow-y:scroll;vertical-align:top' onblur='javascript:add_remark();'></textarea>";
+		document.getElementById('change_remark').style.display = "none";
+		document.getElementById('order_note_value').style.display = "none";
+		document.getElementById('order_note_textarea').style.display = "";
+        	/*
 		YAHOO.example.container.wait.show();
         var sUrl = webroot_dir+"carts/change_remark/";
         var postData = "";
         var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, change_remark_callback,postData);
+        */
 	}
 	
 	var change_remark_Success = function(o){

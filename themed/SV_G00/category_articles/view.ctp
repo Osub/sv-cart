@@ -9,30 +9,24 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: view.ctp 1215 2009-05-06 05:46:48Z huangbo $
+ * $Id: view.ctp 1314 2009-05-11 07:20:51Z huangbo $
 *****************************************************************************/
 ?>
 <div id="Right">
 	<?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 	<div id="Products_box">
     	<h1 class="headers"><span class="l"></span><span class="r"></span><b><?=$SCLanguages['article'];?><?=$SCLanguages['list'];?></b></h1>
-<div id="Edit_box"><!--文章列表-->      
-
+<div id="Edit_box">
+<!--文章列表-->
   <div id="Edit_info">
  <?if(isset($article_list) && sizeof($article_list)>0){?>   <div id="user_msg">
   	<p class="article_time article_title">
 		<span class="title"><?=$SCLanguages['article'];?><?=$SCLanguages['list'];?></span>
-		<span class="user_name"><?=$SCLanguages['author'];?></span>
 		<span class="add_time"><?=$SCLanguages['issue_time'];?></span></p>
-	<p class="article_time article_title"></p>	
     <div id="article_box">
-    
-<?php 
-	  	foreach($article_list as $key=>$v){ ?>    
-    
+<?php foreach($article_list as $key=>$v){ ?>    
 		<p class="list">
 			<span class="title"><?php echo $html->link($v['ArticleI18n']['title'],"/articles/{$v['Article']['id']}",array(),false,false);?></span>
-			<span class="name"><?php echo $v['ArticleI18n']['author'];?></span>
 			<span class="time"><?php echo $v['Article']['created'];?></span>
 		</p>
 <?php } ?>

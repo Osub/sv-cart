@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: flash.ctp 1116 2009-04-28 11:04:43Z huangbo $
+ * $Id: flash.ctp 1314 2009-05-11 07:20:51Z huangbo $
 *****************************************************************************/
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -67,6 +67,7 @@ var <?php echo $k;?> = "<?php echo $v;?>";
 		</div>
 <div class="contents">
 <div id="ur_here"><?=$SCLanguages['current_location_system_remind']?></div>
+<p class="height_5"></p>
 <!--Main Start-->
 <div class="home_main">
 	<div class="informations">

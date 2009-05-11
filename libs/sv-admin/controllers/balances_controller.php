@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: balances_controller.php 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: balances_controller.php 1329 2009-05-11 11:29:59Z huangbo $
 *****************************************************************************/
 class BalancesController extends AppController {
 
@@ -37,10 +37,6 @@ class BalancesController extends AppController {
 			}
 			$this->set('names',$this->params['url']['name']);
 	   	}
-	   	/* 用户id */
-		if(isset($this->params['url']['user_id']) && $this->params['url']['user_id'] != ''){
-			$condition['and']['user_id'] = $this->params['url']['user_id'];
-	   	}
 	   	/* 开始时间 */
 		if(isset($this->params['url']['start_time']) && $this->params['url']['start_time'] != ''){
 	   	   $condition['and']['modified >='] = $this->params['url']['start_time'];
@@ -58,6 +54,15 @@ class BalancesController extends AppController {
 	   	else {
 	   	   $condition['and']['modified <='] = date('Y-m-d')." 23:59:59";
 	   	   $this->set('end_time',date('Y-m-d'));
+	   	}
+	   	/* 用户id */
+		if(isset($this->params['url']['user_id']) && $this->params['url']['user_id'] != ''){
+			$condition = array();
+			$this->set('start_time','');
+			$this->set('end_time','');
+			
+			$this->set('names',$this->User->field('name',array('User.id ='=>$this->params['url']['user_id'])));
+			$condition['and']['user_id'] = $this->params['url']['user_id'];
 	   	}
 		/* 分页 */
    	    $total = $this->UserBalanceLog->findCount($condition,0);

@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 899 2009-04-22 15:03:02Z huangbo $
+ * $Id: index.ctp 1327 2009-05-11 11:01:20Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here',array('cache'=>'+0 hour'))?>
@@ -49,7 +49,7 @@
 <div id="Editinfo_title"><h1><span><?=$SCLanguages['my_comments'];?></span></h1></div>
 <div id="Edit_box">
 	<div id="Edit_info">
-    	<p align="center" style="font-size:14px;color:#FF6C00;">
+    	<p align="center" style="font-size:14px;">
     	<br /><br />
     	<b><?=$SCLanguages['no_comments'];?></b>
     	<br /><br /></p>

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: products_controller.php 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: products_controller.php 1329 2009-05-11 11:29:59Z huangbo $
 *****************************************************************************/
 class ProductsController extends AppController {
 	var $name = 'Products';
@@ -75,6 +75,9 @@ class ProductsController extends AppController {
 	   if(isset($this->params['url']['quantity']) && $this->params['url']['quantity'] != 0){
 	   	   $condition .=" and Product.quantity <= '".$this->params['url']['quantity']."'";
 	   }
+	   if(isset($this->params['url']['forsale']) && $this->params['url']['forsale'] != '99'){
+	   	   $condition .=" and Product.forsale = '".$this->params['url']['forsale']."'";
+	   }
 	   if(isset($this->params['url']['promotion_status']) && $this->params['url']['promotion_status'] != 0){
 	   	   $condition .=" and Product.promotion_status = '".$this->params['url']['promotion_status']."'";
 	   }	
@@ -137,6 +140,7 @@ class ProductsController extends AppController {
        $provides_tree=$this->Provider->findAll();
         //pr($types_tree);
        $category_id=isset($this->params['url']['category_id'])?$this->params['url']['category_id']:0;
+       $forsale=isset($this->params['url']['forsale'])?$this->params['url']['forsale']:99;
    	   $brand_id=isset($this->params['url']['brand_id'])?$this->params['url']['brand_id']:0;
    	   $type_id=isset($this->params['url']['type_id'])?$this->params['url']['type_id']:0;
    	   $keywords=isset($this->params['url']['keywords'])?$this->params['url']['keywords']:'';
@@ -148,7 +152,7 @@ class ProductsController extends AppController {
    	   $provider_id=isset($this->params['url']['provider_id'])?$this->params['url']['provider_id']:-1;
    	   //pr($products_list);
    	   
-   	   
+   	   $this->set('forsale',$forsale);
    	   $this->set('products_list',$products_list);
    	   $this->set('navigations',$this->navigations);
    	   $this->set('categories_tree',$categories_tree);
@@ -288,6 +292,7 @@ class ProductsController extends AppController {
               	      	  
               	      	  $imgurl = $this->params['form']['img_url'];
               	      	  foreach($imgurl as $k=>$v){
+              	      	  	  if(!empty($v)){
               	      	  	  $image_name=basename($v);//basename($this->params['form']['img_url']);
 	              	      	  $dir_name=substr($v,0,strrpos($v,'/'));
 	              	      	  //echo $dir_name;
@@ -313,7 +318,7 @@ class ProductsController extends AppController {
 			                        $this->Product->saveAll(array('Product'=>$product));
 		                        
 		                  }
-		                        
+		                  }
               	      }
               	      $product_info_img = $this->Product->findById($id);
               	      $product_code = $product_info_img['Product']['code'];
@@ -745,12 +750,12 @@ function add(){
 /*------------------------------------------------------ */
 
 	function searchproducts($keywords="all",$cat_id="0",$brand_id="0",$products_id="0"){
-		   $condition="1=1 ";
+		   $condition="Product.forsale=1 and Product.status=1 ";
 		   if($keywords != "all"){
-		       $condition .=" and Product.code like '%$keywords%' or ProductI18n.name like '%$keywords%' or ProductI18n.description like '%$keywords%' or Product.id='$keywords' ";
+		       $condition .=" and (Product.code like '%$keywords%' or ProductI18n.name like '%$keywords%' or ProductI18n.description like '%$keywords%' or Product.id='$keywords') ";
 		   }
 		   if($cat_id != "0"){
-		   	   $condition .= " and ProductsCategory.category_id = '$cat_id'";
+		   	   $condition .= " and Product.category_id = '$cat_id'";
 		   }
 		   if($brand_id != "0"){
 		   	   $condition .= " and Product.brand_id = '$brand_id'";
@@ -760,7 +765,7 @@ function add(){
 		   
 		   }
 		   //$related_product_id = $this->ProductRelation->findall(array('ProductRelation.product_id'=>$products_id),'DISTINCT ProductRelation.related_product_id');
-	       $Pids=$this->Product->findall($condition,'DISTINCT Product.id');
+	       $Pids=$this->Product->findall($condition,'DISTINCT Product.id','Product.created ASC');
 
 	       //pr($Pids);
 	       $pid_array=array();
@@ -771,9 +776,8 @@ function add(){
 	      }
 	      $this->Product->set_locale($this->locale);
  	      $condition = array("Product.id"=>$pid_array);
-	      $products_tree=$this->Product->findall($condition);
-	     //pr($products_tree);
-	     // pr($products_tree);
+	      $products_tree=$this->Product->findall($condition,'','Product.created DESC');
+
 	      $this->set('products_tree',$products_tree);
 	      
 	      //显示的页面
@@ -794,21 +798,40 @@ function add(){
 		   	   $is_double=0;
 		   }
 		    //增加关联商品
-		    	  $this->ProductRelation->deleteAll(array('ProductRelation.related_product_id'=>$link_product_id));
+		    	  //$this->ProductRelation->deleteAll(array('ProductRelation.related_product_id'=>$link_product_id));
 				   if($is_double){
 			             $linkproduct_info1=array(
 		                            'product_id'=>	$link_product_id,
 		                            'related_product_id'=>	$id,
 		                            'is_double'=>	$is_double
 		                  );
-		               $this->ProductRelation->save(array('ProductRelation'=>$linkproduct_info1));
+		               $product_rela = $this->ProductRelation->find($linkproduct_info1);
+		               if(empty($product_rela)){
+		               		$this->ProductRelation->save(array('ProductRelation'=>$linkproduct_info1));
+		               }
+		               
 				     }
 			         $linkproduct_info2=array(
 		                      'product_id'=>	$id,
-		                      'related_product_id'=>	$link_product_id,
+		                      'related_product_id'=>$link_product_id,
 		                      'is_double'=>	$is_double
 		              );
-		              $this->ProductRelation->save(array('ProductRelation'=>$linkproduct_info2));
+		             $linkproduct_info22=array(
+		                      'product_id'=>$link_product_id,
+		                      'related_product_id'=>$id	,
+		                      'is_double'=>	$is_double
+		              );
+		              $product_rela2 = $this->ProductRelation->find($linkproduct_info2);
+					  $product_rela22 = $this->ProductRelation->find($linkproduct_info22);
+					  if(empty($product_rela22)){
+		              	$this->ProductRelation->saveall(array('ProductRelation'=>$linkproduct_info22));
+		              }
+		              if(empty($product_rela2)){
+		              	  
+		              	$this->ProductRelation->saveall(array('ProductRelation'=>$linkproduct_info2));
+		              }
+		              
+		              
 		              //调整关联区商品
 		              $this->Product->set_locale($this->locale);
 				   	  $linked_products = $this->requestAction("/commons/get_linked_products/".$id."");

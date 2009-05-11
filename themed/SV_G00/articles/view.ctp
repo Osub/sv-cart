@@ -9,36 +9,32 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: view.ctp 1162 2009-04-30 11:17:42Z huangbo $
+ * $Id: view.ctp 1314 2009-05-11 07:20:51Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
-	<div id="Products_box">
-    	<h1 class="headers">
-    	<span class="l"></span><span class="r"></span>
-    	<b><? echo $article_detail['ArticleI18n']['title']; ?></b></h1>
-        <div id="Edit_box">
-  <div id="article_info">
-    
-  <p class="note article_title">
-  <div id="user_msg" style="padding-left:10px;padding-right:10px;">
-  	<p class="article_time">
-  	  <span class="title">&nbsp;<? echo $article_detail['ArticleI18n']['author']."  ".$article_detail['Article']['modified']; ?></span></p><br />
-    <p class="article">
-    	<span>
-    		<? echo $article_detail['ArticleI18n']['content']; ?>
-    	</span>
-    </p>
-  </div>
-  <div id="select_article"> <p><? if($neighbours['next']){ ?>
- <?=$SCLanguages['next'];?><?=$SCLanguages['piece'];?>: 
-  <?php echo $html->link("{$neighbours['next']['ArticleI18n']['title']}","{$neighbours['next']['Article']['id']}",array(),false,false); } ?>
-<br />
- <? if($neighbours['prev']){?>
- <?=$SCLanguages['previous'];?><?=$SCLanguages['piece'];?>: 
- <?php echo $html->link("{$neighbours['prev']['ArticleI18n']['title']}","{$neighbours['prev']['Article']['id']}",array(),false,false); } ?>
-</p></div> </div>
-</div><!--文章列表End-->
+<div id="Products_box">
+<h1 class="headers"><span class="l"></span><span class="r"></span><b><? echo $article_detail['ArticleI18n']['title']; ?></b></h1>
+<div id="Edit_box">
+	<div id="article_info">
+		<div id="user_msg">
+			<p class="article_time"><span class="title">&nbsp;<? echo $article_detail['ArticleI18n']['author']."  ".$article_detail['Article']['modified']; ?></span></p>
+			<div class="article"><? echo $article_detail['ArticleI18n']['content']; ?></div>
+		</div>
+
+		<div id="select_article">
+			<p><? if($neighbours['next']){ ?>
+			 <?=$SCLanguages['next'];?><?=$SCLanguages['piece'];?>: 
+			  <?php echo $html->link("{$neighbours['next']['ArticleI18n']['title']}","{$neighbours['next']['Article']['id']}",array(),false,false); } ?>
+			<br />
+			 <? if($neighbours['prev']){?>
+			 <?=$SCLanguages['previous'];?><?=$SCLanguages['piece'];?>: 
+			 <?php echo $html->link("{$neighbours['prev']['ArticleI18n']['title']}","{$neighbours['prev']['Article']['id']}",array(),false,false); } ?>
+			</p>
+		</div>
+	</div>
+</div>
+<!--文章列表End-->
 <!--相关商品-->
 <?php 
 	if(isset($product_list) && sizeof($product_list)>0){?>

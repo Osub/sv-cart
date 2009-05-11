@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: carts_controller.php 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: carts_controller.php 1327 2009-05-11 11:01:20Z huangbo $
 *****************************************************************************/
 class CartsController extends AppController {
 	var $name = 'Carts';
@@ -21,8 +21,7 @@ class CartsController extends AppController {
 	    $this->page_init();
  		$this->Product->set_locale($this->locale);
 		if(!isset($_SESSION['svcart']['products']) && isset($_COOKIE['CakeCookie']['cart_cookie'])){
-			$cookie = unserialize(StripSlashes($_COOKIE['CakeCookie']['cart_cookie']));
-			$_SESSION['svcart'] = $cookie;
+			$_SESSION['svcart'] = @unserialize(StripSlashes($this->Cookie->read('cart_cookie')));
 		}
  		//取得促销商品
  		$promotion_products = $this->Product->promotion($this->configs['promotion_count']);
@@ -60,19 +59,15 @@ class CartsController extends AppController {
 	}
 	
 	function checkout(){
-	    $this->page_init();
+		$this->page_init();
 		if(isset($_SESSION['User']))
 		{
 			//	unset($_SESSION['svcart']);
-				if(isset($_SESSION['svcart']['cart_info'])){
+				if(isset($_SESSION['svcart']['cart_info']) && !isset($_SESSION['svcart']['cart_info']['total'])){
 					$_SESSION['svcart']['cart_info']['total'] = $_SESSION['svcart']['cart_info']['sum_subtotal'];
-				}	
-				
-				if(!isset($_SESSION['svcart']['products']) && isset($_COOKIE['CakeCookie']['cart_cookie'])){
-					$cookie = unserialize(StripSlashes($_COOKIE['CakeCookie']['cart_cookie']));
-					$_SESSION['svcart'] = $cookie;
+				}else if(!isset($_SESSION['svcart']['products']) && isset($_COOKIE['CakeCookie']['cart_cookie'])){
+					$_SESSION['svcart'] = @unserialize($this->Cookie->read('cart_cookie'));
 				}
-			//	pr($_SESSION['svcart']);
 			//	$this->Cookie->write('cart_cookie',serialize($_SESSION['svcart']),false,time()+3600 * 24 * 365); 
 				/*
 				if(isset($_SESSION['svcart']['address'])){
@@ -101,12 +96,18 @@ class CartsController extends AppController {
 				}*/
 				//	unset($_SESSION['svcart']);			
 
+			if(!(isset($_SESSION['svcart']['products']) && sizeof($_SESSION['svcart']['products'])>0)){
+				$this->pageTitle = $this->languages['no_products_in_cart']." - ".$this->configs['shop_title'];
+				$this->flash($this->languages['no_products_in_cart']," ","/",5);
+			}else{
+				$send_point = array();
 				if($this->configs['order_smallest'] <= $_SESSION['svcart']['cart_info']['sum_subtotal']){
 					$send_point['order_smallest'] = $this->configs['out_order_points'];
 				}
 				if($this->configs['order_gift_points'] == 1){
 					$send_point['order_gift_points'] = $this->configs['order_points'];
-				}
+				}					
+				
 				$now = date("Y-m-d H:i:s");
 				$product_point = array();
 				$send_coupon = array();
@@ -118,12 +119,13 @@ class CartsController extends AppController {
 					//	for($i =0;$i<$v['quantity'];$i++){
 						$send_coupon[$k]['coupon'] = $v['Product']['coupon_type_id'];
 						$send_coupon[$k]['name'] = $v['ProductI18n']['name'];
-						$send_coupon[$k]['quantity'] = $v['Product']['quantity'];
+						$send_coupon[$k]['quantity'] = $v['quantity'];
 				//		}
 					}
 				}
 				$this->set('send_point',$send_point);
 				$this->set('product_point',$product_point);
+				
 	            if(isset($this->configs['send_coupons']) && $this->configs['send_coupons'] == 1){
 					$order_coupon = array();
 	          	 	$this->CouponType->set_locale($this->locale);
@@ -150,11 +152,8 @@ class CartsController extends AppController {
 	            }
 				$this->set('product_coupon',$product_coupon);
 				
-				 }
-			if(!(isset($_SESSION['svcart']['products']) && sizeof($_SESSION['svcart']['products'])>0)){
-				$this->pageTitle = $this->languages['no_products_in_cart']." - ".$this->configs['shop_title'];
-				$this->flash($this->languages['no_products_in_cart']," ","/",5);
-			}else{
+				 }			 
+				 				
 				//pr($_SESSION);
 				//初始化session
 	    		$this->statistic_svcart();
@@ -293,7 +292,8 @@ class CartsController extends AppController {
 		}
 		else
 		{
-			$_SESSION['back_url'] = "/carts/checkout/";
+			$host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
+			$_SESSION['back_url'] = "http://".$host.$this->webroot."carts/checkout/";
 			$this->redirect('/user/login/');
 			exit;
 		}
@@ -1037,7 +1037,8 @@ class CartsController extends AppController {
 		$do_action = 1;
 		
 		if(!(isset($_SESSION['User']))){
-			$_SESSION['back_url'] = "/carts/done/";
+			$host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
+			$_SESSION['back_url'] = "http://".$host.$this->webroot."carts/checkout/";
 			$this->redirect('/user/login/');
 			exit;
 		}
@@ -1087,8 +1088,8 @@ class CartsController extends AppController {
 			$order['consignee'] 				= $_SESSION['svcart']['address']['consignee'];
        		$now = date("Y-m-d H:i:s");
 			$order['created'] 					= $now;
-			if(isset($_SESSION['svcart']['order_remark'])){
-				$order['note'] 				= $_SESSION['svcart']['order_remark'];
+			if(isset($_POST['order_note'])){
+				$order['note'] 				= $_POST['order_note'];
 			}
 			/* 判断是否需要配送方式 */
 			if((isset($_SESSION['svcart']['cart_info']['all_virtual']) && $_SESSION['svcart']['cart_info']['all_virtual']==0) 
@@ -1467,7 +1468,8 @@ class CartsController extends AppController {
 				$this->set('pay_form',$form);
 			}
 			unset($_SESSION['svcart']);
-			$this->Cookie->del('cart_cookie'); 
+			$this->Cookie->del('cart_cookie');
+
 		
 		}else{
 			$this->set('error_arr',$error_arr);
@@ -1582,11 +1584,16 @@ class CartsController extends AppController {
 	//		$_SESSION['svcart']['cart_info']['shipping_fee'] = $_SESSION['svcart']['shipping']['shipping_fee'];
 	//		$_SESSION['svcart']['cart_info']['total'] = $_SESSION['svcart']['shipping']['shipping_fee']+$_SESSION['svcart']['cart_info']['sum_subtotal']+$payment_fee;
 	//		pr($_POST['support_cod']."-".$_SESSION['svcart']['payment']['is_cod']);
-			if(isset($_SESSION['svcart']['payment']['is_cod']) && $_POST['support_cod'] == 0 &&  $_SESSION['svcart']['payment']['is_cod'] == 1){
+			$this->Shipping->set_locale($this->locale);
+			$shipping = $this->Shipping->findbyid($_POST['shipping_id']);
+			
+			if(isset($_SESSION['svcart']['payment']['is_cod']) && $shipping['Shipping']['support_cod'] == 0 &&  $_SESSION['svcart']['payment']['is_cod'] == 1){
 				$result['type'] = 1;
 				$result['message'] = $this->languages['shipping_no_support'];
 			}else{
 				$_SESSION['svcart']['shipping'] = $_POST;
+				$_SESSION['svcart']['shipping']['shipping_name'] = $shipping['ShippingI18n']['name'];
+				$_SESSION['svcart']['shipping']['shipping_description'] = $shipping['ShippingI18n']['description'];
 				if($_SESSION['svcart']['shipping']['free_subtotal']>0 && $_SESSION['svcart']['shipping']['free_subtotal'] < $_SESSION['svcart']['cart_info']['sum_subtotal']){
 					$_SESSION['svcart']['shipping']['shipping_fee'] = 0;
 				}else{
@@ -1759,17 +1766,23 @@ class CartsController extends AppController {
 		//	$_SESSION['svcart']['cart_info']['total'] += $_SESSION['svcart']['payment']['payment_fee']+$_SESSION['svcart']['cart_info']['sum_subtotal']+$shipping_fee;
 			/* 该判断增加了全部购买物品为虚拟物品的判断 */
 			//||( $_POST['is_cod']>0 && $_SESSION['svcart']['cart_info']['all_virtual'])
-			
-			if($_POST['is_cod']>0 && $_SESSION['svcart']['cart_info']['all_virtual']){
+			$this->Payment->set_locale($this->locale);
+			$payment = $this->Payment->findbyid($_POST['payment_id']);
+			if($payment['Payment']['is_cod']>0 && $_SESSION['svcart']['cart_info']['all_virtual']){
 				$result['type'] = 1;
 				$result['message'] = $this->languages['payment_no_support'];
-			}else if((isset($_SESSION['svcart']['shipping']['support_cod']) && $_POST['is_cod']== 1 && $_SESSION['svcart']['shipping']['support_cod'] == 0)){
+			}else if((isset($_SESSION['svcart']['shipping']['support_cod']) && $payment['Payment']['is_cod']== 1 && $_SESSION['svcart']['shipping']['support_cod'] == 0)){
 				$result['type'] = 1;
 				$result['message'] = $this->languages['payment_no_support'];
-			}else if($_POST['code'] == "account_pay"){
+			}else if($payment['Payment']['code'] == "account_pay"){
 				$user_info = $this->User->findbyid($_SESSION['User']['User']['id']);
 				if($_SESSION['svcart']['cart_info']['total'] <= $user_info['User']['balance']){
-					$_SESSION['svcart']['payment'] = $_POST;
+					$_SESSION['svcart']['payment']['payment_id'] = $payment['Payment']['id'];
+					$_SESSION['svcart']['payment']['payment_fee'] = $payment['Payment']['fee'];
+					$_SESSION['svcart']['payment']['payment_name'] = $payment['PaymentI18n']['name'];
+					$_SESSION['svcart']['payment']['payment_description'] = $payment['PaymentI18n']['description'];
+					$_SESSION['svcart']['payment']['is_cod'] = $payment['Payment']['is_cod'];
+					$_SESSION['svcart']['payment']['code'] = $payment['Payment']['code'];
 					$_SESSION['svcart']['cart_info']['total'] += $_SESSION['svcart']['payment']['payment_fee'];
 					$this->Cookie->write('cart_cookie',serialize($_SESSION['svcart']),false,time()+3600 * 24 * 365); 
 				
@@ -1780,7 +1793,13 @@ class CartsController extends AppController {
 					$result['message'] = $this->languages['lack_balance_supply_first'];
 				}
 			}else{
-			$_SESSION['svcart']['payment'] = $_POST;
+					$_SESSION['svcart']['payment']['payment_id'] = $payment['Payment']['id'];
+					$_SESSION['svcart']['payment']['payment_fee'] = $payment['Payment']['fee'];
+					$_SESSION['svcart']['payment']['payment_name'] = $payment['PaymentI18n']['name'];
+					$_SESSION['svcart']['payment']['payment_description'] = $payment['PaymentI18n']['description'];
+					$_SESSION['svcart']['payment']['is_cod'] = $payment['Payment']['is_cod'];
+					$_SESSION['svcart']['payment']['code'] = $payment['Payment']['code'];			
+			
 			$_SESSION['svcart']['cart_info']['total'] += $_SESSION['svcart']['payment']['payment_fee'];
 					$this->Cookie->write('cart_cookie',serialize($_SESSION['svcart']),false,time()+3600 * 24 * 365); 
 					
@@ -2342,7 +2361,7 @@ class CartsController extends AppController {
 		 					$error_arr[] = $this->languages['exceed_max_value_can_use'];
 							$result['type'] = 2;
  	    				}			    				
-				}				
+				}
 				
 			//	pr($_SESSION['svcart']['address']);
 			}else{
@@ -2415,7 +2434,7 @@ class CartsController extends AppController {
 		if($this->RequestHandler->isPost()){
 		Configure::write('debug', 0);
     		unset($_SESSION['svcart']);
-    		$this->Cookie->del('products');
+    		$this->Cookie->del('cart_cookie');
     		$result['type'] = 1 ;
     		die($result);
     	}

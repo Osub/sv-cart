@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: users_controller.php 1273 2009-05-08 16:49:08Z huangbo $
+ * $Id: users_controller.php 1329 2009-05-11 11:29:59Z huangbo $
 *****************************************************************************/
 class UsersController extends AppController {
 
@@ -181,7 +181,7 @@ class UsersController extends AppController {
                	    	$BalanceLog['UserBalanceLog']['amount'] = $_POST['balance'];
                	    	$BalanceLog['UserBalanceLog']['admin_user'] = $_SESSION['Operator_Info']['Operator']['name'];
                	    	$BalanceLog['UserBalanceLog']['admin_note'] = "";
-               	    	$BalanceLog['UserBalanceLog']['system_note'] = "管理员增加该用户资金";
+               	    	$BalanceLog['UserBalanceLog']['system_note'] = "管理员:".$_SESSION['Operator_Info']['Operator']['name']." 增加该用户资金";
                	    	$BalanceLog['UserBalanceLog']['log_type'] = "A";
                	    	$BalanceLog['UserBalanceLog']['type_id'] = 0;
                	    	
@@ -192,10 +192,10 @@ class UsersController extends AppController {
 					}
 					else {
                	    	$BalanceLog['UserBalanceLog']['user_id'] = $id;
-               	    	$BalanceLog['UserBalanceLog']['amount'] = $_POST['balance'];
+               	    	$BalanceLog['UserBalanceLog']['amount'] = '-'.$_POST['balance'];
                	    	$BalanceLog['UserBalanceLog']['admin_user'] = $_SESSION['Operator_Info']['Operator']['name'];
                	    	$BalanceLog['UserBalanceLog']['admin_note'] = "";
-               	    	$BalanceLog['UserBalanceLog']['system_note'] = "管理员减少该用户资金";
+               	    	$BalanceLog['UserBalanceLog']['system_note'] = "管理员:".$_SESSION['Operator_Info']['Operator']['name']." 减少该用户资金";
                	    	$BalanceLog['UserBalanceLog']['log_type'] = "A";
                	    	$BalanceLog['UserBalanceLog']['type_id'] = 0;
                	    	
@@ -223,8 +223,8 @@ class UsersController extends AppController {
                	    	$PointLog['UserPointLog']['point'] = $_POST['balance'];
                	    	$PointLog['UserPointLog']['admin_user'] = $_SESSION['Operator_Info']['Operator']['name'];
                	    	$PointLog['UserPointLog']['admin_note'] = "";
-               	    	$PointLog['UserPointLog']['system_note'] = "管理员增加该用户积分";
-               	    	$PointLog['UserPointLog']['log_type'] = "f";
+               	    	$PointLog['UserPointLog']['system_note'] = "管理员:".$_SESSION['Operator_Info']['Operator']['name']." 增加该用户积分";
+               	    	$PointLog['UserPointLog']['log_type'] = "A";
                	    	$PointLog['UserPointLog']['type_id'] = 0;
                	    	
                	    	$this->UserPointLog->save($PointLog);
@@ -235,11 +235,11 @@ class UsersController extends AppController {
 					}
 					else {
                	    	$PointLog['UserPointLog']['user_id'] = $id;
-               	    	$PointLog['UserPointLog']['point'] = $_POST['balance'];
+               	    	$PointLog['UserPointLog']['point'] = '-'.$_POST['balance'];
                	    	$PointLog['UserPointLog']['admin_user'] = $_SESSION['Operator_Info']['Operator']['name'];
                	    	$PointLog['UserPointLog']['admin_note'] = "";
-               	    	$PointLog['UserPointLog']['system_note'] = "管理员扣除该用户积分";
-               	    	$PointLog['UserPointLog']['log_type'] = "g";
+               	    	$PointLog['UserPointLog']['system_note'] = "管理员:".$_SESSION['Operator_Info']['Operator']['name']." 扣除该用户积分";
+               	    	$PointLog['UserPointLog']['log_type'] = "A";
                	    	$PointLog['UserPointLog']['type_id'] = 0;
                	    	
                	    	$this->UserPointLog->save($PointLog);

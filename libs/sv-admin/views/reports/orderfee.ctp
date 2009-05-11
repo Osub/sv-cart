@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: orderfee.ctp 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: orderfee.ctp 1329 2009-05-11 11:29:59Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -59,37 +59,43 @@
 		<th rowspan="2" width="12%">金额小计</th>
 	</tr>
 	<tr>
-	  <td height="33" align="center" style="border-right:1px solid #ABABAB;"><strong><?php $temp=explode('-',$month);echo $temp[0].'年'.$temp[1].'月' ?></strong></td>
+	  <td height="33" align="center" style="border-right:1px solid #ABABAB;vertical-align:middle;"><strong><?php $temp=explode('-',$month);echo $temp[0].'年'.$temp[1].'月' ?></strong></td>
 <!--状态标题 循环时请注意这个th跨行-->
 	  <th colspan="5" rowspan="<?php echo $n+2?>" style="border-right:0;">
 	  	<table width="100%" cellpadding="0" cellspacing="0" border="0" class="second_headers">
-		<tr class="headers"><th width="20%" height="30">未确认</th><th width="20%">已确认</th><th width="20%">已取消</th><th width="20%">无效</th><th width="20%" style="border-right:0;">退货</th></tr>
-		    		<?if(isset($order_status) && sizeof($order_status)>0){?>
-
+		<tr class="headers"><th width="20%" height="30">未确认</th>
+		<th width="20%">已确认</th><th width="20%">已取消</th>
+		<th width="20%">无效</th>
+		<th width="20%" style="border-right:0;">退货</th>
+		</tr>
+		<?if(isset($order_status) && sizeof($order_status)>0){?>
 		<?php foreach($order_status as $k=>$v){?>
-		<tr><td width="20%" height="31"><?php if(isset($v[0]))echo $v[0];else echo 0;?></td>
-			<td width="20%" ><?php if(isset($v[1]))echo $v[1];else echo 0;?></td>
-			<td width="20%" ><?php if(isset($v[2]))echo $v[2];else echo 0;?></td>
-			<td width="20%" ><?php if(isset($v[3]))echo $v[3];else echo 0;?></td>
-			<td width="20%" ><?php if(isset($v[4]))echo $v[4];else echo 0;?></td>
+		<tr><td width="20%" height="31" style="vertical-align:middle;"><?php if(isset($v[0]))echo $v[0];else echo 0;?></td>
+			<td width="20%" style="vertical-align:middle;"><?php if(isset($v[1]))echo $v[1];else echo 0;?></td>
+			<td width="20%" style="vertical-align:middle;"><?php if(isset($v[2]))echo $v[2];else echo 0;?></td>
+			<td width="20%" style="vertical-align:middle;"><?php if(isset($v[3]))echo $v[3];else echo 0;?></td>
+			<td width="20%" style="vertical-align:middle;"><?php if(isset($v[4]))echo $v[4];else echo 0;?></td>
 			
 		</tr>
 		<?php }}?>
-		<tr class="orderfee_headers"><th width="20%" height="31"><?php if(isset($all_order_status[0])) echo $all_order_status[0];else echo 0;?></th>
-			<th width="20%" ><?php if(isset($all_order_status[1])) echo $all_order_status[1];else echo 0;?></th>
-			<th width="20%" ><?php if(isset($all_order_status[2])) echo $all_order_status[2];else echo 0;?></th>
-			<th width="20%" ><?php if(isset($all_order_status[3])) echo $all_order_status[3];else echo 0;?></th>
-			<th width="20%" ><?php if(isset($all_order_status[4])) echo $all_order_status[4];else echo 0;?></th>
-	  </tr></table></th>
+		<tr class="orderfee_headers">
+			<th width="20%" height="31" style="vertical-align:middle;"><?php if(isset($all_order_status[0])) echo $all_order_status[0];else echo 0;?></th>
+			<th width="20%" style="vertical-align:middle;"><?php if(isset($all_order_status[1])) echo $all_order_status[1];else echo 0;?></th>
+			<th width="20%" style="vertical-align:middle;"><?php if(isset($all_order_status[2])) echo $all_order_status[2];else echo 0;?></th>
+			<th width="20%" style="vertical-align:middle;"><?php if(isset($all_order_status[3])) echo $all_order_status[3];else echo 0;?></th>
+			<th width="20%" style="vertical-align:middle;"><?php if(isset($all_order_status[4])) echo $all_order_status[4];else echo 0;?></th>
+	  </tr>
+	  </table>
+	  </th>
 <!--状态标题 End-->	
     </tr>
-    		<?if(isset($order_status) && sizeof($order_status)>0){?>
+    <?if(isset($order_status) && sizeof($order_status)>0){?>
     <?php foreach($order_status as $k=>$v){?>
 	<tr>
-		<td align="center" width="16%" height="31"><strong><?php echo $k?>日</strong></td>
-		<td align="center" width="12%"><?php echo $v['count_order']?></td>
-		<td align="center" width="12%"><?php echo $v['count_product']?></td>
-		<td align="center" width="12%"><?php echo $v['sum_total']?></td>
+		<td align="center" width="16%" height="31" style="vertical-align:middle;"><strong><?php echo $k?>日</strong></td>
+		<td align="center" width="12%" style="vertical-align:middle;"><?php echo $v['count_order']?></td>
+		<td align="center" width="12%" style="vertical-align:middle;"><?php echo $v['count_product']?></td>
+		<td align="center" width="12%" style="vertical-align:middle;"><?php echo $v['sum_total']?></td>
 	</tr>
 	<?php }}?>
 	<tr class="orderfee_headers">

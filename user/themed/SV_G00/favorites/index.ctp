@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: index.ctp 1329 2009-05-11 11:29:59Z huangbo $
 *****************************************************************************/
 ?>
 <div id="Products_box" style="border:0;">
@@ -98,7 +98,7 @@
         </div><?}else{?>
         	<div class="not">
 		<br />
-		<?=$html->image("warning_img.gif",array("alt"=>""))?><strong>没有收藏任何商品</strong><br /><br /></div>
+		<?=$html->image("warning_img.gif",array("alt"=>""))?><strong><?=$SCLanguages['not_favorite_goods'];?></strong><br /><br /></div>
 		<?}?>
  <?if ($showtype == 'L'){?>
  	<?if(isset($fav_products) && sizeof($fav_products)>0){?>

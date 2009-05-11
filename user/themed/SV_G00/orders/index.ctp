@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: index.ctp 1329 2009-05-11 11:29:59Z huangbo $
 *****************************************************************************/
 ?>
 <?=$javascript->link('/../js/yui/calendar-min.js');?>
@@ -140,7 +140,7 @@
    <?}else{?> 
         	<div class="not">
 		<br />		<br />
-		<?=$html->image("warning_img.gif",array("alt"=>""))?><strong>没有任何订单</strong></div>
+		<?=$html->image("warning_img.gif",array("alt"=>""))?><strong><?=$SCLanguages['no_order']?></strong></div>
    	  <?}?>
    	  </div>
 

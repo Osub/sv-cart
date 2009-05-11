@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: index.ctp 1329 2009-05-11 11:29:59Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here',array('cache'=>'+0 hour'))?>
@@ -17,7 +17,7 @@
     	<h1><span><?=$SCLanguages['my_balance'];?></span></h1>        <div id="infos" style="width:739px;">
 
     		<?if(isset($my_balance_list) && sizeof($my_balance_list)>0){?>
-        	<p class="last_integral" style="margin:5px 10px;"><?=$SCLanguages['current'].sprintf($SCLanguages['remaining_balance'],"：<span>".$my_balance."</span>");?><cite><?=sprintf($SCLanguages['today_consumer'],"： <font color='#FF6C00'>".$all_fee."</font>");?></cite></p>
+        	<p class="last_integral" style="margin:5px 10px;"><?=$SCLanguages['current'].sprintf($SCLanguages['remaining_balance'],"：<span>".$my_balance."</span>");?><cite><?=sprintf($SCLanguages['today_consumer'],"： <font>".$all_fee."</font>");?></cite></p>
             <ul class="integral_title"><li class="integral"><?=$SCLanguages['amount'];?></li><li class="time"><?=$SCLanguages['time'];?></li><li class="gift"><?=$SCLanguages['operation'].$SCLanguages['type'];?></li><li class="handel"><?=$SCLanguages['operation'];?></li></ul>
             <div class="integral_list">
    
@@ -30,7 +30,7 @@
 				<li class="gift" style="text-align:center">&nbsp;&nbsp;
 				<?if($v['UserBalanceLog']['log_type'] == 'O'){?><?=$SCLanguages['order_code'];?>
 				<?}elseif($v['UserBalanceLog']['log_type'] == 'B'){?><?=$SCLanguages['supply'];?>
-				<?}elseif($v['UserBalanceLog']['log_type'] == 'A'){?>管理员操作<?}?></li>
+				<?}elseif($v['UserBalanceLog']['log_type'] == 'A'){?><?=$SCLanguages['administrator_operation'];?><?}?></li>
 				
 				<li class="handel btn_list">
 				<?if($v['UserBalanceLog']['log_type'] == 'O'){?>
@@ -50,7 +50,7 @@
 		<?}else{?>
         	<div class="not">
 		<br />		<br />
-		<?=$html->image("warning_img.gif",array("alt"=>""))?><strong>没有资金日志</strong><br /><br /></div>
+		<?=$html->image("warning_img.gif",array("alt"=>""))?><strong><?=$SCLanguages['no_balance_log'];?></strong><br /><br /></div>
 		<?}?>
         </div>
           <div id="pager">

@@ -3,7 +3,7 @@ var oTextNodeMap = {};//增节点
 var oCurrentTextNode = null;//取节点对像
 /***********************每次点击创造节点start**********************************************************/
 function loadNodeData(node, fnLoadComplete){
-	var path = "";
+	var path = "";///
 	var leafNode = node;
 	//取当前节点和父节点
 	while (!leafNode.isRoot()) {       
@@ -14,8 +14,15 @@ function loadNodeData(node, fnLoadComplete){
 	if( assign_dir == "products" ){
 		path = "/products"+path;
 	}
+	if( assign_dir == "product_categories" ){
+		path = "/product_categories"+path;
+	}
+	if( assign_dir == "article_categories" ){
+		path = "/article_categories"+path;
+	}
 	document.getElementById('img_address').value = path;//设置目录参数
 	img_addr = path;
+
 	var sUrl = webroot_dir+"images/treeview/?path="+path;
 	swf_upload_addr();//创建SESSION上传图片
 	var callback = {
@@ -50,9 +57,9 @@ function loadNodeData(node, fnLoadComplete){
 
 /***********************init调用的第一个函数**********************************************************/
 function buildTree(){
-	
 	//商品页货号定位
 	if(window_option_status != ""){
+		
 		if(assign_dir == "products"){
 			var productcode = "/products/&dirname="+window.opener.document.getElementById('ProductCode').value;
 			img_addr = "/products/"+window.opener.document.getElementById('ProductCode').value;
@@ -62,11 +69,23 @@ function buildTree(){
 		}else{
 			var productcode = "";
 		}
+		
 
 		if(assign_dir =="product_categories"){
-			img_addr = "/product_categories/";
+			var productcode = "/product_categories/&dirname="+window.opener.document.getElementById('categoryid').value;
+			img_addr = "/product_categories/"+window.opener.document.getElementById('categoryid').value+"&product_categories_id="+window.opener.document.getElementById('categoryid').value;
 			var urlimg = webroot_dir+"images/treeview/?path="+img_addr;
 			YAHOO.util.Connect.asyncRequest('POST', urlimg, load_show_img_callback);
+			img_addr = "/product_categories/"+window.opener.document.getElementById('categoryid').value;
+		}
+	
+		if(assign_dir =="article_categories"){
+			
+			var productcode = "/article_categories/&dirname="+window.opener.document.getElementById('categoryid').value;
+			img_addr = "/article_categories/"+window.opener.document.getElementById('categoryid').value+"&article_categories_id="+window.opener.document.getElementById('categoryid').value;
+			var urlimg = webroot_dir+"images/treeview/?path="+img_addr;
+			YAHOO.util.Connect.asyncRequest('POST', urlimg, load_show_img_callback);
+			img_addr = "/article_categories/"+window.opener.document.getElementById('categoryid').value;
 			
 		}
 		if(assign_dir =="links"){
@@ -118,7 +137,26 @@ function buildTree(){
 							oTextNodeMap[tempNode[i].labelElId]=tempNode[i];//增节点
 			   			}
 	   				}
-	   			
+	   				if(assign_dir == "product_categories"){
+			   			if( name == Trim(window.opener.document.getElementById('categoryid').value,'g') ){
+			   				
+							tempNode[i] 				= 		new YAHOO.widget.MenuNode(name, root, false); 
+							tempNode[i].onLabelClick 	= 		load_show_img;//节点ONCLICK事件..重载图片
+							tempNode[i].editable 		= 		true;//增编节点
+							oTextNodeMap[tempNode[i].labelElId]=tempNode[i];//增节点
+			   			}
+			   			
+	   				}
+	   				if(assign_dir == "article_categories"){
+			   			if( name == Trim(window.opener.document.getElementById('categoryid').value,'g') ){
+			   				
+							tempNode[i] 				= 		new YAHOO.widget.MenuNode(name, root, false); 
+							tempNode[i].onLabelClick 	= 		load_show_img;//节点ONCLICK事件..重载图片
+							tempNode[i].editable 		= 		true;//增编节点
+							oTextNodeMap[tempNode[i].labelElId]=tempNode[i];//增节点
+			   			}
+			   			
+	   				}
 	   			}
 	   		}else{
 	   			//图片管理时创造全部节点
@@ -132,7 +170,7 @@ function buildTree(){
 		
 		//第一层菜单设置中文名称
 		//除商品页进入外其它创造中文节点
-		if( assign_dir != "products" ){
+		if( assign_dir != "products" && assign_dir != "product_categories"&& assign_dir != "article_categories"){
 			for(var j=0;j<=oResults.message.length-1; j++){
 				
 				
@@ -169,6 +207,12 @@ function load_show_img(node){
 	}
 	if( assign_dir == "products" ){
 		path = "/products"+path;
+	}
+	if( assign_dir == "product_categories" ){
+		path = "/product_categories"+path;
+	}
+	if( assign_dir == "article_categories" ){
+		path = "/article_categories"+path;
 	}
 	img_addr = path;//SWF上传图片的路径
 
@@ -227,6 +271,12 @@ function addNode(){
 			if(window_option_status != ""){
 				if(window.opener.document.getElementById('assign_dir').value == "products"){
 					path = "/products"+path;
+				}
+				if(window.opener.document.getElementById('assign_dir').value == "product_categories"){
+					path = "/product_categories"+path;
+				}
+				if(window.opener.document.getElementById('assign_dir').value == "article_categories"){
+					path = "/article_categories"+path;
 				}
 	   		}
 			var create_dir = webroot_dir+"images/create_dir/?path="+path+"/"+sLabel;

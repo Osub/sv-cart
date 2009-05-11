@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: view.ctp 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: view.ctp 1327 2009-05-11 11:01:20Z huangbo $
 *****************************************************************************/
 ?>
 
@@ -36,7 +36,7 @@ echo $html->div('picc',$html->image($galleries[0]['ProductGallery']['img_detail'
 <?if(isset($galleries) && sizeof($galleries)>0){?>
 <?foreach($galleries as $k=>$g){?>
 <div class="pic_select">
-<? echo $html->link($html->image($g['ProductGallery']['img_detail'],array("alt"=>$g['ProductGallery']['description'])),"javascript:show_pic('".$g['ProductGallery']['img_detail']."');","",false,false);?></div>
+<? echo $html->link($html->image($g['ProductGallery']['img_thumb'],array("alt"=>$g['ProductGallery']['description'])),"javascript:show_pic('".$g['ProductGallery']['img_detail']."');","",false,false);?></div>
 <?}?>
 <?}?>
 <?
@@ -80,7 +80,6 @@ echo $html->div('picc',$html->image("/img/product_default.jpg",array("id"=>"img1
 			
 		<?if(isset($SVConfigs['show_member_level_price']) && $SVConfigs['show_member_level_price']> 0 && isset($my_product_rank) && $my_product_rank < $info['Product']['shop_price']){?>
 		<li><dd class="l"><?//php echo $SCLanguages['membership_price'];?><?php echo $SCLanguages['our_price'];?>:</dd><dd>
-		<?=$svshow->price_format($my_product_rank,$SVConfigs['price_format']);?>	
 		</dd></li>
 		<?}else{?>
 		<li><dd class="l"><?php echo $SCLanguages['our_price'];?>:</dd><dd>
@@ -105,7 +104,9 @@ echo $html->div('picc',$html->image("/img/product_default.jpg",array("id"=>"img1
 				<dd>					<select>
 
 					<?foreach($v as $kk=>$vv){?>
-						<option><?=$vv['value']?>  [<?=$vv['price']?>]</option>
+						<option><?=$vv['value']?>  [
+		<?=$svshow->price_format($vv['price'],$SVConfigs['price_format']);?>	
+							]</option>
 					<?}?>					</select>
 </dd>
 				</li>
@@ -276,7 +277,7 @@ echo $html->div('picc',$html->image("/img/product_default.jpg",array("id"=>"img1
 </div>
 <!--用户评论-->
 <div id="Edit_box">
-	<div id="Edit_info" style="border:0;border-top:1px solid #909592;">
+	<div id="Edit_info" style="border:0;">
 		<p class="note article_title" style="position:relative;">
 		<span class='comment-left'></span><span class='comment-right'></span>
 		<?=$SCLanguages['comments'];?>

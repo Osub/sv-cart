@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: view.ctp 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: view.ctp 1327 2009-05-11 11:01:20Z huangbo $
 *****************************************************************************/
 ?>
 <?=$javascript->link('/../js/yui/calendar-min.js');?>
@@ -264,7 +264,7 @@
 	<ul class="product_llist procurements procurements_list">
 	
 	<li class="name"><?if($v['UserPointLog']['log_type'] == 'O' || $v['UserPointLog']['log_type'] == 'B'){?><?echo $v['Order']['id']?><?}else{?>&nbsp;&nbsp;&nbsp;<?}?></li>
-	<li class="number"><?if($v['UserPointLog']['log_type'] == 'a'){?>注册赠送<?}elseif($v['UserPointLog']['log_type'] == 'b'){?>购买赠送<?}elseif($v['UserPointLog']['log_type'] == 'c'){?>购买消费<?}elseif($v['UserPointLog']['log_type'] == 'd'){?>推荐注册赠送<?}elseif($v['UserPointLog']['log_type'] == 'e'){?>推荐购买赠送<?}elseif($v['UserPointLog']['log_type'] == 'f'){?>管理员增加<?}elseif($v['UserPointLog']['log_type'] == 'g'){?>管理员扣除<?}?></li>
+	<li class="number"><?if($v['UserPointLog']['log_type'] == 'R'){?>注册赠送<?}elseif($v['UserPointLog']['log_type'] == 'B'){?>购买赠送<?}elseif($v['UserPointLog']['log_type'] == 'O'){?>购买消费<?}elseif($v['UserPointLog']['log_type'] == 'A'){?>管理员操作<?}?></li>
 	<li class="item_number"><?echo $v['UserPointLog']['created'];?></li>
 	<li class="profiles"><?echo $v['UserPointLog']['point'];?></li>
 	<li class="units"><?if($v['UserPointLog']['log_type'] == 'O' or $v['UserPointLog']['log_type'] == 'B'){?><?echo $v['Order']['payment_name']?><?}else{?>&nbsp;&nbsp;&nbsp;<?}?></li>

@@ -17,7 +17,13 @@
 <td width="34%" height="25" valign="middle" class="bewrite">
 <div class="btn_list" style="padding-top:10px;">
 <p class="float_l" style="padding:1px 4px 0 20px;*margin-top:-2px;">
-<textarea name="order_note" id="order_note_add" class="green_border" style="width:340px;overflow-y:scroll;vertical-align:top" onblur="javascript:add_remark();" ></textarea></p><br/><br/><br/><br/>
+<span id="order_note_value" style="display:none">
+</span>
+<span id="order_note_textarea">
+<textarea name="order_note" id="order_note_add" class="green_border" style="width:340px;overflow-y:scroll;vertical-align:top" onblur="javascript:add_remark();" ></textarea>
+</span>
+
+</p><br/><br/><br/><br/>
 <span id="remark_msg" style='padding:1px 4px 0 20px;*margin-top:-2px;color:red'></span>
 <div style="padding:2px 4px 0 160px;*margin-top:-2px;">
 </div>

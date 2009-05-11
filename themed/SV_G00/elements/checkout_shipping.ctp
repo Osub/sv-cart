@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: checkout_shipping.ctp 1232 2009-05-06 12:14:41Z huangbo $
+ * $Id: checkout_shipping.ctp 1327 2009-05-11 11:01:20Z huangbo $
 *****************************************************************************/
 ?>
 <? if(isset($shippings) && is_array($shippings) && sizeof($shippings)>0){?>
@@ -23,7 +23,7 @@
 <? foreach($shippings as $k=>$v){?>
 <tr class="list">
 <td width="29%" height="25" valign="middle" class="selece_input">
-<span class="select_input"><input type="radio" name="shipping_id" value="<?=$v['Shipping']['id'];?>" onclick="confirm_shipping(<?=$v['Shipping']['id'];?>,<?=$v['ShippingArea']['fee']; ?>,'<?=$v['ShippingI18n']['name']; ?>',<?=$v['ShippingArea']['free_subtotal']; ?>,<?=$v['Shipping']['support_cod']?>,'<?=$v['ShippingI18n']['description']; ?>')" <?if(isset($svcart['shipping']['shipping_id']) && $v['Shipping']['id'] ==$svcart['shipping']['shipping_id']){?>checked="checked"<?}?> id="shipping_id<?=$v['Shipping']['id'];?>" class="radio" /></span><label for="shipping_id<?=$v['Shipping']['id'];?>"><span class="name"><?=$v['ShippingI18n']['name']; ?></span></label></td>
+<span class="select_input"><input type="radio" name="shipping_id" value="<?=$v['Shipping']['id'];?>" onclick="confirm_shipping(<?=$v['Shipping']['id'];?>,<?=$v['ShippingArea']['fee']; ?>,<?=$v['ShippingArea']['free_subtotal']; ?>,<?=$v['Shipping']['support_cod']?>)" <?if(isset($svcart['shipping']['shipping_id']) && $v['Shipping']['id'] ==$svcart['shipping']['shipping_id']){?>checked="checked"<?}?> id="shipping_id<?=$v['Shipping']['id'];?>" class="radio" /></span><label for="shipping_id<?=$v['Shipping']['id'];?>"><span class="name"><?=$v['ShippingI18n']['name']; ?></span></label></td>
 <td width="41%" height="25" valign="middle" class="bewrite"><?=$v['ShippingI18n']['description']; ?></td>
 <td width="14%" height="25" align="center" valign="middle" class="addrees">
 	<?=$svshow->price_format($v['ShippingArea']['fee'],$SVConfigs['price_format']);?>	

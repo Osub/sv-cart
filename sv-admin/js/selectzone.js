@@ -12,6 +12,7 @@ function addItem (source,act,Id,isDouble,Type)
         YAHOO.example.container.manager.hideAll();
 		YAHOO.example.container.wait.show();
 		var sUrl = webroot_dir+"products/"+act+"/"+linkedId+"/"+Id+"/"+isDouble+"/"+Type+"/"+Math.random();
+		
 		var request = YAHOO.util.Connect.asyncRequest('GET', sUrl, addDropItem_callback);
     }
   }
@@ -19,7 +20,7 @@ function addItem (source,act,Id,isDouble,Type)
 		try{   
 			var result = YAHOO.lang.JSON.parse(o.responseText);   
 		}catch (e){   
-			alert("Invalid data");
+			alert(o.responseText);
 			YAHOO.example.container.wait.hide();
 		} 
 	//	alert(result.msg)

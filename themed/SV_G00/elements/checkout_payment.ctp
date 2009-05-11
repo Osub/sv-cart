@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: checkout_payment.ctp 1232 2009-05-06 12:14:41Z huangbo $
+ * $Id: checkout_payment.ctp 1327 2009-05-11 11:01:20Z huangbo $
 *****************************************************************************/
 ?>
 <table cellpadding="0" cellspacing="0" class="address_list" width="874">
@@ -28,7 +28,7 @@
 <tr class="list">
 <td width="29%" height="25" valign="middle" class="selece_input">
 <span class="select_input"> 
-<input type="radio" name="payment_id" value="<? echo $v['Payment']['id']; ?>" onclick="confirm_payment(<?=$v['Payment']['id'];?>,<?=$v['Payment']['fee'];?>,'<?=$v['PaymentI18n']['name']; ?>','<?=$v['PaymentI18n']['description']; ?>',<?=$v['Payment']['is_cod']?>,'<?=$v['Payment']['code']?>')" style='margin:0 0 0 0;*margin:-2px 0 0 0;vertical-align:middle;' /></span>
+<input type="radio" name="payment_id" value="<? echo $v['Payment']['id']; ?>" onclick="confirm_payment(<?=$v['Payment']['id'];?>)" style='margin:0 0 0 0;*margin:-2px 0 0 0;vertical-align:middle;' /></span>
 <span class="name"><? echo $v['PaymentI18n']['name']; ?></span></td>
 <td width="54%" height="25" valign="middle" class="bewrite"><? echo $v['PaymentI18n']['description']; ?></td>
 <td width="17%" height="25" align="center" valign="middle" class="handel">
@@ -42,7 +42,7 @@
 <tr class="list">
 <td width="29%" height="25" valign="middle" class="selece_input">
 <span class="select_input">
-<input type="radio" name="payment_id" value="<? echo $v['Payment']['id']; ?>" onclick="confirm_payment(<?=$v['Payment']['id'];?>,<?=$v['Payment']['fee'];?>,'<?=$v['PaymentI18n']['name']; ?>','<?=$v['PaymentI18n']['description']; ?>',<?=$v['Payment']['is_cod']?>,'<?=$v['Payment']['code']?>')" id="payment_id<? echo $v['Payment']['id']; ?>" class='radio' /></span>
+<input type="radio" name="payment_id" value="<? echo $v['Payment']['id']; ?>" onclick="confirm_payment(<?=$v['Payment']['id'];?>)" id="payment_id<? echo $v['Payment']['id']; ?>" class='radio' /></span>
 <label for="payment_id<? echo $v['Payment']['id']; ?>"><span class="name"><? echo $v['PaymentI18n']['name']; ?></span></label></td>
 <td width="54%" height="25" valign="middle" class="bewrite"><? echo $v['PaymentI18n']['description']; ?></td>
 <td width="17%" height="25" align="center" valign="middle" class="handel">
@@ -57,7 +57,7 @@
 <tr class="list">
 <td width="29%" height="25" valign="middle" class="selece_input">
 <span class="select_input"> 
-<input type="radio" name="payment_id" value="<? echo $v['Payment']['id']; ?>" onclick="confirm_payment(<?=$v['Payment']['id'];?>,<?=$v['Payment']['fee'];?>,'<?=$v['PaymentI18n']['name']; ?>','<?=$v['PaymentI18n']['description']; ?>',<?=$v['Payment']['is_cod']?>,'<?=$v['Payment']['code']?>')" style='margin:0 0 0 0;*margin:-2px 0 0 0;vertical-align:middle;' /></span>
+<input type="radio" name="payment_id" value="<? echo $v['Payment']['id']; ?>" onclick="confirm_payment(<?=$v['Payment']['id'];?>)" style='margin:0 0 0 0;*margin:-2px 0 0 0;vertical-align:middle;' /></span>
 <span class="name"><? echo $v['PaymentI18n']['name']; ?></span></td>
 <td width="54%" height="25" valign="middle" class="bewrite"><? echo $v['PaymentI18n']['description']; ?></td>
 <td width="17%" height="25" align="center" valign="middle" class="handel">

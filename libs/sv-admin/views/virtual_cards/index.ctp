@@ -35,6 +35,11 @@
 			<option value="<?=$third_v['Category']['id'];?>" <?if($category_id == $third_v['Category']['id']){?>selected<?}?>>&nbsp;&nbsp;&nbsp;&nbsp;<?=$third_v['CategoryI18n']['name'];?></option>
 	<?}}}}}}?>
 	</select><?}?>
+	<select name="forsale">
+		<option value="99" selected >所有商品</option>
+		<option value="1" <?if($forsale==1){?>selected<?}?> >上架</option>
+		<option value="0" <?if($forsale==0){?>selected<?}?> >下架</option>
+	</select>
 	价格区间：<input name="min_price" id="min_price" value="<?echo $min_price?>" size=15>－<input name="max_price" id="max_price" value="<?echo $max_price?>" size=15>
 	关键字：<input type="text" style="width:105px;" name="keywords" id="keywords" value="<?echo $keywords?>"/></p>
 	<?if(!empty($brands_tree)){?>
@@ -102,7 +107,7 @@
 	<li class="best"><?if($v['Product']['forsale'] == 1){?><?=$html->image('yes.gif')?><?}else{?><?=$html->image('no.gif')?><?}?></li>
 	<li class="best"><?if($v['Product']['recommand_flag'] == 1){?><?=$html->image('yes.gif')?><?}else{?><?=$html->image('no.gif')?><?}?></li>
 	<li class="hadle" style="width:23%">
-	 <?php echo $html->link("查看","../../virtual_cards/{$v['Product']['id']}");?>
+	 <?php echo $html->link("查看","../../products/{$v['Product']['id']}",array('target'=>'_blank'));?>
 	|<?php echo $html->link("编辑","/virtual_cards/{$v['Product']['id']}");?>
 	|<?php echo $html->link("复制","/virtual_cards/copy_pro/{$v['Product']['id']}");?>
 	|<?php echo $html->link("回收站","javascript:;",array("onclick"=>"layer_dialog_show('确定进回收站?','{$this->webroot}products/trash/{$v['Product']['id']}')"));?>

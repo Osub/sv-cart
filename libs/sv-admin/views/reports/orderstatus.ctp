@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: orderstatus.ctp 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: orderstatus.ctp 1329 2009-05-11 11:29:59Z huangbo $
 *****************************************************************************/
 ?>
 <?=$javascript->link('/../js/yui/calendar-min.js');?>
@@ -50,31 +50,29 @@
 	  <th height="30" width="33%" colspan="5" rowspan="<?=$num?>" style="border-right:0;">
 	  	<table cellpadding="0" cellspacing="0" border="0" width="100%" class="second_box">
 		<tr class="second_title">
-		<!--
-		<div style="border:1px solid #B6B6B6; height:28px; position:absolute;_top:0;width:31.75%;_width:99.5%; zoom:1; z-index:1;margin-top:-1px;"></div>
-		-->
-			<th style="height:28px;*height:27px;" width="20%">未确认</th>
-			<th width="20%">已确认</th>
-			<th width="20%">已取消</th>
-			<th width="20%" >无效</th>
-			<th width="20%" style="border-right:0;white-space:nowrap;padding:0 1px">退货</th></tr>
+			<th style="height:28px;*height:27px;width:20%">未确认</th>
+			<th style="width:20%">已确认</th>
+			<th style="width:20%">已取消</th>
+			<th style="width:20%">无效</th>
+			<th style="border-right:0;width:19%">退货</th>
+		</tr>
 	<!--	pr($order_status);pr($shipping_status);pr($payment_status);pr($payment);-->
-			<?if(isset($payment) && sizeof($payment)>0){?>
+		<?if(isset($payment) && sizeof($payment)>0){?>
 		<?php foreach($payment as $k=>$v){?>
 		<tr>
-			<td height="58"><?php if(isset($order_status[0][$k])) echo $order_status[0][$k];else echo 0;?></td>
-			<td><?php if(isset($order_status[1][$k])) echo $order_status[1][$k];else echo 0;?></td>
-			<td><?php if(isset($order_status[2][$k])) echo $order_status[2][$k];else echo 0;?></td>
-			<td><?php if(isset($order_status[3][$k])) echo $order_status[3][$k];else echo 0;?></td>
-			<td width="20%"><?php if(isset($order_status[4][$k])) echo $order_status[4][$k];else echo 0;?></td>
+			<td height="30" style="vertical-align:middle;"><?php if(isset($order_status[0][$k])) echo $order_status[0][$k];else echo 0;?></td>
+			<td style="vertical-align:middle;"><?php if(isset($order_status[1][$k])) echo $order_status[1][$k];else echo 0;?></td>
+			<td style="vertical-align:middle;"><?php if(isset($order_status[2][$k])) echo $order_status[2][$k];else echo 0;?></td>
+			<td style="vertical-align:middle;"><?php if(isset($order_status[3][$k])) echo $order_status[3][$k];else echo 0;?></td>
+			<td style="vertical-align:middle;"><?php if(isset($order_status[4][$k])) echo $order_status[4][$k];else echo 0;?></td>
 		</tr>
 		<?php }}?>
 		<tr class="orderfee_headers title_sum">
 		<td height="31" valign="middle"><?php if(isset($order_status[0])) echo array_sum($order_status[0]);else echo 0;?></td>
-		<td valign="middle"><?php if(isset($order_status[1])) echo array_sum($order_status[1]);else echo 0;?></td>
-		<td valign="middle"><?php if(isset($order_status[2])) echo array_sum($order_status[2]);else echo 0;?></td>
-		<td valign="middle"><?php if(isset($order_status[3])) echo array_sum($order_status[3]);else echo 0;?></td>
-		<td valign="middle"><?php if(isset($order_status[4])) echo array_sum($order_status[4]);else echo 0;?></td>
+		<td style="vertical-align:middle;"><?php if(isset($order_status[1])) echo array_sum($order_status[1]);else echo 0;?></td>
+		<td style="vertical-align:middle;"><?php if(isset($order_status[2])) echo array_sum($order_status[2]);else echo 0;?></td>
+		<td style="vertical-align:middle;"><?php if(isset($order_status[3])) echo array_sum($order_status[3]);else echo 0;?></td>
+		<td style="vertical-align:middle;"><?php if(isset($order_status[4])) echo array_sum($order_status[4]);else echo 0;?></td>
 		</tr>
 		</table>
 		</th>
@@ -84,14 +82,19 @@
 	  <table cellpadding="0" cellspacing="0" border="0" width="100%" class="second_box">
 		
 		<tr class="second_title">
-		<th width="25%" style="border-left:1px solid #ABABAB;height:28px;*height:27px;">未发货</th>
-		<th width="25%">已发货</th>
-		<th width="25%">已收货</th>
-		<th width="25%" style="border-right:0;">备货中</th>
+		<th style="border-left:1px solid #ABABAB;height:28px;*height:27px;width:25%">未发货</th>
+		<th style="width:25%">已发货</th>
+		<th style="width:25%">已收货</th>
+		<th style="border-right:0;width:24%">备货中</th>
 		</tr>
 			<?if(isset($payment) && sizeof($payment)>0){?>
 		<?php foreach($payment as $k=>$v){?>
-		<tr><td height="58"><?php if(isset($shipping_status[0][$k])) echo $shipping_status[0][$k];else echo 0;?></td><td><?php if(isset($shipping_status[1][$k])) echo $shipping_status[1][$k];else echo 0;?></td><td><?php if(isset($shipping_status[2][$k])) echo $shipping_status[2][$k];else echo 0;?></td><td><?php if(isset($shipping_status[3][$k])) echo $shipping_status[3][$k];else echo 0;?></td></tr>
+		<tr>
+		<td style="vertical-align:middle;" height="30"><?php if(isset($shipping_status[0][$k])) echo $shipping_status[0][$k];else echo 0;?></td>
+		<td style="vertical-align:middle;"><?php if(isset($shipping_status[1][$k])) echo $shipping_status[1][$k];else echo 0;?></td>
+		<td style="vertical-align:middle;"><?php if(isset($shipping_status[2][$k])) echo $shipping_status[2][$k];else echo 0;?></td>
+		<td style="vertical-align:middle;"><?php if(isset($shipping_status[3][$k])) echo $shipping_status[3][$k];else echo 0;?></td>
+		</tr>
 		<?php }}?>
 		<tr class="orderfee_headers title_sum"><td height="31"><?php if(isset($shipping_status[0])) echo array_sum($shipping_status[0]);else echo 0;?></td><td><?php if(isset($shipping_status[1])) echo array_sum($shipping_status[1]);else echo 0;?></td><td><?php if(isset($shipping_status[2])) echo array_sum($shipping_status[2]);else echo 0;?></td><td><?php if(isset($shipping_status[3])) echo array_sum($shipping_status[3]);else echo 0;?></td></tr>
 		</table></th>
@@ -107,16 +110,24 @@
 		</tr>
 			<?if(isset($payment) && sizeof($payment)>0){?>
 		<?php foreach($payment as $k=>$v){?>
-		<tr><td height="58"><?php if(isset($payment_status[0][$k])) echo $payment_status[0][$k];else echo 0;?></td><td><?php if(isset($payment_status[1][$k])) echo $payment_status[1][$k];else echo 0;?></td><td><?php if(isset($payment_status[2][$k])) echo $payment_status[2][$k];else echo 0;?></td></tr>
+		<tr>
+		<td height="30" style="vertical-align:middle;"><?php if(isset($payment_status[0][$k])) echo $payment_status[0][$k];else echo 0;?></td>
+		<td style="vertical-align:middle;"><?php if(isset($payment_status[1][$k])) echo $payment_status[1][$k];else echo 0;?></td>
+		<td style="vertical-align:middle;"><?php if(isset($payment_status[2][$k])) echo $payment_status[2][$k];else echo 0;?></td></tr>
 		<?php }}?>
-		<tr class="orderfee_headers title_sum"><td height="31"><?php if(isset($payment_status[0])) echo array_sum($payment_status[0]);else echo 0;?></td><td><?php if(isset($payment_status[1])) echo array_sum($payment_status[1]);else echo 0;?></td><td><?php if(isset($payment_status[2])) echo array_sum($payment_status[2]);else echo 0;?></td></tr>
-		</table>	  </th>
+		<tr class="orderfee_headers title_sum">
+		<td height="31"><?php if(isset($payment_status[0])) echo array_sum($payment_status[0]);else echo 0;?></td>
+		<td><?php if(isset($payment_status[1])) echo array_sum($payment_status[1]);else echo 0;?></td>
+		<td><?php if(isset($payment_status[2])) echo array_sum($payment_status[2]);else echo 0;?></td>
+		</tr>
+		</table>
+		</th>
 <!--支付状态标题 End-->
 	</tr>
 		<?if(isset($payment) && sizeof($payment)>0){?>
 	<?php foreach($payment as $k=>$v){?>
 	<tr class="list">
-		<td height="58" style="vertical-align:middle;" align="center"><strong><?=$v?></strong></td>
+		<td height="30" style="vertical-align:middle;" align="center"><strong><?=$v?></strong></td>
 	</tr>
 	<?php }}?>
 	<tr class="orderfee_headers title_sum">

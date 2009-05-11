@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: images_controller.php 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: images_controller.php 1329 2009-05-11 11:29:59Z huangbo $
 *****************************************************************************/
 class ImagesController extends AppController {
 
@@ -21,18 +21,22 @@ class ImagesController extends AppController {
 		$this->pageTitle = '图片管理'." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'图片管理','url'=>'/images/');
 		$this->set('navigations',$this->navigations);
+	
 		if (!isset($_FILES["Filedata"]) || !is_uploaded_file($_FILES["Filedata"]["tmp_name"]) || $_FILES["Filedata"]["error"] != 0) {
+			$session_config_str = serialize($_SESSION['Config']);
+			
 			$session_operator_str = serialize($_SESSION['Operator_Info']);
-			@$Operator = @serialize($_SESSION['Operator']);
-			$Admin_Config = serialize($_SESSION['Admin_Config']);
-			$Action_List = serialize($_SESSION['Action_List']);
-			$Admin_Locale = serialize($_SESSION['Admin_Locale']);
+			
+			$session_admin_config_str = serialize($_SESSION['Admin_Config']);
+			
+			$session_action_list_str = serialize($_SESSION['Action_List']);
+			$session_admin_locale_str = serialize($_SESSION['Admin_Locale']);
 			$cart_back_url = serialize($_SESSION['cart_back_url']);
-			$this->set('Operator',$Operator);
-			$this->set('Admin_Config',$Admin_Config);
-			$this->set('Action_List',$Action_List);
-			$this->set('Admin_Locale',$Admin_Locale);
+			$this->set('session_config_str',$session_config_str);
 			$this->set('session_operator_str',$session_operator_str);
+			$this->set('session_admin_config_str',$session_admin_config_str);
+			$this->set('session_action_list_str',$session_action_list_str);
+			$this->set('session_admin_locale_str',$session_admin_locale_str);
 			$this->set('cart_back_url',$cart_back_url);
 		} else {
 		}
@@ -97,21 +101,34 @@ class ImagesController extends AppController {
 			$dir = "../img/";
 			@chmod("../img/", 0777);
 		}
-		if(!empty($_REQUEST['dirname'])){
-			$crdir = "../img/products/".$_REQUEST['dirname'];
+		if(!empty($_REQUEST['product_categories_id'])){
+			$categories = "../img".$_REQUEST['path'].$_REQUEST['product_categories_id']."/";
+			@mkdir("../img".$_REQUEST['path'].$_REQUEST['product_categories_id']."/", 0777);
+			@chmod("../img".$_REQUEST['path'].$_REQUEST['product_categories_id']."/".$_REQUEST['path'], 0777);
+		}
+		if(!empty($_REQUEST['article_categories_id'])){
+			$categories = "../img".$_REQUEST['path'].$_REQUEST['article_categories_id']."/";
+			@mkdir("../img".$_REQUEST['path'].$_REQUEST['article_categories_id']."/", 0777);
+			@chmod("../img".$_REQUEST['path'].$_REQUEST['article_categories_id']."/".$_REQUEST['path'], 0777);
+		}
+		if(!empty($_REQUEST['dirname'])&&!empty($_REQUEST['path'])){
+			
+			$crdir = "../img".$_REQUEST['path'].$_REQUEST['dirname'];
 			if(!is_dir($crdir)){
 				mkdir($crdir, 0777);
 				@chmod($crdir, 0777);
 			}
-			$crdir_detail 	= "../img/products/".$_REQUEST['dirname']."/detail";
-			if(!is_dir($crdir_detail)){
-				mkdir($crdir_detail, 0777);
-				@chmod($crdir_detail, 0777);
-			}
-			$crdir_original = "../img/products/".$_REQUEST['dirname']."/original";
-			if(!is_dir($crdir_original)){
-				mkdir($crdir_original, 0777);
-				@chmod($crdir_original, 0777);
+			if($_REQUEST['path']=='/products/'){
+				$crdir_detail 	= "../img".$_REQUEST['path'].$_REQUEST['dirname']."/detail";
+				if(!is_dir($crdir_detail)){
+					mkdir($crdir_detail, 0777);
+					@chmod($crdir_detail, 0777);
+				}
+				$crdir_original = "../img".$_REQUEST['path'].$_REQUEST['dirname']."/original";
+				if(!is_dir($crdir_original)){
+					mkdir($crdir_original, 0777);
+					@chmod($crdir_original, 0777);
+				}
 			}
 		}else{
 			$crdir = "../img";
@@ -173,7 +190,25 @@ class ImagesController extends AppController {
 			}
 			$results['show_img_str'] = $show_img_str;
 		}
+		if(!empty($_REQUEST['article_categories_id'])||!empty($_REQUEST['product_categories_id'])){
+			if(!empty($_REQUEST['article_categories_id'])){
+				$categories_id = $_REQUEST['article_categories_id'];
+			}
+			if(!empty($_REQUEST['product_categories_id'])){
+				$categories_id = $_REQUEST['product_categories_id'];
+				
+			}
+			$results_message = $results['message'];
+			for($i=0;$i<=count($results_message)-1;$i++){
+				
+				if($categories_id == $results_message[$i]){
+					$results['message'] = "";
+					$results['message'][] = $results_message[$i];
+				}
+			
+			}
 		
+		}
 		die(json_encode($results));
 	}
 	//创建目录

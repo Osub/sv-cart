@@ -609,7 +609,7 @@ CREATE TABLE IF NOT EXISTS `svcart_language_dictionaries` (
   `modified` datetime NOT NULL default '2008-01-01 00:00:00' COMMENT '修改时间',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `locale` (`locale`,`name`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1674 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1696 ;
 
 -- --------------------------------------------------------
 
@@ -1584,7 +1584,7 @@ CREATE TABLE IF NOT EXISTS `svcart_provider_products` (
   `product_id` int(11) NOT NULL COMMENT '商品编号',
   `price` float(12,2) NOT NULL COMMENT '价格',
   `status` char(1) collate utf8_unicode_ci NOT NULL default '1' COMMENT '状态[0:无效;1:有效;]',
-  `min_buy` datetime NOT NULL COMMENT '最小进货量',
+  `min_buy` int(11) NOT NULL COMMENT '最小进货量',
   `orderby` tinyint(4) NOT NULL default '50' COMMENT '排序',
   `created` datetime NOT NULL default '2008-01-01 00:00:00' COMMENT '创建时间',
   `modified` datetime NOT NULL default '2008-01-01 00:00:00' COMMENT '修改时间',

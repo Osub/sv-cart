@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: categories_controller.php 899 2009-04-22 15:03:02Z huangbo $
+ * $Id: categories_controller.php 1327 2009-05-11 11:01:20Z huangbo $
 *****************************************************************************/
 class CategoriesController extends AppController {
 
@@ -22,7 +22,7 @@ class CategoriesController extends AppController {
 	var $components = array('RequestHandler');
  
  function index($type='P'){
-		
+	
 		/*判断权限*/
 		//$user->controller('categories_display');
 		$this->pageTitle = "分类管理" ." - ".$this->configs['shop_name'];
@@ -133,7 +133,12 @@ class CategoriesController extends AppController {
 	}
 	
 	function add($type='P'){
+		//图片ID
+		$this->set('categories_id',"temp");
+		$category_info = $this->Category->find("","","Category.id desc"); 
 		
+		//$this->set('categories_id',$category_info['Category']['id']+1);
+		$new_id = $category_info['Category']['id']+1;
 		/*判断权限*/
 		//	$user->controller('categories_edit');
 		/*新增商品分类*/
@@ -144,19 +149,39 @@ class CategoriesController extends AppController {
 			$this->set('navigations',$this->navigations);
 		
 			if($this->RequestHandler->isPost()){
-			//	pr($this->data);
+				//pr($this->data);
 			//	$this->CategoryI18n->deleteall("category_id = '".$this->data['Category']['id']."'",false); //删除原有多语言
 
 				$this->data['Category']['orderby'] = !empty($this->data['Category']['orderby'])?$this->data['Category']['orderby']:50;
+				$this->data['Category']['img01'] = str_replace("temp", $new_id, $this->data['Category']['img01']);
+				$this->data['Category']['img02'] = str_replace("temp", $new_id, $this->data['Category']['img02']);
+					
 				
 				$this->Category->save($this->data['Category']); //关联保存
 				$id=$this->Category->id;
-				
+				$new_id = $id;
 				if(is_array($this->data['CategoryI18n']))
 				foreach($this->data['CategoryI18n'] as $k => $v){
 					$v['category_id']=$id;
 					$this->CategoryI18n->id='';
-
+					$img01 = $v['img01'];
+					if(!strpos($img01, "temp")){
+				 	
+				 		$pos = "..".substr($img01,0,strpos($img01, "new_id")-2-strlen($img01)).$new_id."/";
+						@rename("../img/product_categories/temp/",$pos);
+					}
+					eval("\$img01 = \"$img01\";");
+					$img01 = str_replace("temp", $new_id, $img01);
+					$v['img01'] = $img01;
+					$img02 = $v['img02'];
+					if(!strpos($img02, "temp")){
+				 		$pos = "..".substr($img02,0,strpos($img02, "new_id")-2-strlen($img02)).$new_id."/";
+						@rename("../img/product_categories/temp/",$pos);
+					}
+					eval("\$img02 = \"$img02\";");
+					$img02 = str_replace("temp", $new_id, $img02);
+					$v['img02'] = $img02;
+					
 					$this->CategoryI18n->save($v); 
 				}
 				$id = $this->Category->getLastInsertId();
@@ -177,19 +202,35 @@ class CategoriesController extends AppController {
 				$this->set('navigations',$this->navigations);
 				if($this->RequestHandler->isPost()){
 					$this->data['Category']['orderby'] = !empty($this->data['Category']['orderby'])?$this->data['Category']['orderby']:50;
-					//print_r($this->data['Category']);
+					$this->data['Category']['img01'] = str_replace("temp", $new_id, $this->data['Category']['img01']);
+					$this->data['Category']['img02'] = str_replace("temp", $new_id, $this->data['Category']['img02']);
+					
 					$this->Category->save($this->data['Category']); //关联保存
 					$id=$this->Category->id;
+					$new_id = $id;
 					if(is_array($this->data['CategoryI18n']))
 					foreach($this->data['CategoryI18n'] as $k => $v){
 						$v['category_id']=$id;
 						$this->CategoryI18n->id='';
-						$test = explode("/",$v['img01']);
-						$test[3] = $id;
-						$v['img01'] = implode('/',$test);
-						$test = explode("/",$v['img02']);
-						$test[3] = $id;
-						$v['img02'] = implode('/',$test);
+						$img01 = $v['img01'];
+					
+						if(!strpos($img01, "temp")){
+				 			$pos = "..".substr($img01,0,strpos($img01, "new_id")-2-strlen($img01)).$new_id."/";
+							@rename("../img/article_categories/temp/",$pos);
+						}
+						
+						eval("\$img01 = \"$img01\";");
+						$img01 = str_replace("temp", $new_id, $img01);
+						$v['img01'] = $img01;
+						$img02 = $v['img02'];
+						if(!strpos($img02, "temp")){
+				 			$pos = "..".substr($img02,0,strpos($img02, "new_id")-2-strlen($img02)).$new_id."/";
+							@rename("../img/article_categories/temp/",$pos);
+						}
+						eval("\$img02 = \"$img02\";");
+						$img02 = str_replace("temp", $new_id, $img02);
+						$v['img02'] = $img02;
+
 						$this->CategoryI18n->save($v); 
 					}				
 				

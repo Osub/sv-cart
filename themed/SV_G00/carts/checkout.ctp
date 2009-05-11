@@ -9,11 +9,11 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: checkout.ctp 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: checkout.ctp 1329 2009-05-11 11:29:59Z huangbo $
 *****************************************************************************/
 ?>
 <div class="Balance_alltitle">
-<h1 class="headers"><span class="l"></span><span class="r"></span><p style="float:right;font-size:12px;"class="address btn_list">
+<h1 class="headers"><span class="l"></span><span class="r"></span><p class="address btn_list clear_all">
 	<?=$html->link("<span>".$SCLanguages['mmodify'].$SCLanguages['products']."</span>","/carts/",array("class"=>"amember"),false,false);?>
 	</p><b><?php echo $SCLanguages['checkout_center'];?>
 </b></h1>
@@ -117,25 +117,35 @@
 	<?//=$SCLanguages['this_order_receives']?>
 <br />
 		<?if(isset($send_point['order_smallest'])){?>
-		<br />	超过订单金额送积分 ： <?=$send_point['order_smallest']?> <?=$SCLanguages['point_unit'];?>
+				<?if($send_point['order_smallest'] > 0){?>
+		<br />	<?=$SCLanguages['more_than_order_total']?><?=$SCLanguages['present_points']?> ： <?=$send_point['order_smallest']?> <?=$SCLanguages['point_unit'];?>
+		<?}?>
 		<?}?>
 		<?if(isset($send_point['order_gift_points'])){?>
-	<br />		下单送积分 ： <?=$send_point['order_gift_points']?> <?=$SCLanguages['point_unit'];?>
+				<?if($send_point['order_gift_points'] > 0){?>
+	<br />		<?=$SCLanguages['place_order']?><?=$SCLanguages['present_points']?> ： <?=$send_point['order_gift_points']?> <?=$SCLanguages['point_unit'];?>
+		<?}?>
 		<?}?>
 		<?if(isset($product_point) && sizeof($product_point)>0){?>
 			<?foreach($product_point as $kk=>$vv){?>
-			<br />	<?=$vv['name']?> 获得积分::<?=$vv['point']?> <?=$SCLanguages['point_unit'];?>
+				<?if($vv['point'] > 0){?>
+			<br />	<?=$vv['name']?> <?=$SCLanguages['present_points']?>:<?=$vv['point']?> <?=$SCLanguages['point_unit'];?>
+				<?}?>
 			<?}?>
 		<?}?>
 		<?if(isset($order_coupon) && sizeof($order_coupon)>0){?>
 			<?foreach($order_coupon as $k=>$v){?>
-		<br />		超过订单金额送优惠券 ：
+				<?if($v['fee'] > 0){?>
+		<br />		<?=$SCLanguages['more_than_order_total']?><?=$SCLanguages['present_points']?> ：
 		<?=$v['name']?><?=$svshow->price_format($v['fee'],$SVConfigs['price_format']);?>&nbsp;
+				<?}?>
 			<?}?>
 			<?}?>
 		<?if(isset($product_coupon) && sizeof($product_coupon)>0){?>
 			<?foreach($product_coupon as $kk=>$vv){?>
-		<br />		<?=$vv['name']?> 获得优惠券 ：<?=$svshow->price_format($vv['fee'],$SVConfigs['price_format']);?><?if($vv['quantity']>1){?>X<?=$vv['quantity']?><?}?>
+				<?if($vv['fee'] > 0){?>
+		<br />		<?=$vv['name']?> <?=$SCLanguages['present_coupons']?> ：<?=$svshow->price_format($vv['fee'],$SVConfigs['price_format']);?><?if($vv['quantity']>1){?>X<?=$vv['quantity']?><?}?>
+			<?}?>
 			<?}?>
 		<?}?>
 			
@@ -282,7 +292,7 @@ show_regions("");
 <?php echo $SCLanguages['payment'];?>:
 </p>
 <? echo $this->element('checkout_payment_confirm', array('cache'=>'+0 hour'));?>
-<?}else if(isset($payments)){?>
+<?}else if(isset($payments) && sizeof($payments)>0){?>
 <p class="address btn_list">
 <span class="l"></span><span class="r"></span>
 <?php echo $SCLanguages['payment'];?>:
@@ -299,8 +309,8 @@ show_regions("");
 <!--Payment End-->
 
 <!-- Points -->	
-<?if($SVConfigs['enable_points'] == 1){?>
 <div id="point">
+<?if($SVConfigs['enable_points'] == 1){?>
 <?if(isset($svcart['point'])){?>
 <p class="address btn_list">
 <span class="l"></span><span class="r"></span>
@@ -314,50 +324,44 @@ show_regions("");
 <?=$SCLanguages['use'].$SCLanguages['point'];?>: 
 </p>
 <? echo $this->element('checkout_point', array('cache'=>'+0 hour'));?>
-</div>
 <?}?>
 <?}?>	
+</div>
 <!--Points End -->
 
 <!-- 优惠券使用 start -->	
-<?if(isset($SVConfigs['use_coupons']) && $SVConfigs['use_coupons'] == 1){?>
 <div id="coupon">
+<?if(isset($SVConfigs['use_coupons']) && $SVConfigs['use_coupons'] == 1){?>
 <?if(isset($svcart['coupon'])){?>
 <p class="address btn_list">
 <span class="l"></span><span class="r"></span>
 <a href="javascript:change_coupon()" class="amember"><span><?=$SCLanguages['mmodify']?></span></a>
 <?=$SCLanguages['use'].$SCLanguages['coupon'];?>: 
 </p>
-<? echo $this->element('checkout_point_confirm', array('cache'=>'+0 hour'));?>
+<? echo $this->element('checkout_coupon_confirm', array('cache'=>'+0 hour'));?>
 <?}else{?>
 <p class="address btn_list">
 <span class="l"></span><span class="r"></span>
 <?=$SCLanguages['use'].$SCLanguages['coupon'];?>: 
 </p>
 <? echo $this->element('checkout_coupon', array('cache'=>'+0 hour'));?>
-</div>
 <?}?>
 <?}?>	
+</div>
  <!--优惠券使用 end --> 
  
 <!-- order_note start -->	
 <div id="order_note">
-<?if(isset($svcart['order_note'])){?>
+
 <p class="address btn_list">
 <span class="l"></span><span class="r"></span>
+<span id="change_remark" style="display:none">
 <a href="javascript:change_remark()" class="amember"><span><?=$SCLanguages['mmodify']?></span></a>
-<?=$SCLanguages['order'].$SCLanguages['remark'];?>: 
-</p>
-<? echo $this->element('checkout_point_confirm', array('cache'=>'+0 hour'));?>
-<?}else{?>
-<p class="address btn_list">
-<span class="l"></span><span class="r"></span>
+</span>
 <?=$SCLanguages['order'].$SCLanguages['remark'];?>: 
 </p>
 <? echo $this->element('checkout_remark', array('cache'=>'+0 hour'));?>
 </div>
-<?}?>
-
  <!--order_note end -->  
 <p class="address">
 <span class="l"></span><span class="r"></span>

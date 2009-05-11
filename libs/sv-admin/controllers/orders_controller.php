@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: orders_controller.php 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: orders_controller.php 1329 2009-05-11 11:29:59Z huangbo $
 *****************************************************************************/
 class OrdersController extends AppController {
 
@@ -887,7 +887,13 @@ function edit_order_info(){
 				$user_info['User']['point'] -= $back_point;
    				$this->User->save($user_info);
 			}
-                  
+				if($order_info['Order']['coupon_id'] > 0){
+                  		$coupon = $this->Coupon->findbyid($order_info['Order']['coupon_id']);
+                  		if(isset($coupon['Coupon'])){
+                  			$coupon['Coupon']['order_id'] = 0;
+                  			$this->Coupon->save($coupon['Coupon']);
+                  		}
+                  }
 			/* 退积分 end*/
 			if($this->configs['enable_auto_send_mail'] == 1 || $this->configs['enable_send_cancel_email'] == 1){
 	 			$products = array();
@@ -987,6 +993,14 @@ function edit_order_info(){
                   		$user_info['User']['point'] -= $back_point;
                   		$this->User->save($user_info);
                   }
+                  if($order_info['Order']['coupon_id'] > 0){
+                  		$coupon = $this->Coupon->findbyid($order_info['Order']['coupon_id']);
+                  		if(isset($coupon['Coupon'])){
+                  			$coupon['Coupon']['order_id'] = 0;
+                  			$this->Coupon->save($coupon['Coupon']);
+                  		}
+                  }
+                  //Coupon
                   /* 退积分 end*/		          
                   if($this->configs['enable_auto_send_mail'] == 1 || $this->configs['enable_send_invalid_email'] == 1){
 			        $products = array();

@@ -15,7 +15,7 @@
 <table cellpadding="0" cellspacing="0" class="address_list" id="checkout_shipping_choice">
 <tr class="list">
 <td width="29%" height="25" valign="middle" class="selece_input">
-<?=$SCLanguages['use']?><?=$SCLanguages['coupon']?> :<?=$svcart['coupon']['sn_code']?>， <?printf($SCLanguages['can_offset_fee'],$svcart['coupon']['fee']);?>
+&nbsp;&nbsp;&nbsp;&nbsp;<?=$SCLanguages['use']?><?=$SCLanguages['coupon']?> :<?=$svcart['coupon']['sn_code']?>， <?printf($SCLanguages['can_offset_fee'],$svcart['coupon']['fee']);?>
 <?if($svcart['coupon']['discount'] < 100){?>
 <?=$SCLanguages['coupon']?><?=$SCLanguages['discount']?>:<?=$svcart['coupon']['discount']?>
 <?}?>

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: points_controller.php 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: points_controller.php 1329 2009-05-11 11:29:59Z huangbo $
 *****************************************************************************/
 class PointsController extends AppController {
 
@@ -37,10 +37,7 @@ class PointsController extends AppController {
 			}
 			$this->set('names',$this->params['url']['name']);
 	   	}
-	   	/* 用户id */
-		if(isset($this->params['url']['user_id']) && $this->params['url']['user_id'] != ''){
-			$condition['and']['user_id'] = $this->params['url']['user_id'];
-	   	}
+
 	   	/* 开始时间 */
 		if(isset($this->params['url']['start_time']) && $this->params['url']['start_time'] != ''){
 	   	   $condition['and']['modified >='] = $this->params['url']['start_time'];
@@ -58,6 +55,15 @@ class PointsController extends AppController {
 	   	else {
 	   	   $condition['and']['modified <='] = date('Y-m-d')." 23:59:59";
 	   	   $this->set('end_time',date('Y-m-d'));
+	   	}
+	   	/* 用户id */
+		if(isset($this->params['url']['user_id']) && $this->params['url']['user_id'] != ''){
+			$condition = array();
+			$this->set('start_time','');
+			$this->set('end_time','');
+			
+			$this->set('names',$this->User->field('name',array('User.id ='=>$this->params['url']['user_id'])));
+			$condition['and']['user_id'] = $this->params['url']['user_id'];
 	   	}
 	   	/* post */
 		if($this->RequestHandler->isPost()){
@@ -92,32 +98,33 @@ class PointsController extends AppController {
 			$user_id = $UserPointLog_list[$k]['UserPointLog']['user_id'];
 			$User = $this->User->findById($user_id);	
 			$UserPointLog_list[$k]['UserPointLog']['name'] = $User['User']['name'];
-			/* 订单号 */
-			$Order = $this->Order->findById($v['UserPointLog']['type_id']);
-			$UserPointLog_list[$k]['UserPointLog']['order_code'] = $Order['Order']['order_code'];
+
 			/* 类型名 */
-			if($v['UserPointLog']['log_type'] == "a"){
+			if($v['UserPointLog']['log_type'] == "R"){
 				$UserPointLog_list[$k]['UserPointLog']['log_type'] = "注册赠送";
+				$UserPointLog_list[$k]['UserPointLog']['description'] = $v['UserPointLog']['system_note'];
 			}
-			else if($v['UserPointLog']['log_type'] == "b"){
+			else if($v['UserPointLog']['log_type'] == "B"){
 				$UserPointLog_list[$k]['UserPointLog']['log_type'] = "购买赠送";
+				/* 订单号 */
+				$Order = $this->Order->findById($v['UserPointLog']['type_id']);
+				$UserPointLog_list[$k]['UserPointLog']['description'] = "订单号：".$Order['Order']['order_code'];
 			}
-			else if($v['UserPointLog']['log_type'] == "c"){
+			else if($v['UserPointLog']['log_type'] == "O"){
 				$UserPointLog_list[$k]['UserPointLog']['log_type'] = "购买消费";
+				/* 订单号 */
+				$Order = $this->Order->findById($v['UserPointLog']['type_id']);
+				$UserPointLog_list[$k]['UserPointLog']['description'] = "订单号：".$Order['Order']['order_code'];
 			}
-			else if($v['UserPointLog']['log_type'] == "d"){
-				$UserPointLog_list[$k]['UserPointLog']['log_type'] = "推荐注册赠送";
+			else if($v['UserPointLog']['log_type'] == "A"){
+				$UserPointLog_list[$k]['UserPointLog']['log_type'] = "管理员操作";
+				$UserPointLog_list[$k]['UserPointLog']['description'] = $v['UserPointLog']['system_note'];
+				
 			}
-			else if($v['UserPointLog']['log_type'] == "e"){
-				$UserPointLog_list[$k]['UserPointLog']['log_type'] = "推荐购买赠送";
-			}
-			else if($v['UserPointLog']['log_type'] == "f"){
-				$UserPointLog_list[$k]['UserPointLog']['log_type'] = "管理员增加";
-			}
-			else if($v['UserPointLog']['log_type'] == "g"){
-				$UserPointLog_list[$k]['UserPointLog']['log_type'] = "管理员扣除";
-			}
-			else $UserPointLog_list[$k]['UserPointLog']['log_type'] = "其他";
+			else {
+				$UserPointLog_list[$k]['UserPointLog']['log_type'] = "其他";
+				$UserPointLog_list[$k]['UserPointLog']['description'] = $v['UserPointLog']['system_note'];
+			}		
 		}
 	   	$this->set('UserPointLog_list',$UserPointLog_list);
 	}

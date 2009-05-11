@@ -28,8 +28,7 @@ class CouponsController extends AppController {
 		$this->page_init();
 		$this->pageTitle = $this->languages['coupon']." - ".$this->configs['shop_title'];
 	    $page=1;
-//	    $rownum=isset($this->configs['show_count']) ? $this->configs['show_count']:((!empty($rownum)) ?$rownum:10);
-		$rownum = 10;
+	   $rownum=isset($this->configs['show_count']) ? $this->configs['show_count']:((!empty($rownum)) ?$rownum:20);
 		$coupons = $this->Coupon->findall("Coupon.user_id = ".$user_id." and Coupon.order_id = 0",'',"Coupon.created DESC","$rownum",$page);
 		if(is_array($coupons) && sizeof($coupons)>0){
 			$this->CouponType->set_locale($this->locale);
@@ -38,9 +37,9 @@ class CouponsController extends AppController {
 				$coupon_type = $this->CouponType->findbyid($v['Coupon']['coupon_type_id']);
 				$coupons[$k]['Coupon']['name'] = $coupon_type['CouponTypeI18n']['name'];
 				$coupons[$k]['Coupon']['use_end_date'] = substr($coupon_type['CouponType']['use_end_date'],0,10);
-				$coupons[$k]['Coupon']['min_products_amount'] = $coupon_type['CouponType']['min_products_amount'];
+				$coupons[$k]['Coupon']['min_amount'] = $coupon_type['CouponType']['min_amount'];
 				$coupons[$k]['Coupon']['fee'] = $coupon_type['CouponType']['money'];
-					$coupons[$k]['Coupon']['is_use'] = 0;
+				$coupons[$k]['Coupon']['is_use'] = 0;
 				}else{
 					unset($coupons[$k]['Coupon']);
 				}
@@ -51,7 +50,7 @@ class CouponsController extends AppController {
 
 	    $parameters=Array($rownum,$page);
 	    $options=Array();
-	    $condition = "Coupon.user_id = ".$user_id;
+	    $condition = "Coupon.user_id = ".$user_id." and  Coupon.order_id = 0";
 	    $page= $this->Pagination->init($condition,"",$options,$total,$rownum,$sortClass);
 		$this->set('coupons',$coupons);
 		//当前位置

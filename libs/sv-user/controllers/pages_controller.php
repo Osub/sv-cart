@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: pages_controller.php 1232 2009-05-06 12:14:41Z huangbo $
+ * $Id: pages_controller.php 1329 2009-05-11 11:29:59Z huangbo $
 *****************************************************************************/
 class PagesController extends AppController {
 	var $name = 'Pages';
@@ -68,10 +68,8 @@ class PagesController extends AppController {
 	}
 	
 	function login(){
-
 		        if($this->RequestHandler->isPost()){
 		        	  unset($_SESSION['User']);
-                       //pr($_POST);
 				      Configure::write('debug', 0);
 				      //type定义 0:没有错误 1:报错 2:其他
 				      $result['type'] = 2;
@@ -746,10 +744,9 @@ class PagesController extends AppController {
 		        }
 		}
 		//判断注册是否送积分 
-		if($this->configs['register_gift_points'] == 1){
+		if(isset($this->configs['register_gift_points']) && $this->configs['register_gift_points'] == 1){
 			$user_info['User']['point'] += $this->configs['first_points'];
 			$this->User->save($user_info);
-			
 			$user_point_log = array("id"=>"",
 									"user_id" => $user_info['User']['id'],
 									"point" => $this->configs['first_points'],
@@ -828,14 +825,16 @@ class PagesController extends AppController {
 		
 	//	header("location:/user/");
 		$this->pageTitle = $this->languages['register'].$this->languages['successfully']." - ".$this->configs['shop_title'];
-		if(!isset($_SESSION['cart_back_url'])){
+		if(isset($_SESSION['back_url'])){
+			$_SESSION['cart_back_url'] = $_SESSION['back_url'];
+		}else if(!isset($_SESSION['cart_back_url'])){
 			$host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
 			$url = "http://".$host.$this->webroot;
 		}else{
 			$url = "/";
  		}
 	    $this->flash($this->languages['register'].$this->languages['successfully'].",".sprintf($this->languages['welcome_to'],$this->configs['shop_name']),$url,'');
-	}
+		}
 	}
 		//注册邮件
  	function send_verify_email($to_email,$user_id){

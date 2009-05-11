@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1028 2009-04-24 12:23:26Z huangbo $
+ * $Id: index.ctp 1327 2009-05-11 11:01:20Z huangbo $
 *****************************************************************************/
 ?>
 <?=$javascript->link('/../js/yui/treeview-min.js');?>
@@ -114,11 +114,11 @@ function swfuploadimg() {
 		upload_url: webroot_dir+"images/upload/",	// Relative to the SWF file
 		post_params: {
 			"PHPSESSID" : "<?=session_id(); ?>",
+			"session_config_str" : '<?=$session_config_str; ?>',
 			"session_operator_str" : '<?=$session_operator_str; ?>',
-			"Admin_Config" : '<?=$Admin_Config; ?>',
-			"Action_List" : '<?=$Action_List; ?>',
-			"Admin_Locale" : '<?=$Admin_Locale; ?>',
-			"Operator" : '<?=$Operator; ?>',
+			"session_admin_config_str" : '<?=$session_admin_config_str; ?>',
+			"session_action_list_str" : '<?=$session_action_list_str; ?>',
+			"session_admin_locale_str" : '<?=$session_admin_locale_str; ?>',
 			"cart_back_url":'<?=$cart_back_url;?>',
 			"img_addr":img_addr,
 			".what" : "OKAY"
@@ -169,14 +169,13 @@ window.onload = function(){
 function swf_upload_addr(){
 	swfu.setPostParams({
 			"PHPSESSID" : "<?=session_id(); ?>",
+			"session_config_str" : '<?=$session_config_str; ?>',
 			"session_operator_str" : '<?=$session_operator_str; ?>',
-			"Admin_Config" : '<?=$Admin_Config; ?>',
-			"Action_List" : '<?=$Action_List; ?>',
-			"Admin_Locale" : '<?=$Admin_Locale; ?>',
-			"Operator" : '<?=$Operator; ?>',
+			"session_admin_config_str" : '<?=$session_admin_config_str; ?>',
+			"session_action_list_str" : '<?=$session_action_list_str; ?>',
+			"session_admin_locale_str" : '<?=$session_admin_locale_str; ?>',
 			"cart_back_url":'<?=$cart_back_url;?>',
 			"img_addr":img_addr,
-			"HELLO-WORLD" : "Here I Am",
 			".what" : "OKAY"
 		});
 		

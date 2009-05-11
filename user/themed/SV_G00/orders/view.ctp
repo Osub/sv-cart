@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: view.ctp 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: view.ctp 1329 2009-05-11 11:29:59Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
@@ -135,6 +135,8 @@
 	  	  </div>
 	  	  <?}?>
   <?}?>
+  	  
+<?if(isset($card) && sizeof($card)>0){?>
   <?foreach($card as $k=>$v){?>
 	  <ul class="already_shop already_list">
 	  <li class="name">
@@ -160,6 +162,8 @@
 	  	  <?=$svshow->price_format($v['Card']['fee']*$v['Card']['quntity'],$SVConfigs['price_format']);?>
 	  	  	  </li></ul>
   <?}?>
+  	<?}?>
+  		<?if(isset($packaging) && sizeof($packaging)>0){?>
   <?foreach($packaging as $k=>$v){?>
 	  <ul class="already_shop already_list">
 	  <li class="name">
@@ -184,7 +188,7 @@
 	  	  <li class="number"><?echo $v['Packaging']['quntity']?></li><li class="subtotal">
 	  	  <?=$svshow->price_format($v['Packaging']['fee']*$v['Packaging']['quntity'],$SVConfigs['price_format']);?>
 	  	  	  </li></ul>
-  <?}?>  			  
+  <?}?> <?}?>		  
   			  
   	 	  </div>
 	  <p class="saves_many"><?=$SCLanguages['amount'].$SCLanguages['subtotal']?>
@@ -262,7 +266,7 @@
 		<?if(isset($point_log['UserPointLog']['point']) && $point_log['UserPointLog']['point']>0){?>
 		<?$fee1=1;?>
 		<?=$SCLanguages['use']?><?=$SCLanguages['point']?>: 
-	  	  <?=$svshow->price_format($point_log['UserPointLog']['point'],$SVConfigs['price_format']);?>
+	  	  <?=$svshow->price_format($order_info['Order']['point_fee'],$SVConfigs['price_format']);?>
 		<?}?>
 		<?if(isset($coupon_fee)){?>
 		<?$fee1=1;?>
@@ -277,7 +281,7 @@
 		<?=$SCLanguages['order']?><?=$SCLanguages['discount']?>: 
 	  	  <?=$svshow->price_format($order_info['Order']['discount'],$SVConfigs['price_format']);?>
 		<?}?>			
-		<?if(isset($balance_log['UserBalanceLog']['amount'])){?>
+		<?if(isset($balance_log['UserBalanceLog']['amount']) && $balance_log['UserBalanceLog']['amount'] >0){?>
 		<?$fee1=1;?>	  <br/>	
 		<?=$SCLanguages['use']?><?=$SCLanguages['balance']?>:
 	  	  <?=$svshow->price_format($balance_log['UserBalanceLog']['amount'],$SVConfigs['price_format']);?>

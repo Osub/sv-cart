@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1156 2009-04-30 09:16:36Z huangbo $
+ * $Id: index.ctp 1327 2009-05-11 11:01:20Z huangbo $
 *****************************************************************************/
 ?>
 <style type='text/css'>
@@ -196,7 +196,7 @@ function typechange(){
 		<?php }}?>
 		</select>
 </span>	<span id="select2">
-					<select  name="pctypeid" id='pcTypeId' <!--onchange='flash_change(this.options[this.options.selectedIndex].value);'--> >
+					<select  name="pctypeid" id='pcTypeId' onchange='flash_change(this.options[this.options.selectedIndex].value);' >
 			<option value='0'>全部页面</option>
 <? if(isset($pc) && sizeof($pc)>0){
 		 foreach($pc as $k => $v){?>
@@ -204,7 +204,7 @@ function typechange(){
 		<?php }}?>
 		</select>
 	</span>			<span id="select3">			
-		<select  name="actypeid" id='acTypeId' <!--onchange='flash_change(this.options[this.options.selectedIndex].value);' -->  >
+		<select  name="actypeid" id='acTypeId' onchange='flash_change(this.options[this.options.selectedIndex].value);' >
 			<option value='0'>全部页面</option>
 <? if(isset($ac) && sizeof($ac)>0){
 		 foreach($ac as $k => $v){?>
