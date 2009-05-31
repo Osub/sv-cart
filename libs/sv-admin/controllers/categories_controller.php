@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: categories_controller.php 1327 2009-05-11 11:01:20Z huangbo $
+ * $Id: categories_controller.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class CategoriesController extends AppController {
 
@@ -28,6 +28,9 @@ class CategoriesController extends AppController {
 		$this->pageTitle = "分类管理" ." - ".$this->configs['shop_name'];
 		
 	    if($type=='P'){ //统计商品小计
+		    /*判断权限*/
+			$this->operator_privilege('goods_category_view');
+			/*end*/
 	    	$this->navigations[] = array('name'=>'商品分类管理','url'=>'/categories/index/P');
 			$this->set('navigations',$this->navigations);
 		    $categories_products_count=$this->ProductsCategory->findcountassoc();
@@ -38,6 +41,9 @@ class CategoriesController extends AppController {
 		}
 	    
 	   	if($type=='A'){ //统计文章小计
+		    /*判断权限*/
+			$this->operator_privilege('article_category_view');
+			/*end*/
 	   		$this->navigations[] = array('name'=>'文章分类管理','url'=>'/categories/index/A');
 	   		$this->set('navigations',$this->navigations);
 		    $categories_articles_count = $this->ArticleCategory->findcountassoc();
@@ -59,6 +65,9 @@ class CategoriesController extends AppController {
 		/*判断权限*/
 		//	$user->controller('categories_edit');
 		if($type == 'P'){
+		    /*判断权限*/
+			$this->operator_privilege('goods_category_edit');
+			/*end*/
 			$this->pageTitle = "编辑商品分类 - 商品分类管理" ." - ".$this->configs['shop_name'];
 			$this->navigations[] = array('name'=>'商品分类管理','url'=>'/categories/index/P');
 			$this->navigations[] = array('name'=>'编辑商品分类','url'=>'');
@@ -85,14 +94,24 @@ class CategoriesController extends AppController {
               	     	 }
               	     }
 				$this->Category->save($this->data); //关联保存
-				
-				
-				$this->flash("编辑成功",'/categories/edit/P/'.$id,10);
+				foreach( $this->data['CategoryI18n'] as $k=>$v ){
+					if($v['locale'] == $this->locale){
+						$userinformation_name = $v['name'];
+					}
+				}
+				$id=$this->Category->id;
+
+				$this->flash("商品分类  ".$userinformation_name." 编辑成功。点击继续编辑该商品分类。",'/categories/edit/P/'.$id,10);
+
+
 				
 			}
 		}
 		
 		if($type == 'A'){
+		    /*判断权限*/
+			$this->operator_privilege('article_category_edit');
+			/*end*/
 			$this->pageTitle = "编辑文章分类 - 文章分类管理" ." - ".$this->configs['shop_name'];
 			$this->navigations[] = array('name'=>'文章分类管理','url'=>'/categories/index/A');
 			$this->navigations[] = array('name'=>'编辑文章分类','url'=>'');
@@ -121,13 +140,21 @@ class CategoriesController extends AppController {
               	    
 				$this->Category->save($this->data); //关联保存
 				$this->params['controller'] = "categories/index/A";
-				$this->flash("编辑成功",'/categories/edit/A/'.$id,10);
+				foreach( $this->data['CategoryI18n'] as $k=>$v ){
+					if($v['locale'] == $this->locale){
+						$userinformation_name = $v['name'];
+					}
+				}
+				$id=$this->Category->id;
+
+				$this->flash("文章分类  ".$userinformation_name." 编辑成功。点击继续编辑该文章分类。",'/categories/edit/A/'.$id,10);
 				
 			}
 		}	
 			$this->data=$this->Category->localeformat($id);
 			//取树形结构
-			$categories_tree=$this->Category->tree($this->data['Category']['type'],$this->locale);
+			$categories_tree=$this->Category->tree($this->data['Category']['type'],$this->locale,$id);
+			//pr($categories_tree);
 			$this->set('categories_tree',$categories_tree);
 			$this->set('type',$type);
 	}
@@ -143,6 +170,9 @@ class CategoriesController extends AppController {
 		//	$user->controller('categories_edit');
 		/*新增商品分类*/
 		if($type=='P'){
+		    /*判断权限*/
+			$this->operator_privilege('goods_category_add');
+			/*end*/
 			$this->pageTitle = "新增商品分类 - 商品分类管理"." - ".$this->configs['shop_name'];
 			$this->navigations[] = array('name'=>'商品分类管理','url'=>'/categories/index/P');
 			$this->navigations[] = array('name'=>'新增商品分类','url'=>'');
@@ -157,7 +187,7 @@ class CategoriesController extends AppController {
 				$this->data['Category']['img02'] = str_replace("temp", $new_id, $this->data['Category']['img02']);
 					
 				
-				$this->Category->save($this->data['Category']); //关联保存
+				$this->Category->saveall($this->data['Category']); //关联保存
 				$id=$this->Category->id;
 				$new_id = $id;
 				if(is_array($this->data['CategoryI18n']))
@@ -182,12 +212,19 @@ class CategoriesController extends AppController {
 					$img02 = str_replace("temp", $new_id, $img02);
 					$v['img02'] = $img02;
 					
-					$this->CategoryI18n->save($v); 
+					$this->CategoryI18n->saveall($v); 
 				}
 				$id = $this->Category->getLastInsertId();
 			  	$category = $this->Category->findById($id);
              	$category_name = $category['CategoryI18n']['name'];
-				$this->flash("添加成功",'/categories/edit/P/'.$id,10);
+				foreach( $this->data['CategoryI18n'] as $k=>$v ){
+					if($v['locale'] == $this->locale){
+						$userinformation_name = $v['name'];
+					}
+				}
+				$id=$this->Category->id;
+
+				$this->flash("商品分类  ".$userinformation_name." 添加成功。点击继续编辑该商品分类。",'/categories/edit/P/'.$id,10);
 
 			}		
 			//取树形结构
@@ -196,6 +233,9 @@ class CategoriesController extends AppController {
 			}
 			/*新增商品分类*/
 			if($type=='A'){
+			    /*判断权限*/
+				$this->operator_privilege('article_category_add');
+				/*end*/
 				$this->pageTitle = "新增文章分类 - 文章分类管理"." - ".$this->configs['shop_name'];
 				$this->navigations[] = array('name'=>'文章分类管理','url'=>'/categories/index/A');
 				$this->navigations[] = array('name'=>'新增文章分类','url'=>'');
@@ -205,7 +245,7 @@ class CategoriesController extends AppController {
 					$this->data['Category']['img01'] = str_replace("temp", $new_id, $this->data['Category']['img01']);
 					$this->data['Category']['img02'] = str_replace("temp", $new_id, $this->data['Category']['img02']);
 					
-					$this->Category->save($this->data['Category']); //关联保存
+					$this->Category->saveall($this->data['Category']); //关联保存
 					$id=$this->Category->id;
 					$new_id = $id;
 					if(is_array($this->data['CategoryI18n']))
@@ -231,14 +271,21 @@ class CategoriesController extends AppController {
 						$img02 = str_replace("temp", $new_id, $img02);
 						$v['img02'] = $img02;
 
-						$this->CategoryI18n->save($v); 
+						$this->CategoryI18n->saveall($v); 
 					}				
 				
 				$id = $this->Category->getLastInsertId();
 			  	$category = $this->Category->findById($id);
              	$category_name = $category['CategoryI18n']['name'];
              	$this->params['controller'] = "categories/index/A";
-				$this->flash("添加成功",'/categories/edit/A/'.$id,10);
+				foreach( $this->data['CategoryI18n'] as $k=>$v ){
+					if($v['locale'] == $this->locale){
+						$userinformation_name = $v['name'];
+					}
+				}
+				$id=$this->Category->id;
+
+				$this->flash("文章分类  ".$userinformation_name." 编辑成功。点击继续编辑该文章分类。",'/categories/edit/A/'.$id,10);
 
 				}
 			$categories_tree=$this->Category->tree('A',$this->locale);
@@ -265,10 +312,16 @@ class CategoriesController extends AppController {
 	function remove($type='P',$id){
 		//判断子分类，子商品是否存在
 		if($type == 'P'){
+			/*判断权限*/
+			$this->operator_privilege('goods_category_edit');
+			/*end*/
 			$this->Category->del($id);
 			$this->flash("删除成功",'/categories/index/P','');
 		}
 		if($type == 'A'){
+			/*判断权限*/
+			$this->operator_privilege('article_category_edit');
+			/*end*/
 			$this->Category->del($id);
 			$this->flash("删除成功",'/categories/index/A','');
 		}

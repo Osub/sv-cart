@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: default_full.ctp 899 2009-04-22 15:03:02Z huangbo $
+ * $Id: default_full.ctp 1841 2009-05-27 06:51:37Z huangbo $
 *****************************************************************************/
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -21,22 +21,9 @@
 <meta name="keywords" content="<?php if(isset($meta_keywords)){echo $meta_keywords;} ?>" />
 <title><?php echo $title_for_layout; ?> - Powered by Seevia</title>
 <?echo $html->meta('icon');
-echo $html->css('style');
-if(isset($_SESSION['Config']['locale'])){
-echo $html->css($_SESSION['Config']['locale']);
-}else{
-echo $html->css('zh_cn');
-}
-echo $scripts_for_layout;
+$lang_css = isset($_SESSION['Config']['locale']) ? $_SESSION['Config']['locale']:'chi';
 ?>
-<?=$javascript->link('/js/yui/yahoo-dom-event.js');?>
-<?=$javascript->link('/js/yui/container_core-min.js');?>
-<?=$javascript->link('/js/yui/menu-min.js');?>
-<?=$javascript->link('/js/yui/element-beta-min.js');?>
-<?=$javascript->link('/js/yui/animation-min.js');?>
-<?=$javascript->link('/js/yui/connection-min.js');?>
-<?=$javascript->link('/js/yui/json-min.js');?>
-<?=$javascript->link('/js/yui/container-min.js');?>
+
 
 <script type="text/javascript">
 	
@@ -54,20 +41,47 @@ var <?php echo $k;?> = "<?php echo $v;?>";
 <? }?>
 <?}?>
 </script>
-<?=$javascript->link('common');?>
+
+<?=$minify->css(array($this->themeWeb.'css/layout',$this->themeWeb.'css/component',$this->themeWeb.'css/login',$this->themeWeb.'css/menu',$this->themeWeb.'css/containers',$this->themeWeb.'css/autocomplete',$this->themeWeb.'css/style',$this->themeWeb.'css/'.$lang_css));?>
+<?=$minify->js(array('/js/yui/yahoo-dom-event.js','/js/yui/container_core-min.js','/js/yui/menu-min.js','/js/yui/element-beta-min.js','/js/yui/animation-min.js','/js/yui/connection-min.js','/js/yui/container-min.js','/js/yui/json-min.js',$this->themeWeb.'js/common.js','/js/swfobject.js'));?>
 </head>
 <body class="svcart-skin-g00" id="svcart-com" style="visibility:hidden">
 <?php echo $this->element('dragl', array('cache'=>'+0 hour'));?>
-	<div id="container">
-		<div id="header">
-			<?php echo $this->element('header', array('cache'=>'+0 hour','languages'=>(isset($languages))?$languages:array(),'navigations_top'=>(isset($navigations['T']))?$navigations['T']:array()));?>
-		</div>
-		<div id="content"><?php echo $content_for_layout; ?></div>
+<div id="header">
+	<?php echo $this->element('header', array('cache'=>'+0 hour','languages'=>(isset($languages))?$languages:array(),'navigations_top'=>(isset($navigations['T']))?$navigations['T']:array()));?>
+</div>
+<div id="container">
+	<div id="content"><?php echo $content_for_layout; ?></div>
+</div>
+<div id="footer">
+	<? echo $this->element('footer', array('cache'=>'+0 hour','categories_tree'=>(isset($categories_tree))?$categories_tree:array(),'brands'=>(isset($brands))?$brands:array(),'navigations_footer'=>(isset($navigations['F']))?$navigations['F']:array()));?>
+</div>
+<?php echo $cakeDebug; ?>
 	
-	<div id="footer">
-		<? echo $this->element('footer', array('cache'=>'+0 hour','categories_tree'=>(isset($categories_tree))?$categories_tree:array(),'brands'=>(isset($brands))?$brands:array(),'navigations_footer'=>(isset($navigations['F']))?$navigations['F']:array()));?>
+<!--对话框-->
+<input type="hidden" value="" id="img_src_text_number">
+<input type="hidden" value="" id="assign_dir">
+<div id="layer_dialog"  style="display:none;background:#fff;">
+<div id="loginout" >
+	<h1><b></b></h1>
+	<div id="buyshop_box">
+		<p class="login-alettr">
+		<?=$html->image("msg.gif",array('align'=>'absmiddle','class'=>'sub_icon'));?>
+		<b>
+		<span id="dialog_content"></span>
+		</b>
+		</p>
+		<br /><input type="hidden" id="confirm">
+
+		<p class="buy_btn mar" ><span id="button_replace">
+		<a href='javascript:layer_dialog_obj.hide();'><?=$SCLanguages['cancel']?></a>
+		<a href='javascript:confirm_record();'><?=$SCLanguages['confirm']?></a>
+		</span></p>
 	</div>
-	</div>
-	<?php echo $cakeDebug; ?>
+	<p><?=$html->image("loginout-bottom.gif");?></p>
+</div>
+</div>
+<!--End 对话框-->		
+	
 </body>
 </html>

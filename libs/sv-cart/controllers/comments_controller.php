@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: comments_controller.php 1162 2009-04-30 11:17:42Z huangbo $
+ * $Id: comments_controller.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class CommentsController extends AppController {
 
@@ -25,7 +25,8 @@ class CommentsController extends AppController {
 			$status = 0;
 			if(isset($this->configs['enable_user_comment_check']) && $this->configs['enable_user_comment_check'] == 0){
 				$status = 1;
-			}
+			}			
+			
 			$comment=array(
 				'type'=>	isset($_POST['type'])   ? trim($_POST['type']): '',
 				'type_id'=>	isset($_POST['id'])   ? intval($_POST['id'])  : 0,
@@ -54,6 +55,7 @@ class CommentsController extends AppController {
 	   	$this->set("result",$result);
 		$this->layout="ajax";
 	}
+	
 
 }
 

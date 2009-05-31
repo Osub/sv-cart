@@ -9,17 +9,17 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1232 2009-05-06 12:14:41Z huangbo $
+ * $Id: index.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ?>
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+
+
 <?=$javascript->link('listtable');?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
 <!--Search-->
 <div class="search_box">
-<?php echo $form->create('',array('action'=>'','name'=>"SearchForm","type"=>"get"));?>
+<?php echo $form->create('',array('action'=>'','name'=>"SearchForm","type"=>"get",'onsubmit'=>"return false"));?>
 	<dl>
 	<dt style="padding-top:0;"><?=$html->image('serach_icon.gif')?></dt>
 	<dd><p class="reg_time">注册时间：<input type="text" id="date" name="date" value="<?=@$date?>"  readonly/><button type="button" id="show" title="Show Calendar">
@@ -47,7 +47,7 @@
 <? echo $form->end();?>
 <p class="add_categories"><strong><?=$html->link($html->image('add.gif',array('align'=>'absmiddle')).'新增会员','/users/add',array(),false,false);?></strong></p>
 
-<?php echo $form->create('users',array('action'=>'','name'=>"UserForm","type"=>"get"));?>
+<?php echo $form->create('users',array('action'=>'','name'=>"UserForm","type"=>"get",'onsubmit'=>"return false"));?>
 
 <div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
 	<ul class="product_llist users_title">
@@ -101,11 +101,13 @@
 function batch_action() 
 { 
 document.UserForm.action=webroot_dir+"users/batch";
+document.UserForm.onsubmit= "";
 document.UserForm.submit(); 
 } 
 function search_user() 
 { 
 document.SearchForm.action=webroot_dir+"users/";
+document.SearchForm.onsubmit= "";
 document.SearchForm.submit(); 
 } 
 

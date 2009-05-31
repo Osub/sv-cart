@@ -12,8 +12,8 @@
  * $Id: view.ctp 1210 2009-05-06 03:50:23Z shenyunfeng $
 *****************************************************************************/
 ?>
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+
+
 
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
@@ -45,7 +45,8 @@
 		<?foreach($rank_list as $k=>$v){?>
 		  <option value="<?echo $v['UserRank']['id']?>" <?if($v['UserRank']['id'] == $this->data['User']['rank']){?>selected<?}?>><?echo $v['UserRank']['name']?></option>
 		<?}}?>
-		</select></dd></dl>
+		</select></dd></dl>	
+
 		<dl style="padding:5px 0;*padding:6px 0;"><dt style="padding-top:1px" class="config_lang">性别：</dt><dd class="best_input">
 		<input type="radio" name="data[User][sex]" <?if($this->data['User']['sex'] == 0){?>checked="checked"<?}?> value="0" checked />保密
 		<input type="radio" name="data[User][sex]" <?if($this->data['User']['sex'] == 1){?>checked="checked"<?}?> value="1"/>男

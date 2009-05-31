@@ -9,14 +9,14 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: checkout_promotion.ctp 1093 2009-04-28 04:02:04Z huangbo $
+ * $Id: checkout_promotion.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <p class="address btn_list border_bottom">
 <span class="l"></span><span class="r"></span>
 <?=$SCLanguages['promotion'].$SCLanguages['activity'];?>:
 </p>
-<table cellpadding="0" cellspacing="0" class="address_table" border=0 align=center id="checkout_shipping_choice">
+<table cellpadding="0" cellspacing="0" class="address_table" border=0 align=center id="checkout_shipping_choice" style="width:97.5%;">
     <tr>
     <td class="lan-name first"><?php echo $SCLanguages['title'];?></td>
     <td class="lan-name first"><?php echo $SCLanguages['content'];?></td>

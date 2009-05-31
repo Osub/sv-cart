@@ -135,16 +135,6 @@ function searchProducts(){
 
 
 
-function insert_products(){
-		var product_name = document.getElementById('product_name');
-		
-		if(product_name.value!=""){
-			document.UpdateOrder.submit();
-		}else{
-			layer_dialog_show("请选择商品!","",3);
-		}
-   	}
-
 
 
 
@@ -364,10 +354,166 @@ function orderaction(obj){
 	}
 	//返回
 	function come_to_back(){
-		document.getElementById("ship_detail").style.display = "none";
-		document.getElementById("unpay_detail").style.display = "none";
-		document.getElementById("cancel_detail").style.display = "none";
-		document.getElementById("return_detail").style.display = "none";
+		document.getElementById("ship_detail_id").style.display = "none";
+		document.getElementById("unpay_detail_id").style.display = "none";
+		document.getElementById("cancel_detail_id").style.display = "none";
+		document.getElementById("return_detail_id").style.display = "none";
 		document.getElementById('handle_detail').style.display = "block";
 
 	}
+	
+	
+	
+	
+	
+	
+	function baseinfo_submit(){
+		//其他信息
+		var data_order_note=GetId('data_order_note').value;//备注
+		var data_order_pack_name=GetId('data_order_pack_name').value;//包装
+		var data_order_how_oos=GetId('data_order_how_oos').value;//缺货处理
+		var data_order_invoice_content=GetId('data_order_invoice_content').value;//发票内容
+		var data_order_invoice_payee=GetId('data_order_invoice_payee').value;//发票抬头
+		var data_order_invoice_type=GetId('data_order_invoice_type').value;//发票类型
+		var data_order_to_buyer=GetId('data_order_to_buyer').value;//商家给客户的留言
+		var data_order_postscript=GetId('data_order_postscript').value;//客户给商家留言
+			
+		
+		//收货人信息
+		var OrderConsignee=GetId('OrderConsignee').value;//收货人
+		var AddressRegion0=GetId('AddressRegion0').value;//区域
+		var AddressRegion1=GetId('AddressRegion1').value;//区域
+		var AddressRegion2=GetId('AddressRegion2').value;//区域
+		
+		var OrderSignBuilding=GetId('OrderSignBuilding').value;//标志性建筑
+		var Ordermobile=GetId('Ordermobile').value;//手机
+		var OrderTelephone=GetId('OrderTelephone').value;//电话
+		var OrderZipcode=GetId('OrderZipcode').value;//邮编
+		var OrderAddress=GetId('OrderAddress').value;//地址
+		var OrderEemail=GetId('OrderEemail').value;//电子邮件
+		var OrderBestTime=GetId('OrderBestTime').value;//
+			
+		//基本信息
+		var order_payment_obj = GetName('data[Order][payment_id]');//支付方式obj
+		for( var i=0;i<=order_payment_obj.length-1;i++ ){
+			if(order_payment_obj[i].checked){
+				var order_payment_id = order_payment_obj[i].value;//支付方式
+			}
+		}
+		var order_shipping_obj = GetName('data[Order][shipping_id]');//配送方式obj
+		for( var i=0;i<=order_shipping_obj.length-1;i++ ){
+			if(order_shipping_obj[i].checked){
+				var order_shipping_id = order_shipping_obj[i].value;//配送方式
+			}
+		}
+		
+		var act_type = GetId('act_type').value
+		var data_order_id = GetId('data_order_id').value
+		YAHOO.example.container.wait.show();
+		var sUrl = webroot_dir+"orders/edit_order_info/?status=1";
+		var postData = "data[Order][id]="+data_order_id+"&act_type="+act_type+"&data[Order][payment_id]="+order_payment_id+"&data[Order][shipping_id]="+order_shipping_id+"&data[Order][consignee]="+OrderConsignee+"&data[Order][email]="+OrderEemail+"&data[Order][address]="+OrderAddress+"&data[Order][zipcode]="+OrderZipcode+"&data[Order][telephone]="+OrderTelephone+"&data[Order][mobile]="+Ordermobile+"&data[Order][sign_building]="+OrderSignBuilding+"&data[Order][best_time]="+OrderBestTime+"&data[Order][postscript]="+data_order_postscript+"&data[Order][to_buyer]="+data_order_to_buyer+"&data[Order][invoice_type]="+data_order_invoice_type+"&data[Order][invoice_payee]="+data_order_invoice_payee+"&data[Order][invoice_content]="+data_order_invoice_content+"&data[Order][how_oos]="+data_order_how_oos+"&data[Order][pack_name]="+data_order_pack_name+"&data[Order][note]="+data_order_note+"&data[Address][Region][0]="+AddressRegion0+"&data[Address][Region][1]="+AddressRegion1+"&data[Address][Region][2]="+AddressRegion2;
+
+		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl,baseinfo_submit_callback,postData);
+
+	}
+	
+	var baseinfo_submit_Success = function(o){
+		
+		try{
+			var result = YAHOO.lang.JSON.parse(o.responseText);
+			loading_operate_information(result.order_id);
+		}catch (e){   
+			alert("Invalid data");
+			alert(o.responseText);
+		}
+		YAHOO.example.container.wait.hide();
+		layer_dialog();
+        layer_dialog_show(result.message,"",3);
+     	
+     }
+	var baseinfo_submit_Failure = function(o){}
+	var baseinfo_submit_callback ={
+		success:baseinfo_submit_Success,
+		failure:baseinfo_submit_Failure,
+		timeout : 300000,
+		argument: {}
+	};
+	
+	
+//加入订单
+function insert_productses(){
+
+	var product_number = GetId('product_number').value;//数量
+	var shop_price = GetId('shop_price').value//价格
+	var brand_id = GetId('brand_id').value//品牌
+	var product_brand = GetId('product_brand').value//品牌
+	var product_cat = GetId('product_cat').value//分类
+
+	var cat_id = GetId('cat_id').value//分类
+	var product_code = GetId('product_code').value//货号
+	var product_name = GetId('product_name').value;//商品名称
+		
+	var order_id = GetId('order_id').value;
+	var product_id = GetId('product_id').value;
+	var insert_products = GetId('insert_products').value;
+	YAHOO.example.container.wait.show();
+	var sUrl = webroot_dir+"orders/edit_order_info/?status=1";
+	var postData = "product_number="+product_number+"&shop_price="+shop_price+"&brand_id="+brand_id+"&product_brand="+product_brand+"&product_cat="+product_cat+"&cat_id="+cat_id+"&product_code="+product_code+"&product_name="+product_name+"&order_id="+order_id+"&act_type="+insert_products+"&product_id="+product_id+"&productslist="+product_id;
+	
+		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl,baseinfo_submit_callback,postData);
+		
+}
+function update_order_product(){
+	var order_id = GetId('order_id').value;
+	var product_attrbute = GetName('product_attrbute[]');//属性
+	var product_quntity = GetName('product_quntity[]');//数量
+	var product_price = GetName('product_price[]');//价格
+	var rec_id = GetName('rec_id[]');
+	var product_str = "test=test";
+	for( var i=0;i<=product_attrbute.length-1;i++ ){
+		product_str+="&product_attrbute["+i+"]="+product_attrbute[i].value;
+		product_str+="&product_quntity["+i+"]="+product_quntity[i].value;
+		product_str+="&product_price["+i+"]="+product_price[i].value;
+		product_str+="&rec_id["+i+"]="+rec_id[i].value;
+		
+	}
+	//alert(product_str);
+	YAHOO.example.container.wait.show();
+	var sUrl = webroot_dir+"orders/edit_order_info/?status=1";
+	var request = YAHOO.util.Connect.asyncRequest('POST', sUrl,baseinfo_submit_callback,product_str+"&act_type=products&order_id="+order_id);
+		
+}
+	
+//  费用信息
+
+function order_fee_information(){
+	var order_id = GetId('order_id').value;
+	var tax = GetId('tax').value;//发票税额
+	var shipping_fee = GetId('shipping_fee').value;//配送费用
+	var insure_fee = GetId('insure_fee').value;//保价费用
+	var payment_fee = GetId('payment_fee').value;//支付费用
+	var pack_fee = GetId('pack_fee').value;//包装费用
+	var card_fee = GetId('card_fee').value;//贺卡费用
+	var discount = GetId('discount').value;//折扣
+	//var tax = GetId('tax').value;//使用红包
+	
+	var subtotal = GetId('subtotal').value;//商品总价
+	var coupon_fee_id = GetId('coupon_fee_id').value;//使用红包
+
+	YAHOO.example.container.wait.show();
+	var sUrl = webroot_dir+"orders/edit_order_info/?status=1";
+	var postData = "order_id="+order_id+"&tax="+tax+"&shipping_fee="+shipping_fee+"&insure_fee="+insure_fee+"&payment_fee="+payment_fee+"&pack_fee="+pack_fee+"&card_fee="+card_fee+"&discount="+discount+"&order_id="+order_id+"&act_type=money&subtotal="+subtotal+"&coupon_fee_id="+coupon_fee_id;
+	var request = YAHOO.util.Connect.asyncRequest('POST', sUrl,baseinfo_submit_callback,postData);
+		
+}
+//订单指派
+function change_data_Operator_id(){
+	YAHOO.example.container.wait.show();
+	var order_id = GetId('order_id').value;
+	var data_Operator_id = GetId('data_Operator_id').value;
+	var sUrl = webroot_dir+"orders/assign_operator/"+order_id;
+	var postData = "data[Operator][id]="+data_Operator_id;
+	//alert(sUrl);
+	var request = YAHOO.util.Connect.asyncRequest('POST', sUrl,baseinfo_submit_callback,postData);
+
+}

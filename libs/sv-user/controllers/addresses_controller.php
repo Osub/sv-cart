@@ -9,8 +9,9 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: addresses_controller.php 1156 2009-04-30 09:16:36Z huangbo $
+ * $Id: addresses_controller.php 1841 2009-05-27 06:51:37Z huangbo $
 *****************************************************************************/
+uses('sanitize');		
 class AddressesController extends AppController {
 	var $name = 'Addresses';
 	var $helpers = array('Html');
@@ -87,11 +88,13 @@ class AddressesController extends AppController {
 					$this->data[$k]['UserAddress']['regions'] = "";
 						foreach($region_array as $kk=>$region_id){
 						//	echo "$region_id<br />";
-							$region_info = $this->Region->findbyid($region_id);
-							if($kk < sizeof($region_array)-1){
-								$this->data[$k]['UserAddress']['regions'] .= $region_info['RegionI18n']['name']." ";
-							}else{
-								$this->data[$k]['UserAddress']['regions'] .= $region_info['RegionI18n']['name'];
+							if(is_int($region_id)){
+								$region_info = $this->Region->findbyid($region_id);
+								if($kk < sizeof($region_array)-1){
+									$this->data[$k]['UserAddress']['regions'] .= $region_info['RegionI18n']['name']." ";
+								}else{
+									$this->data[$k]['UserAddress']['regions'] .= $region_info['RegionI18n']['name'];
+								}
 							}
 						}        
         }
@@ -158,7 +161,8 @@ class AddressesController extends AppController {
 		if($this->RequestHandler->isPost() ){
 			if(isset($_SESSION['User']['User']['id'])){
 				$address=(array)json_decode(StripSlashes($_POST['address']));
-				$address['user_id']=$_SESSION['User']['User']['id'];
+				$address['user_id']=$_SESSION['User']['User']['id'];			
+				
 			//	$address=(array)json_decode('{"Regions":"中国 上海 ","Name":"123","Consignee":"456","Address":"","Mobile":"","SignBuilding":"","Telephone":"","Zipcode":"","Email":"","BestTime":""}');
 				$this->UserAddress->save($address);
 				$result['type']=0;

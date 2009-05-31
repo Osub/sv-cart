@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: update_password.ctp 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: update_password.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ob_start();?>
 <div id="loginout">
@@ -24,7 +24,7 @@ ob_start();?>
 	<?}else{?>
 	<?=$html->link("取消","javascript:close_message();");?>
 	<?}?>
-	<p><?=$html->image("loginout-bottom.gif");?></p>
+	<p><?=$html->image("loginout-bottom.png");?></p>
 	</div></div>
 </div>
 <?

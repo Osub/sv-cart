@@ -18,13 +18,13 @@
 <?=$html->css('slider');?>
 <?=$html->css('color_font');?>
 
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+
+
 <?=$javascript->link('/../js/yui/dragdrop-min.js');?>
 <?=$javascript->link('/../js/yui/button-min.js');?>
 <?=$javascript->link('/../js/yui/slider-min.js');?>
 <?=$javascript->link('/../js/yui/colorpicker-min.js');?>
-<?=$javascript->link('/../js/yui/element-beta-min.js');?>
+
 <?=$javascript->link('color_picker');?>	
 <?=$javascript->link('selectzone');?>	
 <?=$javascript->link('product');?>	
@@ -53,7 +53,8 @@
 	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
 	  通用信息</h1></div>
 	  <div class="box">
-	  
+<input id="products_id" type="hidden" value="<?= $this->data['Product']['id'];?>">
+
 <? if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
 	<input id="ProductI18n<?=$k;?>Locale" name="data[ProductI18n][<?=$k;?>][locale]" type="hidden" value="<?= $v['Language']['locale'];?>">
@@ -180,7 +181,6 @@
 	</select></dd></dl><?}?>
 		<dl><dt>本店售价：</dt><dd><input type="text" class="text_inputs" id="ProductShopPrice" name="data[Product][shop_price]" onblur="priceSetted();user_rank_list();"<?if(isset($this->data['Product']['shop_price'])){?>value="<?= $this->data['Product']['shop_price'];?>"<?}else{?>value=""<?}?> /><input type="button" class="pointer" value="按市场价计算" onclick="marketPriceSetted()"/> <font color="#ff0000">*</font></dd></dl>
 		
-		
 	 <?if(!empty($user_rank_list)){?>
 		<dl>
 		   <dt><?=$html->image('help_icon.gif',array('align'=>'absmiddle'))?>会员价格：</dt>
@@ -191,7 +191,7 @@
 <input type="checkbox" id="is_default_rank<?=$k?>" name="is_default_rank[<?=$k?>]" <?if(@$v['UserRank']['is_default_rank']==1){ echo "checked"; }?> value="1" onclick="user_prince_check(this.checked,<?=$k?>)" >自动按照比例结算
 	</span>
 		<?echo $v['UserRank']['name']?>
-		<input class="text_inputs" style="width:50px;margin:-1px 0 0 4px;padding:0;text-align:center" id="rank_product_price<?=$k?>" name="rank_product_price[<?=$k?>]"  value="<?echo @$v['UserRank']['product_price']?>" class="no_border_input" size="3" onkeyup="rank_product_price(<?echo $k?>)" />
+		<input class="text_inputs" style="width:50px;margin:-1px 0 0 4px;padding:0;text-align:center" id="rank_product_price<?=$k?>" name="rank_product_price[<?=$k?>]"  value="<?echo $v['UserRank']['product_price']?>" class="no_border_input" size="3" onkeyup="rank_product_price(<?echo $k?>)" />
               <input type="hidden" id="user_rank<?=$k?>" name="user_rank[<?=$k?>]" value="<?echo @$v['UserRank']['id']?>"   /></p>
 			<input type="hidden" id="productrank_id<?=$k?>" name="productrank_id[<?=$k?>]" value="<?echo @$v['UserRank']['productrank_id']?>"   />
 		     <?}}?></dd>
@@ -321,16 +321,18 @@
 		
 		<dl class="edit_photo">
 		<dd>图片描述 :</dd>
-		<dt><input class="green_border" type="text" style='width:98%' value="<?echo $v['description']?>" name="data[ProductGallery][<?echo $k?>][description]"  id="ProductGallery<?echo $k?>Description"/>
-		</dt>
-		</dl>
+		<dt></dt></dl>
+		<? if(isset($languages) && sizeof($languages)>0){
+		foreach ($languages as $lk => $lv){?>
 		<dl class="edit_photo">
-		<dd>排序: </dd>
-		<dt><input class="green_border" type="text" style='width:98%' size="3" value="<?echo $v['orderby']?>" name="data[ProductGallery][<?echo $k?>][orderby]"  id="ProductGallery<?echo $k?>Orderby" />
-		
+		<dd><?=$html->image($lv['Language']['img01'])?></dd>
+		<dt>
+			<input class="green_border" type="text" style='width:98%'  name="ProductGalleryI18ndescription[<?=$k?>][ProductGalleryI18n][<?=$lk?>][description]"   value="<?echo @$v['ProductGalleryI18n'][$lv['Language']['locale']]['description']?>" id="ProductGallery<?echo $k?>Description"/>
+			<input type="hidden" name="ProductGalleryI18ndescription[<?=$k?>][ProductGalleryI18n][<?=$lk?>][product_gallery_id]" value="<?echo $v['id']?>">
+				<input type="hidden" name="ProductGalleryI18ndescription[<?=$k?>][ProductGalleryI18n][<?=$lk?>][locale]" value="<?echo $lv['Language']['locale']?>">
+
 		</dt>
-		</dl>
-		
+		</dl><?}}?>
 		<dl class="edit_photo">
 		<dd>&nbsp;</dd>
 		<dt>
@@ -350,17 +352,20 @@
 	  <p class="add_photo"><font face="宋体">[<?=$html->link("+","javascript:;",array("onclick"=>"addImg()"),false,false);?>]</font></p>
 	  <div id="Pro_img_div">
 		<p class="add_photo">
-		图片描述 : <input type="text" name="img_desc[]" id="img_desc[]"/>
+		图片描述 : 
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+		  <?=$html->image($v['Language']['img01'])?><input type="text" name="img_desc[<?=$v['Language']['locale']?>][]" id="img_desc[]"/>
+<?}}?>
 		排序: <input type="text" name="img_sort[]" id="img_sort[]" size="2"/>
 		<span id="new_file">上传文件 : <input type="text" name="img_url[]" id="upload_img_text_1"/>
-<?=$html->link($html->image('select_img.gif',array("align"=>"absmiddle","height"=>"23")),"javascript:img_sel(1,'products')",'',false,false)?></span></p><ul class="other_img">
+<?=$html->link($html->image('select_img.gif',array("align"=>"absmiddle","height"=>"23")),"javascript:img_sel(1,'products')",'',false,false)?></span></p>
 <li>
-	<?=@$html->image("",array('id'=>'logo_thumb_img_1','height'=>'150'))?>
+	<?=@$html->image("",array('id'=>'logo_thumb_img_1','height'=>'150','style'=>'display:none'))?>
 
 		  </li>
-</ul>
+
 		</div>
-		<ul class="other_img">
 		<li><div id="other_imgs"></div></li>
 		 </ul>
 		<p class="submit_btn"><input type="submit" value="确定" /><input type="reset" value="重置" /></p>
@@ -370,15 +375,16 @@
 	</div>
 <!--用来创造要替换的字符串start-->
   	<span id="imgupload" style="display:none">
-	<p class="add_photo">
-		图片描述 : <input type="text" name="img_desc[]" id="img_desc[]"/>
+	<p class="add_photo">图片描述 : 
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+		  <?=$html->image($v['Language']['img01'])?><input type="text" name="img_desc[<?=$v['Language']['locale']?>][]" id="img_desc[]"/>
+<?}}?>
 		排序: <input type="text" name="img_sort[]" id="img_sort[]" size="2"/>
 		<span id="new_file">上传文件 : <input type="text" name="img_url[]" id="upload_img_text_&id&"/>
 <?=$html->link($html->image('select_img.gif',array("align"=>"absmiddle","height"=>"23")),"javascript:img_sel(&id&,'products')",'',false,false)?></span></p>
-			  <?=@$html->image("",array('id'=>'logo_thumb_img_&id&','height'=>'150'))?>
+			  <?=@$html->image("",array('id'=>'logo_thumb_img_&id&','height'=>'150','style'=>'display:none'))?>
 
-
- 
   	</span> <!--用来创造要替换的字符串end-->
 	<script>
 	    var ddd = 2;
@@ -393,6 +399,7 @@
 	    }
 	</script>
 <!--Product Photos End-->
+
 
 
 
@@ -445,7 +452,7 @@
 				</p>
 				</td>
 				<td valign="top" width="40%">
-				<p><strong>跟该商品关联的商品</strong></p>
+				<p><strong>跟该商品关联的商品排序</strong></p>
 				<div class="relativies_box">
 				<div id="target_select1">
 				<?if(isset($product_relations) && sizeof($product_relations)>0){?>
@@ -453,17 +460,14 @@
                              <?if (isset($v['Product'])){?>
                            <p class="rel_list">
                            <span class="handle">
-                           <input size="2" value="<?echo $v['ProductRelation']['orderby']?>" onblur="update_orderby(<?echo $v['ProductRelation']['id']?>,this.value,'P');">
+                           排序:<input size="2" value="<?echo $v['ProductRelation']['orderby']?>" onblur="update_orderby(<?echo $v['ProductRelation']['id']?>,this.value,'P');">
                            <input type="button" class="pointer" value="删除" onclick="dropItem(<?echo $v['ProductRelation']['related_product_id']?>,'drop_link_products', <?=$this->data['Product']['id']?>, this.form.elements['is_single'][0].checked,'P');"/></span><?echo $v['ProductI18n']['name']?>
-</p>
                             <?}?>
                       <?}}?>
                       </div>
                </div></td>
 			</tr>
 		</table>
-		
-	<!--	<p class="submit_btn"><input type="submit" value="确定" /><input type="reset" value="重置" /></p>-->
 <? echo $form->end();?>
 	  </div>
 	</div>
@@ -515,7 +519,7 @@
                           <?if (isset($v['Article'])){?>
                            <p class="rel_list">
                            <span class="handle">
-                           <input size="2" value="<?echo $v['ProductArticle']['orderby']?>" onblur="update_orderby(<?echo $v['ProductArticle']['id']?>,this.value,'A');">
+                           排序:<input size="2" value="<?echo $v['ProductArticle']['orderby']?>" onblur="update_orderby(<?echo $v['ProductArticle']['id']?>,this.value,'A');">
                            <input type="button" class="pointer" value="删除" onclick="dropItem(<?echo $v['ProductArticle']['article_id']?>,'drop_product_articles', <?=$this->data['Product']['id']?>, this.form.elements['is_single'][0].checked,'P');"/>
                            </span>
                            <?echo $v['Article']['title']?>

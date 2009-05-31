@@ -9,16 +9,16 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: help.ctp 899 2009-04-22 15:03:02Z huangbo $
+ * $Id: help.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <!--帮助中心显示开始-->
-<?
-if($navigations_help){
-?>
+<?if($navigations_help){?>
 <?//pr($navigations_help);?>
-<div class="category_box brand_box"><h3><?=$SCLanguages['help_center']?></h3><div class="category Help"><ul>
-
+<div class="category_box brand_box">
+<h3><span class="l"></span><span class="r"></span><?=$SCLanguages['help_center']?></h3>
+<div class="category Help box">
+<ul>
 <?if(isset($navigations_help) && sizeof($navigations_help)>0){?>
 <?foreach($navigations_help as $key=>$help){?>
 <li><?=$html->image('ico_28.gif',array("alt"=>"SV-Cart"));?><?=$html->link($help['NavigationI18n']['name']." <font face='宋体'>&gt;&gt;</font>","{$help['NavigationI18n']['url']}","",false,false);?></li>

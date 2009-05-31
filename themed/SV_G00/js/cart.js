@@ -1,5 +1,7 @@
 //已修正开始
-
+function to_checkout(){
+		document.forms['cart_info'].submit();
+}
 //将购物车页的促销商品添加到购物车--begin
 	function buy_on_cart_page(type,id){
 
@@ -364,7 +366,9 @@
 		//	YAHOO.example.container.wait.hide();
 			YAHOO.example.container.message_width.hide();	
 		if(result.type == "0"){
+			if(document.getElementById('checkout_total') != null){
 			document.getElementById('checkout_total').innerHTML = result.checkout_total;
+			}
 			confirm_address(result.id);
 		}else{
 			document.getElementById('message_content').innerHTML = result.message;
@@ -448,7 +452,9 @@
 			//YAHOO.example.container.wait.hide();
 			YAHOO.example.container.message_width.hide();	
 		if(result.type == "0"){
+			if(document.getElementById('checkout_total') != null){
 			document.getElementById('checkout_total').innerHTML = result.checkout_total;
+			}
 			confirm_address(result.id);
 		}else{
 			document.getElementById('message_content').innerHTML = result.message;
@@ -574,7 +580,9 @@
 		//YAHOO.example.container.wait.hide();
 		YAHOO.example.container.message_width.hide();	
 		if(result.type == "0"){
+			if(document.getElementById('checkout_total') != null){
 			document.getElementById('checkout_total').innerHTML = result.checkout_total;
+			}
 			confirm_address(result.id);
 		}else{
 			document.getElementById('message_content').innerHTML = result.message;
@@ -655,7 +663,9 @@
 		//YAHOO.example.container.wait.hide();
 		YAHOO.example.container.message_width.hide();	
 		if(result.type == "0"){
+			if(document.getElementById('checkout_total') != null){
 			document.getElementById('checkout_total').innerHTML = result.checkout_total;
+			}
 			//alert(result.id);
 			confirm_address(result.id);
 		}else{
@@ -705,11 +715,23 @@
 		argument: {}
 	};
 	
-	function confirm_shipping(shipping_id,shipping_fee,free_subtotal,support_cod){
+	function confirm_shipping_insure(shipping_id,shipping_fee,free_subtotal,support_cod,insure_fee){
+		if(insure_fee >0){
+    		layer_dialog_show(support_value_or_not,"",3,shipping_id,shipping_fee,free_subtotal,support_cod,insure_fee);
+			return;
+		}
+		confirm_shipping(shipping_id,shipping_fee,free_subtotal,support_cod,insure_fee);
+	}
+
+	function confirm_shipping_fee(shipping_id,shipping_fee,free_subtotal,support_cod,insure_fee){
+		layer_dialog_obj.hide();
+		confirm_shipping(shipping_id,shipping_fee,free_subtotal,support_cod,insure_fee);
+	}
+		
+	function confirm_shipping(shipping_id,shipping_fee,free_subtotal,support_cod,insure_fee){
 		YAHOO.example.container.wait.show();
  		var sUrl = webroot_dir+"carts/confirm_shipping/";
-		var postData ="shipping_id="+ shipping_id + "&shipping_fee="+shipping_fee+"&free_subtotal="+free_subtotal+"&support_cod="+support_cod;
-//		alert(postData);
+		var postData ="shipping_id="+ shipping_id + "&shipping_fee="+shipping_fee+"&free_subtotal="+free_subtotal+"&support_cod="+support_cod+"&insure_fee="+insure_fee;
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, confirm_shipping_callback,postData);
 	}
 
@@ -725,7 +747,9 @@
 		YAHOO.example.container.wait.hide();
 		if(result.type == "0"){
 			document.getElementById('checkout_shipping').innerHTML = result.checkout_shipping;
+			if(document.getElementById('checkout_total') != null){
 			document.getElementById('checkout_total').innerHTML = result.checkout_total;
+			}
 		}else{
 		
 			document.getElementById('message_content').innerHTML = result.checkout_shipping;
@@ -805,7 +829,9 @@
 		YAHOO.example.container.wait.hide();
 		if(result.type == "0"){
 			document.getElementById('payment').innerHTML = result.checkout_payment;
+			if(document.getElementById('checkout_total') != null){
 			document.getElementById('checkout_total').innerHTML = result.checkout_total;
+			}
 		}else{
 			document.getElementById('message_content').innerHTML = result.checkout_payment;
 			YAHOO.example.container.message.show();
@@ -927,7 +953,9 @@
 		YAHOO.example.container.wait.hide();
 		if(result.type == "0"){
 			document.getElementById('checkout_shipping').innerHTML = result.checkout_shipping;
+			if(document.getElementById('checkout_total') != null){
 			document.getElementById('checkout_total').innerHTML = result.checkout_total;
+			}
 		}else{
 			document.getElementById('message_content').innerHTML = result.checkout_shipping;
 			YAHOO.example.container.message.show();
@@ -960,7 +988,9 @@
 		YAHOO.example.container.wait.hide();
 		if(result.type == "0" || result.type == "1"){
 			document.getElementById('payment').innerHTML = result.checkout_payment;
+			if(document.getElementById('checkout_total') != null){
 			document.getElementById('checkout_total').innerHTML = result.checkout_total;
+			}
 		}else{
 			document.getElementById('message_content').innerHTML = result.message;
 			YAHOO.example.container.message.show();
@@ -976,7 +1006,7 @@
 	
 	function add_note(type,id){
 		YAHOO.example.container.wait.show();
-		note = document.getElementById('note').value;
+		var note = document.getElementById('note').value;
 		var sUrl = webroot_dir+"carts/add_note/";
 		var postData ="note="+note+"&type="+type+"&id="+id;
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, add_note_callback,postData);
@@ -1040,8 +1070,6 @@
 	
 	//选促销活动
 function confirm_promotion(type,id,type_ext,title,meta_description){
-    //	var promotion_product_id = document.getElementById('promotion_product_select').value;
-
         YAHOO.example.container.wait.show();
         var sUrl = webroot_dir+"carts/confirm_promotion/";
         var postData ="id="+id+"&type="+type+"&type_ext="+type_ext+"&title="+title+"&meta_description="+meta_description;
@@ -1060,7 +1088,9 @@ function confirm_promotion(type,id,type_ext,title,meta_description){
         YAHOO.example.container.wait.hide();
         if(result.type == "0" || result.type == "1"){
             document.getElementById('promotions').innerHTML = result.checkout_promotion_confirm;
+			if(document.getElementById('checkout_total') != null){
             document.getElementById('checkout_total').innerHTML = result.checkout_total;
+            }
         }else{
             document.getElementById('message_content').innerHTML = result.checkout_promotion_confirm;
             YAHOO.example.container.message.show();
@@ -1094,7 +1124,9 @@ function confirm_promotion(type,id,type_ext,title,meta_description){
         YAHOO.example.container.wait.hide();
         if(result.type == "0" || result.type == "1"){
 			document.getElementById('promotions').innerHTML = result.checkout_promotion;
+			if(document.getElementById('checkout_total') != null){
             document.getElementById('checkout_total').innerHTML = result.checkout_total;
+            }
             /* 判断是否需要显示配送方式 */
             if(result.shipping_display == '1'){
             	document.getElementById('address_btn_list').style.display = "block";
@@ -1140,7 +1172,9 @@ function confirm_promotion(type,id,type_ext,title,meta_description){
             document.getElementById('checkout_shipping').innerHTML = result.checkout_shipping;
             document.getElementById('checkout_address').innerHTML = result.checkout_address;
           //  change_shipping();
+			if(document.getElementById('checkout_total') != null){
             document.getElementById('checkout_total').innerHTML = result.checkout_total;
+            }
         }else if(result.type == "3"){
         	
         }else{
@@ -1165,7 +1199,6 @@ function confirm_promotion(type,id,type_ext,title,meta_description){
         var postData ="promotion_id="+promotion_id+"&product_id="+product_id+"&now_fee="+now_fee+"&product_name="+product_name;
         var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, add_promotion_product_callback,postData);
     }
-   
     var add_promotion_product_Success = function(o){
         try{
            var result = YAHOO.lang.JSON.parse(o.responseText);
@@ -1174,22 +1207,28 @@ function confirm_promotion(type,id,type_ext,title,meta_description){
             alert("Invalid data");
             YAHOO.example.container.wait.hide();
         }
-       
         YAHOO.example.container.wait.hide();
         if(result.type == "0" ){
 			document.getElementById('promotions').innerHTML = result.checkout_promotion_confirm;
+			if(document.getElementById('checkout_total') != null){
             document.getElementById('checkout_total').innerHTML = result.checkout_total;
+            }
             /* 判断是否需要显示配送方式 */
             if(result.shipping_display == '1'){
-            	if(document.getElementById('checkout_shipping').style.display == "none"){
-	            	change_address();
-	            	document.getElementById('address_btn_list').style.display = "block";
-	            	document.getElementById('checkout_shipping').style.display = "block";
-            	}
-
+            	if(document.getElementById('address_btn_list') != null){
+	            	if(document.getElementById('checkout_shipping').style.display == "none"){
+		            	change_address();
+		            	document.getElementById('address_btn_list').style.display = "block";
+		            	document.getElementById('checkout_shipping').style.display = "block";
+	            	}
+				}
             }else {
+            	if(document.getElementById('address_btn_list') != null){
             	document.getElementById('address_btn_list').style.display = "none";
+            	}
+            	if(document.getElementById('address_btn_list') != null){
             	document.getElementById('checkout_shipping').style.display = "none";
+            	}
             }
             	
         //  close_message();
@@ -1219,8 +1258,12 @@ function confirm_promotion(type,id,type_ext,title,meta_description){
 			document.getElementById('point_error_msg').innerHTML = exceed_max_value_can_use;
 			return;
 		}
-	   if(point == "" || point < 1){
+	   if(point == ""){
 			document.getElementById('point_error_msg').innerHTML = point_not_empty;
+			return;
+		}	
+		if(point <1 ){
+		//	document.getElementById('point_error_msg').innerHTML = point_not_empty;
 			return;
 		}		
 		
@@ -1242,7 +1285,9 @@ function confirm_promotion(type,id,type_ext,title,meta_description){
         YAHOO.example.container.wait.hide();
         if(result.type == "0" ){
 			document.getElementById('point').innerHTML = result.checkout_point;
+			if(document.getElementById('checkout_total') != null){
             document.getElementById('checkout_total').innerHTML = result.checkout_total;
+            }
         }else{
             document.getElementById('message_content').innerHTML = result.checkout_point;
             YAHOO.example.container.message.show();
@@ -1274,7 +1319,9 @@ function confirm_promotion(type,id,type_ext,title,meta_description){
         YAHOO.example.container.wait.hide();
         if(result.type == "0" ){
 			document.getElementById('point').innerHTML = result.checkout_point;
+			if(document.getElementById('checkout_total') != null){
             document.getElementById('checkout_total').innerHTML = result.checkout_total;
+            }
         }else{
             document.getElementById('message_content').innerHTML = result.checkout_point;
             YAHOO.example.container.message.show();
@@ -1368,7 +1415,9 @@ function confirm_promotion(type,id,type_ext,title,meta_description){
         YAHOO.example.container.wait.hide();
         if(result.type == "0" ){
 			document.getElementById('coupon').innerHTML = result.checkout_point;
+			if(document.getElementById('checkout_total') != null){
             document.getElementById('checkout_total').innerHTML = result.checkout_total;
+            }
         }else{
             document.getElementById('message_content').innerHTML = result.checkout_point;
             YAHOO.example.container.message.show();
@@ -1404,7 +1453,9 @@ function confirm_promotion(type,id,type_ext,title,meta_description){
         YAHOO.example.container.wait.hide();
         if(result.type == "0" ){
 			document.getElementById('coupon').innerHTML = result.checkout_point;
+			if(document.getElementById('checkout_total') != null){
             document.getElementById('checkout_total').innerHTML = result.checkout_total;
+            }
         }else{
             document.getElementById('message_content').innerHTML = result.checkout_point;
             YAHOO.example.container.message.show();
@@ -1437,7 +1488,9 @@ function confirm_promotion(type,id,type_ext,title,meta_description){
         YAHOO.example.container.wait.hide();
         if(result.type == "0" ){
 			document.getElementById('coupon').innerHTML = result.checkout_coupon;
+			if(document.getElementById('checkout_total') != null){
             document.getElementById('checkout_total').innerHTML = result.checkout_total;
+            }
         }else{
             document.getElementById('message_content').innerHTML = result.checkout_coupon;
             YAHOO.example.container.message.show();
@@ -1534,3 +1587,35 @@ function confirm_promotion(type,id,type_ext,title,meta_description){
         argument: {}
     };
     
+    
+    // add 09.5.26
+    function layer_dialog_show(dialog_content,url_or_function,button_num,shipping_id,shipping_fee,free_subtotal,support_cod,insure_fee){
+		layer_dialog();
+		document.getElementById('layer_dialog').style.display = "block";
+		if(url_or_function!=''){
+			document.getElementById('confirm').value = url_or_function;//删除层传URL
+		}
+		document.getElementById('dialog_content').innerHTML = dialog_content;//对话框中的中文
+		var button_replace = document.getElementById('button_replace');
+		if(button_num==3){
+			button_replace.innerHTML = "<a href='javascript:confirm_shipping_fee("+shipping_id+","+shipping_fee+","+free_subtotal+","+support_cod+",0);' style='padding-right:50px;'>"+cart_cancel+"</a>"+"<a href='javascript:confirm_shipping_fee("+shipping_id+","+shipping_fee+","+free_subtotal+","+support_cod+","+insure_fee+");' style='padding-right:50px;'>"+cart_confirm+"</a>";
+		}
+		layer_dialog_obj.show();
+	}
+	function layer_dialog_hide(){
+		document.getElementById('layer_dialog').style.display = "none";
+	}	
+	
+	function layer_dialog(){
+	//	tabView = new YAHOO.widget.TabView('contextPane'); 
+        layer_dialog_obj = new YAHOO.widget.Panel("layer_dialog", 
+							{
+								visible:false,
+								draggable:false,
+								modal:true,
+								style:"margin 0 auto",
+								fixedcenter: true
+							} 
+						); 
+		layer_dialog_obj.render();
+	}

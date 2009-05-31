@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: default.ctp 899 2009-04-22 15:03:02Z huangbo $
+ * $Id: default.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -19,28 +19,15 @@
 <title><?php echo $title_for_layout; ?> - <?php __('Powered by Seevia'); ?></title>
 	<?php
 		echo $html->meta('icon');
-		echo $html->css('style');
-		echo $scripts_for_layout;
-		//pr($alt);
-
 	?>
 	
-<?=$javascript->link('/../js/yui/yahoo-dom-event.js');?>
-<?=$javascript->link('/../js/yui/container_core-min.js');?>
-<?=$javascript->link('/../js/yui/menu-min.js');?>
-<?=$javascript->link('/../js/yui/element-beta-min.js');?>
-<?=$javascript->link('/../js/yui/animation-min.js');?>
-<?=$javascript->link('/../js/yui/connection-min.js');?>
-<?=$javascript->link('/../js/yui/json-min.js');?>
-<?=$javascript->link('/../js/yui/container-min.js');?>
-<?=$javascript->link('/../js/yui/tabview-min.js');?><!--删除层遮罩-->
-
 <script type="text/javascript">
 	var webroot_dir = "<?=$this->webroot;?>";
 	var themePath = "<?=$this->themeWeb;?>";
 	var now_locale = "<?=$now_locale?>";//当前语言
 </script>
-<?=$javascript->link('common');?>
+<?=$minify->css(array('/css/layout','/css/admin','/css/calendar','/css/menu','/css/container','/css/treeview','/css/image','/css/swfupload','/css/tabview','css/style'));?>
+<?=$minify->js(array('/../js/yui/yahoo-dom-event.js','/../js/yui/container_core-min.js','/../js/yui/menu-min.js','/../js/yui/element-beta-min.js','/../js/yui/animation-min.js','/../js/yui/connection-min.js','/../js/yui/container-min.js','/../js/yui/tabview-min.js','/../js/yui/json-min.js','/../js/yui/calendar-min.js','/js/common.js','/js/calendar.js','/../js/swfobject.js'));?>
 <!--菜单-->
 <script type="text/javascript">
     YAHOO.util.Event.onContentReady("topmenu", function () {
@@ -71,23 +58,23 @@
 	?>
 <?php echo $cakeDebug; ?>
 <!--对话框-->
-<input type="hidden" value="" id="img_src_text_number">
-<input type="hidden" value="" id="assign_dir">
-<div id="layer_dialog" style="display:none;">
+<input type="hidden" value="" id="img_src_text_number" />
+<input type="hidden" value="" id="assign_dir" />
+<div id="layer_dialog" style="display:none;" >
 <div id="loginout" >
 	<h1><b>系统提示</b></h1>
 	<div id="buyshop_box">
 		<p class="login-alettr">
-		<?=$html->image("icon-10.gif",array('align'=>'absmiddle','class'=>'sub_icon'));?>
+		<?=$html->image("msg.gif",array('class'=>'sub_icon vmiddle'));?>
 		<b>
 		<span id="dialog_content"></span>
 		</b>
 		</p>
-		<br /><input type="hidden" id="confirm">
+		<br /><input type="hidden" id="confirm" />
 		<p class="buy_btn mar" ><span id="button_replace"><?=$html->link("取消","javascript:;",array("onclick"=>"layer_dialog_obj.hide()"));?>
 		<?=$html->link("确定","javascript:;",array("onclick"=>"confirm_record()"));?></span></p>
 	</div>
-	<p><?=$html->image("loginout-bottom.gif");?></p>
+	<p><?=$html->image("loginout-bottom.png");?></p>
 </div>
 </div>
 <!--End 对话框-->

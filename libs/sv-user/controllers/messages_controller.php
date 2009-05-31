@@ -11,6 +11,7 @@
  * $开发: 上海实玮$
  * $Id: message_controller.php 718 2009-04-17 07:18:27Z shenyunfeng $
 *****************************************************************************/
+uses('sanitize');		
 class MessagesController extends AppController {
 
 	var $name = 'Messages';
@@ -86,6 +87,7 @@ class MessagesController extends AppController {
 	}
 /************   添加留言    ****************/
 function AddMessage(){
+		$mrClean = new Sanitize();		
 	 $order_id = 0;
 	 if(isset($_POST['order_id'])){
 	 	$order_id = $_POST['order_id'];
@@ -94,6 +96,7 @@ function AddMessage(){
 	 $message_type = $_POST['message_type'];
 	 }
 	 $created=date('Y-m-d H:i:s');
+	 
 	 $messages=array(
 		'msg_title'=>	isset($_POST['title'])   ? trim($_POST['title'])  : '',
 		'msg_content'=>	isset($_POST['content'])   ? trim($_POST['content'])  : 0,

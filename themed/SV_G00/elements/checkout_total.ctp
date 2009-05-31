@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: checkout_total.ctp 1201 2009-05-05 13:30:17Z huangbo $
+ * $Id: checkout_total.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?>
 <p class="item_price">
@@ -17,8 +17,14 @@
 	<?=$svshow->price_format($svcart['cart_info']['sum_subtotal'],$SVConfigs['price_format']);?>	
 <?if(isset($svcart['shipping']['shipping_fee'])){?>
 <span class="send_menny"><?php echo $SCLanguages['shipping_fee'];?>:
-	<?=$svshow->price_format($svcart['shipping']['shipping_fee'],$SVConfigs['price_format']);?>	
-	</span><?}?>
+<?=$svshow->price_format($svcart['shipping']['shipping_fee'],$SVConfigs['price_format']);?>	
+</span><?}?>
+<?if(isset($svcart['shipping']['insure_fee']) && $svcart['shipping']['insure_fee'] >0){?>
+<span class="send_menny"><?=$SCLanguages['support_value_fee']?>:
+<?=$svshow->price_format($svcart['shipping']['insure_fee'],$SVConfigs['price_format']);?>	
+</span><?}else{
+	$svcart['shipping']['insure_fee'] = 0;
+}?>	
 <?if(isset($svcart['payment']['payment_fee'])){?>
 <span class="send_menny">
 <?php echo $SCLanguages['payment_fee'];?>:

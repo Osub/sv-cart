@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 943 2009-04-23 10:38:44Z huangbo $
+ * $Id: index.ctp 1841 2009-05-27 06:51:37Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content" >
@@ -28,7 +28,8 @@
 	  
 	  <div class="box themes_backup" >
 	  <p class="picture">
-	<?=@$html->image("/../../{$curr_template['screenshot']}",array('height'=>'190'))?>
+	  	 
+		<?=@$html->image("/{$this->themeWeb}{$curr_template['screenshot']}",array('height'=>'190'))?>
 	</p>
 		<ul class="bak_haddle">
 		<li><?php if(isset($curr_template['name']))echo $curr_template['name'];?> &nbsp;<?php if(isset($curr_template['version']))echo $curr_template['version'];?></li>		

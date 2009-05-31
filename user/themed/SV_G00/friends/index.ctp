@@ -9,15 +9,14 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1153 2009-04-30 08:55:43Z huangbo $
+ * $Id: index.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?>
 <?=$javascript->link('friends');?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 <div id="Products_box" style="overflow:hidden;height:100%;">
-    <h1>
-    <span><?=$SCLanguages['my_friends'];?></span>
-    <cite class="new_group" style="cursor:pointer;">
+<h1 class="headers friendheader"><span class="l">&nbsp;</span><span class="r">&nbsp;</span><b><?=$SCLanguages['my_friends'];?></b>
+<cite class="new_group" style="cursor:pointer;">
     <?if(isset($SVConfigs['friend_category']) && isset($this->data) && ( sizeof($this->data) < $SVConfigs['friend_category'])){?>
     <?=$html->image('add-icon.png',array())?>
     <a href="javascript:newfriendgroup();"><?=$SCLanguages['add'].$SCLanguages['group']?></a>
@@ -30,7 +29,7 @@
 <?if(isset($this->data) && sizeof($this->data)>0){?>
 <?foreach($this->data as $k=>$v){?>
 
-    <div id="infos" style="width:739px;">
+    <div id="infos">
     	<p class="cat_friend" ><b>·<span id="contact_cat[<?echo $v['UserFriendCat']['id']?>]"><?echo $v['UserFriendCat']['cat_name']?></span>· <font color="red" id="cat_msg<?echo $v['UserFriendCat']['id']?>"></font></b>
     	<span class="add_friend">
     	<a href="javascript:modify_cat(<?echo $v['UserFriendCat']['id']?>)"><?=$SCLanguages['edit']?></a>|
@@ -104,7 +103,7 @@
   	<a href="javascript:del_friends(<?echo $val['UserFriend']['id'] ?>)"><span><?=$SCLanguages['delete']?></span></a></li></ul>
  <!--编辑好友弹出框-->
   <div id="edit_friend[<?echo $val['UserFriend']['id'] ?>]" style="border:0;display:none;padding-left:50px;">
-  <p class="droup_bg"><b><?=$SCLanguages['edit_friend']?></b></p>
+  <p class="droup_bg"><b><?=$SCLanguages['edit']?><?=$SCLanguages['friend']?></b></p>
   <div style="padding-bottom:50px;height:100%;background:#fff;">
 <form  action="" method="post" name="EditContactForm<?=$key?>">
 	<input type="hidden" name="action_type" value="edit_contact">
@@ -119,7 +118,7 @@
 		<dd><?=$SCLanguages["friend"]?><?=$SCLanguages["name"]?>：</dd><dt><input size="30" type="text" name="data[UserFriend][contact_name]" id="UserFriendContactName<?=$key?>" value="<?echo $val['UserFriend']['contact_name']?>"/>&nbsp;<font color="red" id="friendname<?=$key?>">*</font></dt>
 		</li>
 		<li>
-		<dd><?=$SCLanguages['name_for_website']?>：</dd><dt><input size="30" type="text" name="data[UserFriend][contact_user_name]" id="UserFriendContactUserName<?=$key?>" value="<?echo $val['UserFriend']['contact_user_name']?>"/></dt>
+		<dd><?=$SCLanguages['username']?>：</dd><dt><input size="30" type="text" name="data[UserFriend][contact_user_name]" id="UserFriendContactUserName<?=$key?>" value="<?echo $val['UserFriend']['contact_user_name']?>"/></dt>
 		</li>
 		<li>
 		<dd><?=$SCLanguages['mobile']?>：</dd><dt><input size="30" type="text" name="data[UserFriend][contact_mobile]" id="UserFriendContactMobile<?=$key?>" value="<?echo $val['UserFriend']['contact_mobile']?>"/>&nbsp;<font color="red" id="mobile<?=$key?>"></font></dt>

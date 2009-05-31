@@ -9,20 +9,23 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: themes_controller.php 946 2009-04-24 00:36:19Z huangbo $
+ * $Id: themes_controller.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class ThemesController extends AppController {
 	var $name = 'Themes';
 	var $uses = array('Config','Template');
 	
 	function index(){
+		/*判断权限*/
+		$this->operator_privilege('template_view');
+		/*end*/
 		$this->pageTitle = '模板管理'." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'模板管理','url'=>'/themes/');
 		$this->set('navigations',$this->navigations);
 	
 		
 		/* 获得当前的模版的信息 */
-		$curr_template = $this->Template->find('where is_default =1');
+		$curr_template = $this->Template->find("where is_default ='1'");
 		if($curr_template){
 			$curr_template_arr = $this->get_template_info($curr_template['Template']['name']);
 		}else{
@@ -42,7 +45,7 @@ class ThemesController extends AppController {
 		@closedir($template_dir);
 		$tem=array();
 		$temp=array();
-	    $template_list=$this->Template->findAll('where is_default =0  and status =1','DISTINCT Template.name');//可用模板
+	    $template_list=$this->Template->findAll("where is_default ='0'  and status ='1'","DISTINCT Template.name");//可用模板
 	    foreach( $template_list as $k=>$v ){
 	    	 $tem[$k]=$v['Template']['name'];
 	    }
@@ -121,7 +124,7 @@ class ThemesController extends AppController {
 
 	function tmp_show(){		
 		/* 获得当前的模版的信息 */
-		$curr_template = $this->Template->find('where is_default =1');
+		$curr_template = $this->Template->find("where is_default ='1'");
 		if($curr_template){
 			$curr_template_arr = $this->get_template_info($curr_template['Template']['name']);
 		}else{
@@ -141,7 +144,7 @@ class ThemesController extends AppController {
 		@closedir($template_dir);
 		$tem=array();
 		$temp=array();
-	    $template_list=$this->Template->findAll('where is_default =0  and status =1','DISTINCT Template.name');//可用模板
+	    $template_list=$this->Template->findAll("where is_default =0  and status ='1'",'DISTINCT Template.name');//可用模板
 	    foreach( $template_list as $k=>$v ){
 	    	 $tem[$k]=$v['Template']['name'];
 	    }

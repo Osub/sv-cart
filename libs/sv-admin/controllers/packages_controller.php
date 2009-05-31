@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: packages_controller.php 943 2009-04-23 10:38:44Z huangbo $
+ * $Id: packages_controller.php 1841 2009-05-27 06:51:37Z huangbo $
 *****************************************************************************/
 class PackagesController extends AppController {
 
@@ -19,6 +19,9 @@ class PackagesController extends AppController {
 	var $uses = array("Packaging","PackagingI18n");
 
 	function index(){
+		/*判断权限*/
+		$this->operator_privilege('package_view');
+		/*end*/
 		$this->pageTitle = "包装"." - ".$this->configs['shop_name'];
 		
 		$this->navigations[] = array('name'=>'包装','url'=>'/packagings/');
@@ -27,7 +30,8 @@ class PackagesController extends AppController {
    		
    		$this->Packaging->set_locale($this->locale);
    	    $condition='';
-   	    $total = $this->Packaging->findCount($condition,0);
+   	    $total = count($this->Packaging->find("all",array("conditions"=>$condition,"fields"=>"DISTINCT Packaging.id")));
+
 	    $sortClass='Packaging';
 	    $page=1;
 	    $rownum=isset($this->configs['show_count']) ? $this->configs['show_count']:((!empty($rownum)) ?$rownum:20);
@@ -37,11 +41,13 @@ class PackagesController extends AppController {
    	    $packaging_list=$this->Packaging->findAll($condition,'',"order by Packaging.orderby",$rownum,$page);
    		
    		
-
    		$this->set('package_list',$packaging_list);	
 	}
 	
 	function edit( $id ){
+		/*判断权限*/
+		$this->operator_privilege('package_operation');
+		/*end*/
 		$this->pageTitle = "编辑包装 - 包装管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'包装管理','url'=>'/packages/');
 		$this->navigations[] = array('name'=>'编辑包装','url'=>'');
@@ -62,7 +68,18 @@ class PackagesController extends AppController {
 		         $this->PackagingI18n->saveall(array('PackagingI18n'=>$packagingI18n_info));//更新多语言
              }
 			$this->Packaging->save( $this->data );
-			$this->flash("编辑成功",'/packages/edit/'.$id,'');
+			
+			foreach( $this->data['PackagingI18n'] as $k=>$v ){
+				if($v['locale'] == $this->locale){
+					$userinformation_name = $v['name'];
+				}
+			}
+			$id=$this->Packaging->id;
+
+			$this->flash("包装  ".$userinformation_name." 编辑成功。点击继续编辑该包装。",'/packages/edit/'.$id,10);
+
+			
+			
 		}
 		$packaging = $this->Packaging->localeformat( $id );
 		$this->set("packaging",$packaging);
@@ -90,11 +107,21 @@ class PackagesController extends AppController {
 				            $this->PackagingI18n->id='';
 				            $this->PackagingI18n->save($v); 
 			           }
-			$this->flash("添加成功",'/packages/edit/'.$id,'');
+			foreach( $this->data['PackagingI18n'] as $k=>$v ){
+				if($v['locale'] == $this->locale){
+					$userinformation_name = $v['name'];
+				}
+			}
+			$id=$this->Packaging->id;
+
+			$this->flash("包装  ".$userinformation_name." 添加成功。点击继续编辑该包装。",'/packages/edit/'.$id,10);
 		}
 	}
 	
 	function remove( $id ){
+		/*判断权限*/
+		$this->operator_privilege('package_operation');
+		/*end*/
 		$condition=array("Packaging.id"=>$id);
 		$this->Packaging->deleteAll( $condition );
 		$this->flash("删除成功",'/packages/','');

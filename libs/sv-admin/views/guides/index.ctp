@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1144 2009-04-29 11:41:30Z huangbo $
+ * $Id: index.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $form->create('guides',array('action'=>'/two/'));?>
@@ -26,35 +26,65 @@
 	<div class="box">
 	<div class="shop_config menus_configs guides" style="width:500px;">
 	<br />
+	
 	<dl><dt style="width:100px;">商店名称： </dt>
-	<dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" name="data[ConfigI18n][shop_name][value]"  value="<?=$config_info['shop_name']['ConfigI18n']['value']?>" />&nbsp<?=$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:hid_show('shop_name')",'',false,false)?></dd><span id="shop_name" style="display:none"><?=$config_info['shop_name']['ConfigI18n']['description']?></span></dl>
-		<input type="hidden" name="data[ConfigI18n][shop_name][id]" value="<?=$config_info['shop_name']['ConfigI18n']['id']?>" />
-		
+	<dd></dd></dl>
+	
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+	<dl><dt style="width:100px;"><?=$html->image($v['Language']['img01'])?></dt>
+	<dd><input type="text" style="width:300px;*width:180px;border:1px solid #649776" name="data[ConfigI18n][shop_name][<?=$k?>][value]"  value="<?=$config_info['shop_name']['ConfigI18n'][$k]['value']?>" />&nbsp<?=$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:hid_show('shop_name_".$v['Language']['locale']."')",'',false,false)?></dd><span id="shop_name_<?=$v['Language']['locale']?>" style="display:none"><?=$config_info['shop_name']['ConfigI18n'][$k]['description']?></span></dl>
+		<input type="hidden" name="data[ConfigI18n][shop_name][<?=$k?>][id]" value="<?=$config_info['shop_name']['ConfigI18n'][$k]['id']?>" />
+<?}}?>
 	<dl><dt style="width:100px;">商店标题： </dt>
-	<dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" name="data[ConfigI18n][shop_title][value]" value="<?=$config_info['shop_title']['ConfigI18n']['value']?>" />&nbsp<?=$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:hid_show('shop_title')",'',false,false)?></dd><span id="shop_title" style="display:none"><?=$config_info['shop_title']['ConfigI18n']['description']?></span></dl>
-		<input type="hidden" name="data[ConfigI18n][shop_title][id]" value="<?=$config_info['shop_title']['ConfigI18n']['id']?>" />
-		
+	<dd></dd></dl>
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+	<dl><dt style="width:100px;"><?=$html->image($v['Language']['img01'])?></dt>
+	<dd><input type="text" style="width:300px;*width:180px;border:1px solid #649776" name="data[ConfigI18n][shop_title][<?=$k?>][value]" value="<?=$config_info['shop_title']['ConfigI18n'][$k]['value']?>" />&nbsp<?=$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:hid_show('shop_title_".$v['Language']['locale']."')",'',false,false)?></dd><span id="shop_title_<?=$v['Language']['locale']?>" style="display:none"><?=$config_info['shop_title']['ConfigI18n'][$k]['description']?></span></dl>
+		<input type="hidden" name="data[ConfigI18n][shop_title][<?=$k?>][id]" value="<?=$config_info['shop_title']['ConfigI18n'][$k]['id']?>" />
+<?}}?>
 	<dl><dt style="width:100px;">商店描述： </dt>
-	<dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" name="data[ConfigI18n][shop_description][value]" value="<?=$config_info['shop_description']['ConfigI18n']['value']?>" />&nbsp<?=$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:hid_show('shop_description')",'',false,false)?></dd><span id="shop_description" style="display:none"><?=$config_info['shop_description']['ConfigI18n']['description']?></span></dl>
-		<input type="hidden" name="data[ConfigI18n][shop_description][id]" value="<?=$config_info['shop_description']['ConfigI18n']['id']?>" />
-		
+	<dd></dd></dl>
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+	<dl><dt style="width:100px;"><?=$html->image($v['Language']['img01'])?></dt>
+	<dd><input type="text" style="width:300px;*width:180px;border:1px solid #649776" name="data[ConfigI18n][shop_description][<?=$k?>][value]" value="<?=$config_info['shop_description']['ConfigI18n'][$k]['value']?>" />&nbsp<?=$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:hid_show('shop_description_".$v['Language']['locale']."')",'',false,false)?></dd><span id="shop_description_<?=$v['Language']['locale']?>" style="display:none"><?=$config_info['shop_description']['ConfigI18n'][$k]['description']?></span></dl>
+		<input type="hidden" name="data[ConfigI18n][shop_description][<?=$k?>][id]" value="<?=$config_info['shop_description']['ConfigI18n'][$k]['id']?>" />
+<?}}?>
 	<dl><dt style="width:100px;">商店关键字： </dt>
-	<dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" name="data[ConfigI18n][shop_keywords][value]" value="<?=$config_info['shop_keywords']['ConfigI18n']['value']?>" />&nbsp<?=$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:hid_show('shop_keywords')",'',false,false)?></dd><span id="shop_keywords" style="display:none"><?=$config_info['shop_keywords']['ConfigI18n']['description']?></span></dl>
-		<input type="hidden" name="data[ConfigI18n][shop_keywords][id]" value="<?=$config_info['shop_keywords']['ConfigI18n']['id']?>" />
-		
+	<dd></dd></dl>
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+	<dl><dt style="width:100px;"><?=$html->image($v['Language']['img01'])?></dt>
+	<dd><input type="text" style="width:300px;*width:180px;border:1px solid #649776" name="data[ConfigI18n][shop_keywords][<?=$k?>][value]" value="<?=$config_info['shop_keywords']['ConfigI18n'][$k]['value']?>" />&nbsp<?=$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:hid_show('shop_keywords_".$v['Language']['locale']."')",'',false,false)?></dd><span id="shop_keywords_<?=$v['Language']['locale']?>" style="display:none"><?=$config_info['shop_keywords']['ConfigI18n'][$k]['description']?></span></dl>
+		<input type="hidden" name="data[ConfigI18n][shop_keywords][<?=$k?>][id]" value="<?=$config_info['shop_keywords']['ConfigI18n'][$k]['id']?>" />
+<?}}?>
 	<dl><dt style="width:100px;">详细地址： </dt>
-	<dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" name="data[ConfigI18n][company_address][value]" value="<?=$config_info['company_address']['ConfigI18n']['value']?>" />&nbsp<?=$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:hid_show('company_address')",'',false,false)?></dd><span id="company_address" style="display:none"><?=$config_info['company_address']['ConfigI18n']['description']?></span></dl>
-		<input type="hidden" name="data[ConfigI18n][company_address][id]" value="<?=$config_info['company_address']['ConfigI18n']['id']?>" />
-		
+	<dd></dd></dl>
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+	<dl><dt style="width:100px;"><?=$html->image($v['Language']['img01'])?></dt>
+	<dd><input type="text" style="width:300px;*width:180px;border:1px solid #649776" name="data[ConfigI18n][company_address][<?=$k?>][value]" value="<?=$config_info['company_address']['ConfigI18n'][$k]['value']?>" />&nbsp<?=$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:hid_show('company_address_".$v['Language']['locale']."')",'',false,false)?></dd><span id="company_address_<?=$v['Language']['locale']?>" style="display:none"><?=$config_info['company_address']['ConfigI18n'][$k]['description']?></span></dl>
+		<input type="hidden" name="data[ConfigI18n][company_address][<?=$k?>][id]" value="<?=$config_info['company_address']['ConfigI18n'][$k]['id']?>" />
+<?}}?>
+
 	<dl><dt style="width:100px;">用户中心公告： </dt>
-	<dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" name="data[ConfigI18n][user_center_notice][value]" value="<?=$config_info['user_center_notice']['ConfigI18n']['value']?>" />&nbsp<?=$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:hid_show('user_center_notice')",'',false,false)?></dd><span id="user_center_notice" style="display:none"><?=$config_info['user_center_notice']['ConfigI18n']['description']?></span></dl>
-		<input type="hidden" name="data[ConfigI18n][user_center_notice][id]" value="<?=$config_info['user_center_notice']['ConfigI18n']['id']?>" />
-		
+	<dd></dd></dl>
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+	<dl><dt style="width:100px;"><?=$html->image($v['Language']['img01'])?></dt>
+	<dd><input type="text" style="width:300px;*width:180px;border:1px solid #649776" name="data[ConfigI18n][user_center_notice][<?=$k?>][value]" value="<?=$config_info['user_center_notice']['ConfigI18n'][$k]['value']?>" />&nbsp<?=$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:hid_show('user_center_notice_".$v['Language']['locale']."')",'',false,false)?></dd><span id="user_center_notice_<?=$v['Language']['locale']?>" style="display:none"><?=$config_info['user_center_notice']['ConfigI18n'][$k]['description']?></span></dl>
+		<input type="hidden" name="data[ConfigI18n][user_center_notice][<?=$k?>][id]" value="<?=$config_info['user_center_notice']['ConfigI18n'][$k]['id']?>" />
+<?}}?>
 	<dl><dt style="width:100px;">商店公告： </dt>
-	<dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" name="data[ConfigI18n][shop_notice][value]" value="<?=$config_info['shop_notice']['ConfigI18n']['value']?>" />&nbsp<?=$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:hid_show('shop_notice')",'',false,false)?></dd><span id="shop_notice" style="display:none"><?=$config_info['shop_notice']['ConfigI18n']['description']?></span></dl>
-		<input type="hidden" name="data[ConfigI18n][shop_notice][id]" value="<?=$config_info['shop_notice']['ConfigI18n']['id']?>" />
-		
-		
+	<dd></dd></dl>
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+	<dl><dt style="width:100px;"><?=$html->image($v['Language']['img01'])?></dt>
+	<dd><input type="text" style="width:300px;*width:180px;border:1px solid #649776" name="data[ConfigI18n][shop_notice][<?=$k?>][value]" value="<?=$config_info['shop_notice']['ConfigI18n'][$k]['value']?>" />&nbsp<?=$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:hid_show('shop_notice_".$v['Language']['locale']."')",'',false,false)?></dd><span id="shop_notice_<?=$v['Language']['locale']?>" style="display:none"><?=$config_info['shop_notice']['ConfigI18n'][$k]['description']?></span></dl>
+		<input type="hidden" name="data[ConfigI18n][shop_notice][<?=$k?>][id]" value="<?=$config_info['shop_notice']['ConfigI18n'][$k]['id']?>" />
+<?}}?>
 	</div>
 	</div>
 	<p class="submit_btn"><input type="submit" value="下一步"  /><input type="button" value="退出向导" onclick="break_config()" /></p>

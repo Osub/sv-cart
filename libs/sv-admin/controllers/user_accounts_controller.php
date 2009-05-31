@@ -20,6 +20,9 @@ class UserAccountsController extends AppController {
 	
 	
 	function index(){
+		/*判断权限*/
+		$this->operator_privilege('user_accounts_view');
+		/*end*/
 		$this->pageTitle = "充值管理" ." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'充值管理','url'=>'/user_accounts/');
 		$this->set('navigations',$this->navigations);
@@ -102,10 +105,10 @@ class UserAccountsController extends AppController {
 	function verify($id){
 		$account = $this->UserAccount->findById($id);
 		if(empty($account)){
-			$this->flash("操作失败，无效的id!",'/balances/search/processing',10);
+			$this->flash("操作失败，无效的id!",'/balances/search/processing',10,false);
 		}
 		else if($account['UserAccount']['status'] != 0){
-			$this->flash("操作失败，请不要重复操作!",'/balances/search/processing',10);
+			$this->flash("操作失败，请不要重复操作!",'/balances/search/processing',10,false);
 		}
 		else{
 			$this->User->updateAll(
@@ -125,17 +128,18 @@ class UserAccountsController extends AppController {
    	    	$BalanceLog['UserBalanceLog']['type_id'] = $id;
    	    	
    	    	$this->UserBalanceLog->save($BalanceLog);
-			$this->flash("确认成功",'/user_accounts/',10);
+			$user_info = $this->User->findById($account['UserAccount']['user_id']);
+			$this->flash("会员 ".$user_info["User"]["name"]." 充值确认成功。点击反回列表页",'/user_accounts/',10);
 		}
 	}
 	
 	function cancel($id){
 		$account = $this->UserAccount->findById($id);
 		if(empty($account)){
-			$this->flash("操作失败，无效的id!",'/balances/search/processing',10);
+			$this->flash("操作失败，无效的id!",'/balances/search/processing',10,false);
 		}
 		else if($account['UserAccount']['status'] != 0){
-			$this->flash("操作失败，请不要重复操作!",'/balances/search/processing',10);
+			$this->flash("操作失败，请不要重复操作!",'/balances/search/processing',10,false);
 		}
 		else{
 			$this->UserAccount->updateAll(

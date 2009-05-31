@@ -9,10 +9,10 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: footer.ctp 1232 2009-05-06 12:14:41Z huangbo $
+ * $Id: footer.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <div id="footer">
 	<p class="copyright">© 2009 上海实玮网络科技有限公司 版权所有</p>
-	<p class="pwoered"><?=$html->link("Powered by SV-Cart","http://www.seevia.cn",'',false,false);?></p>
+	<p class="pwoered"><?=$html->link("Powered by SV-Cart ".$SVConfigs['version'],"http://www.seevia.cn",'',false,false);?></p>
 </div>

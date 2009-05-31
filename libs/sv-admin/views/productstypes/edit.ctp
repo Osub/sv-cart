@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: edit.ctp 943 2009-04-23 10:38:44Z huangbo $
+ * $Id: edit.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -43,7 +43,7 @@
 
 		
 		<dl><dt style="padding-top:10px;"><?=$html->image('help_icon.gif',array('align'=>'absmiddle'))?>属性分组: </dt>
-		<dd><textarea style="border:1px solid #629373;width:318px;height:80px;overflow-y:scroll" name="data[ProductType][group]" ><?php echo $this->data['ProductType']['group']?></textarea><br /><font color="#646464">每行一个商品属性组。排序也将按照顺序排序。</font></dd></dl>
+		<dd><textarea style="border:1px solid #629373;width:318px;height:80px;overflow-y:scroll" name="data[ProductType][group_code]" ><?php echo $this->data['ProductType']['group_code']?></textarea><br /><font color="#646464">每行一个商品属性组。排序也将按照顺序排序。</font></dd></dl>
 		
 		
 		<br /><br /><br /><br /><br /><br /><br />

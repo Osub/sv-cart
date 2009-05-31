@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: edit.ctp 1273 2009-05-08 16:49:08Z huangbo $
+ * $Id: edit.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -107,9 +107,9 @@
 			<?foreach($payment_arr as $k=>$v){?>
 				<dl><dt><?=$v['name']?>:</dt>
 				<dd>
-				<?//if($v['type']=="text"){?>
+				<?if($v['type']=="text"){?>
 				<input type="text"  class="text_inputs" style="width:120px;" name="payment_arr[<?=$k?>][value]" <?if(isset($v['value'])){?>value="<?= $v['value'];?>"<?}else{?>value=""<?}?>/>
-				<?//}?>
+				<?}?>
 				<?if(@$v['type']=="select"){?>
 				<select name="payment_arr[<?=$k?>][value]">
 				<?  $num = 0;
@@ -132,12 +132,30 @@
 				<input type="hidden"  class="text_inputs" style="width:120px;" name="payment_arr[<?=$k?>][select_value][<?=$num?>][value]" value="<?=$vv?>"/>				
 				<?}}?>
 				<?}?>
+				<?if($v['type']=="all_select"){?>
+				<?foreach($v['value'] as $kkk=>$vvv){?>
+					&nbsp; <?=$vvv['name']?>  :
+							<select name="payment_arr[<?=$k?>][sub][<?=$kkk?>][value]">
+							<?  $num = 0;
+							if(isset($vvv['select_value']) && sizeof($vvv['select_value'])>0){
+								foreach($vvv['select_value'] as $a=>$b){?>
+							<?if(isset($vvv['value']) && $vvv['value'] == $b){?>
+							<option value="<?=$b?>" selected>
+							<?}else{?>
+							<option value="<?=$b?>">
+							<?}?>
+								<?=$a?></option>
+							<?}}?>
+							</select>
+				<input type="hidden"  class="text_inputs" style="width:120px;" name="payment_arr[<?=$k?>][sub][<?=$kkk?>][name]" value="<?= $vvv['name'];?>"/>
+						<br /><br />
+					<?}?>
+				<?}?>					
 				<input type="hidden"  class="text_inputs" style="width:120px;" name="payment_arr[<?=$k?>][name]" <?if(isset($v['name'])){?>value="<?= $v['name'];?>"<?}else{?>value=""<?}?>/>
 				<input type="hidden"  class="text_inputs" style="width:120px;" name="payment_arr[<?=$k?>][type]" <?if(isset($v['type'])){?>value="<?= $v['type'];?>"<?}else{?>value=""<?}?>/>
 				</dd></dl>
 			<?}?>
 		<?}?>
-		
 		
 		<br /><br /><br /><br /><br />	<br /><br /><br /><br /><br />	<br /><br /><br /><br /><br /><br /><br /><br /><br />
 		

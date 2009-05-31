@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: regions_controller.php 1028 2009-04-24 12:23:26Z huangbo $
+ * $Id: regions_controller.php 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 class RegionsController extends AppController {
 	var $name = 'Regions';
@@ -29,6 +29,19 @@ class RegionsController extends AppController {
 				$str = $_POST['str'];
 			}
 			$this->children($regions,$str);
+			for($i=0;$i<4;$i++){
+				if(isset($this->regions_selects) && sizeof($this->regions_selects)>0 && isset($this->regions_selects[sizeof($this->regions_selects)-1])){
+					if(isset($this->regions_selects[sizeof($this->regions_selects)-1]['select']) && sizeof($this->regions_selects[sizeof($this->regions_selects)-1]['select']) ==2){
+						foreach($this->regions_selects[sizeof($this->regions_selects)-1]['select'] as $a=>$b){
+							if($a != $this->languages['please_choose'] && isset($a)){
+								$str .= " ".$a;
+								$this->regions_selects = array();
+								$this->children($regions,$str);
+							}
+						}
+					}
+				}
+			}			
 			$this->set('regions_selects',$this->regions_selects);
 			if(isset($_POST['address_id'])){
 				$this->set('address_id',$_POST['address_id']);
@@ -44,11 +57,13 @@ class RegionsController extends AppController {
  	//	pr($region_id_array);
  		if(sizeof($region_id_array)>0){
 	 		foreach($region_id_array as $k=>$v){
-	 			$region_info = $this->Region->findbyid($v);
-	 			if($k < sizeof($region_id_array)-1){
-	 			$region_str .= $region_info['Region']['id']." ";
-	 			}else{
-	 			$region_str .= $region_info['Region']['id'];
+	 			if($v != $this->languages['please_choose']){
+		 			$region_info = $this->Region->findbyid($v);
+		 			if($k < sizeof($region_id_array)-1){
+		 			$region_str .= $region_info['Region']['id']." ";
+		 			}else{
+		 			$region_str .= $region_info['Region']['id'];
+		 			}
 	 			}
 	 		}
  		}
@@ -78,7 +93,25 @@ class RegionsController extends AppController {
 			$this->Region->set_locale($this->locale);
 			$regions = $this->Region->find("threaded");
 	//		pr($regions);
-			$this->children($regions,$_POST['str']);
+	
+			$str = "";
+			if(isset($_POST['str'])){
+				$str = $_POST['str'];
+			}	
+			$this->children($regions,$str);
+			for($i=0;$i<4;$i++){
+				if(isset($this->regions_selects) && sizeof($this->regions_selects)>0 && isset($this->regions_selects[sizeof($this->regions_selects)-1])){
+					if(isset($this->regions_selects[sizeof($this->regions_selects)-1]['select']) && sizeof($this->regions_selects[sizeof($this->regions_selects)-1]['select']) ==2){
+						foreach($this->regions_selects[sizeof($this->regions_selects)-1]['select'] as $a=>$b){
+							if($a != $this->languages['please_choose'] && isset($a)){
+								$str .= " ".$a;
+								$this->regions_selects = array();
+								$this->children($regions,$str);
+							}
+						}
+					}
+				}
+			}			
 			$this->set('regions_selects',$this->regions_selects);
 			if(isset($_POST['updateaddress_id'])){
 				$this->set('updateaddress_id',$_POST['updateaddress_id']);

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: view.ctp 943 2009-04-23 10:38:44Z huangbo $
+ * $Id: view.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?> 
 <div class="content">
@@ -78,7 +78,7 @@
 	foreach ($languages as $k => $v){?>
 		<p class="products_name">
 			<?=$html->image($v['Language']['img01'])?><span><input id="upload_img_text_<?=$k?>" name="data[BrandI18n][<?=$k;?>][img01]" type="text" size="45"   value="<?=@$this->data['BrandI18n'][$v['Language']['locale']]['img01'];?>"></span> <?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(".$k.",'brands')",'',false,false)?>
-			<br />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<?=@$html->image("{$this->data['BrandI18n'][$v['Language']['locale']]['img01']}",array('id'=>'logo_thumb_img_'.$k,'height'=>'150'))?>
+			<br />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<?=@$html->image("{$this->data['BrandI18n'][$v['Language']['locale']]['img01']}",array('id'=>'logo_thumb_img_'.$k,'height'=>'150','style'=>'display:none'))?>
 			</p>
 
 <?
@@ -96,10 +96,14 @@
 		
 		<dl><dt>品牌网址：</dt>
 			<dd><input type="text" id="BrandUrl" name="data[Brand][url]" value="<?=$this->data['Brand']['url'];?>" class="text_inputs" style="width:286px;" /></dd></dl>
-		<dl><dt>品牌图片：</dt>
+		<dl><dt>品牌图片1：</dt>
 			<dd><input type="text" id="upload_img_text_1001" name="data[Brand][img01]" value="<?=$this->data['Brand']['img01'];?>" class="text_inputs" style="width:286px;" /></dd><dd><?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(1001,'brands')",'',false,false)?></dd></dl>
+
+		<dl><dt>品牌图片2：</dt>
+			<dd><input type="text" id="upload_img_text_1002" name="data[Brand][img02]" value="<?=$this->data['Brand']['img02'];?>" class="text_inputs" style="width:286px;" /></dd><dd><?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(1002,'brands')",'',false,false)?></dd></dl>
+
 		<dl><dt></dt>
-		<dd><?=$html->image("/..{$this->data['Brand']['img01']}",array('id'=>'logo_thumb_img_1001','height'=>'150'))?>
+		<dd><?=$html->image("/..{$this->data['Brand']['img01']}",array('id'=>'logo_thumb_img_1001','height'=>'150','style'=>'display:none'))?>
 		</dd></dl>
 		<dl><dt>排序：</dt><dd class="time"><input id="BrandOrderby" name="data[Brand][orderby]" type="text" class="text" style="width:108px;"   value="<?=$this->data['Brand']['orderby'];?>" onkeyup="check_input_num(this)" /><br />如果您不输入排序号，系统将默认为50</dd></dl>
 		<dl style="padding:5px 0;*padding:6px 0;">

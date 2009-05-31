@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: advertisement.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: advertisement.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class Advertisement extends AppModel{
 	var $name = 'Advertisement';
@@ -32,7 +32,6 @@ class Advertisement extends AppModel{
     //数组结构调整
     function localeformat($id){
 		$lists=$this->findAll("Advertisement.id = '".$id."'");
-	//	pr($lists);
 		foreach($lists as $k => $v){
 				 $lists_formated['Advertisement']=$v['Advertisement'];
 				 $lists_formated['AdvertisementI18n'][]=$v['AdvertisementI18n'];
@@ -40,7 +39,6 @@ class Advertisement extends AppModel{
 				 	  $lists_formated['AdvertisementI18n'][$val['locale']]=$val;
 				 }
 			}
-	//	pr($lists_formated);
 		return $lists_formated;
 	}
 

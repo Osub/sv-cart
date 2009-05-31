@@ -2,7 +2,7 @@
 		var sUrl = webroot_dir+"regions/choice/";
 		var postData ="str="+str;
 	//	alert(sUrl);
-			document.getElementById('region_loading').style.display="inline-block ";
+		document.getElementById('region_loading').style.display="inline-block";
 
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, show_regions_callback,postData);
 	}

@@ -66,10 +66,6 @@ version: 2.5.2
 .yuimenu.show-scrollbars{overflow:visible;}
 .yuimenu.hide-scrollbars .yui-menu-shadow{overflow:hidden;}
 .yuimenu.show-scrollbars .yui-menu-shadow{overflow:auto;}
-
-.svcart-skin-g00 .yuimenu .bd{
-	background:url(../img/category_ulbg.gif) repeat-y;
-}
 .svcart-skin-g00 .yuimenu .Sub_bd{
 	border:none;background:#EFF7EF url(../img/LeftsubNav_bg.gif) repeat-y;clear:both;
 }
@@ -95,7 +91,7 @@ version: 2.5.2
 .svcart-skin-g00 .yuimenuitemlabel{
 	padding:0 0 0 40px;text-decoration:none;line-height:26px;
 }
-
+* html .svcart-skin-g00 .yuimenuitemlabel{height:100%;}
 .svcart-skin-g00 .yuimenuitemlabel .helptext{
 	margin-top:-1.5em;*margin-top:-1.45em;
 }

@@ -292,15 +292,15 @@ form{margin:0px;}
 	padding:2px;width:270px;height:60px;vertical-align:top
 }
 #user_msg p.msg_title{
-	background:#EFF9E1;margin:0 1px;padding:2px 0;position:relative;height:20px;overflow:hidden;line-height:20px;
+	background:#EFF9E1;margin:0 1px;padding:2px 0 2px 10px;position:relative;height:20px;overflow:hidden;line-height:20px;
 }
 #user_msg p.msg_title .title{
 }
 #user_msg p.msg_title .del_btn{
 	position:absolute;right:30px;top:2px;
 }
-#user_msg p.msg_txt{
-	padding:10px 10px;line-height:normal;text-indent:1.5em;
+#user_msg .msg_txt{
+	padding:10px 10px;line-height:normal;text-indent:1.5em;color:#18AA5C;
 }
 #user_msg p{
 	color:#18AA5C;
@@ -406,13 +406,13 @@ form{margin:0px;}
 	color:#16A45A;float:left;border-bottom:1px solid #fff;border-right:1px solid #fff;height:25px;line-height:25px;
 }
 #user_msg p.article_title span.title{
-	width:77%;padding-left:24px;
+	width:68%;padding-left:24px;
 }
 #user_msg p.article_title span.user_name{
-	width:165px;
+	width:14%;text-align:center;
 }
 #user_msg p.article_title span.add_time{
-	width:19.6%;border-right:none;
+	width:14%;border-right:none;text-align:center;
 }
 #user_msg #article_box{
 	margin:10px 0 0;
@@ -424,14 +424,14 @@ form{margin:0px;}
 	float:left;
 }
 #article_box p.list .title{
-	width:77%;padding-left:24px;overflow-x:hidden;
+	width:68%;padding-left:24px;overflow-x:hidden;
 }
 #article_box p.list .title a{
 	color:#9D9D9D;
 }
 #article_box p.list span.name{
-	width:165px;text-align:center;
+	width:14%;text-align:center;
 }
 #article_box p.list span.time{
-	width:19.6%;text-align:center;
+	width:14%;text-align:center;
 }

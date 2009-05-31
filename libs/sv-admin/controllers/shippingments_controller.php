@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: shippingments_controller.php 1201 2009-05-05 13:30:17Z huangbo $
+ * $Id: shippingments_controller.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class ShippingmentsController extends AppController {
 	var $name = 'Shippingments';
@@ -21,6 +21,9 @@ class ShippingmentsController extends AppController {
 	var $uses = array('ShippingI18n','Shipping','ShippingArea','ShippingAreaI18n','ShippingAreaRegion','Region');
 
 	function index(){
+		/*判断权限*/
+		$this->operator_privilege('ship_view');
+		/*end*/
 		$this->pageTitle = '配送方式'." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'配送方式','url'=>'/shippingments/');
 		$this->set('navigations',$this->navigations);
@@ -46,15 +49,7 @@ class ShippingmentsController extends AppController {
 		$page = $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass);
 		
 		$data = $this->Shipping->find('all',array('page'=>$page,'limit'=>$rownum,'conditions'=>$condition,'order'=>'Shipping.created,Shipping.id'));
-	/*	foreach($data as $k=>$v){
-			$v['Shipping']['name'] = '';
-			$v['Shipping']['description'] = '';
-			if(!empty($v['ShippingI18n']))foreach($v['ShippingI18n'] as $vv){
-				$v['Shipping']['name'] .= $vv['name']."|";
-				$v['Shipping']['description'] .= $vv['description']."|";
-			}
-			$data[$k] = $v;
-		}*/
+
 		$this->set('shippings',$data);
 	}
 	function edit($id){
@@ -81,7 +76,9 @@ class ShippingmentsController extends AppController {
 				array('description' =>"'".$this->data['ShippingI18n']['description']."'"),
 				array('id' =>$this->data['ShippingI18n']['id'])
 			);
-			$this->flash("编辑成功",'/shippingments/edit/'.$id,10);
+
+			$this->flash("配送方式 ".$this->data['ShippingI18n']['name']." 编辑成功。点击继续编辑该配送方式。",'/shippingments/edit/'.$id,10);
+
 		}
 		$this->Shipping->set_locale($this->locale);
 		$Shipping_info = $this->Shipping->findById($id);
@@ -111,8 +108,15 @@ class ShippingmentsController extends AppController {
         	$this->data['ShippingArea']['fee_configures'] = $money;
         	$this->ShippingAreaI18n->deleteall("shipping_area_id = '".$this->data['ShippingArea']['id']."'",false);
     	   	$this->ShippingArea->saveAll($this->data);
-    	   	//pr($this->data);
-        	$this->flash("编辑成功",'/shippingments/area/'.$_REQUEST['re_id'],10);
+    	   	
+    	   	
+			foreach( $this->data['ShippingAreaI18n'] as $k=>$v ){
+				if($v['locale'] == $this->locale){
+					$userinformation_name = $v['name'];
+				}
+			}
+			$this->flash("配送区域 ".$userinformation_name." 编辑成功。点击继续编辑该配送区域。",'/shippingments/area/'.$_REQUEST['re_id'],10);
+
 
         }
         $shippingarearegion_edit = $this->ShippingAreaRegion->findall(array("shipping_area_id"=>$id));
@@ -230,8 +234,13 @@ class ShippingmentsController extends AppController {
 					$this->ShippingAreaRegion->saveAll( $datas );
 			}
 			//pr($datas);
-			
-        	$this->flash("编辑成功",'/shippingments/area/'.$id,10);
+			foreach( $this->data['ShippingAreaI18n'] as $k=>$v ){
+				if($v['locale'] == $this->locale){
+					$userinformation_name = $v['name'];
+				}
+			}
+			$this->flash("配送区域 ".$userinformation_name." 编辑成功。点击继续编辑该配送区域。",'/shippingments/area_edit/'.$this->ShippingArea->getLastInsertID().'/'.$id,10);
+
         	//pr($this->data);
         }
 		

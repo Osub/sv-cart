@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: remove.ctp 1232 2009-05-06 12:14:41Z huangbo $
+ * $Id: remove.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ob_start();?>
 <?if($result['type'] == "product"){?>
@@ -61,7 +61,7 @@ ob_start();?>
 </ul>
 <p class="buy_btn">
 <?if($result['type']==0){?>
-<?=$html->link($SCLanguages['delete'],"javascript:act_remove_product('product',".$product_info['Product']['id'].")","",false,false);?>
+<?=$html->link($SCLanguages['delete'],"javascript:act_remove_product('product',".$product_info_id.")","",false,false);?>
 <?=$html->link($SCLanguages['cancel'],"javascript:close_message();","",false,false);?>
 <?}else{?>
 <?=$html->link($SCLanguages['confirm'],"javascript:close_message();","",false,false);?>

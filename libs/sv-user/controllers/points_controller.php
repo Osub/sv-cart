@@ -9,8 +9,9 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: points_controller.php 1201 2009-05-05 13:30:17Z huangbo $
+ * $Id: points_controller.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
+uses('sanitize');		
 class PointsController extends AppController {
 
 	var $name = 'Points';
@@ -25,7 +26,8 @@ class PointsController extends AppController {
 			 $this->redirect('/login/');
 		}
 		$this->page_init();
-		
+		$mrClean = new Sanitize();		
+			
 		//当前位置
 		$this->navigations[] = array('name'=>__($this->languages['points'],true),'url'=>"");
 		$this->set('locations',$this->navigations);
@@ -41,9 +43,11 @@ class PointsController extends AppController {
 	   	   $condition .=" and created  <= '".$this->params['url']['date2']."'";
 	   }
 	   if(isset($this->params['url']['min_points']) && $this->params['url']['min_points'] != ''){
+			$this->params['url']['min_points']= $mrClean->paranoid($this->params['url']['min_points'],array(' ','@','-','.',':','/',',','_'));
 	   	   $condition .=" and point >= '".$this->params['url']['min_points']."'";
 	   }
 	   if(isset($this->params['url']['max_points']) && $this->params['url']['max_points'] != ''){
+			$this->params['url']['max_points']= $mrClean->paranoid($this->params['url']['max_points'],array(' ','@','-','.',':','/',',','_'));
 	   	   $condition .=" and point <= '".$this->params['url']['max_points']."'";
 	   }
 	   $total = $this->UserPointLog->findCount($condition,0);
@@ -54,21 +58,49 @@ class PointsController extends AppController {
 	   $options=Array();
 	   $page= $this->Pagination->init($condition,"",$options,$total,$rownum,$sortClass);
 	   $my_points=$this->UserPointLog->findAll($condition,'','','',$page);
+	   $b_point = 0;
+	   $r_point = 0;
+	   $o_point = 0;
+	   $c_point = 0;
+	   
 	   foreach($my_points as $k=>$v){
 	   	   $condition=" id = '".$v['UserPointLog']['type_id']."'";
 	   	   $my_points[$k]['Order']=$this->Order->find($condition);
+	   	   if($v['UserPointLog']['log_type'] == "B"){
+	   	   		$b_point += $v['UserPointLog']['point'];
+	   	   }
+	   	   if($v['UserPointLog']['log_type'] == "R"){
+	   	   		$r_point += $v['UserPointLog']['point'];
+	   	   }	 
+	   	   if($v['UserPointLog']['log_type'] == "O"){
+	   	   		$o_point += $v['UserPointLog']['point'];
+	   	   }	 
+	   	   if($v['UserPointLog']['log_type'] == "C"){
+	   	   		$c_point += $v['UserPointLog']['point'];
+	   	   }		   	   
+	   	   	   	     	   
 	   }
+	   $this->set('c_point',$c_point);
+	   $this->set('b_point',$b_point);
+	   $this->set('o_point',$o_point);
+	   $this->set('r_point',$r_point);
+	   
 	   $user_info = $this->User->findbyid($user_id);
 	   $my_point = $user_info['User']['point'];
-	   $condition=" user_id='".$user_id."' and payment_status = 0 ";
+	   $condition=" user_id='".$user_id."' and payment_status = '0' ";
 	   $total_no_pay=$this->Order->findCount($condition,0);
-	   $condition=" user_id='".$user_id."' and status = 0 ";
-	   $total_no_confirm=$this->Order->findCount($condition,0);
+	   $condition=" user_id='".$user_id."' and status = '0' ";
 	   //筛选条件
 	   $min_points=isset($this->params['url']['min_points'])?$this->params['url']['min_points']:'';
    	   $max_points=isset($this->params['url']['max_points'])?$this->params['url']['max_points']:'';
    	   $start_date=isset($this->params['url']['date'])?$this->params['url']['date']:'';
-   	   $end_date=isset($this->params['url']['date2'])?$this->params['url']['date2']:'';
+   	   $end_date=isset($this->params['url']['date2'])?$this->params['url']['date2']:''; 
+   	   
+   	   
+	   $total_no_confirm=$this->Order->findCount($condition,0);
+	   
+	   
+   	   
 	   $js_languages = array("page_number_expand_max" => $this->languages['page_number'].$this->languages['not_exist'] ,
 	   						"recharge_amount_not_empty" => $this->languages['supply'].$this->languages['amount'].$this->languages['can_not_empty'],
 	   						"no_choose_payment_method" => $this->languages['please_choose'].$this->languages['payment']);

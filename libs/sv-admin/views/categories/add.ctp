@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 1327 2009-05-11 11:01:20Z huangbo $
+ * $Id: add.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -179,7 +179,8 @@
 				  }?>
 			</select></dd></dl>
 		<dl><dt>排序：</dt><dd class="time"><!--<? echo $form->input('orderby',array('label'=>false,'div'=>false));?>--><input id="CategoryOrderby" name="data[Category][orderby]" type="text" class="text" style="width:108px;"   value=""/></dd></dl>
-		<span style="display:none"><dl><dt>FLASH幻灯片参数：</dt><dd class="time"><input id="CategoryFlashConfig" name="data[Category][flash_config]" type="text" class="text" value=""/></dd></dl>
+		<dl><dt>超级连接：</dt><dd class="time"><input id="CategoryFlashConfig" name="data[Category][link]" type="text" class="text"  style="width:108px;"  value=""/></dd></dl>
+
 		</span><dl style="padding:5px 0;*padding:6px 0;"><dt style="padding-top:1px">是否显示：</dt><dd class="best_input"><input id="CategoryStatus" name="data[Category][status]" type="radio" value="1" checked >是<input id="CategoryStatus" name="data[Category][status]" type="radio" value="0"  >否</dd></dl>
 		<dl><dt>分类图片01：</dt><dd><input id="upload_img_text_3" name="data[Category][img01]" type="text" size="50" /><br /><br /><?=@$html->image('',array('id'=>'logo_thumb_img_3','height'=>'150','style'=>'display:none'))?>
 </dd><dd><?=@$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(3,'product_categories')",'',false,false)?></dd></dl>

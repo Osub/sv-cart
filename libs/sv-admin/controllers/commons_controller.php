@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: commons_controller.php 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: commons_controller.php 1895 2009-05-31 13:03:01Z huangbo $
 *****************************************************************************/
 class CommonsController extends AppController {
 
@@ -32,10 +32,11 @@ class CommonsController extends AppController {
 		$Operator_menus=$this->Operator_menu->tree();
 		//pr($Operator_menus);
         $sub_actions_id1=explode(';',$_SESSION['Action_List']);
+        
 		if($sub_actions_id1[0] != 'all'){
 			  //得到所有属于此操作员的action的id集合
 		      $sub_actions_id2=array();
-		      $condition = array("Operator_action.id"=>$sub_actions_id1," Operator_action.parent_id != 0 and Operator_action.status = 1");
+		      $condition = array("Operator_action.id"=>$sub_actions_id1," Operator_action.parent_id != '0' and Operator_action.status = '1'");
 		      $actions_list=$this->Operator_action->findAll($condition);
 		      $Operator_real_menus=array();
               foreach($Operator_menus as $k=>$v){
@@ -62,6 +63,7 @@ class CommonsController extends AppController {
          }
         else{
         	$Operator_real_menus=$Operator_menus;
+        	//pr($Operator_real_menus);
         }
 //	pr($Operator_real_menus);
 
@@ -262,7 +264,7 @@ function product_type_list($selected = 0){
             $spec = 0;
             foreach ($attr AS $key => $val){
             	  $html .= "<tr><td style='width:120px;'>";
-            	  if ($val['ProductTypeAttribute']['attr_type'] == 1){
+            	  if ($val['ProductTypeAttribute']['attr_type'] == "1"){
             	  	    $html .= ($spec != $val['ProductTypeAttribute']['id']) ?
                              "<a href='javascript:;' onclick='addSpec(this)'>[+]</a>" :
                              "<a href='javascript:;' onclick='removeSpec(this)'>[-]</a>";
@@ -270,10 +272,10 @@ function product_type_list($selected = 0){
             	  }
             	  $html .= $val['ProductTypeAttributeI18n']['name']."</td><td><input  type='hidden' name='attr_id_list[]' value=".$val['ProductTypeAttribute']['id']." />";
             	  
-            	  if ($val['ProductTypeAttribute']['attr_input_type'] == 0){
+            	  if ($val['ProductTypeAttribute']['attr_input_type'] == "0"){
             	  	     $html .= '<input style="width:355px;height:60px;border:1px solid #649776;overflow-y:scroll" name="attr_value_list[]" type="text" value="' .$val['ProductAttribute']['product_type_attribute_value']. '"  /> ';
             	  }
-            	  elseif ($val['ProductTypeAttribute']['attr_input_type'] == 2){
+            	  elseif ($val['ProductTypeAttribute']['attr_input_type'] == "2"){
             	  	     $html .= '<textarea style="width:355px;height:60px;border:1px solid #649776;overflow-y:scroll" name="attr_value_list[]" >' .$val['ProductAttribute']['product_type_attribute_value']. '</textarea>';
             	  }
             	  else{
@@ -294,10 +296,10 @@ function product_type_list($selected = 0){
             	  	     $html .= '</select> ';
 
             	  }
-            	  //$html .= "</td><td>";
-            	  $html .= ($val['ProductTypeAttribute']['attr_type'] == 1) ? '属性价格<input style="border:1px solid #649776;overflow-y:scroll" type="text" name="attr_price_list[]" value="' . $val['ProductAttribute']['product_type_attribute_price'] . '" size="2" maxlength="10" />' :
+            	  $html .= "<span style='display:none'>";
+            	  $html .= ($val['ProductTypeAttribute']['attr_type'] == "1") ? '属性价格<input style="border:1px solid #649776;overflow-y:scroll" type="text" name="attr_price_list[]" value="' . $val['ProductAttribute']['product_type_attribute_price'] . '" size="2" maxlength="10" />' :
             ' <input type="hidden" name="attr_price_list[]" value="0" />';
-
+					$html .= '</span>';
                   $html .= '</td></tr>';
             	  
             }
@@ -333,7 +335,10 @@ function product_type_list($selected = 0){
  function get_linked_topic_products($topic_id){
 
  	$this->Product->set_locale($this->locale);
-	$topic_products=$this->TopicProduct->findAll("TopicProduct.topic_id = '".$topic_id."'","","TopicProduct.orderby desc");
+ 	if(!empty($topic_id)){
+ 		$wh["TopicProduct.topic_id"] = $topic_id;
+ 	}
+	$topic_products=$this->TopicProduct->findAll($wh,"","TopicProduct.orderby desc");
 
 	$res=$this->Product->findAll();
 	foreach($res as $k=>$v){
@@ -412,9 +417,11 @@ function get_articles_products($article_id){
  
   function send_email($to_email,$template,$fromName,$subject){
 		$this->MailTemplate->set_locale($this->locale);
-		$template=$this->MailTemplate->find("code = '$template' and status = 1");
+		$template=$this->MailTemplate->find("code = '$template' and status = '1'");
 
 		$this->Email->sendAs = 'html';
+		$this->Email->is_ssl = $this->configs['smtp_ssl'];
+		$this->Email->smtp_port = $this->configs['smtp_port'];
   		$this->Email->smtpHostNames = "".$this->configs['smtp_host']."";
         $this->Email->smtpUserName = "".$this->configs['smtp_user']."";
         $this->Email->smtpPassword = "".$this->configs['smtp_pass']."";

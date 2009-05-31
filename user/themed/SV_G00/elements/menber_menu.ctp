@@ -9,11 +9,12 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: menber_menu.ctp 1201 2009-05-05 13:30:17Z huangbo $
+ * $Id: menber_menu.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
-<div id="category_box" class="catmenus">
-<h3 class="font_14"><?=$SCLanguages['user_center']?></h3>
+<div class="category_box catmenus">
+<h3 class="font_14"><span class="l"></span><span class="r"></span><?=$SCLanguages['user_center']?></h3>
+<div class="box">
 <ul class="left_menus">
 	<li class="Nav"><?=$html->link($SCLanguages['my_information'],'/profiles/',array('class'=>'svcartmenuitemlabel'))?></li>
 	<li class="Nav"><?=$html->link($SCLanguages['address_book'],'/addresses/',array('class'=>'svcartmenuitemlabel'));?></li>
@@ -30,6 +31,7 @@
 	<li class="Nav"><?=$html->link($SCLanguages['set'],"/configs/",array("class"=>"svcartmenuitemlabel"));?></li>
 	<?}?>
 	<li class="Nav"><?=$html->link($SCLanguages['log_out'],'javascript:logout();',array("class"=>"svcartmenuitemlabel"));?></li>
-</ul>            
+</ul>
+</div>
 <p><?=$html->image('category_ulbt.gif',array('alt'=>''))?></p>
 </div><!--用户中心菜单 End-->

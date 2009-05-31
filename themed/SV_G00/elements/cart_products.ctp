@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: cart_products.ctp 1232 2009-05-06 12:14:41Z huangbo $
+ * $Id: cart_products.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?>
 <?if(isset($svcart['products']) || isset($svcart['packagings']) || isset($svcart['cards'])){?>
@@ -28,18 +28,35 @@
 <?if(!empty($SVConfigs['enable_products_show_method']) && $SVConfigs['enable_products_show_method'] == 1){?>
 <p class="pic">
 <?if($p['Product']['img_thumb'] != ""){?>
-<?=$html->link($html->image($p['Product']['img_thumb'],array("width"=>108,"height"=>108)),"/products/".$i."/","",false,false);?>
+<?=$html->link($html->image($p['Product']['img_thumb'],array("width"=>108,"height"=>108)),$svshow->sku_product_link($i,$p['ProductI18n']['name'],$p['Product']['code'],$SVConfigs['use_sku']),"",false,false);?>
 <?}else{?>
-<?=$html->link($html->image("/img/product_default.jpg",array("width"=>108,"height"=>108)),"/products/".$i."/","",false,false);?>	
+<?=$html->link($html->image("/img/product_default.jpg",array("width"=>108,"height"=>108)),$svshow->sku_product_link($i,$p['ProductI18n']['name'],$p['Product']['code'],$SVConfigs['use_sku']),"",false,false);?>	
 <?}?>
 </p>
 <?}?>
 <p class="info">
 <?if(isset($p['ProductI18n']['name'])){?>
-<span><?=$html->link($p['ProductI18n']['name'],"/products/".$i."/","",false,false);?></span>
+<?
+if(isset($p['attributes'])){
+	$p_name = $p['ProductI18n']['name']." (".$p['attributes']." )";
+}else{
+	$p_name = $p['ProductI18n']['name'];
+}
+?>
+<span><?=$html->link($p_name,$svshow->sku_product_link($i,$p['ProductI18n']['name'],$p['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?></span>
 <?}?>
 <?if(isset($p['category_name'])){?>
-<span><?=$html->link($p['category_name'],"/categories/".$p['category_id']."/","",false,false);?></span>
+<span>
+		<?if(isset($p['use_sku'])){?>
+			<?if(isset($p['parent'])){?>
+			<?=$html->link($p['category_name'],"/categories/".$p['category_id']."/".$p['parent']."/".$p['category_name'],array(),false,false);?>
+			<?}else{?>
+			<?=$html->link($p['category_name'],"/categories/".$p['category_id']."/".$p['category_name']."/0/",array(),false,false);?>
+			<?}?>
+		<?}else{?>	
+			<?=$html->link($p['category_name'],"/categories/".$p['category_id'],array(),false,false);?>
+		<?}?>
+</span>
 <?}?>
 <?if(isset($brands[$p['Product']['brand_id']])){?><span><?=$html->link($brands[$p['Product']['brand_id']]['BrandI18n']['name'],"/brands/".$p['Product']['brand_id']."/","",false,false);?></span><?}?>
 </p>
@@ -47,10 +64,7 @@
 <div class="Item_Price">
 
 <span class="Products_Price">
-<?=$SCLanguages['our_price']?>:
-<?if(isset($p['product_rank_price'])){?>
-<?=$svshow->price_format($p['product_rank_price'],$SVConfigs['price_format']);?>	
-<?}else if(isset($p['is_promotion'])){?>
+<?=$SCLanguages['our_price']?>:<?if(isset($p['product_rank_price'])){?><?=$svshow->price_format($p['product_rank_price'],$SVConfigs['price_format']);?><?}else if(isset($p['is_promotion'])){?>
 <? if($p['is_promotion'] == 1){ ?>
 <?=$svshow->price_format($p['Product']['promotion_price'],$SVConfigs['price_format']);?>	
 <? }else{ ?>
@@ -90,13 +104,14 @@
 </div>
 <div class="btn_list">
 <a href="javascript:remove_product('product',<?=$i?>)"><span><?=$SCLanguages['delete']?></span></a>
+	<?if(isset($_SESSION['User'])){?>
 <a href="javascript:favorite(<?=$i?>,'p')"><span><?=$SCLanguages['favorite']?></span></a>
-<?=$html->link("<span>".$SCLanguages['detail']."</span>","/products/".$i,array(),false,false);?></div>
+	<?}?>
+<?=$html->link("<span>".$SCLanguages['detail']."</span>",$svshow->sku_product_link($i,$p['ProductI18n']['name'],$p['Product']['code'],$SVConfigs['use_sku']),array(),false,false);?></div>
 </div>
 <?}?>
 </div>
-<? $st = 'ok';
-} if(isset($svcart['packagings']) && sizeof($svcart['packagings'])>0){?>
+<? $st = 'ok';} if(isset($svcart['packagings']) && sizeof($svcart['packagings'])>0){?>
 <div class="List_bg">
 <?foreach($svcart['packagings'] as $i=>$p){?>
 <div id="Item_box">
@@ -104,9 +119,9 @@
 <?if(!empty($SVConfigs['enable_products_show_method']) && $SVConfigs['enable_products_show_method'] == 1){?>
 <p class="pic">
 <?if($p['Packaging']['img01'] != ""){?>
-<?=$html->link($html->image($p['Packaging']['img01'],array("width"=>108,"height"=>108)),"/carts/#","",false,false);?>
+<?=$html->image($p['Packaging']['img01'],array("width"=>108,"height"=>108));?>
 <?}else{?>
-<?=$html->link($html->image("/img/product_default.jpg",array("width"=>108,"height"=>108)),"/carts/#","",false,false);?>
+<?=$html->image("/img/product_default.jpg",array("width"=>108,"height"=>108));?>
 <?}?>
 </p>
 <?}?>
@@ -116,8 +131,18 @@
 </div>
 <div class="Item_Price">
 <span class="Products_Price"><?=$SCLanguages['price']?>:
+<?if(isset($p['Packaging']['fee_free'])){?>
+<?=$svshow->price_format($p['Packaging']['fee_free'],$SVConfigs['price_format']);?>	
+<?}else{?>
 <?=$svshow->price_format($p['Packaging']['fee'],$SVConfigs['price_format']);?>	
-	</span>
+<?}?>
+</span>
+<?if($p['Packaging']['free_money'] > 0){?>
+<span class="Products_Price"><?=$SCLanguages['free'];?><?=$SCLanguages['limit'];?>:
+<?=$svshow->price_format($p['Packaging']['free_money'],$SVConfigs['price_format']);?>	
+</span>
+<?}?>
+
 </div>
 <div class="Number_select">
  <span class="top"><?=$html->link($html->image("ico_top.gif",array()),"javascript:quantity_change('packaging','+',".$i.")","",false,false);?></span>
@@ -133,8 +158,7 @@
 </div>
 <?}?>
 </div>
-<? $st = 'ok';
-} if(isset($svcart['cards']) && sizeof($svcart['cards'])>0){?>
+<? $st = 'ok';} if(isset($svcart['cards']) && sizeof($svcart['cards'])>0){?>
 <div class="List_bg">
 <?foreach($svcart['cards'] as $i=>$p){?>
 <div id="Item_box">
@@ -142,9 +166,9 @@
 <?if(!empty($SVConfigs['enable_products_show_method']) && $SVConfigs['enable_products_show_method'] == 1){?>
 <p class="pic">
 <?if($p['Card']['img01'] != ""){?>
-<?=$html->link($html->image($p['Card']['img01'],array("width"=>108,"height"=>108)),"/carts/#","",false,false);?>
+<?=$html->image($p['Card']['img01'],array("width"=>108,"height"=>108));?>
 <?}else{?>
-<?=$html->link($html->image("/img/product_default.jpg",array("width"=>108,"height"=>108)),"/carts/#","",false,false);?>
+<?=$html->image("/img/product_default.jpg",array("width"=>108,"height"=>108));?>
 <?}?>
 </p>
 <?}?>
@@ -154,8 +178,19 @@
 </div>
 <div class="Item_Price">
 <span class="Products_Price"><?=$SCLanguages['price']?>:
+<?if(isset($p['Card']['fee_free'])){?>
+<?=$svshow->price_format($p['Card']['fee_free'],$SVConfigs['price_format']);?>	
+<?}else{?>
 <?=$svshow->price_format($p['Card']['fee'],$SVConfigs['price_format']);?>	
-	</span>
+<?}?>
+</span>
+<?if($p['Card']['free_money'] > 0){?>
+<span class="Products_Price"><?=$SCLanguages['free'];?><?=$SCLanguages['limit'];?>:
+<?=$svshow->price_format($p['Card']['free_money'],$SVConfigs['price_format']);?>	
+</span>
+<?}?>	
+	
+	
 </div>
 <div class="Number_select">
  <span class="top"><?=$html->link($html->image("ico_top.gif",array()),"javascript:quantity_change('card','+',".$i.")","",false,false);?></span>
@@ -171,10 +206,8 @@
 </div>
 <?}?>
 </div>
-<? $st = 'ok';
-}   
-if(empty($st)){
-?>
+<? $st = 'ok';}if(empty($st)){?>
+<br/><br/>
 <? echo "<p class='not'>"?>
 <?=$html->image('warning_img.gif',array('alt'=>''))?>
 <?
@@ -182,20 +215,11 @@ echo "<strong>".$SCLanguages['no_products_in_cart']."</strong></p><br /><br /><b
 }else{ ?>
 <div id="balance">
 <span><?=$SCLanguages['subtotal']?>:<font color="#ff0000">
-<?=$svshow->price_format($svcart['cart_info']['sum_subtotal'],$SVConfigs['price_format']);?>	
-	</font></span>
+<?=$svshow->price_format($svcart['cart_info']['sum_subtotal'],$SVConfigs['price_format']);?></font></span>
 <?if($svcart['cart_info']['discount_price'] > 0){?>
-<span><?=$SCLanguages['discount']?>:
-	<?if(isset($svcart['cart_info']['discount_rate'])){?>
-	<?=$svcart['cart_info']['discount_rate'];?>
-	<?}else{?>
-		100
-		<?}?>
-	%</span>
-<span><?=$SCLanguages['save_to_market_price']?>:<font color="#ff0000">
-<?=$svshow->price_format($svcart['cart_info']['discount_price'],$SVConfigs['price_format']);?>	
-	</font>
-</span>
+<span><?=$SCLanguages['discount']?>:<?if(isset($svcart['cart_info']['discount_rate'])){?>
+<?=$svcart['cart_info']['discount_rate'];?><?}else{?>100<?}?>%</span>
+<span><?=$SCLanguages['save_to_market_price']?>:<font color="#ff0000"><?=$svshow->price_format($svcart['cart_info']['discount_price'],$SVConfigs['price_format']);?></font></span>
 <?}?>
-	</div>
+</div>
 <?}?>

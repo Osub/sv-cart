@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: product.php 1144 2009-04-29 11:41:30Z huangbo $
+ * $Id: product.php 1902 2009-05-31 13:56:19Z huangbo $
 *****************************************************************************/
 class Product extends AppModel
 {
@@ -19,7 +19,7 @@ class Product extends AppModel
 												  'className'    => 'ProductI18n',   
 					                              'order'        => '',   
 					                              'dependent'    =>  true,   
-					                              'foreignKey'   => 'Product_id'
+					                              'foreignKey'   => 'product_id'
 					                        	 ) ,
 					   	/*	'ProductsCategory' =>array
 												(
@@ -83,7 +83,7 @@ class Product extends AppModel
     	$datetime = date("Y-m-d H:i:s");
     	$condition = "Product.status ='1' and Product.alone = '1' and Product.forsale ='1' and Product.promotion_status in ('1','2') and '".$datetime."' between Product.promotion_start and Product.promotion_end  and Product.id= '".$product_id."'";
 		$products=$this->find($condition);
-		if($products)
+		if($products['Product'])
 			return true;
 		else
 			return false;
@@ -207,6 +207,19 @@ class Product extends AppModel
 					}else{
 						return null;
 					}
+	}
+	
+	function locale_price($id,$shop_price,$db){
+			if(isset($db->configs['mlti_currency_module']) && $db->configs['mlti_currency_module'] == 1){
+			$product_price = $db->ProductLocalePrice->find("ProductLocalePrice.product_id =".$id." and ProductLocalePrice.status = '1' and ProductLocalePrice.locale = '".$db->locale."'");
+				if(isset($product_price['ProductLocalePrice']['product_price'])){
+					return $product_price['ProductLocalePrice']['product_price'];
+				}else{
+					return $shop_price;
+				}
+			}else{
+				return $shop_price;
+			}
 	}
 	
 	

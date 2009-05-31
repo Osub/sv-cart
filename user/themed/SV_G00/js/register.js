@@ -188,12 +188,17 @@ function check_input(column){
 		var answer = document.getElementById('answer').value;
 		var postData = " name="+name+"&password="+password+"&email="+email+"&question="+question+"&column=all&answer="+answer+"&pwd_cfm="+pwd_cfm;
 	}else if(column == 'password_confirm'){
+		document.getElementById("password_confirm_loading").style.display = "";
 		var sUrl = webroot_dir+"check_input/";
 		var value = document.getElementById(column).value;
 		var pwd = document.getElementById('password').value;
 		var pwd_cfm = document.getElementById('password_confirm').value;
 		var postData = " column="+column+"&password="+pwd+"&password_confirm="+pwd_cfm;
 	}else{
+		var aa = column+'_loading';
+		if(column != "question"){
+		document.getElementById(aa).style.display = "";
+		}
 		var sUrl = webroot_dir+"check_input/";
 		var value = document.getElementById(column).value;
 		var postData = " column="+column+"&value="+value;
@@ -208,7 +213,6 @@ function check_input(column){
 			alert("Invalid data");
 			alert(o.responseText);
 		} 
-
 		if(result.column == "all"){			
 			if(result.error_type == ""){
 				document.user_info.submit();
@@ -219,12 +223,19 @@ function check_input(column){
 		}else if(result.error == 1){
 			user_info_error_num = 1;
 			document.getElementById(result.column+'_msg').innerHTML = "<font color=red>"+result.error_msg+"</font>";
+			document.getElementById(result.column+'_loading').style.display = "none";
 			is_error ++;
 			//document.getElementById(result.column).focus();
             return false;
 		}else{
 			user_info_error_num = 0;
-			document.getElementById(result.column+'_msg').innerHTML = '';
+			document.getElementById(result.column+'_loading').style.display = "none";
+			var password = document.getElementById('password').value;
+			if(result.column == 'password_confirm' && password != ""){
+				document.getElementById(result.column+'_msg').innerHTML =  "<font color=green >√</font>";
+			}else if(result.column != 'question' && result.column != 'password_confirm'){
+				document.getElementById(result.column+'_msg').innerHTML =  "<font color=green >√</font>";
+			}
 		}
 		error += user_info_error_num;
 		

@@ -9,15 +9,14 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1273 2009-05-08 16:49:08Z huangbo $
+ * $Id: index.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ?>
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
 <?=$javascript->link('calendar');?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 <div id="Products_box">
-<h1><span><?=$SCLanguages['points']?></span></h1>
-	<div id="infos" style="width:739px;">
+<h1 class="headers"><span class="l"></span><span class="r"></span><b><?=$SCLanguages['points']?></b></h1>
+	<div id="infos">
         	<p class="history_detail find-btns">
         	<a class="float_r" style="margin-top:5px;"><input onfocus="blur()" class="find" type="button" onclick="javascript:points_search();" value="<?=$SCLanguages['search']?>" /></a>
 			
@@ -30,41 +29,40 @@
 			<b><?=$SCLanguages['history_details']?></b>
 			</p>
             <ul class="integral_title">
-            <li class="integral" style="width:10%"><?=$SCLanguages['exchange'].$SCLanguages['points']?></li>
-            <li class="time"><?=$SCLanguages['exchange'].$SCLanguages['time']?></li>
-            <li class="time" ><?=$SCLanguages['order'].$SCLanguages['code']?></li>
-            <li class="gift" style="width:15%"><?=$SCLanguages['operation'].$SCLanguages['type']?></li>
-            <li class="handel"><?=$SCLanguages['operation']?></li></ul>
-            <div class="integral_list"><?//pr($my_points);?>
+            <li class="integral" style="width:23%"><?=$SCLanguages['exchange'].$SCLanguages['points']?></li>
+            <li class="time" style="width:23%"><?=$SCLanguages['exchange'].$SCLanguages['time']?></li>
+            <li class="gift"style="width:23%"><?=$SCLanguages['operation'].$SCLanguages['type']?></li>
+            <li class="handel" style="width:22%"><?=$SCLanguages['remark']?></li></ul>
+            <div class="integral_list">
     		<?if(isset($my_points) && sizeof($my_points)>0){?>
 		    <?foreach($my_points as $k=>$v){?>
-				<ul class="integral_title">
-				<li class="integral" style="width:10%"><?echo $v['UserPointLog']['point']?><?=$SCLanguages['point_unit']?></li>
-				<li class="time" ><?echo $v['UserPointLog']['created']?></li>
-				<li class="time">
-				<?if(isset($v['Order']['Order']['order_code'])){?>
-					<?=$v['Order']['Order']['order_code']?>
-				<?}else{?>
-				&nbsp;
-				<?}?>
-					</li>
-				<li class="gift" style="width:15%;text-align:center;margin-left:25px;">
+				<ul class="integral_title" >
+				<li class="integral" style="width:23%"><?echo $v['UserPointLog']['point']?><?=$SCLanguages['point_unit']?></li>
+				<li class="time" style="width:23%"><?echo $v['UserPointLog']['created']?></li>
+				<li class="gift" style="width:23%;text-align:center;margin-left:25px;">
 				<?if ($v['UserPointLog']['log_type'] == 'B'){?>&nbsp;<?=$SCLanguages['order_generated']?><?}elseif ($v['UserPointLog']['log_type'] == 'O'){?>
 					&nbsp;<?=$SCLanguages['order']?><?=$SCLanguages['use']?><?}elseif($v['UserPointLog']['log_type'] == 'R'){?>&nbsp;
 						<?=$SCLanguages['register_presented']?><?}elseif($v['UserPointLog']['log_type'] == 'C'){?>&nbsp;<?=$SCLanguages['order']?><?=$SCLanguages['return']?><?}else{?>&nbsp;<?}?></li>
 				
-				<li class="handel">
+				<li class="handel"   style="width:22%">
 				<?//if ($v['UserPointLog']['log_type'] == 'O'){?>
-					<?if(isset($v['Order']['Order']['id'])){?>
-				<?=$html->link($SCLanguages['view'].$SCLanguages['order'],"../orders/".$v['Order']['Order']['id'],array(),false,false);?>
+				<?if(isset($v['Order']['Order']['id'])){?>
+				<?=$SCLanguages['order_code']?>:<?=$html->link("<span>".$v['Order']['Order']['order_code']."</span>","../orders/".$v['Order']['Order']['id'],array('style'=>'text-decoration:underline;',"target"=>"_blank"),false,false);?>
 				<?}?></li>
 				</ul>
 				<?}?>
 				<?}?>	
-					
+	<!-- 小计 -->				
+			 <ul class="integral_title">
+	        <li class="time" style="width:13%"><?=$SCLanguages['order_generated']?>: <?=$b_point?> <?=$SCLanguages['point_unit']?></li>
+	        <li class="gift"style="width:13%"><?=$SCLanguages['register_presented']?> : <?=$r_point?> <?=$SCLanguages['point_unit']?></li>
+	        <li class="gift"style="width:13%"><?=$SCLanguages['order']?><?=$SCLanguages['use']?> : <?=$o_point?> <?=$SCLanguages['point_unit']?></li>
+	        <li class="gift"style="width:13%"><?=$SCLanguages['order']?><?=$SCLanguages['return']?> : <?=$c_point?> <?=$SCLanguages['point_unit']?></li>
+			</ul>		
+	<!-- 小计 -->
+	<p class="last_integral" align="right"><?=$SCLanguages['current'].$SCLanguages['point']?>：<span><?echo $my_point?></span><?=$SCLanguages['point_unit']?></p>
 			</div>
-			<p class="last_integral"><?=$SCLanguages['current'].$SCLanguages['points']?>：<span><?echo $my_point?></span><?=$SCLanguages['point_unit']?></p>
-			<br /><br />
+			
         </div>
   </div>
 

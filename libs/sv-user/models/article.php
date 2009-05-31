@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: article.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: article.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class Article extends AppModel
 {
@@ -18,7 +18,7 @@ class Article extends AppModel
                         array('className'    => 'ArticleI18n',   
                               'order'        => '',   
                               'dependent'    =>  true,   
-                              'foreignKey'   => 'Article_id'
+                              'foreignKey'   => 'article_id'
                         )
                   );
 	
@@ -56,7 +56,7 @@ class Article extends AppModel
 	
 	//滚动文章
 	function findscroll(){
-		$conditions="Article.status ='1' and Article.importance in (2,3)";
+		$conditions="Article.status ='1' and Article.importance in ('2','3')";
 		return $this->findAll($conditions,'','orderby asc');
 	}
 	

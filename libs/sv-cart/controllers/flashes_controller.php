@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: flashes_controller.php 1201 2009-05-05 13:30:17Z huangbo $
+ * $Id: flashes_controller.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 App::import('Core', 'xml');
 
@@ -22,12 +22,12 @@ class FlashesController extends AppController {
  	  $this->page_init();
  	  $this->Flash->set_locale($this->locale);
  	  $flash_info=$this->Flash->find("type = '$type' and type_id = $type_id ");
-	  $flash_info['Flash']['titleBgColor']=hexdec($flash_info['Flash']['titleBgColor']);
-	  $flash_info['Flash']['titleTextColor']=hexdec($flash_info['Flash']['titleTextColor']);
-	  $flash_info['Flash']['btnTextColor']=hexdec($flash_info['Flash']['btnTextColor']);
-	  $flash_info['Flash']['btnDefaultColor']=hexdec($flash_info['Flash']['btnDefaultColor']);
-	  $flash_info['Flash']['btnHoverColor']=hexdec($flash_info['Flash']['btnHoverColor']);
-	  $flash_info['Flash']['btnFocusColor']=hexdec($flash_info['Flash']['btnFocusColor']);
+	  $flash_info['Flash']['titlebgcolor']=hexdec($flash_info['Flash']['titlebgcolor']);
+	  $flash_info['Flash']['titletextcolor']=hexdec($flash_info['Flash']['titletextcolor']);
+	  $flash_info['Flash']['btntextcolor']=hexdec($flash_info['Flash']['btntextcolor']);
+	  $flash_info['Flash']['btndefaultcolor']=hexdec($flash_info['Flash']['btndefaultcolor']);
+	  $flash_info['Flash']['btnhovercolor']=hexdec($flash_info['Flash']['btnhovercolor']);
+	  $flash_info['Flash']['btnfocuscolor']=hexdec($flash_info['Flash']['btnfocuscolor']);
 //	  pr($flash_info);
  	  $config = $flash_info['Flash'];
 

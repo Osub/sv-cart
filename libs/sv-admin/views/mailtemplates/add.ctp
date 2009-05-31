@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 1093 2009-04-28 04:02:04Z huangbo $
+ * $Id: add.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -33,8 +33,9 @@
 ?>
 <!--Mailtemplates_Config-->
 	  <div class="shop_config menus_configs">
-
-		
+	<dl><dt style="width:105px;">编号: </dt>
+		<dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" id="data_mailtemplate_code" name="data[MailTemplate][code]"  /></dd></dl>
+	
 		<h2>邮件主题：</h2>
 <? if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>

@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: default.ctp 1232 2009-05-06 12:14:41Z huangbo $
+ * $Id: default.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -21,30 +21,16 @@
 <meta name="keywords" content="<?php if(isset($meta_keywords)){echo $meta_keywords;} ?>" />
 <title><?php echo $title_for_layout; ?> - Powered by Seevia</title>
 <?echo $html->meta('icon');
-echo $html->css('style');
-if(isset($_SESSION['Config']['locale'])){
-echo $html->css($_SESSION['Config']['locale']);
-}else{
-echo $html->css('chi');
-}
-echo $scripts_for_layout;
+$lang_css = isset($_SESSION['Config']['locale']) ? $_SESSION['Config']['locale']:'chi';
 ?>
-<?=$javascript->link('/../js/yui/yahoo-dom-event.js');?>
-<?=$javascript->link('/../js/yui/container_core-min.js');?>
-<?=$javascript->link('/../js/yui/menu-min.js');?>
-<?=$javascript->link('/../js/yui/element-beta-min.js');?>
-<?=$javascript->link('/../js/yui/animation-min.js');?>
-<?=$javascript->link('/../js/yui/connection-min.js');?>
-<?=$javascript->link('/../js/yui/json-min.js');?>
-<?=$javascript->link('/../js/yui/yahoo-min.js');?>
-<?=$javascript->link('/../js/yui/container-min.js');?>
-<?=$javascript->link('regions');?>
-<?=$javascript->link('/../js/yui/treeview-min.js');?>
+
 <script type="text/javascript">
 	var webroot_dir = "<?=$this->webroot;?>";
 	var themePath = "<?=$this->themeWeb;?>";
 </script>
-<?=$javascript->link('common');?>
+
+<?=$minify->css(array($this->themeWeb.'css/layout',$this->themeWeb.'css/component',$this->themeWeb.'css/login',$this->themeWeb.'css/menu',$this->themeWeb.'css/containers',$this->themeWeb.'css/autocomplete',$this->themeWeb.'css/calendar',$this->themeWeb.'css/treeview',$this->themeWeb.'css/container',$this->themeWeb.'css/style',$this->themeWeb.'css/'.$lang_css));?>
+<?=$minify->js(array('/../js/yui/yahoo-dom-event.js','/../js/yui/container_core-min.js','/../js/yui/menu-min.js','/../js/yui/element-beta-min.js','/../js/yui/animation-min.js','/../js/yui/connection-min.js','/../js/yui/container-min.js','/../js/yui/json-min.js','/../js/yui/button-min.js','/../js/yui/calendar-min.js','/../js/yui/yahoo-min.js','/../js/yui/treeview-min.js',$this->themeWeb.'/js/regions.js',$this->themeWeb.'/js/common.js'));?>
 
 
 <script type="text/javascript">
@@ -69,37 +55,31 @@ var <?php echo $k;?> = "<?php echo $v;?>";
 </script>
 </head>
 		<?//pr($this);?>
-<body class="svcart-skin-g00" id="svcart-com" style="visibility:hidden" >
-	<div id="container">
-		<div id="header">
+<body class="svcart-skin-g00" id="svcart-com" style="visibility:hidden">
+<div id="header">
+	<?if(isset($languages)){?>
+	<?php echo $this->element('header', array('cache'=>'+0 hour','languages'=>$languages,'navigations_top'=>(isset($navigations['T']))?$navigations['T']:array()));?>
+	<?}else{?>
+	<div id="logo"><?=$html->link($html->image('logo.gif',array("alt"=>"SV-Cart")),"/","",false,false);?></div>
+	<?}?>
+</div>
+<div id="container">
+	<div id="content">
+		<div id="Left">
 		<?if(isset($languages)){?>
-			<?php echo $this->element('header', array('cache'=>'+0 hour','languages'=>$languages,'navigations_top'=>(isset($navigations['T']))?$navigations['T']:array()));?>
-		<?}else{?>
-<div id="logo"><?=$html->link($html->image('logo.gif',array("alt"=>"SV-Cart")),"/","",false,false);?></div>
-		<?}?>
-			</div>
-		<div id="content">
-			<div id="Left">
-		<?if(isset($languages)){?>
-				<?php echo $this->element('menber_menu', array('cache'=>'+0 hour'));?>
-				<?php echo $this->element('help', array('cache'=>'+0 hour'));?>
-				
-			</div>
-			<div id="Right">
-		<?php echo $content_for_layout; ?>
-			</div>
+		<?php echo $this->element('menber_menu', array('cache'=>'+0 hour'));?>
+		<?php echo $this->element('help', array('cache'=>'+0 hour'));?>
+		</div>
+		<div id="Right"><?php echo $content_for_layout; ?></div>
 		<?}else{?>
 		<?php echo $content_for_layout; ?>
 		<?}?>		
-		</div>
 	</div>
-	<?if(isset($languages)){?>
-	<div id="footer">
-	<?php echo $this->element('footer', array('cache'=>'+0 hour'));?>
-	</div>
-	<?php echo $this->element('dragl', array('cache'=>'+0 hour'));?>
-	<?}?>
-	<?php echo $cakeDebug; ?>
-
+</div>
+<?if(isset($languages)){?>
+<div id="footer"><?php echo $this->element('footer', array('cache'=>'+0 hour'));?></div>
+<?php echo $this->element('dragl', array('cache'=>'+0 hour'));?>
+<?}?>
+<?php echo $cakeDebug; ?>
 </body>
 </html>

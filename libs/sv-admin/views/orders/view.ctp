@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: view.ctp 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: view.ctp 1895 2009-05-31 13:03:01Z huangbo $
 *****************************************************************************/
 ?>
 <?if( $ctp_view == 'yes' ){?>
@@ -54,8 +54,8 @@ table.handels th{
 <span id="ajax_view">
 <div class="home_main">
   <?php echo $form->create('Order',array('action'=>'edit_order_info'));?>
-  <input name="data[Order][id]" type="hidden" value="<?echo $order_info['Order']['id']?>" />
-  <input type="hidden" name="act_type" value="baseinfo"></>
+  <input name="data[Order][id]" id="data_order_id" type="hidden" value="<?echo $order_info['Order']['id']?>" />
+  <input type="hidden" name="act_type" id="act_type" value="baseinfo"></>
 <table width="100%" cellpadding="0" cellspacing="0" class="">
 <tr>
 <td align="left" width="40%" valign="top" style="padding-right:5px">
@@ -76,7 +76,7 @@ table.handels th{
 	<?}}?>
 		<input type="button" name="Payment_edit" value="编辑" onclick="status_edit_show(this)">
   	    </dd></dl>
-<span style="display:none" id="Payment_edit">
+<span style="display:none" id="Payment_edit_id">
   	<?if(isset($payment_list) && sizeof($payment_list)>0){?>
   	<?foreach($payment_list as $k=>$v){?>
 		<p class="langs"><input class="radio" type="radio" style="width:auto;border:0;" value="<?echo $v['Payment']['id']?>" name="data[Order][payment_id]" <?if($order_info['Order']['payment_id'] == $v['Payment']['id']){?>checked<?}?>/><?echo $v['PaymentI18n']['name']?></p>
@@ -91,7 +91,7 @@ table.handels th{
 	<?}}?>
   	<input type="button" name="Shipping_edit" value="编辑" onclick="status_edit_show(this)">
   	</dd></dl>
-<span style="display:none" id="Shipping_edit">
+<span style="display:none" id="Shipping_edit_id">
   	<?if(isset($shipping_list) && sizeof($shipping_list)>0){?>
 	<?foreach($shipping_list as $k=>$v){?>
 		<p class="langs"><span>￥<?echo $v['Shipping']['shipping_fee']?></span><input type="radio" class="radio" style="width:auto;border:0;" value="<?echo $v['Shipping']['id']?>" name="data[Order][shipping_id]" <?if($order_info['Order']['shipping_id'] == $v['Shipping']['id']){?>checked<?}?> /><?echo $v['ShippingI18n']['name']?></p>
@@ -105,7 +105,9 @@ table.handels th{
 		<dl><dt>下单时间：</dt><dd><font face="arial"><?echo $order_info['Order']['created']?></font></dd></dl>
 		<dl><dt>付款时间：</dt><dd><font face="arial"><?if($order_info['Order']['payment_status'] == 1 || $order_info['Order']['payment_status'] == 2){?><?echo $order_info['Order']['payment_time']?><?}else{?>未付款<?}?></font></dd></dl>
 		<dl><dt>发货时间：</dt><dd><font face="arial"><?if($order_info['Order']['shipping_status'] == 1 || $order_info['Order']['shipping_status'] == 2){?><?echo $order_info['Order']['shipping_time']?><?}else{?>未付款<?}?></font></dd></dl>
+		
 		<dl><dt>订单来源：</dt><dd><font face="arial"><?echo $order_info['Order']['referer']?></font></dd></dl>
+		
 		<br />
 	  </div>
 	</div>
@@ -155,16 +157,17 @@ table.handels th{
 	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
 	  其他信息</h1></div>
 	  <div class="box">
-		<dl><dt>客户给商家留言：</dt><dd><textarea style="width:355px;height:60px;border:1px solid #649776;overflow-y:scroll" name="data[Order][postscript]" ><?echo $order_info['Order']['postscript']?></textarea></dd></dl>
-		<dl><dt>商家给客户的留言：</dt><dd><textarea style="width:355px;height:60px;border:1px solid #649776;overflow-y:scroll" name="data[Order][to_buyer]"><?echo $order_info['Order']['to_buyer']?></textarea></dd></dl>
-		<dl><dt>发票类型：</dt><dd><input type="text" name="data[Order][invoice_type]" class="text_inputs" style="width:198px;" value="<?echo $order_info['Order']['invoice_type']?>"/></dd></dl>
-		<dl><dt>发票抬头：</dt><dd><input type="text" name="data[Order][invoice_payee]" class="text_inputs" style="width:198px;" value="<?echo $order_info['Order']['invoice_payee']?>"/></dd></dl>
-		<dl><dt>发票内容：</dt><dd><textarea name="data[Order][invoice_content]" style="width:355px;height:60px;border:1px solid #649776;overflow-y:scroll"><?echo $order_info['Order']['invoice_content']?></textarea></dd></dl>
-		<dl><dt>缺货处理：</dt><dd><input type="text" class="text_inputs" style="width:198px;" value="<?echo $order_info['Order']['how_oos']?>" name="data[Order][how_oos]"/></dd></dl>
-		<dl><dt>包装：</dt><dd><input type="text" class="text_inputs" style="width:198px;" value="<?echo $order_info['Order']['pack_name']?>" name="data[Order][pack_name]"/></dd></dl>
-		<dl><dt>贺卡祝福语：</dt><dd><input type="text" class="text_inputs" style="width:198px;" value="<?echo $order_info['Order']['card_message']?>" name="data[Order][card_message]"/></dd></dl>
-		<dl><dt>贺卡：</dt><dd><input type="text" class="text_inputs" style="width:198px;" value="<?echo $order_info['Order']['card_name']?>"  name="data[Order][card_name]"/></dd></dl>
-	  </div>
+		<dl><dt>客户给商家留言：</dt><dd><textarea style="width:355px;height:60px;border:1px solid #649776;overflow-y:scroll" name="data[Order][postscript]" id="data_order_postscript" ><?echo $order_info['Order']['postscript']?></textarea></dd></dl>
+		<dl><dt>商家给客户的留言：</dt><dd><textarea style="width:355px;height:60px;border:1px solid #649776;overflow-y:scroll" id="data_order_to_buyer" name="data[Order][to_buyer]"><?echo $order_info['Order']['to_buyer']?></textarea></dd></dl>
+		<dl><dt>发票类型：</dt><dd><input type="text" name="data[Order][invoice_type]" id="data_order_invoice_type" class="text_inputs" style="width:198px;" value="<?echo $order_info['Order']['invoice_type']?>"/></dd></dl>
+		<dl><dt>发票抬头：</dt><dd><input type="text" name="data[Order][invoice_payee]" id="data_order_invoice_payee" class="text_inputs" style="width:198px;" value="<?echo $order_info['Order']['invoice_payee']?>"/></dd></dl>
+		<dl><dt>发票内容：</dt><dd><textarea name="data[Order][invoice_content]" id="data_order_invoice_content" style="width:355px;height:60px;border:1px solid #649776;overflow-y:scroll"><?echo $order_info['Order']['invoice_content']?></textarea></dd></dl>
+		<dl><dt>缺货处理：</dt><dd><input type="text" id="data_order_how_oos" class="text_inputs" style="width:198px;" value="<?echo $order_info['Order']['how_oos']?>" name="data[Order][how_oos]"/></dd></dl>
+		<span style="display:none"><dl><dt>包装：</dt><dd><input type="text" id="data_order_pack_name" class="text_inputs" style="width:198px;" value="<?echo $order_info['Order']['pack_name']?>" name="data[Order][pack_name]"/></dd></dl>
+		</span>
+	    <dl><dt>备注：</dt><dd><textarea id="data_order_note" name="data[Order][note]" style="width:355px;height:60px;border:1px solid #649776;overflow-y:scroll"><?echo $order_info['Order']['note']?></textarea></dd></dl>
+		
+  	  </div>
 	</div>
 <!--Other Stat End-->
 
@@ -172,7 +175,7 @@ table.handels th{
 </tr>
 
 </table>
-<p class="submit_btn"><input type="submit" value="确定" /><input type="reset" value="重置" /></p>
+<p class="submit_btn"><input type="button" value="确定" onclick="baseinfo_submit()" /><input type="reset" value="重置" /></p>
 <? echo $form->end();?>
 
 <!--Product Infos-->
@@ -201,7 +204,7 @@ table.handels th{
 	  <tr>
 	  <tbody>
 	    <input name="rec_id[]" type="hidden" value="<?echo $v['id']?>" />
-	  	<td width="17%" height="28" valign="middle"><?echo $v['product_name']?></td>
+	  	<td width="17%" height="28" valign="middle"><?php echo $html->link($v['product_name'],"../../products/{$v['product_id']}",array('target'=>'_blank'));?></td>
 		<td width="11%" valign="middle"><?echo $v['product_code']?></td>
 		<td width="10%" valign="middle"><input type="text" name="product_price[]" value="<?echo $v['product_price']?>" style="width:75px;text-align:right;" /></td>
 		<td width="8%" valign="middle"><input type="text" id="product_quntity[]" name="product_quntity[]" value="<?echo $v['product_quntity']?>" style="width:45px; text-align:right;" onblur="javascript:check_input(this);"/></td>
@@ -215,12 +218,48 @@ table.handels th{
 		<td valign="middle" colspan="4"><pre>  <font color="#F90000">备注：商品价格中已包含属性加价</font></pre></td>
 		<td align="right" valign="middle"><strong>合计：</strong></td>
 		<td valign="middle" align="right"><?echo $order_info['Order']['subtotal']?></td>
-		<td valign="middle" align="center"><?if($order_info['Order']['shipping_status'] == 0){?><input type="submit" value="更新商品" style="background:url(<?=$this->webroot?>img/upload.gif) no-repeat;width:78px;height:22px;border:0;font-size:12px;cursor:pointer" /><?}?></td>
+		<td valign="middle" align="center"><?if($order_info['Order']['shipping_status'] == 0){?><input type="button" value="更新商品" onclick="update_order_product()" style="background:url(<?=$this->webroot?>img/upload.gif) no-repeat;width:78px;height:22px;border:0;font-size:12px;cursor:pointer" /><?}?></td>
 	  </tbody></tr>
+	<?if(isset($order_packaging_list) && sizeof($order_packaging_list)>0){?>
+	<tr>
+	  	<th width="17%" height="28" valign="middle">包装名称</th>
+		<th width="11%" valign="middle">包装价格</th>
+		<th width="10%" valign="middle">包装数量</th>
+		<th width="62%" valign="middle">备注</th>
+
+	  </tr>
+	<?foreach($order_packaging_list as $k=>$v){?>
+	  <tr>
+	  <tbody>
+	    <input name="OrderPackaging_id[]" type="hidden" value="<?echo $v['OrderPackaging']['id']?>" />
+	  	<td width="17%" height="28" valign="middle"><?php echo $v['OrderPackaging']['packaging_name'];?></td>
+		<td width="11%" valign="middle"><?echo $v['OrderPackaging']['packaging_fee']?></td>
+		<td width="10%" valign="middle"><?echo $v['OrderPackaging']['packaging_quntity']?></td>
+		<td width="62%" valign="middle"><?echo $v['OrderPackaging']['note']?></td>
+	  </tbody></tr>
+	<?}}?>
+	<?if(isset($order_card_list) && sizeof($order_card_list)>0){?>
+	<tr>
+	  	<th width="17%" height="28" valign="middle">贺卡名称</th>
+		<th width="11%" valign="middle">贺卡价格</th>
+		<th width="10%" valign="middle">贺卡数量</th>
+		<th width="62%" valign="middle">备注</th>
+
+	  </tr>
+	<?foreach($order_card_list as $k=>$v){?>
+	  <tr>
+	  <tbody>
+	    <input name="OrderCsrd_id[]" type="hidden" value="<?echo $v['OrderCard']['id']?>" />
+	  	<td width="17%" height="28" valign="middle"><?php echo $v['OrderCard']['card_name'];?></td>
+		<td width="11%" valign="middle"><?echo $v['OrderCard']['card_fee']?></td>
+		<td width="10%" valign="middle"><?echo $v['OrderCard']['card_quntity']?></td>
+		<td width="62%" valign="middle"><?echo $v['OrderCard']['note']?></td>
+	  </tbody></tr>
+	<?}}?>
 </table><? echo $form->end();?>
 <?php echo $form->create('',array('action'=>'edit_order_info','name'=>'UpdateOrder','onsubmit'=>'return false;'));?>
 	  <input name="order_id" type="hidden" value="<?echo $order_info['Order']['id']?>" />
-  <input type="hidden" name="act_type" value="insert_products" />
+  <input type="hidden" name="act_type" id="insert_products" value="insert_products" />
   <input type="hidden" name="product_id" id="product_id" />
 	  <tr><td colspan="7" height="60">
 	  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;按商品编号或商品名称或商品货号搜索
@@ -268,7 +307,7 @@ table.handels th{
 	  </td>
 	  </tr>
 	  </table>
-	  <p class="submit_btn"><span><input type="button" value="加入订单" onclick="insert_products()"/></span></p></span><br />
+	  <p class="submit_btn"><span><input type="button" value="加入订单" onclick="insert_productses()"/></span></p></span><br />
 <? echo $form->end();?>		
 	  </div>
 	</div>
@@ -286,33 +325,37 @@ table.handels th{
 	  费用信息</h1></div>
 	  <div class="box">
 	  <div class="properies_left">
-		<dl><dt>商品总金额：</dt><dd>￥<?echo $order_info['Order']['subtotal']?><input type="hidden" name="subtotal" value="<?echo $order_info['Order']['subtotal']?>"></dd></dl>
-		<dl><dt>发票税额：</dt><dd><input type="text" name="tax" value="<?echo $order_info['Order']['tax']?>" style="width:110px;" /></dd></dl>
-		<dl><dt>配送费用：</dt><dd><input type="text" name="shipping_fee" value="<?echo $order_info['Order']['shipping_fee']?>" style="width:110px;" /></dd></dl>
-		<dl><dt>保价费用：</dt><dd><input type="text" style="width:110px;" name="insure_fee" value="<?echo $order_info['Order']['insure_fee']?>"/></dd></dl>
-		<dl><dt>支付费用：</dt><dd><input type="text" style="width:110px;" name="payment_fee" value="<?echo $order_info['Order']['payment_fee']?>"/></dd></dl>
-		<dl><dt>包装费用：</dt><dd><input type="text" style="width:110px;" name="pack_fee" value="<?echo $order_info['Order']['pack_fee']?>"/></dd></dl>
-		<dl><dt>贺卡费用：</dt><dd><input type="text" style="width:110px;" name="card_fee" value="<?echo $order_info['Order']['card_fee']?>"/></dd></dl>
-		
-		
-		
-		
+		<dl><dt>商品总金额：</dt><dd><?echo sprintf($price_format,sprintf("%01.2f",$order_info['Order']['subtotal']))?><input type="hidden" id="subtotal" name="subtotal" value="<?echo $order_info['Order']['subtotal']?>"></dd></dl>
+		<dl><dt>发票税额：</dt><dd><input type="text" id="tax" name="tax" value="<?echo $order_info['Order']['tax']?>" style="width:110px;" /></dd></dl>
+		<dl><dt>配送费用：</dt><dd><input type="text" id="shipping_fee" name="shipping_fee" value="<?echo $order_info['Order']['shipping_fee']?>" style="width:110px;" /></dd></dl>
+		<dl><dt>保价费用：</dt><dd><input type="text" style="width:110px;" id="insure_fee" name="insure_fee" value="<?echo $order_info['Order']['insure_fee']?>"/></dd></dl>
+		<dl><dt>支付费用：</dt><dd><input type="text" style="width:110px;" id="payment_fee" name="payment_fee" value="<?echo $order_info['Order']['payment_fee']?>"/></dd></dl>
+		<dl><dt>包装费用：</dt><dd><input type="text" style="width:110px;" id="pack_fee" name="pack_fee" value="<?echo $order_info['Order']['pack_fee']?>"/></dd></dl>
+		<dl><dt>贺卡费用：</dt><dd><input type="text" style="width:110px;" id="card_fee" name="card_fee" value="<?echo $order_info['Order']['card_fee']?>"/></dd></dl>
 		
 		</div>
 		
 		<div class="properies_left" style="float:right;">
-		<dl><dt>折扣：</dt><dd><input type="text" style="width:110px;" name="discount" value="<?echo $order_info['Order']['discount']?>" /></dd></dl>
-		<dl><dt>订单总金额：</dt><dd>￥<?echo $order_info['Order']['total']?><input type="hidden" name="total" value="<?echo $order_info['Order']['total']?>"></dd></dl>
-		<dl><dt>已付款金额：</dt><dd>￥<?echo $order_info['Order']['money_paid']?><input type="hidden" name="money_paid" value="<?echo $order_info['Order']['money_paid']?>"></dd></dl>
-		<dl><dt>使用余额：</dt><dd><dd>￥0.00<?//echo $user_info['User']['balance']?><input type="hidden" name="balance" value="<?echo $user_info['User']['balance']?>"></dd></dd>
+		<dl><dt>折扣：</dt><dd><input type="text" style="width:110px;" id="discount" name="discount" value="<?echo $order_info['Order']['discount']?>" /></dd></dl>
+		<dl><dt>订单总金额：</dt><dd><?echo sprintf($price_format,sprintf("%01.2f",$order_info["Order"]["total"]));?><input type="hidden" name="total" value="<?echo $order_info['Order']['total']?>"></dd></dl>
+		<dl><dt>已付款金额：</dt><dd><?echo sprintf($price_format,sprintf("%01.2f",$order_info["Order"]["money_paid"]));?><input type="hidden" name="money_paid" value="<?echo $order_info['Order']['money_paid']?>"></dd></dl>
+		<dl><dt>使用余额：</dt><dd><dd><?echo sprintf($price_format,sprintf("%01.2f",$balance_log["UserBalanceLog"]["amount"]));?><input type="hidden" name="balance" value="<?echo $user_info['User']['balance']?>"></dd></dd>
 		</dl>
-		<dl><dt>使用积分：</dt><dd><?echo intval($order_info['Order']['point_fee'])?><input type="hidden" name="point" value="<?echo $order_info['Order']['point_fee']?>"></dd></dl>
-		<dl><dt>使用红包：</dt><dd><select><option>请选择...</option></select></dd></dl>
-		<dl><dt>应付款金额：</dt><dd>￥<?echo sprintf("%01.2f",($order_info['Order']['total']-$order_info['Order']['money_paid']-$order_info['Order']['discount']-$order_info['Order']['point_fee']))?></dd></dl>
+		<dl><dt>使用积分：</dt><dd><?echo $order_info["Order"]["point_use"];?><input type="hidden" name="point" value="<?echo $order_info['Order']['point_use']?>"></dd></dl>
+		<dl><dt>积分抵扣：</dt><dd><?echo sprintf($price_format,sprintf("%01.2f",$order_info["Order"]["point_fee"]));?><input type="hidden" name="point" value="<?echo $order_info['Order']['point_fee']?>"></dd></dl>
+		<dl><dt>使用红包：</dt><dd>
+			<?echo $order_info['Order']['coupon_fee']?>
+			<select id="coupon_fee_id">
+			<option value="0">请选择...</option>
+			<?foreach( $coupon_types_list as $k=>$v ){?>
+				<option value="<?=$v['CouponType']['id']?>" <?if($v["CouponType"]["id"]==$coupon_info["Coupon"]["coupon_type_id"]){?>selected<?}?>><?=$v["CouponTypeI18n"]["name"]?></option>
+			<?}?>
+			</select></dd></dl>
+		<dl><dt>应付款金额：</dt><dd><?echo $order_info['Order']['amount_payable']?></dd></dl>
 		
 		</div>
 		<div style="clear:both"></div>
-		<p class="submit_btn"><input type="submit" value="确定" /><input type="reset" value="重置" /></p>
+		<p class="submit_btn"><input type="button" value="确定" onclick="order_fee_information()" /><input type="reset" value="重置" /></p>
 	  </div>
 	</div>
 	<?echo $form->end();?>
@@ -329,6 +372,18 @@ table.handels th{
 	  <div class="box" style="padding-left:0;padding-right:0;">
 	  <dl><dt style="padding-top:25px;padding-right:10px;">操作备注：</dt><dd><textarea style="width:580px;height:55px;border:1px solid #629373;overflow-y:scroll;" name="action_note" id="action_note"></textarea></dd></dl>
 	  <div id="handle_detail">
+	<dl><dt style="padding-right:10px;"></dt>
+		<dd class="orders_submits">
+		<?php echo $form->create('Order',array('action'=>'assign_operator/'.$order_info['Order']['id']));?>
+				<span><input type="button" value="指派给" onclick="change_data_Operator_id()" /></span>
+				<select name="data[Operator][id]" id="data_Operator_id">
+					<option value="0" >请选择...</option>
+					<?foreach( $operator_info as $k=>$v ){?>
+					<option value="<?=$v['Operator']['id']?>" <?if($order_info['Order']['operator_id']==$v['Operator']['id']){?>selected<?}?>><?=$v['Operator']['name']?></option>
+					<?}?>
+				</select>
+		<?echo $form->end();?>
+			</dd></dl>
 		<dl><dt style="padding-right:10px;">当前可执行操作：</dt>
 		<dd class="orders_submits">
 		  <?if(isset($order_action['confirm']) && $order_action['confirm']){?>
@@ -338,13 +393,13 @@ table.handels th{
 			<span><input type="button" value="付款" name="pay" id="pay" onclick="orderaction(this)"/></span>
 		  <?}?>
 		  <?if(isset($order_action['unpay']) && $order_action['unpay']){?>
-			<span><input type="button" value="设为未付款" name="unpay_detail" onclick="order_show_hide('unpay_detail')"/></span>
+			<span><input type="button" value="设为未付款" name="unpay_detail" onclick="order_show_hide('unpay_detail_id')"/></span>
 		  <?}?>
 		  <?if(isset($order_action['prepare']) && $order_action['prepare']){?>
 			<span><input type="button" value="配货" name="prepare" id="prepare" onclick="orderaction(this)"/></span>
 		  <?}?>
 		  <?if(isset($order_action['ship']) && $order_action['ship']){?>
-			<span><input type="button" value="发货" <?if($virtual_card_status == 'yes'){?>name="ship" id="ship" onclick="orderaction(this)"<?}else{?> onclick="order_show_hide('ship_detail')"<?}?>/></span>
+			<span><input type="button" value="发货" <?if($virtual_card_status == 'yes'){?>name="ship" id="ship" onclick="orderaction(this)"<?}else{?> onclick="order_show_hide('ship_detail_id')"<?}?>/></span>
 		  <?}?>
 		  <?if(isset($order_action['unship']) && $order_action['unship']){?>
 			<span><input type="button" value="未发货" name="unship" id="unship" onclick="orderaction(this)"/></span>
@@ -353,13 +408,13 @@ table.handels th{
 			<span><input type="button" value="已收货" name="receive" id="receive" onclick="orderaction(this)"/></span>
 		  <?}?>
 		  <?if(isset($order_action['cancel']) && $order_action['cancel']){?>
-			<span><input type="button" value="取消" name="cancel_detail" onclick="order_show_hide('cancel_detail')" /></span>
+			<span><input type="button" value="取消" name="cancel_detail" onclick="order_show_hide('cancel_detail_id')" /></span>
 		  <?}?>
 		  <?if(isset($order_action['invalid']) && $order_action['invalid']){?>
 			<span><input type="button" value="无效" name="invalid" id="invalid" onclick="orderaction(this)"/></span>
 		  <?}?>
 		  <?if(isset($order_action['return']) && $order_action['return']){?>
-			<span><input type="button" value="退货" name="return_detail" onclick="order_show_hide('return_detail')" /></span>
+			<span><input type="button" value="退货" name="return_detail" onclick="order_show_hide('return_detail_id')" /></span>
 		  <?}?>
 		    <span><input type="button" value="售后" name="after_service" id="after_service" onclick="orderaction(this)"/></span>
 		  <?if(isset($order_action['remove']) && $order_action['remove']){?>
@@ -367,7 +422,7 @@ table.handels th{
 		  <?}?>
 			</dd></dl></div>
 <!--发货详细框-->
-<div id="ship_detail" style="display:none">
+<div id="ship_detail_id" style="display:none">
 <dl><dt style="padding-right:10px;">发货单号：</dt>
 <dd><input style="border:1px solid #629373;overflow-y:scroll;" name="invoice_no" id="invoice_no" ></dd></dl>
 <dl><dt style="padding-right:10px;"></dt>
@@ -375,7 +430,7 @@ table.handels th{
 </dl>
 </div>
 <!--设为未付款详细框-->
-<div id="unpay_detail" style="display:none">
+<div id="unpay_detail_id" style="display:none">
 <dl><dt style="padding-right:10px;">退款方式：</dt>
 	<dd>
 		<input type="radio" name="refund[]" value="1" />退回用户余额<br>
@@ -392,7 +447,7 @@ table.handels th{
 </div>
 
 <!--取消详细框-->
-<div id="cancel_detail" style="display:none">
+<div id="cancel_detail_id" style="display:none">
 <dl><dt style="padding-right:10px;">取消原因：</dt>
 <dd><textarea name="cancel_note" cols="60" rows="3" id="cancel_note"></textarea></dd></dl>
 <dl><dt style="padding-right:10px;">退款方式：</dt>
@@ -413,20 +468,20 @@ table.handels th{
 
 <!--退货详细框-->
 
-<div id="return_detail" style="display:none">
+<div id="return_detail_id" style="display:none">
 <dl><dt style="padding-right:10px;">退款方式：</dt>
-<dd><input type="radio" name="refund_return[]" value="1" id="refund_return1"/>退回用户余额<br>
-    <input type="radio" name="refund_return[]" value="2" id="refund_return2"/>生成退货申请<br>
-    <input type="radio" name="refund_return[]" value="3" id="refund_return3"/>不处理，误操作时选择此项<br></dd></dl>
-<dl>
+	
+<dd>
+<input type="radio" name="refund_return[]" value="1" id="refund_return1"/>退回用户余额<br>
+<input type="radio" name="refund_return[]" value="2" id="refund_return2"/>生成取消申请<br>
+<input type="radio" name="refund_return[]" value="3" id="refund_return3"/>不处理，误操作时选择此项<br>
+</dd></dl>
 
 <dl><dt style="padding-right:10px;">退款说明：</dt>
 <dd><textarea name="refund_return_note" cols="60" rows="3" id="refund_return_note"></textarea></dd></dl>
 <dl>
-
-
 <dt style="padding-right:10px;"></dt>
-<dd class="orders_submits"><span><input type="button" value="确定" name="return" id="return" onclick="orderaction(this)"/></span><span><input type="button" value="取消" onclick="come_to_back()"/><span></dd>
+<dd class="orders_submits"><span><input type="button" value="确定" name="return" id="return" onclick="orderaction(this)"/></span><span><input type="button" value="取消" onclick="come_to_back()"/></span></dd>
 </dl>
 </div>
 
@@ -457,7 +512,7 @@ table.handels th{
 <script type="text/javascript">
 	
 	function status_edit_show(obj){
-		var edit_obj = document.getElementById(obj.name);
+		var edit_obj = document.getElementById(obj.name+"_id");
 	
 		if(edit_obj.style.display == "none"){
 			edit_obj.style.display = "block";
@@ -473,7 +528,7 @@ table.handels th{
 	
 	var virtual_card_status = '<?=$virtual_card_status?>';
 	var regions = "<?echo $order_info['Order']['regions']?>"
-		
+
 	//必填控制
 	var write_order_unpay_remark = "<?=$write_order_unpay_remark?>";//设置订单为“未付款”时
 	var write_order_ship_remark = "<?=$write_order_ship_remark?>";//设置订单为“已发货”时
@@ -485,3 +540,4 @@ table.handels th{
 
 //	alert(write_order_unpay_remark);
 </script>
+

@@ -9,14 +9,14 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: flash.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: flash.php 1732 2009-05-25 12:03:32Z huangbo $
 *****************************************************************************/
 class Flash extends AppModel
 {
 	var $name = 'Flash';
 	var $hasMany = array('FlashImage' =>   
                         array('className'    => 'FlashImage',   
-        					  'conditions' => 'status = 1 ',
+        					  'conditions' => "status = '1' ",
      						  'fields' => array("image","title","url"),
                               'order'        => ' orderby ',   
                               'dependent'    =>  true,   
@@ -26,8 +26,8 @@ class Flash extends AppModel
     var $cacheQueries = true;
     
     function set_locale($locale){
-    	$conditions = " FlashImage.locale = '".$locale."'";
-    //	$this->hasMany['FlashImage']['conditions'] = $conditions;
+    	$conditions = " and FlashImage.locale = '".$locale."'";
+    	$this->hasMany['FlashImage']['conditions'] = $this->hasMany['FlashImage']['conditions'] .= $conditions;
         
     }
 

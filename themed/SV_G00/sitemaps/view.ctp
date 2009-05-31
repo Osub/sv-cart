@@ -83,7 +83,13 @@
     <!-- Products -->    
     <?php foreach ($products as $product):?>
     <url>
-        <loc><?php echo Router::url(array('controller'=>'products','action'=>'view','id'=>$product['Product']['id']),true); ?></loc>
+        <loc>
+        <?if($SVConfigs['use_sku'] == 1){?>
+        <?php echo Router::url(array('controller'=>'products','action'=>'sku',$product['ProductI18n']['name'],$product['Product']['code']),true); ?>
+        <?}else{?>
+        <?php echo Router::url(array('controller'=>'products','action'=>'view','id'=>$product['Product']['id']),true); ?>
+        <?}?>
+        </loc>
         <lastmod><?php echo $time->toAtom($product['Product']['modified']); ?></lastmod>
         <priority>0.8</priority>
     </url>

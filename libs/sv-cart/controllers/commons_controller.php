@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: commons_controller.php 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: commons_controller.php 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 
 class CommonsController extends AppController {
@@ -19,7 +19,7 @@ class CommonsController extends AppController {
     var $uses = array('Language','Navigation','Category','Brand','Article','Comment','Config','Product','Card','Packaging','ProductsCategory');
     //$languages = $this->requestAction('commons/get_languages_front/');
      function get_languages_front(){
-         $languages = $this->Language->findall("Language.front <> 0 ");
+         $languages = $this->Language->findall("Language.front <> '0' ");
         return $languages;
      }
      
@@ -42,7 +42,7 @@ class CommonsController extends AppController {
         $result = NULL;
         $default_locale="chi";
         
-        $languages=$this->Language->findall("Language.front <> 0 ");
+        $languages=$this->Language->findall("Language.front <> '0' ");
         
         if(is_array($languages) && sizeof($languages)>0 ){
             $has=false;
@@ -69,20 +69,35 @@ class CommonsController extends AppController {
 				if(isset($_SESSION['svcart']['products'])){
 					$this->Product->set_locale($locale);
 					foreach($_SESSION['svcart']['products'] as $product){
+						$attributes = $product['attributes'];
 						$quantity = $product['quantity'];
 	                    $is_promotion = $product['is_promotion'];
 	                    $market_subtotal = $product['market_subtotal'];
 	                    $subtotal = $product['subtotal'];
 	                    $discount_price = $product['discount_price'];
-	                    $discount_rate = $product['discount_rate'];
+	                    $discount_rate = $product['discount_rate'];	                    
 						$product_i18n = $this->Product->findbyid($product['Product']['id']);
-						$_SESSION['svcart']['products'][$product['Product']['id']] = $product_i18n;
-						$_SESSION['svcart']['products'][$product['Product']['id']]['quantity'] = $quantity;
-	                    $_SESSION['svcart']['products'][$product['Product']['id']]['is_promotion'] = $is_promotion;
-	                    $_SESSION['svcart']['products'][$product['Product']['id']]['market_subtotal'] = $market_subtotal;
-	                    $_SESSION['svcart']['products'][$product['Product']['id']]['subtotal'] = $subtotal;
-	                    $_SESSION['svcart']['products'][$product['Product']['id']]['discount_price'] = $discount_price;
-	                    $_SESSION['svcart']['products'][$product['Product']['id']]['discount_rate'] = $discount_rate;
+						if(isset($product['Product']['attributes'])  && sizeof($product['Product']['attributes'])>0){
+							$p_id = $product['Product']['id'].".";
+						//	$product_i18n['ProductI18n']['name'] .=" (";
+							foreach($product['Product']['attributes'] as $k=>$v){
+								$p_id .= $k;
+						//		$product_i18n['ProductI18n']['name'] .= $v." ";
+							}
+						//	$product_i18n['ProductI18n']['name'] .=" )";
+							$_SESSION['svcart']['products'][$p_id] = $product_i18n;
+	                    	$_SESSION['svcart']['products'][$p_id]['Product']['attributes'] = $product['Product']['attributes'];
+						}else{
+							$p_id = $product['Product']['id'];
+							$_SESSION['svcart']['products'][$p_id] = $product_i18n;
+						}
+						$_SESSION['svcart']['products'][$p_id]['attributes'] = $attributes;
+						$_SESSION['svcart']['products'][$p_id]['quantity'] = $quantity;
+	                    $_SESSION['svcart']['products'][$p_id]['is_promotion'] = $is_promotion;
+	                    $_SESSION['svcart']['products'][$p_id]['market_subtotal'] = $market_subtotal;
+	                    $_SESSION['svcart']['products'][$p_id]['subtotal'] = $subtotal;
+	                    $_SESSION['svcart']['products'][$p_id]['discount_price'] = $discount_price;
+	                    $_SESSION['svcart']['products'][$p_id]['discount_rate'] = $discount_rate;
 					}
 				}
 				if(isset($_SESSION['svcart']['packagings'])){
@@ -233,7 +248,7 @@ function real_ip()
  	 
  	// pr($keywords);
      // $condition=" 1=1 and Product.status = 1";
-	  $condition['AND'][]= "Product.status = 1";
+	  $condition['AND'][]= "Product.status = '1'";
     if($category_id !=''&& $category_id != 0){
       //$condition .=" and ProductsCategory.category_id =$category_id";
      // 	$condition['AND'][]= "ProductsCategory.category_id =$category_id";
@@ -249,6 +264,9 @@ function real_ip()
       //$condition .=" and Product.brand_id =$brand_id";
       	  $condition['AND'][]= "Product.brand_id =$brand_id";
     }
+    if($category_id !=''&& $category_id != 0){
+      	  $condition['AND'][]= "Product.category_id =$category_id";
+    }
    if($min_price !=''&& $min_price > 0){
      // $condition .=" and Product.shop_price >= ".$min_price;
       	  $condition['AND'][]= "Product.shop_price >= ".$min_price;
@@ -263,7 +281,7 @@ function real_ip()
       		//$condition .=" and Product.code like '%$keywords%' or ProductI18n.name like '%$keywords%' or ProductI18n.description like '%$keywords%' ";
 				$condition['OR'][0] = "Product.code like '%$keywords%' ";
 				$condition['OR'][1] = "ProductI18n.name like '%$keywords%' ";
-				$condition['OR'][2] = "ProductI18n.description like '%$keywords%' ";    	
+				$condition['OR'][2] = "ProductI18n.description like '%$keywords%' ";
     	}
      }
      //pr($condition);exit;            	
@@ -276,13 +294,15 @@ function real_ip()
             }
             if(isset($category_product_ids) && sizeof($category_product_ids)>0){
 	            foreach($category_product_ids as $k){
-	            	if(in_array($k,$pid_array)){
-	            	$pid_arrays[] = $k;
+	            	if(!in_array($k,$pid_array)){
+	            		$pid_array[] = $k;
 	            	}
 	            }
+					$pid_arrays = $pid_array;
             }else{
             	if(isset($category_id) && $category_id > 0){
-            		$pid_arrays = 'null';
+            		//$pid_arrays = 'null';
+					$pid_arrays = $pid_array;
             	}else{
             		$pid_arrays = $pid_array;
             	}

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: pages_controller.php 1329 2009-05-11 11:29:59Z huangbo $
+ * $Id: pages_controller.php 1732 2009-05-25 12:03:32Z huangbo $
 *****************************************************************************/
 class PagesController extends AppController {
 	var $name = 'Pages';
@@ -73,13 +73,13 @@ class PagesController extends AppController {
 		
 		//待发货订单
 		$condition 						= 		"";
-		$condition['status']			=		1;
-		$condition['shipping_status']	=		3;
+		$condition['status']			=		'1';
+		$condition['shipping_status']	=		'3';
 		$wait_shipments_order_count  	= 		$this->Order->findCount($condition,0);
 
 		//等待支付订单
 		$condition 						= 		"";
-		$condition['payment_status !=']	=		2;
+		$condition['payment_status !=']	=		'2';
 		$wait_pay_order_count 			= 		$this->Order->findCount($condition,0);
 
 		//订单缺货登记
@@ -93,7 +93,7 @@ class PagesController extends AppController {
 
 		//已成交订单数
 		$condition 						= 		"";
-		$condition['shipping_status']	=		1;
+		$condition['shipping_status']	=		'1';
 		$order_complete_count 			= 		$this->Order->findCount($condition,0);
 		$this->set("wait_shipments_order_count",$wait_shipments_order_count );//待发货订单
 		$this->set("wait_pay_order_count",$wait_pay_order_count );//待发货订单
@@ -144,12 +144,12 @@ class PagesController extends AppController {
     	}
     
 		$this->set("article",$article );//文章列表
-		$this->set("rss_str",$this->rss_str() );
+		//$this->set("rss_str",$this->rss_str() );
 	    $this->layout = 'default';
 	}
 	
 	function login(){
-		$locales = $this->Language->findall("backend = 1");
+		$locales = $this->Language->findall("backend = '1'");
         if(isset($_SESSION['login_is_msg']) && $_SESSION['login_is_msg'] == "1"){
         }else{
         	unset($_SESSION['login_msg']);       	
@@ -176,6 +176,7 @@ class PagesController extends AppController {
 			$operator=trim($_REQUEST['operator']);
 			$operator_pwd=trim($_REQUEST['operator_pwd']);
 	        $authnum=trim($_REQUEST['authnum']);
+	        
 	        if(isset($_REQUEST['authnum']) && $this->captcha->check($_REQUEST['authnum']) == false){
 		    	$error_msg="验证码错误";
 		    }else{
@@ -214,13 +215,13 @@ class PagesController extends AppController {
 		    			//pr($_POST['cookie']);
 		    				if(isset($_POST['cookie']) && $_POST['cookie'] != ""){
 		    					//	pr("sdsds");
+								$this->Cookie->write('SV-Cart.admin_cookie',serialize($_SESSION['Operator_Info']),false,time()+3600 * 24 * 365); 
 		    					$this->Cookie->write('SV-Cart.admin_id',$operator_info['Operator']['id'],false,time()+3600 * 24 * 365); 
 		    					$this->Cookie->write('SV-Cart.admin_pass',md5($operator_info['Operator']['password']),false,time()+3600 * 24 * 365); 
 		    					$this->Cookie->write('SV-Cart.locale',$_REQUEST['locale'],false,time()+3600 * 24 * 365); 
 						
 							}
 							$result['type'] = 0;
-
 			    		}
 			    	}
 			    }
@@ -270,10 +271,10 @@ class PagesController extends AppController {
 		Configure::write('debug', 0);
 		$result['type'] = 2;
 		if($this->RequestHandler->isPost()){
-			$conditions = "1=1";
+			$conditions = "";
 			$name = trim($_REQUEST['name']);
 			$email = trim($_REQUEST['email']);
-			$conditions .= " and Operator.name = '$name' and Operator.email = '$email'";
+			$conditions = "  Operator.name = '$name' and Operator.email = '$email'";
 			$operator = $this->Operator->find($conditions,"");
 			if(is_array($operator) && count($operator)>0 && $name != "" && $email != ""){	 	 
 				  $this->Config->set_locale($this->locale);
@@ -283,7 +284,7 @@ class PagesController extends AppController {
 	              $shop_name = $configs['shop_name'];
 	              $user_password = $operator['Operator']['password'];
 	              $this->MailTemplate->set_locale($this->locale);
-	  	          $template=$this->MailTemplate->find("code = 'send_password' and status = 1");
+	  	          $template=$this->MailTemplate->find("code = 'send_password' and status = '1'");
 	  	          $template_str=$template['MailTemplateI18n']['html_body'];
 	  	          $host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
 	  	          //生成连接code  id+原密码 md5 加密
@@ -298,6 +299,9 @@ class PagesController extends AppController {
 				  $to_email = $operator['Operator']['email'];
 				  $this->set_email_config($configs);
 				  $this->Email->sendAs = 'html';
+				  $this->Email->is_ssl = $this->configs['smtp_ssl'];
+				  $this->Email->smtp_port = $this->configs['smtp_port'];
+
 				  $this->Email->fromName = "".$shop_name.""; 
 				  $this->Email->html_body = "".$template_str."";
 		          $text_body = $template['MailTemplateI18n']['text_body'];
@@ -418,7 +422,21 @@ class PagesController extends AppController {
 				}
 			}
 		}
-		return $rss_str;
+		//pr($rss_str);
+		Configure::write('debug', 0);
+		die(json_encode($rss_str));
 	}
+	    //后台分页数Cookie记录
+    function pagers_num($number){
+    	$this->Cookie->write('pagers_num_cookies',$number);
+    	Configure::write('debug', 0);
+		die();
+    }	
+    
+    function test(){
+    	pr($_SESSION);
+    	echo  session_id();
+    	exit();
+    }
 }
 ?>

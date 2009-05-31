@@ -9,12 +9,12 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1329 2009-05-11 11:29:59Z huangbo $
+ * $Id: index.ctp 1732 2009-05-25 12:03:32Z huangbo $
 *****************************************************************************/
 ?>
 <div id="Products_box" style="border:0;">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
-    	<h1 style="margin-bottom:0;"><span><?=$SCLanguages['my_favorite'];?></span></h1>
+<h1 class="headers"><span class="l"></span><span class="r"></span><b><?=$SCLanguages['my_favorite'];?></b></h1>
         <div id="Products">
       <div class="List_bg">
     
@@ -107,13 +107,13 @@
         	<div class="Item_info">
             	<p class="pic">            
 			<?if($v['Product']['img_thumb'] != ""){?>
-       	  <?=$html->link($html->image("/../".$v['Product']['img_thumb'],array("width"=>"108","height"=>"108")),"/../products/".$v['Product']['id'],array(),false,false);?>
+       	  <?=$html->link($html->image("/../".$v['Product']['img_thumb'],array("width"=>"108","height"=>"108")),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array(),false,false);?>
 			<?}else{?>
-       	  <?=$html->link($html->image("/../img/product_default.jpg",array("width"=>"108","height"=>"108")),"/../products/".$v['Product']['id'],array(),false,false);?>
+       	  <?=$html->link($html->image("/../img/product_default.jpg",array("width"=>"108","height"=>"108")),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array(),false,false);?>
 			 <?}?>            </p>
                 <p class="info">
                 	<span class="item_name">
-			<?=$html->link($v['ProductI18n']['name'],"/../products/".$v['Product']['id'],array(),false,false);?>
+			<?=$html->link($v['ProductI18n']['name'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?>
             </span>
                 </p>
             </div>
@@ -143,13 +143,13 @@
   	<?foreach ($fav_products as $k=>$v){?>
 	<li><p class="pic">
 			<?if($v['Product']['img_thumb'] != ""){?>
-       	  <?=$html->link($html->image("/../".$v['Product']['img_thumb'],array("width"=>"108","height"=>"108")),"/../products/".$v['Product']['id'],array(),false,false);?>
+       	  <?=$html->link($html->image("/../".$v['Product']['img_thumb'],array("width"=>"108","height"=>"108")),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array(),false,false);?>
 			<?}else{?>
-       	  <?=$html->link($html->image("/../img/product_default.jpg",array("width"=>"108","height"=>"108")),"/../products/".$v['Product']['id'],array(),false,false);?>
+       	  <?=$html->link($html->image("/../img/product_default.jpg",array("width"=>"108","height"=>"108")),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array(),false,false);?>
 			 <?}?>	</p>
 	<p class="info">
 	<span class="name">
-			<?=$html->link($v['ProductI18n']['name'],"/../products/".$v['Product']['id'],array(),false,false);?>
+			<?=$html->link($v['ProductI18n']['name'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?>
 		</span>
 	<span class="Price"><?=$SCLanguages['market_price'];?>：<font color="#ff0000">
 <?=$svshow->price_format($v['Product']['market_price'],$SVConfigs['price_format']);?>	
@@ -173,7 +173,7 @@
         	<div class="Item_info">
                 <p class="info">
                 	<span class="" style="margin-top:15px;">
-			<?=$html->link($v['ProductI18n']['name'],"/../products/".$v['Product']['id'],array(),false,false);?>
+			<?=$html->link($v['ProductI18n']['name'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?>
                 	</span>
                 </p>
             </div>

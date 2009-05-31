@@ -9,39 +9,38 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: cards_controller.php 943 2009-04-23 10:38:44Z huangbo $
+ * $Id: cards_controller.php 1841 2009-05-27 06:51:37Z huangbo $
 *****************************************************************************/
 class CardsController extends AppController {
 	var $name = 'Cards';
+	var $helpers = array('Html','Pagination');
 	var $components = array('Pagination','RequestHandler');
 	var $uses = array('Card','CardI18n');
 
 	function index(){
+		/*判断权限*/
+		$this->operator_privilege('card_view');
+		/*end*/
 		$this->pageTitle = '贺卡管理' ." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'贺卡管理','url'=>'/cards/');
 		$this->set('navigations',$this->navigations);
 		
 		$this->Card->set_locale($this->locale);
 		$condition='';
-   	    $total = $this->Card->findCount($condition,0);
+   	    $total = count($this->Card->find("all",array("conditions"=>$condition,"fields"=>"DISTINCT Card.id")));
 	    $sortClass='Card';
 	    $page=1;
-	    $rownum=100;
+	    $rownum=isset($this->configs['show_count']) ? $this->configs['show_count']:((!empty($rownum)) ?$rownum:20);
 	    $parameters=Array($rownum,$page);
 	    $options=Array();
 	    list($page) = $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass);
 		$data = $this->Card->findAll($condition,'',"Card.orderby",$rownum,$page);
-		/*foreach($data as $k=>$v){
-			$data[$k]['Card']['name'] = '';
-			$data[$k]['Card']['description'] = '';
-			if(!empty($v['CardI18n']))foreach($v['CardI18n'] as $vv){
-					$data[$k]['Card']['name'] .= $vv['name'] . "|";
-					$data[$k]['Card']['description'] .= $vv['description'] . "<br/>";
-			}
-		}*/
 		$this->set('cards',$data);
 	}
 	function edit( $id ){
+		/*判断权限*/
+		$this->operator_privilege('card_operation');
+		/*end*/
 		$this->pageTitle = "贺卡管理 - 贺卡管理" ." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'贺卡管理','url'=>'/cards/');
 		$this->navigations[] = array('name'=>'编辑贺卡','url'=>'');
@@ -63,7 +62,16 @@ class CardsController extends AppController {
 		                     $this->CardI18n->saveall(array('CardI18n'=>$cardI18n_info));//更新多语言
             }
 			$this->Card->save($this->data); //保存
-			$this->flash("编辑成功",'/cards/edit/'.$id,10);
+			
+			foreach( $this->data['CardI18n'] as $k=>$v ){
+				if($v['locale'] == $this->locale){
+					$userinformation_name = $v['name'];
+				}
+			}
+			$id=$this->Card->id;
+
+			$this->flash("贺卡  ".$userinformation_name." 编辑成功。点击继续编辑该贺卡。",'/cards/edit/'.$id,10);
+
 		}
 		
 		$card = $this->Card->localeformat( $id );
@@ -94,12 +102,22 @@ class CardsController extends AppController {
 				            $this->CardI18n->id='';
 				            $this->CardI18n->save($v); 
 			           }
-			$this->flash("添加成功",'/cards/edit/'.$id,10);
+			foreach( $this->data['CardI18n'] as $k=>$v ){
+				if($v['locale'] == $this->locale){
+					$userinformation_name = $v['name'];
+				}
+			}
+			$id=$this->Card->id;
+
+			$this->flash("贺卡  ".$userinformation_name." 添加成功。点击继续编辑该贺卡。",'/cards/edit/'.$id,10);
 		}
 
 	
 	}
 	function remove($id){
+		/*判断权限*/
+		$this->operator_privilege('card_operation');
+		/*end*/
 		$this->Card->deleteAll("Card.id='$id'");
 		$this->flash("删除成功",'/cards/',10);
     }

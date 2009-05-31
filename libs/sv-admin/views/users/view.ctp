@@ -9,11 +9,11 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: view.ctp 1327 2009-05-11 11:01:20Z huangbo $
+ * $Id: view.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?>
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+
+
 
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
@@ -35,6 +35,7 @@
 	  <div class="box">
 	  <br />
   	    <dl><dt class="config_lang">会员名称：</dt>
+  	<input type="hidden" name="data[User][name]" value="<?=$this->data['User']['name'];?>">
 			<dd><font size="3" face="arial"><?=$this->data['User']['name'];?></font></dd></dl>
 		<dl><dt class="config_lang">邮件地址：</dt>
 			<dd><input type="text" class="text_inputs" style="width:265px;" id="user_email" name="data[User][email]" value="<?=$this->data['User']['email'];?>"/> <font color="#F94671">*</font></dd></dl>
@@ -47,6 +48,7 @@
 		  <option value="<?echo $v['UserRank']['id']?>" <?if($v['UserRank']['id'] == $this->data['User']['rank']){?>selected<?}?>><?echo $v['UserRank']['name']?></option>
 		<?}}?>
 		</select></dd></dl>
+
 		<dl style="padding:5px 0;*padding:6px 0;"><dt style="padding-top:1px" class="config_lang">性别：</dt><dd class="best_input">
 		<input type="radio" name="data[User][sex]" <?if($this->data['User']['sex'] == 0){?>checked="checked"<?}?> value="0"/>保密
 		<input type="radio" name="data[User][sex]" <?if($this->data['User']['sex'] == 1){?>checked="checked"<?}?> value="1"/>男
@@ -58,37 +60,37 @@
 		 <?if($v['UserInfo']['backend'] == 1){?>
 		 	 <?if($v['UserInfo']['type'] == "text"){?>
 		<dl><dt class="config_lang"><?echo $v['UserInfo']['name']?>：</dt>
-		       <input id="ValueId" name="info_value_id[<?echo @$v['value']['user_info_id']?>]" type="hidden" value="<?echo @$v['UserInfo']['id']?>">
+		       <input id="ValueId" name="info_value_id[<?echo @$v['value']['user_info_id']?>]" type="hidden" value="<?echo $v['UserInfo']['id']?>">
 			<dd><input type="text" class="text_inputs" style="width:265px;" name="info_value[<?echo @$v['value']['user_info_id']?>]" value="<?echo @$v['value']['value']?>"/></dd></dl>
 		<?}?>
 		<?if(@$v['UserInfo']['type'] == "radio"){?>
 		<dl><dt class="config_lang"><?echo @$v['UserInfo']['name']?>：</dt>
-		       <input id="ValueId" name="info_value_id[<?echo @$v['value']['user_info_id']?>]" type="hidden" value="<?echo @$v['UserInfo']['id']?>">
+		       <input id="ValueId" name="info_value_id[<?echo @$v['value']['user_info_id']?>]" type="hidden" value="<?echo $v['UserInfo']['id']?>">
 			<dd>
 			<?$one_arr = explode(";",@$v['UserInfo']['values']);?>
 			<?foreach($one_arr as $kkk=>$vvv){$two_arr = explode(":",$vvv);?>
-				<input type="radio" name="info_value[<?echo @$v['value']['user_info_id']?>]" value="<?=$two_arr[0]?>" <?if(@$v['value']['value']==$two_arr[0]){echo "checked";}?>><?=$two_arr[1]?>
+				<input type="radio" name="info_value[<?echo @$v['UserInfo']['id']?>]" value="<?=$two_arr[0]?>" <?if(@$v['value']['value']==$two_arr[0]){echo "checked";}?>><?=$two_arr[1]?>
 			<?}?>
 
 	</dd></dl>
 		<?}?>	<?if(@$v['UserInfo']['type'] == "checkbox"){?>
 		<dl><dt class="config_lang"><?echo @$v['UserInfo']['name']?>：</dt>
-		       <input id="ValueId" name="info_value_id[<?echo @$v['value']['user_info_id']?>]" type="hidden" value="<?echo @$v['UserInfo']['id']?>">
+		       <input id="ValueId" name="info_value_id[<?echo @$v['value']['user_info_id']?>]" type="hidden" value="<?echo $v['UserInfo']['id']?>">
 			<dd>
 			<?$one_arr = explode(";",@$v['UserInfo']['values']);?>
 			<?foreach($one_arr as $kkk=>$vvv){$two_arr = explode(":",$vvv);?>
-				<input type="checkbox" name="info_value[<?echo @$v['value']['user_info_id']?>][]" value="<?=$two_arr[0]?>" <?if(in_array($two_arr[0],explode(";",@$v['value']['value']))){echo "checked";}?> ><?=$two_arr[1]?>
+				<input type="checkbox" name="info_value[<?echo @$v['UserInfo']['id']?>][]" value="<?=$two_arr[0]?>" <?if(in_array($two_arr[0],explode(";",@$v['value']['value']))){echo "checked";}?> ><?=$two_arr[1]?>
 			<?}?>
 
 	</dd></dl>
 		<?}?>
 		 	 <?if($v['UserInfo']['type'] == "textarea"){?>
 		<dl><dt class="config_lang"><?echo $v['UserInfo']['name']?>：</dt>
-		       <input id="ValueId" name="info_value_id[<?echo @$v['value']['user_info_id']?>]" type="hidden" value="<?echo @$v['UserInfo']['id']?>">
+		       <input id="ValueId" name="info_value_id[<?echo @$v['value']['user_info_id']?>]" type="hidden" value="<?echo $v['UserInfo']['id']?>">
 			<dd><textarea type="text" class="text_inputs" style="width:265px;" name="info_value[<?echo @$v['value']['user_info_id']?>]" /><?echo @$v['value']['value']?></textarea></dd></dl>
 		<?}?> <?if(@$v['UserInfo']['type'] == "select"){?>
 		<dl><dt class="config_lang"><?echo @$v['UserInfo']['name']?>：</dt>
-		       <input id="ValueId" name="info_value_id[<?echo @$v['value']['user_info_id']?>]" type="hidden" value="<?echo @$v['UserInfo']['id']?>">
+		       <input id="ValueId" name="info_value_id[<?echo @$v['value']['user_info_id']?>]" type="hidden" value="<?echo $v['UserInfo']['id']?>">
 			<dd>
 			<?$one_arr = explode(";",$v['UserInfo']['values']);?>
 			<select class="text_inputs" style="width:265px;" name="info_value[<?echo @$v['UserInfo']['id']?>]" >
@@ -124,14 +126,40 @@
 	<div class="order_stat athe_infos tongxun" style="margin-top:13px;_margin-top:14px;">
 	  
 	  <div class="box">
-		<dl class="bankcroll"><dt>可用资金:</dt>
-			<dd class="best_input"><font><?=$this->data['User']['balance'];?> <input type="radio" name="balance_type" value="1" checked>加<input type="radio" name="balance_type" value="0">减 <input type="text" class="text_inputs" style="width:50px;" id="user_balance" name="balance" value="0"/></font> <font face="tahoma">[<?=$html->link("查看明细","/balances/?user_id={$this->data['User']['id']}",'',false,false);?>]</font></dd></dl>
-		<dl class="bankcroll"><dt>冻结资金:</dt>
-			<dd class="best_input"><font><?=$this->data['User']['frozen'];?> <input type="radio" name="frozen_type" value="1" checked>加<input type="radio" name="frozen_type" value="0">减 <input type="text" class="text_inputs" style="width:50px;" id="user_frozen" name="frozen" value="0"/></font> <font face="tahoma">[<?=$html->link("查看明细","/balances/?user_id={$this->data['User']['id']}",'',false,false);?>]</font></dd></dl>
-		<dl class="bankcroll"><dt>消费积分:</dt>
-			<dd class="best_input"><font><?=$this->data['User']['point'];?> <input type="radio" name="point_type" value="1" checked>加<input type="radio" name="point_type" value="0">减 <input type="text" class="text_inputs" style="width:50px;" id="user_point" name="point" value="0"/></font> <font face="tahoma">[<?=$html->link("查看明细","/points/?user_id={$this->data['User']['id']}",'',false,false);?>]</font></dd></dl>
-		<dl class="bankcroll"><dt>等级积分:</dt>
-			<dd>0 <font face="tahoma">[<?=$html->link("查看明细","{$this->webroot}memberlevels/",'',false,false);?>]</font></dd></dl>	
+		<dl class="bankcroll">
+			<dt>可用资金:</dt>
+			<dd class="best_input" style="width:50%;">
+			<span style="width:50%;float:left;"><font><?=$this->data['User']['balance'];?></font>
+			<font face="tahoma">[<?=$html->link("查看明细","/balances/?user_id={$this->data['User']['id']}",'',false,false);?>]</font></span>
+			<font style="float:left;"><input type="radio" name="balance_type" value="1" checked>加
+			<input type="radio" name="balance_type" value="0">减
+			<input type="text" class="text_inputs" style="width:50px;" id="user_balance" name="balance" value="0"/></font>
+			</dd>
+		</dl>
+		<dl class="bankcroll">
+			<dt>冻结资金:</dt>
+			<dd class="best_input" style="width:50%;">
+			<span style="width:50%;float:left;"><font><?=$this->data['User']['frozen'];?></font>
+			<font face="tahoma">[<?=$html->link("查看明细","/balances/?user_id={$this->data['User']['id']}",'',false,false);?>]</font></span>
+			<font style="float:left;"><input type="radio" name="frozen_type" value="1" checked>加
+			<input type="radio" name="frozen_type" value="0">减
+			<input type="text" class="text_inputs" style="width:50px;" id="user_frozen" name="frozen" value="0"/></font>
+			</dd></dl>
+		<dl class="bankcroll">
+			<dt>消费积分:</dt>
+			<dd class="best_input" style="width:50%;">
+			<span style="width:50%;float:left;"><font><?=$this->data['User']['point'];?></font>
+			<font face="tahoma">[<?=$html->link("查看明细","/points/?user_id={$this->data['User']['id']}",'',false,false);?>]</font></span>
+			<font style="float:left;"><input type="radio" name="point_type" value="1" checked>加
+			<input type="radio" name="point_type" value="0">减
+			<input type="text" class="text_inputs" style="width:50px;" id="user_point" name="point" value="0"/></font>
+			</dd>
+		</dl>
+		<dl class="bankcroll">
+			<dt>等级积分:</dt>
+			<dd>
+			<font>0</font>
+			<font face="tahoma">[<?=$html->link("查看明细","/memberlevels/",'',false,false);?>]</font></dd></dl>	
 		<dl class="bankcroll"><dt>注册时间:</dt>
 			<dd><?echo $this->data['User']['created'];?> </dd></dl>
 		<dl class="bankcroll"><dt>最后登录时间:</dt>
@@ -159,7 +187,6 @@
 		<tr>
 			<td align="center" width="24%"><?echo $user_address['UserAddress']['consignee']?></td>
 			<td width="28%"><p>
-			
 			</p><p><?echo $user_address['UserAddress']['address']?></p></td>
 			<td width="30%"><p>电话：<?echo $user_address['UserAddress']['telephone']?></p><p>手机：<?echo $user_address['UserAddress']['mobile']?></p><p>Email：<?echo $user_address['UserAddress']['email']?></p></td>
 			<td width="17%"><p>最佳送时间：<?echo $user_address['UserAddress']['best_time']?></p><p>标志建筑：<?echo $user_address['UserAddress']['sign_building']?></p></td>
@@ -184,7 +211,7 @@
 <?if(isset($orders_list) && sizeof($orders_list)){?>
 	  <?foreach($orders_list as $k=>$v){?>
 	<ul class="orders_title orders-list">
-	<li class="number"><?echo $v['Order']['id']?></li>
+	<li class="number"><?=$html->link($v['Order']['order_code'],"/orders/".$v['Order']['id'],array('target'=>'_blank'),false,false);?></li>
 	<li class="time">
 		<span><?echo $v['Order']['consignee']?></span>
 		<span><?echo $v['Order']['created']?></span></li>
@@ -199,7 +226,7 @@
 		<li class="state"><?if($v['Order']['status'] == 0){?>未确认&nbsp;<?}elseif($v['Order']['status'] == 1){?>已确认&nbsp;<?}elseif($v['Order']['status'] == 2){?>已取消&nbsp;<?}elseif($v['Order']['status'] == 3){?>无效&nbsp;<?}elseif($v['Order']['status'] == 4){?>退货&nbsp;<?}?>
 		<?if($v['Order']['payment_status'] == 0){?>未付款&nbsp;<?}elseif($v['Order']['payment_status'] == 1){?>付款中&nbsp;<?}elseif($v['Order']['payment_status'] == 2){?>已付款&nbsp;<?}?>
 		<?if($v['Order']['shipping_status'] == 0){?>未发货&nbsp;<?}elseif($v['Order']['shipping_status'] == 1){?>已发货&nbsp;<?}elseif($v['Order']['shipping_status'] == 2){?>已收货&nbsp;<?}elseif($v['Order']['shipping_status'] == 3){?>备货中&nbsp;<?}?></li>
-		<li class="hadle"><?=$html->link("查看","{$this->webroot}orders/{$v['Order']['id']}",'',false,false);?></li></ul>
+		<li class="hadle"><?=$html->link("查看","/orders/{$v['Order']['id']}",array('target'=>'_blank'),false,false);?></li></ul>
 <?}}?>		
 
 		<p style="clear:both;"></p>
@@ -216,29 +243,20 @@
 	  资金日志</h1></div>
 	  <div class="box users_configs">
   	    <ul class="product_llist procurements">
-	<li class="name">订单号</li>
-	<li class="number">类型</li>
-	<li class="item_number">操作日期</li>
-	<li class="profiles">资金</li>
-	<li class="units">支付方式</li>
-	<li class="supplier">到款状态</li>
-	<li class="remark"></li></ul>
-			<?if(isset($balances_list) && sizeof($balances_list)){?>
+		<li class="name">金额</li>
+		<li class="number">时间</li>
+		<li class="item_number">操作类型</li>
+		<li><p>备注</p></li>
+		</ul>
+<?if(isset($balances_list) && sizeof($balances_list)){?>
 <?foreach($balances_list as $k=>$v){?>
 	<ul class="product_llist procurements procurements_list">
-	
-	<li class="name"><?if($v['UserBalanceLog']['log_type'] == 'O'){?><?echo $v['Order']['id']?><?}else{?>&nbsp;&nbsp;&nbsp;<?}?></li>
-	<li class="number"><?if($v['UserBalanceLog']['log_type'] == 'O'){?>订单<?}elseif($v['UserBalanceLog']['log_type'] == 'B'){?>充值<?}elseif($v['UserBalanceLog']['log_type'] == 'R'){?>退款<?}?></li>
-	<li class="item_number"><?echo $v['UserBalanceLog']['created'];?></li>
-	<li class="profiles"><?echo $v['UserBalanceLog']['amount'];?></li>
-	<li class="units"><?if($v['UserBalanceLog']['log_type'] == 'O'){?><?echo $v['Order']['payment_name']?><?}else{?>&nbsp;&nbsp;&nbsp;<?}?></li>
-	<li class="supplier"><?if($v['UserBalanceLog']['log_type'] == 'O'){?><?if($v['Order']['payment_status'] == 0){?>未付款<?}elseif($v['Order']['payment_status'] == 1){?>付款中<?}elseif($v['Order']['payment_status'] == 2){?>已付款 <?}?><?}else{?>&nbsp;&nbsp;&nbsp;<?}?></li>
-	<li class="remark remark_point">
-		</li></ul>
-	
+	<li class="name"><?echo $v['UserBalanceLog']['amount'];?></li>
+	<li class="number"><?echo $v['UserBalanceLog']['created'];?></li>
+	<li class="item_number"><?if($v['UserBalanceLog']['log_type'] == 'O'){?>订单号<?}elseif($v['UserBalanceLog']['log_type'] == 'B'){?>充值<?}elseif($v['UserBalanceLog']['log_type'] == 'R'){?>退款<?}elseif($v['UserBalanceLog']['log_type'] == 'A'){?>管理员操作<?}?></li>
+	<li><p><?echo $v['UserBalanceLog']['system_note'];?></p></li>
+	</ul>
 <?}}?>
-	
-		
 	  </div>
 	  </div>
 <!--bankcrollLog List End-->
@@ -252,28 +270,21 @@
 	  积分日志</h1></div>
 	  <div class="box users_configs">
   	    <ul class="product_llist procurements">
-	<li class="name">订单号</li>
-	<li class="number">类型</li>
-	<li class="item_number">操作日期</li>
-	<li class="profiles">积分</li>
-	<li class="units">支付方式</li>
-	<li class="supplier">到款状态</li>
-	<li class="remark"></li></ul>
+		<li class="name">兑换我的积分</li>
+		<li class="number">兑换时间</li>
+		<li class="item_number">操作类型</li>
+		<li><p>备注</p></li>
+	</ul>
 	<?if(isset($points_list) && sizeof($points_list)>0){?>
 <?foreach($points_list as $k=>$v){?>
 	<ul class="product_llist procurements procurements_list">
 	
-	<li class="name"><?if($v['UserPointLog']['log_type'] == 'O' || $v['UserPointLog']['log_type'] == 'B'){?><?echo $v['Order']['id']?><?}else{?>&nbsp;&nbsp;&nbsp;<?}?></li>
-	<li class="number"><?if($v['UserPointLog']['log_type'] == 'R'){?>注册赠送<?}elseif($v['UserPointLog']['log_type'] == 'B'){?>购买赠送<?}elseif($v['UserPointLog']['log_type'] == 'O'){?>购买消费<?}elseif($v['UserPointLog']['log_type'] == 'A'){?>管理员操作<?}?></li>
-	<li class="item_number"><?echo $v['UserPointLog']['created'];?></li>
-	<li class="profiles"><?echo $v['UserPointLog']['point'];?></li>
-	<li class="units"><?if($v['UserPointLog']['log_type'] == 'O' or $v['UserPointLog']['log_type'] == 'B'){?><?echo $v['Order']['payment_name']?><?}else{?>&nbsp;&nbsp;&nbsp;<?}?></li>
-	<li class="supplier"><?if($v['UserPointLog']['log_type'] == 'O' || $v['UserPointLog']['log_type'] == 'B'){?><?if($v['Order']['payment_status'] == 0){?>未付款<?}elseif($v['Order']['payment_status'] == 1){?>付款中<?}elseif($v['Order']['payment_status'] == 2){?>已付款 <?}?><?}else{?>&nbsp;&nbsp;&nbsp;<?}?></li>
-	<li class="remark remark_point">
-		</li></ul>	
+	<li class="name"><?echo $v['UserPointLog']['point'];?></li>
+	<li class="number"><?echo $v['UserPointLog']['created'];?></li>
+	<li class="item_number"><?if($v['UserPointLog']['log_type'] == 'R'){?>注册赠送<?}elseif($v['UserPointLog']['log_type'] == 'B'){?>订单产生<?}elseif($v['UserPointLog']['log_type'] == 'O'){?>订单使用<?}elseif($v['UserPointLog']['log_type'] == 'A'){?>管理员操作<?}elseif($v['UserPointLog']['log_type'] == 'C'){?>订单返回<?}?></li>
+	<li><p><?echo $v['UserPointLog']['system_note'];?></p></li>
+	</ul>	
 <?}}?>
-	
-		
 	  </div>
 	  <br />
 	  </div>

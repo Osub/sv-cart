@@ -9,21 +9,17 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: shipping_area.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: shipping_area.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class ShippingArea extends AppModel
 {
 	var $name = 'ShippingArea';
-	var $hasMany = array('ShippingAreaI18n'     =>array
-												( 
+	var $hasMany = array('ShippingAreaI18n'=>array( 
 												  'className'    => 'ShippingAreaI18n',   
 					                              'order'        => '',   
 					                              'dependent'    =>  true,   
 					                              'foreignKey'   => 'shipping_area_id'
-					                        	 ) ,
-		
+					                        	 ),
                  	   );
-    
-
 }
 ?>

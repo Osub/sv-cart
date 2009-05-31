@@ -9,13 +9,13 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1329 2009-05-11 11:29:59Z huangbo $
+ * $Id: index.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here',array('cache'=>'+0 hour'))?>
 <div id="Products_box">
-    	<h1><span><?=$SCLanguages['my_balance'];?></span></h1>        <div id="infos" style="width:739px;">
-
+<h1 class="headers"><span class="l"></span><span class="r"></span><b><?=$SCLanguages['my_balance'];?></b></h1>
+	<div id="infos" style="width:739px;">
     		<?if(isset($my_balance_list) && sizeof($my_balance_list)>0){?>
         	<p class="last_integral" style="margin:5px 10px;"><?=$SCLanguages['current'].sprintf($SCLanguages['remaining_balance'],"：<span>".$my_balance."</span>");?><cite><?=sprintf($SCLanguages['today_consumer'],"： <font>".$all_fee."</font>");?></cite></p>
             <ul class="integral_title"><li class="integral"><?=$SCLanguages['amount'];?></li><li class="time"><?=$SCLanguages['time'];?></li><li class="gift"><?=$SCLanguages['operation'].$SCLanguages['type'];?></li><li class="handel"><?=$SCLanguages['operation'];?></li></ul>

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: brands_controller.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: brands_controller.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class BrandsController extends AppController {
 
@@ -19,6 +19,9 @@ class BrandsController extends AppController {
 	var $uses = array('Brand','BrandI18n');
 
    function index(){
+		/*判断权限*/
+		$this->operator_privilege('brand_view');
+		/*end*/
    	   $this->pageTitle = '品牌管理' ." - ".$this->configs['shop_name'];
 	   $this->navigations[] = array('name'=>'品牌管理','url'=>'/brands/');
 	   $this->set('navigations',$this->navigations);
@@ -59,6 +62,9 @@ class BrandsController extends AppController {
    	   
    }
    function remove($id){
+		/*判断权限*/
+		$this->operator_privilege('brand_edit');
+		/*end*/
    	    $this->pageTitle = "删除品牌-品牌管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'品牌管理','url'=>'/users/');
 		$this->navigations[] = array('name'=>'删除品牌','url'=>'');
@@ -66,12 +72,15 @@ class BrandsController extends AppController {
 		$this->flash("删除成功",'/brands/',10);
    }
    function view($id){
+		/*判断权限*/
+		$this->operator_privilege('brand_edit');
+		/*end*/
 		$this->pageTitle = "编辑品牌- 品牌管理" ." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'品牌管理','url'=>'/brands/');
 		$this->navigations[] = array('name'=>'编辑品牌','url'=>'');
 		$this->set('navigations',$this->navigations);
 		if($this->RequestHandler->isPost()){
-
+   	   	    $this->data['Brand']['flash_config'] = !empty($this->data['Brand']['flash_config'])?$this->data['Brand']['orderby']:"0";
 			//$this->BrandI18n->deleteall("brand_id = '".$this->data['Brand']['id']."'",false); //删除原有多语言
 		foreach($this->data['BrandI18n'] as $v){
               	     	    $brandi18n_info=array(
@@ -99,12 +108,17 @@ class BrandsController extends AppController {
 	$this->set('brands_info',$this->data);
    }
    function add(){
+		/*判断权限*/
+		$this->operator_privilege('brand_add');
+		/*end*/		
 		$this->pageTitle = "添加品牌- 品牌管理" ." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'品牌管理','url'=>'/brands/');
 		$this->navigations[] = array('name'=>'添加品牌','url'=>'');
 		$this->set('navigations',$this->navigations);
    	   if($this->RequestHandler->isPost()){
+   	   	   
    	   	    $this->data['Brand']['orderby'] = !empty($this->data['Brand']['orderby'])?$this->data['Brand']['orderby']:"50";
+   	   	    $this->data['Brand']['flash_config'] = !empty($this->data['Brand']['flash_config'])?$this->data['Brand']['orderby']:"0";
 			$this->Brand->save($this->data['Brand']); //关联保存
 			$id=$this->Brand->id;
 			

@@ -1296,12 +1296,13 @@ ul.card_list li.card_name,ul.card_list li.card_bewrite{ text-align:left;}
 ul.procurements li.item_number{width:17%;}
 ul.procurements li.name{width:20%;}
 ul.procurements li.profiles{width:11%;}
-ul.procurements li.number{width:11%; text-align:center;}
+ul.procurements li.number{width:11%; text-align:center;line-height:normal;}
 ul.procurements li.units{width:11%;}
 ul.procurements li.supplier{width:14%;}
 ul.procurements li.remark{width:15%;border-right:0;}
-ul.procurements_list{ background:#fff;border-bottom:1px solid #F3F3F3;}
-ul.procurements_list li{border-right:1px solid #F3F3F3; font-weight:normal;}
+ul.procurements_list{ background:#fff;border-bottom:1px solid #F3F3F3;height:100%;overflow:hidden;}
+ul.procurements_list li{border-right:1px solid #F3F3F3; font-weight:normal;padding-bottom:15px;}
+ul.procurements p{padding:0 5px;}
 /*=========================Admin Shipments ==========================*/
 ul.procurements li.ship_name{width:11%;}
 ul.procurements li.addresse{width:20%;}

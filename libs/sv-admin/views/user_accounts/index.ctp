@@ -12,8 +12,8 @@
  * $Id: search.ctp 725 2009-04-17 08:00:21Z huangbo $
 *****************************************************************************/
 ?> 
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+
+
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 <!--Search-->

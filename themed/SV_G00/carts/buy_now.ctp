@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: buy_now.ctp 1232 2009-05-06 12:14:41Z huangbo $
+ * $Id: buy_now.ctp 1902 2009-05-31 13:56:19Z huangbo $
 *****************************************************************************/
 ob_start();?>
 <?if($result['type'] == 5){?>
@@ -71,6 +71,12 @@ ob_start();?>
 <?}?>
 </li>
 </ul>
+
+<?if(isset($attributes) && sizeof($attributes)>0){?>
+	<?foreach($attributes as $k=>$v){?>
+		<input type="hidden" name="attributes_<?=$k?>" value="<?=$v?>" />
+	<?}?>
+<?}?>
 <p class="buy_btn">
 <?=$html->link($SCLanguages['confirm'],"javascript:sure_buy(".$product_info['Product']['id'].",".$product_info['quantity'].")","",false,false);?>
 <?=$html->link($SCLanguages['cancel'],"javascript:close_message();","",false,false);?>

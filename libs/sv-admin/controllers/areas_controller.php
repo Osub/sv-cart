@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: areas_controller.php 1261 2009-05-08 07:18:58Z huangbo $
+ * $Id: areas_controller.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class AreasController extends AppController {
 	var $name = 'Areas';
@@ -17,9 +17,11 @@ class AreasController extends AppController {
 	var $uses = array("Region","RegionI18n");
 
 	function index($pid=0){
+		/*判断权限*/
+		$this->operator_privilege('zone_view');
+		/*end*/
 		$this->pageTitle = "地区管理" ." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'地区管理','url'=>'/areas/');
-
 		$area_list=$this->Region->getarealist($pid,$this->locale);
 		$region_parents = $this->Region->get_parents($pid);
 		$num = "1";
@@ -47,7 +49,6 @@ class AreasController extends AppController {
 			    $num_name="未知地区";
 			    break;
 		}
-
 		$this->set('navigations',$this->navigations);
 		$this->set('num_name',$num_name);
 		$this->set('area_list',$area_list);
@@ -55,12 +56,10 @@ class AreasController extends AppController {
 	}
 	function edit($region_id){
 		$edit_region = $this->RegionI18n->findAll(array("region_id"=>$region_id));
-	
 		foreach($edit_region as $k=>$v){
 			$arr[$k]['locale'] = $v['RegionI18n']['locale'];
 			$arr[$k]['name'] = $v['RegionI18n']['name'];
 			$arr[$k]['id'] = $v['RegionI18n']['id'];
-	
 		}	
 		Configure::write('debug',0);
 		die(json_encode($arr));
@@ -69,56 +68,64 @@ class AreasController extends AppController {
 //-- 新增地区
 /*------------------------------------------------------ */
     function add(){
-    	    
 		$this->pageTitle = "添加地区-地区管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'地区管理','url'=>'/areas/');
 		$this->navigations[] = array('name'=>'添加地区','url'=>'');
-			$region_info=array(
-    	    	          'parent_id'=>isset($this->params['form']['parent_id'])?$this->params['form']['parent_id']:0,
-    	    	'id'=>isset($this->params['form']['r_id'])?$this->params['form']['r_id']:0
-    	    	   );
-    	    
-    	    $this->Region->saveall(array('Region'=>$region_info));
-    	    $id=$this->Region->id;
-    	    if(is_array($this->data['RegionI18n']))
-			          foreach($this->data['RegionI18n'] as $k => $v){
-				            $v['region_id']=$id;
-				           // $this->RegionI18n->id='';
-				           $this->RegionI18n->saveall(array('RegionI18n'=>$v)); 
+		$Region_info = $this->Region->find("","","Region.id desc");
+		$region_info=array(
+				'id'=>$Region_info['Region']['id']+1,
+				'parent_id'=>isset($this->params['form']['parent_id'])?$this->params['form']['parent_id']:0,
+				'level'=>isset($this->params['form']['level'])?$this->params['form']['parent_id']:'0',
+				'agency_id'=>isset($this->params['form']['agency_id'])?$this->params['form']['agency_id']:0,
+				'param01'=>isset($this->params['form']['param01'])?$this->params['form']['param01']:'',
+				'param02'=>isset($this->params['form']['param02'])?$this->params['form']['param02']:'',
+				'param03'=>isset($this->params['form']['param03'])?$this->params['form']['param03']:'',
+				'orderby'=>isset($this->params['form']['orderby'])?$this->params['form']['orderby']:50,
+		);
+    	$this->Region->saveall(array('Region'=>$region_info));
+    	$id=$this->Region->id;
+    	if(is_array($this->data['RegionI18n'])){
+			foreach($this->data['RegionI18n'] as $k => $v){
+				$v['region_id']=$id;
+				$v['description'] = "";
+				$this->RegionI18n->saveall(array('RegionI18n'=>$v)); 
 			}
-    	    $this->flash("编辑成功",'/areas/index/'.$this->params['form']['parent_id'],10);
+			foreach( $this->data['RegionI18n'] as $k=>$v ){
+				if($v['locale'] == $this->locale){
+					$userinformation_name = $v['name'];
+				}
+			}
+		}
+		$this->flash("地区 ".$userinformation_name." 编辑成功。",'/areas/index/'.$this->params['form']['parent_id'],10);
      }
-     	
 /*------------------------------------------------------ */
 //-- 删除地区
 /*------------------------------------------------------ */
     function remove($id){
-    	   //pr($this);
     	   $this->pageTitle = "删除地区-地区管理"." - ".$this->configs['shop_name'];
 		   $this->navigations[] = array('name'=>'地区管理','url'=>'/areas/');
 		   $this->navigations[] = array('name'=>'删除地区','url'=>'');
-    	   $this->Region->deleteAll("Region.id = ".$id."",false);
-		   $this->RegionI18n->deleteAll("RegionI18n.region_id = ".$id."");
+    	   $this->Region->deleteAll("Region.id = '".$id."'",false);
+		   $this->RegionI18n->deleteAll("RegionI18n.region_id = '".$id."'");
     	   $this->flash("删除成功",'/areas/',10);
     }
 /*------------------------------------------------------ */
 //-- ajax修改未命名的区域
 /*------------------------------------------------------ */
     function ajaxeditregion($new_region_name,$regioni18n_id){
-    	    if($new_region_name != '' && $regioni18n_id > 0){
-    	    	   	$this->RegionI18n->updateAll(
-			                array('RegionI18n.name' => $new_region_name),
-			                array('RegionI18n.id' => $regioni18n_id)
-			        );
-			        $msg='区域新命名成功';
-    	    }
-    	    else{
-    	    	   $msg='请重新确认你填写的区域名称';
-    	    }
-    	    Configure::write('debug',0);
-            $result['type'] = "0";
-            $result['msg'] = $msg;
-            die(json_encode($result));
+		if($new_region_name != '' && $regioni18n_id > 0){
+			$this->RegionI18n->updateAll(
+				array('RegionI18n.name' => "'".$new_region_name."'"),
+				array('RegionI18n.id' => "'".$regioni18n_id."'")
+			);
+			$msg='区域新命名成功';
+		}else{
+			$msg='请重新确认你填写的区域名称';
+		}
+		Configure::write('debug',0);
+		$result['type'] = "0";
+		$result['msg'] = $msg;
+		die(json_encode($result));
     }
 }
 

@@ -9,15 +9,15 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: category_A.ctp 1215 2009-05-06 05:46:48Z huangbo $
+ * $Id: category_A.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <!--文章分类显示开始-->
 <?if(isset($categories_tree) && sizeof($categories_tree)>0){?>
 <div class="category_box">
-<h3 class="font_14"><?=$SCLanguages['classificatory']?></h3>
+<h3 class="font_14"><span class="l"></span><span class="r"></span><?=$SCLanguages['classificatory']?></h3>
 	<?//pr($categories_tree);?>
-<div id="bd"><div class="svcart-b"><div id="catmenu" class="svcartmenu"><div class="bd"><ul class="first-of-type">
+<div id="bd" class="box"><div class="svcart-b"><div id="catmenu" class="svcartmenu"><div class="bd"><ul class="first-of-type">
 <?foreach($categories_tree as $first_k=>$first_v){?>
 <li class="svcartmenuitem first-of-type">
 <?if(!empty($first_v['Category']['link'])){?>
@@ -50,7 +50,7 @@
 <?}?></li>
 <?}?></ul></div><?=$html->image('LeftsubNav_bottom.gif',array("alt"=>"","align"=>"top"))?></div>
 <?}?></li>
-<?}?></ul></div></div><p><?=$html->image('category_ulbt.gif',array("alt"=>""))?></p></div></div></div>
+<?}?></ul></div></div></div></div><p><?=$html->image('category_ulbt.gif',array("alt"=>""))?></p></div>
 <?}?>
 
 <!--文章分类显示结束-->

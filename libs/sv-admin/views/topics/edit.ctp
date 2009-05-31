@@ -9,11 +9,11 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: edit.ctp 1144 2009-04-29 11:41:30Z huangbo $
+ * $Id: edit.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ?>
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+
+
 <?=$javascript->link('selectzone');?>
 <?=$javascript->link('product');?>
 
@@ -47,7 +47,20 @@
 		
 <?	}
    } ?>		
-
+   		<h2>SEO分类关键字：</h2>
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input type="text" style="width:360px;" id="meta_keywords_<?=$v['Language']['locale']?>" name="data[TopicI18n][<?=$k;?>][meta_keywords]" value="<?=@$topic['TopicI18n'][$k]['meta_keywords']?>"  /> <font color="#ff0000">*</font></span></p>
+		
+<?	}
+   } ?>
+   		<h2>SEO分类描述：</h2>
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input type="text" style="width:360px;" id="meta_description_<?=$v['Language']['locale']?>" name="data[TopicI18n][<?=$k;?>][meta_description]" value="<?=@$topic['TopicI18n'][$k]['meta_description']?>" /> <font color="#ff0000">*</font></span></p>
+		
+<?	}
+   } ?>		
 <? if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
 	<input id="TopicI18n<?=$k;?>Locale" name="data[TopicI18n][<?=$k;?>][locale]" type="hidden" value="<?=@$v['Language']['locale'];?>">

@@ -9,9 +9,10 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: advancedsearch.ctp 1215 2009-05-06 05:46:48Z huangbo $
+ * $Id: advancedsearch.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?>
+<?=$javascript->link(array('autocomplete','/js/yui/autocomplete-min'));?>
 <?echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 <!--Search-->
 <div id="Products_box">
@@ -19,18 +20,17 @@
 <span class="r"></span><span class="l"></span>
 <b><?=$SCLanguages['advanced_search'];?></b></h1>
 	<div id="Products">
-	
 	<div id="advanced_search_page">
 	<span class="search_ico"><?=$html->image("adv_search_ico.png")?></span>
-	<?=$form->create('Product', array('action' => 'Search' ,'onsubmit'=>"return YAHOO.example.ACJson.validateForm();"));?> 
+	<?=$form->create('Product', array('action' => 'Search' ));?> 
 	<div id="ysearch" class="green_3">
 	<dl>
 	<dd><?php echo $SCLanguages['keywords'];?>：</dd>
-	<dt><input id="ysearchinput_search" class="text_input" type="text" name="keywords" style="width:176px;" value="<?if(isset($keywords) && $not_show == 0){echo $keywords;}?>"/></dt>
+	<dt><input id="ysearchinput_search" class="text_input" onchange='javascript:YAHOO.example.ACJson.validateForm();' type="text" name="keywords" style="width:176px;" value="<?if(isset($keywords) && $not_show == 0){echo $keywords;}?>"/></dt>
 	<input type="hidden" name="type" value="S">
 	</dl>
 	<dl>
-	<dd><?php echo $SCLanguages['category'];?>：</dd>
+	<dd><?php echo $SCLanguages['classificatory'];?>：</dd>
 	<dt><select class="selects" name="category_id_search" id="category_id_search" style="width:176px;">
 	<option value="0" <?if(isset($category_id) && $category_id == 0){echo 'selected';}?>><?php echo $SCLanguages['please_choose'];?></option>
 	<?if(isset($categories_tree) && sizeof($categories_tree)>0){?><?foreach($categories_tree as $first_k=>$first_v){?><option value="<?=$first_v['Category']['id'];?>" <?if(isset($category_id) && $category_id == $first_v['Category']['id']){echo 'selected';}?>><?=$first_v['CategoryI18n']['name'];?></option>
@@ -58,7 +58,7 @@
 	</dl>
 	<div id="buyshop_box">
 	<p class="buy_btn">
-	<a href="javascript:advanced_search()" title="<?php echo $SCLanguages['advanced_search'];?>"><?php echo $SCLanguages['advanced_search'];?></a></p>
+	<a href="javascript:advanced_search()" title="<?php echo $SCLanguages['advanced_search'];?>"><?php echo $SCLanguages['search'];?></a></p>
 	</div>
 	</div>
 	<?=$form->end();?>

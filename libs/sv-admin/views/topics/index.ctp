@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1116 2009-04-28 11:04:43Z huangbo $
+ * $Id: index.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <?=$javascript->link('listtable');?>
@@ -19,7 +19,7 @@
 <br />
 <p class="add_categories"><strong><?=$html->link($html->image('add.gif',array('align'=>'absmiddle')).'新增专题','/topics/add','',false,false)?> </strong></p>
 <div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
-<?php echo $form->create('',array('action'=>'','name'=>"UserForm","type"=>"get"));?>
+<?php echo $form->create('',array('action'=>'','name'=>"UserForm","type"=>"get",'onsubmit'=>"return false"));?>
 	<ul class="product_llist topics_headers">
 	<li class="number"><label><input type="checkbox" name="chkall" value="checkbox" onclick="selectAll(this,'checkbox');" />编号<?=$html->image('sort_desc.gif',array('align'=>'absmiddle'))?></label></li>
 	<li class="theme_name">专题名称</li>
@@ -64,6 +64,7 @@
 function batch_action() 
 { 
 document.UserForm.action=webroot_dir+"topics/batch"; 
+document.UserForm.onsubmit= "";
 document.UserForm.submit(); 
 } 
 </script>

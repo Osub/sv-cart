@@ -9,38 +9,25 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1116 2009-04-28 11:04:43Z huangbo $
+ * $Id: index.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 <div id="Products_box">
-    	<h1><span><?echo $SCLanguages['address_book']?></span></h1>
+    	<h1 class="headers"><span class="l"></span><span class="r"></span><b><?echo $SCLanguages['address_book']?></b></h1>
   <div id="reguser_gut01" class="addrees_box" style="padding-bottom:0;margin-left:0;">
   <p class="aleter"><?=$SCLanguages['preset_delivery_address'];?>。</p>
   <table width="100%" cellspacing="0" cellpadding="2">
-  	<tr class="color_e" height="25">
-  	<td align="center"><?=$SCLanguages['address'];?><?=$SCLanguages['label'];?></td>
-    	<td align="center"><?echo $SCLanguages['consignee'].$SCLanguages['name']?></td>
-    	<td align="center"><?echo $SCLanguages['email']?></td>
-        <td align="center"><?=$SCLanguages['area'];?></td>
-        <td align="center"><?=$SCLanguages['street'];?></td>
-        <td align="center"><?echo $SCLanguages['post_code']?></td>
-        <td align="center"><?echo $SCLanguages['telephone']?>/<?echo $SCLanguages['mobile']?></td>
-        <td align="center" class="btn_list"><?echo $SCLanguages['operation']?></td>
-    </tr>
-    
     <?if(isset($this->data) && sizeof($this->data)>0){?>
     
     <?foreach($this->data as $k=>$v){?>
     <tr bgcolor="#ffffff" height="25" class="adrees_list">
-    	<td align="center" width=90><?echo $v['UserAddress']['name']?></td>
-    	<td align="center" width=90><?echo $v['UserAddress']['consignee']?></td>
-    	<td align="center" width=120><?echo $v['UserAddress']['email']?></td>
-        <td align="center"><?echo $v['UserAddress']['regions']?></td>
-        <td align="center"><?echo $v['UserAddress']['address']?></td>
-        <td align="center"><?echo $v['UserAddress']['zipcode']?></td>
-        <td align="center"><?echo $v['UserAddress']['telephone_all']?>/<?echo $v['UserAddress']['mobile']?></td>
-        <td align="center" class="btn_list">
+    	<td align="center" width="10%" rowspan="2"><?echo $v['UserAddress']['name']?></td>
+    	<td align="center" width="20%"><?echo $v['UserAddress']['consignee']?></td>
+    	<td align="center" width="35%">&nbsp;<?echo $v['UserAddress']['email']?></td>
+        <td align="center" width="20%"><?echo $v['UserAddress']['telephone_all']?>/<?echo $v['UserAddress']['mobile']?></td>
+        <td align="center" width="15%">&nbsp;<?echo $v['UserAddress']['zipcode']?></td>
+         <td align="center"  class="btn_list" rowspan="2">
         <div class="margin_sid">
         <a href="javascript:show_edit(<?=$v['UserAddress']['id']?>)"><span><?echo $SCLanguages['edit']?></span></a>
         <p style='height:0;line-height:0;padding:0;margin:3px 0 0;'></p>
@@ -48,6 +35,10 @@
         </div>
         </td>
     </tr>
+    	<td align="center" ><?echo $v['UserAddress']['regions']?></td>
+    	<td align="center" ><?echo $v['UserAddress']['address']?></td>
+    	<td align="center" >&nbsp;<?echo $v['UserAddress']['sign_building']?></td>
+        <td align="center">&nbsp;<?echo $v['UserAddress']['best_time']?></td>
     <?}?>
     	
     <?}?>

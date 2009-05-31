@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1327 2009-05-11 11:01:20Z huangbo $
+ * $Id: index.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <style type='text/css'>
@@ -85,64 +85,64 @@ function typechange(){
 					<input type="hidden" name="data[Flashe][id]" id="id">
 					<input type="hidden" name="data[Flashe][type]"  id="type">
 					<input type="hidden" name="data[Flashe][type_id]"  id="type_id">
-					roundCorner：</td>
-				<td><input type="text" id="roundCorner" name="data[Flashe][roundCorner]"  style="width:125px;border:1px solid #649776"  /></td>
-				<td class='paddings'>autoPlayTime：</td>
-				<td><input type="text" id="autoPlayTime" name="data[Flashe][autoPlayTime]"  style="width:125px;border:1px solid #649776"  /></td>
-				<td class='paddings'>isHeightQuality：</td>
-				<td><input type="text" id="isHeightQuality" name="data[Flashe][isHeightQuality]"  style="width:125px;border:1px solid #649776"  /></td>
-				<td class='paddings'>blendMode：</td>
-				<td><input type="text" id="blendMode" name="data[Flashe][blendMode]"  style="width:125px;border:1px solid #649776"  /></td>
+					roundcorner：</td>
+				<td><input type="text" id="roundcorner" name="data[Flashe][roundcorner]"  style="width:125px;border:1px solid #649776"  /></td>
+				<td class='paddings'>autoplaytime：</td>
+				<td><input type="text" id="autoplaytime" name="data[Flashe][autoplaytime]"  style="width:125px;border:1px solid #649776"  /></td>
+				<td class='paddings'>isheightquality：</td>
+				<td><input type="text" id="isheightquality" name="data[Flashe][isheightquality]"  style="width:125px;border:1px solid #649776"  /></td>
+				<td class='paddings'>blendmode：</td>
+				<td><input type="text" id="blendmode" name="data[Flashe][blendmode]"  style="width:125px;border:1px solid #649776"  /></td>
 			</tr>
 				<tr valign="middle">
-					<td class='paddings'>transDuration：</td>
-					<td><input type="text" id="transDuration" name="data[Flashe][transDuration]"  style="width:125px;border:1px solid #649776"  /></td>
-					<td class='paddings'>windowOpen：</td>
-					<td><input type="text" id="windowOpen" name="data[Flashe][windowOpen]"  style="width:125px;border:1px solid #649776"  /></td>
-					<td class='paddings'>btnSetMargin：</td>
-					<td><input type="text" id="btnSetMargin" name="data[Flashe][btnSetMargin]"  style="width:125px;border:1px solid #649776"  /></td>
-					<td class='paddings'>btnDistance：</td>
-					<td><input type="text"id="btnDistance" name="data[Flashe][btnDistance]"  style="width:125px;border:1px solid #649776"  /></td>
+					<td class='paddings'>transduration：</td>
+					<td><input type="text" id="transduration" name="data[Flashe][transduration]"  style="width:125px;border:1px solid #649776"  /></td>
+					<td class='paddings'>windowopen：</td>
+					<td><input type="text" id="windowopen" name="data[Flashe][windowopen]"  style="width:125px;border:1px solid #649776"  /></td>
+					<td class='paddings'>btnsetmargin：</td>
+					<td><input type="text" id="btnsetmargin" name="data[Flashe][btnsetmargin]"  style="width:125px;border:1px solid #649776"  /></td>
+					<td class='paddings'>btndistance：</td>
+					<td><input type="text"id="btndistance" name="data[Flashe][btndistance]"  style="width:125px;border:1px solid #649776"  /></td>
 				</tr>
 				<tr>
-					<td valign="middle" class='paddings'>titleBgColor：</td>
-					<td><input type="text" id="titleBgColor" name="data[Flashe][titleBgColor]"  style="width:125px;border:1px solid #649776"  /></td>
-					<td class='paddings' valign="middle">titleTextColor：</td>
-					<td><input type="text" id="titleTextColor" name="data[Flashe][titleTextColor]"  style="width:125px;border:1px solid #649776"  /></td>
-					<td class='paddings' valign="middle">titleBgAlpha：</td>
-					<td><input type="text" id="titleBgAlpha" name="data[Flashe][titleBgAlpha]"  style="width:125px;border:1px solid #649776"  /></td>
-					<td class='paddings' valign="middle">titleMoveDuration：</td>
-					<td><input type="text" id="titleMoveDuration" name="data[Flashe][titleMoveDuration]"  style="width:125px;border:1px solid #649776"  /></td>
+					<td valign="middle" class='paddings'>titlebgcolor：</td>
+					<td><input type="text" id="titlebgcolor" name="data[Flashe][titlebgcolor]"  style="width:125px;border:1px solid #649776"  /></td>
+					<td class='paddings' valign="middle">titletextcolor：</td>
+					<td><input type="text" id="titletextcolor" name="data[Flashe][titletextcolor]"  style="width:125px;border:1px solid #649776"  /></td>
+					<td class='paddings' valign="middle">titlebgalpha：</td>
+					<td><input type="text" id="titlebgalpha" name="data[Flashe][titlebgalpha]"  style="width:125px;border:1px solid #649776"  /></td>
+					<td class='paddings' valign="middle">titlemoveduration：</td>
+					<td><input type="text" id="titlemoveduration" name="data[Flashe][titlemoveduration]"  style="width:125px;border:1px solid #649776"  /></td>
 				</tr>
 				<tr valign="middle">
-					<td class='paddings'>btnAlpha：</td>
-					<td><input type="text" id="btnAlpha" name="data[Flashe][btnAlpha]"  style="width:125px;border:1px solid #649776"  /></td>
-					<td class='paddings'>btnTextColor：</td>
-					<td><input type="text" id="btnTextColor" name="data[Flashe][btnTextColor]"  style="width:125px;border:1px solid #649776"  /></td>
-					<td class='paddings'>btnDefaultColor：</td>
-					<td><input type="text" id="btnDefaultColor" name="data[Flashe][btnDefaultColor]"  style="width:125px;border:1px solid #649776"  /></td>
-					<td class='paddings'>btnHoverColor：</td>
-					<td><input type="text" id="btnHoverColor" name="data[Flashe][btnHoverColor]"  style="width:125px;border:1px solid #649776"  /></td>
+					<td class='paddings'>btnalpha：</td>
+					<td><input type="text" id="btnalpha" name="data[Flashe][btnalpha]"  style="width:125px;border:1px solid #649776"  /></td>
+					<td class='paddings'>btntextcolor：</td>
+					<td><input type="text" id="btntextcolor" name="data[Flashe][btntextcolor]"  style="width:125px;border:1px solid #649776"  /></td>
+					<td class='paddings'>btndefaultcolor：</td>
+					<td><input type="text" id="btndefaultcolor" name="data[Flashe][btndefaultcolor]"  style="width:125px;border:1px solid #649776"  /></td>
+					<td class='paddings'>btnhovercolor：</td>
+					<td><input type="text" id="btnhovercolor" name="data[Flashe][btnhovercolor]"  style="width:125px;border:1px solid #649776"  /></td>
 				</tr>
 				<tr valign="middle">
-					<td class='paddings'>btnFocusColor：</td>
-					<td><input type="text" id="btnFocusColor" name="data[Flashe][btnFocusColor]"  style="width:125px;border:1px solid #649776"  /></td>
-					<td class='paddings'>changImageMode：</td>
-					<td><input type="text" id="changImageMode" name="data[Flashe][changImageMode]"  style="width:125px;border:1px solid #649776"  /></td>
-					<td class='paddings'>isShowBtn：</td>
-					<td><input type="text" id="isShowBtn" name="data[Flashe][isShowBtn]"  style="width:125px;border:1px solid #649776"  /></td>
-					<td class='paddings'>isShowTitle：</td>
-					<td><input type="text" id="isShowTitle" name="data[Flashe][isShowTitle]"  style="width:125px;border:1px solid #649776"  /></td>
+					<td class='paddings'>btnfocuscolor：</td>
+					<td><input type="text" id="btnfocuscolor" name="data[Flashe][btnfocuscolor]"  style="width:125px;border:1px solid #649776"  /></td>
+					<td class='paddings'>changimagemode：</td>
+					<td><input type="text" id="changimagemode" name="data[Flashe][changimagemode]"  style="width:125px;border:1px solid #649776"  /></td>
+					<td class='paddings'>isshowbtn：</td>
+					<td><input type="text" id="isshowbtn" name="data[Flashe][isshowbtn]"  style="width:125px;border:1px solid #649776"  /></td>
+					<td class='paddings'>isshowtitle：</td>
+					<td><input type="text" id="isshowtitle" name="data[Flashe][isshowtitle]"  style="width:125px;border:1px solid #649776"  /></td>
 				</tr>
 				<tr valign="middle">
-					<td class='paddings'>scaleMode：</td>
-					<td><input type="text" id="scaleMode" name="data[Flashe][scaleMode]"  style="width:125px;border:1px solid #649776"  /></td>
+					<td class='paddings'>scalemode：</td>
+					<td><input type="text" id="scalemode" name="data[Flashe][scalemode]"  style="width:125px;border:1px solid #649776"  /></td>
 					<td class='paddings'>transform：</td>
 					<td><input type="text" id="transform" name="data[Flashe][transform]"  style="width:125px;border:1px solid #649776"  /></td>
-					<td class='paddings'>isShowAbout：</td>
-					<td><input type="text" id="isShowAbout" name="data[Flashe][isShowAbout]"  style="width:125px;border:1px solid #649776"  /></td>
-					<td class='paddings'>titleFont：</td>
-					<td><input type="text" id="titleFont" name="data[Flashe][titleFont]"  style="width:125px;border:1px solid #649776"  /></td>
+					<td class='paddings'>isshowabout：</td>
+					<td><input type="text" id="isshowabout" name="data[Flashe][isshowabout]"  style="width:125px;border:1px solid #649776"  /></td>
+					<td class='paddings'>titlefont：</td>
+					<td><input type="text" id="titlefont" name="data[Flashe][titlefont]"  style="width:125px;border:1px solid #649776"  /></td>
 				</tr>
 				
 				<tr>

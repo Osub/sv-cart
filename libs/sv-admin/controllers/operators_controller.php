@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: operators_controller.php 899 2009-04-22 15:03:02Z huangbo $
+ * $Id: operators_controller.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class OperatorsController extends AppController {
 	var $name = 'Operators';
@@ -18,24 +18,24 @@ class OperatorsController extends AppController {
 	var $uses = array('Operator','OperatorRole','Department','Operator_action','Language');
 	
 	function index () {
-		//pr($this->locale);
 		/*判断权限*/
-		//	$user->controller('categories_edit');
+		$this->operator_privilege('operator_view');
+		/*end*/
 		$this->pageTitle = "操作员管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'操作员管理','url'=>'/operators/');
 		$this->set('navigations',$this->navigations);
 		$this->Department->set_locale($this->locale);
-		$condition=' 1=1 ';
+		$condition='';
 		//操作员搜索筛选条件
 		if(isset($this->params['url']['operator_email']) && !empty($this->params['url']['operator_email'])){
-	   	       $condition .=" and Operator.email like '%".$this->params['url']['operator_email']."%'";
+	   	       $condition["Operator.email like"]="%".$this->params['url']['operator_email']."%";
 	    }
 	    if(isset($this->params['url']['operator_depart']) && ($this->params['url']['operator_depart'] != '所有部门')){
-	   	       $condition .=" and Operator.department_id= '".$this->params['url']['operator_depart']."'";
+	   	       $condition["Operator.department_id"]=$this->params['url']['operator_depart'];
 	   	       $this->set("operator_depart",$this->params['url']['operator_depart']);
 	    }
 	    if(isset($this->params['url']['operator_name']) && !empty($this->params['url']['operator_name'])){
-	    	   $condition .=" and Operator.name like '%".$this->params['url']['operator_name']."%'";
+	    	   $condition["Operator.name like"]="%".$this->params['url']['operator_name']."%";
 	    }
    	    $total = $this->Operator->findCount($condition,0);
 	    $sortClass='Operator';
@@ -79,21 +79,28 @@ class OperatorsController extends AppController {
 	}
 	function edit($id) {
 		/*判断权限*/
-		//	$user->controller('categories_edit');
+		if($id == 1){
+			$this->flash("您不能对此管理员的权限进行任何操作!",'/operators/',10,false);
+			return false;
+		}
+		$this->operator_privilege('Operator_edit');
 		$this->pageTitle = "编辑操作员 - 操作员管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'操作员管理','url'=>'/operators/');
 		$this->navigations[] = array('name'=>'编辑操作员','url'=>'');
 		$this->set('navigations',$this->navigations);
+		
 		$this->Department->set_locale($this->locale);
 		if($this->RequestHandler->isPost()){
-		//	pr($this->params);
+			$this->data['Operator']['store_id'] = !empty($this->data['Operator']['store_id'])?$this->data['Operator']['store_id']:"0";
+			$this->data['Operator']['role_id'] = !empty($this->data['Operator']['role_id'])?$this->data['Operator']['role_id']:"0";
+			$this->data['Operator']['desktop'] = !empty($this->data['Operator']['desktop'])?$this->data['Operator']['desktop']:"0";
 		   $operator_info=$this->Operator->findbyid($this->data['Operator']['id']);
 		   if(!empty($this->params['form']['oldpassword']) && !empty($this->params['form']['newpassword']) && !empty($this->params['form']['confirmpassword'])){
 		               if(strcmp(md5($this->params['form']['oldpassword']),$operator_info['Operator']['password']) != 0){
-		       	             $this->flash("输入旧密码不正确",'/operators/edit/'.$this->data['Operator']['id'],10);
+		       	             $this->flash("输入旧密码不正确",'/operators/edit/'.$this->data['Operator']['id'],10,false);
 		               }
 		               if(strcmp($this->params['form']['newpassword'],$this->params['form']['confirmpassword']) != 0){
-		       	             $this->flash("两次输入的新密码不一样",'/operators/edit/'.$this->data['Operator']['id'],10);
+		       	             $this->flash("两次输入的新密码不一样",'/operators/edit/'.$this->data['Operator']['id'],10,false);
 		               }
 		               else{
 		             	     $this->data['Operator']['password']=md5($this->params['form']['newpassword']);
@@ -105,7 +112,7 @@ class OperatorsController extends AppController {
 		       }
 			//检验用户名唯一性
 			if($this->Operator->check_unique_name($this->data['Operator']['name'],$this->data['Operator']['id'])){
-				$this->flash("编辑失败，用户名已占用",'/operators/edit/'.$this->data['Operator']['id'],5);
+				$this->flash("编辑失败，用户名已占用",'/operators/edit/'.$this->data['Operator']['id'],5,false);
 			}
 			else{
 				   if(isset($this->params['form']['operator_role']) && !empty($this->params['form']['operator_role'])){
@@ -115,7 +122,10 @@ class OperatorsController extends AppController {
 				            $this->data['Operator']['actions'] = implode(';',$this->params['form']['operator_action']);
 				   }
 				$this->Operator->save($this->data);
-				$this->flash("编辑成功",'/operators/',10);
+				
+
+				$this->flash("操作员  ".$this->data['Operator']['name']." 编辑成功。点击继续编辑该操作员。",'/operators/edit/'.$id,10);
+
 			}
 		}
 		
@@ -125,6 +135,7 @@ class OperatorsController extends AppController {
 		$this->OperatorRole->set_locale($this->locale);
 		$res = $this->OperatorRole->findAll();
 	//	pr($res);
+		$operator_roles = array();
 		foreach($res as $k=>$v){
 			$operator_roles[$v['OperatorRole']['id']]['OperatorRole']=$v['OperatorRole'];
 			$operator_roles[$v['OperatorRole']['id']]['OperatorRole']['name'] = '';
@@ -156,21 +167,25 @@ class OperatorsController extends AppController {
 	}
    function remove($id){
 		/*判断权限*/
-		//	$user->controller('categories_edit');
+		$this->operator_privilege('Operator_edit');
 		$this->Operator->del($id);
 		$this->flash("删除成功",'/operators/',10);
    }
    function add(){
 		/*判断权限*/
-		//	$user->controller('categories_edit');
+		$this->operator_privilege('operator_add');
 		$this->pageTitle = "新增操作员 - 操作员管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'操作员管理','url'=>'/operators/');
 		$this->navigations[] = array('name'=>'新增操作员','url'=>'');
 		$this->set('navigations',$this->navigations);
 		$this->Department->set_locale($this->locale);
    	    if($this->RequestHandler->isPost()){
+			$this->data['Operator']['store_id'] = !empty($this->data['Operator']['store_id'])?$this->data['Operator']['store_id']:"0";
+			$this->data['Operator']['role_id'] = !empty($this->data['Operator']['role_id'])?$this->data['Operator']['role_id']:"0";
+			$this->data['Operator']['desktop'] = !empty($this->data['Operator']['desktop'])?$this->data['Operator']['desktop']:"0";
+   	    	
    	   	   	if($this->Operator->check_unique_name($this->data['Operator']['name'])){
-				$this->flash("添加失败，用户名已占用",'/operators/add/',5);
+				$this->flash("添加失败，用户名已占用",'/operators/add/',5,false);
 			}
 			else{
 				if(!empty($this->data['Operator']['password']))
@@ -183,10 +198,11 @@ class OperatorsController extends AppController {
 				$this->data['Operator']['password'] = md5($this->data['Operator']['password']);
 				$this->Operator->save($this->data); 
 				$id=$this->Operator->id;
-				$this->flash("添加成功",'/operators/','');
+				$this->flash("操作员  ".$this->data['Operator']['name']." 添加成功。点击继续编辑该操作员。",'/operators/edit/'.$id,10);
 			}
 		}
 		$res = $this->OperatorRole->findAll();
+		$operator_roles = array();
 		foreach($res as $k=>$v){
 			$operator_roles[$v['OperatorRole']['id']]['OperatorRole']=$v['OperatorRole'];
 			if(!empty($v['OperatorRoleI18n']))
@@ -217,11 +233,11 @@ class OperatorsController extends AppController {
    		$operator_id = $_SESSION['Operator_Info']['Operator']['id'];
    		$operator_password = $_SESSION['Operator_Info']['Operator']['password'];
    		if( $md5_pwd != $operator_password){
-   			$pwd_status = 0;
+   			$pwd_status = "0";
    			echo $pwd_status;
    			die();
    		}else{
-   			$pwd_status = 1;
+   			$pwd_status = "1";
    		}
    		
    		$this->Operator->updateAll(

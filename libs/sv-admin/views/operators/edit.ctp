@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: edit.ctp 943 2009-04-23 10:38:44Z huangbo $
+ * $Id: edit.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <?=$javascript->link('listtable');?>
@@ -20,8 +20,7 @@
 
 <div class="home_main">
 <?php echo $form->create('Operator',array('action'=>'edit','onsubmit'=>'return operators_check();'));?>
-	
-	
+
 <? if(isset($languages) && sizeof($languages)>0){
 		foreach ($languages as $k => $v){?>
 	<input name="data[OperatorI18n][<?=$k;?>][locale]" type="hidden" value="<?= $v['Language']['locale'];?>">
@@ -45,6 +44,8 @@
 			<dd><input type="text" class="text_inputs" style="width:260px;" id="OperatorName"  name="data[Operator][name]" value="<?= $this->data['Operator']['name'];?>"/> <font color="#F94671">*</font></dd></dl>
 		<dl><dt>Email地址：</dt>
 			<dd><input type="text" class="text_inputs" style="width:260px;" id="OperatorEmail" name="data[Operator][email]" value="<?= $this->data['Operator']['email'];?>"/> <font color="#F94671">*</font></dd></dl>
+		<dl><dt>手机：</dt>
+			<dd><input type="text" class="text_inputs" style="width:270px;" id="Operatormobile" name="data[Operator][mobile]" value="<?= $this->data['Operator']['mobile'];?>"/> <font color="#F94671">*</font></dd></dl>
 		<dl><dt>所属部门：</dt><dd>
 			<select style="width:262px;*width:265px;" name="data[Operator][department_id]">
 			<option value="0">没有部门</option>
@@ -95,7 +96,7 @@
 </table>
 
 <!--Categories List-->
-		<!--Order Stat-->
+	<!--Order Stat-->
 	<div class="order_stat operators properies">
 	  <div class="title">
 	  <h1>

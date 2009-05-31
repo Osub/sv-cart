@@ -14,10 +14,9 @@
 ?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 <div id="Products_box">
-    	<h1><span><?=$SCLanguages['coupon']?></span></h1>
-        <div id="infos" style="width:739px;">
+<h1 class="headers"><span class="l"></span><span class="r"></span><b><?=$SCLanguages['coupon']?></b></h1>
+        <div id="infos">
  			<?if(isset($coupons) && sizeof($coupons)>0){?>
- 			<br /><br />
 			<ul class="integral_title">
             <li class="integral" style="width:8%"><?=$SCLanguages['coupon']?><?=$SCLanguages['code']?></li>
             <li class="time"><?=$SCLanguages['coupon']?><?=$SCLanguages['apellation']?></li>
@@ -27,7 +26,7 @@
             <li class="handel"><?=$SCLanguages['coupon']?><?=$SCLanguages['status']?></li>
     		</ul> <div class="integral_list">	
  				<?foreach($coupons as $k=>$v){?>
-			<ul class="integral_title">
+			<ul class="integral_title" <?if($k == (sizeof($coupons)-1)){?>style="border:none;" <?}?>>
             <li class="integral" style="width:8%"><?=$v['Coupon']['sn_code']?></li>
             <li class="time"><?=$v['Coupon']['name']?></li>
             <li class="time" style="width:10%"><?=$v['Coupon']['fee']?></li>
@@ -59,24 +58,22 @@
    <?}?></div>
   <br />
 <div id="Products_box">
-	<div id="infos" style="width:739px;">
+	<div id="infos" style="background:#fff;">
 <p class="sufficient"><b><?=$SCLanguages['add'];?><?=$SCLanguages['coupon'];?></b>:</p>
-            <ul class="integral_title">
-				<li class="time" style="width:50%"> 
+<br />
+            <ul class="integral_title" style="background:#fff;border:0px;">
+				<li class="time" style="width:50%; background:#fff;"> 
 		<?=$SCLanguages['please_enter'].$SCLanguages['coupon'].$SCLanguages['code'];?> :<input type="text" style="width:150px;" name="sn_code" id="sn_code" /> 
 				</li>
-				<li class="handel btn_list">
+				<li class="handel btn_list" style="background:#fff;">
 				<a href="javascript:add_coupon()" class="float_l"><span><?=$SCLanguages['confirm']?></span></a>
 				</li>
-				<li class="msg">
+				<li class="msg" style="background:#fff;">
 				<span style="color:red;" id="sn_code_msg"></span>
 				</li>
-			</ul>  	
-
+			</ul>
+		<br />	
    </div>
 </div>  	  
-  	  <br />
-  	  <br />
-  	  <br />
 
 <?php echo $this->element('news', array('cache'=>'+0 hour'));?>

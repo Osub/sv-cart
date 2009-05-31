@@ -8,7 +8,7 @@ YAHOO.example.container.manager = new YAHOO.widget.OverlayManager();
 
 YAHOO.example.container.wait = new YAHOO.widget.Panel("wait",{ width:"240px", fixedcenter:true, close:false, draggable:false, modal:true,visible:false,effect:{effect:YAHOO.widget.ContainerEffect.FADE, duration:0.5}});
 YAHOO.example.container.wait.setHeader("<div style='background:#fff;width:100%;padding-top:5px;margin-top:2px;text-align:center'>Loading, please wait...</div>");
-YAHOO.example.container.wait.setBody("<object data='"+webroot_dir+themePath+"img/loading.swf' type='application/x-shockwave-flash' width='240' height='30'><param name='movie' value='"+webroot_dir+"../img/loading.swf' /><param name='wmode' value='Opaque'></object>");
+YAHOO.example.container.wait.setBody("<object data='"+webroot_dir+themePath+"img/loading.swf' type='application/x-shockwave-flash' width='240' height='30'><param name='movie' value='"+webroot_dir+"img/loading.swf' /><param name='wmode' value='Opaque'></object>");
 //YAHOO.example.container.wait.setBody("<object id='loading' data='../../img/loading.swf' type='application/x-shockwave-flash' width='240' height='40'><param name='movie' value='../../img/loading.swf' /><param name='wmode' value='Opaque'></object>");
 
 YAHOO.example.container.wait.render(document.body);
@@ -34,6 +34,51 @@ YAHOO.util.Event.onDOMReady(init);
 	}
 //创建DIV--end
 
+/****leo20090513*****************************************************************************
+使用说明:
+  例:
+* GetId("zheng").innerHTML)
+* GetTag("li").length  
+* GetChildTag(GetId("zheng"),"li").length+"个li"
+* GetClass("zheng")[0].innerHTML+GetClass("zheng")[1].innerHTML
+*********************************************************************************/
+//通过ID获取对象
+function GetId(id){
+	return document.getElementById(id)
+}  
+//通过NAME获取对象
+function GetName(name){
+	return document.getElementsByName(name)
+}
+//通过Tag获取对象
+function GetTag(tag){
+	return document.getElementsByTagName(tag)
+}
+//通过Tag获取ID的子对象
+function GetChildTag(id,tag){
+	return id.getElementsByTagName(tag)
+}  
+//通过className获取对象
+function GetClass(className){
+	return getElementsByClassName(className)
+}  
+var $c=function(array){var nArray = [];for (var i=0;i<array.length;i++) nArray.push(array[i]);return nArray;};
+    Array.prototype.each=function(func){for(var i=0,l=this.length;i<l;i++) {func(this[i],i);};};
+var getElementsByClassName=function(cn){
+        var hasClass=function(w,Name){
+	        var hasClass = false;
+	        w.className.split(' ').each(function(s){
+	            if (s == Name) hasClass = true;
+	        });
+	        return hasClass;
+        }; 
+        var elems =document.getElementsByTagName("*")||document.all;
+		var elemList = [];
+		$c(elems).each(function(e){
+			if(hasClass(e,cn)){elemList.push(e);}
+		})
+		return $c(elemList);
+};
 
 	//window.open图片管理
 	function img_sel(number,assign_dir){
@@ -202,12 +247,17 @@ function menus_check(){
 //邮件模板管理
 function mailtemplates_check(){
 	var title = document.getElementById('title'+now_locale);
+	var data_mailtemplate_code = document.getElementById('data_mailtemplate_code');
+
 	layer_dialog();
 	if( Trim( title.value,'g' ) == "" ){
 		layer_dialog_show("邮件主题不能为空!","",3);
 		return false;
 	}
-
+	if( Trim( data_mailtemplate_code.value,'g' ) == "" ){
+		layer_dialog_show("邮件编号不能为空!","",3);
+		return false;
+	}
 }
 
 //语言管理 
@@ -272,9 +322,19 @@ function navigations_check(){
 //广告管理
 function advertisements_check(){
 	var advertisement_name = document.getElementById('advertisement_name');
+	var data_AdvertisementI18n_start_time = document.getElementById('date');
+	var data_AdvertisementI18n_end_time = document.getElementById('date2');
 	layer_dialog();
 	if( Trim( advertisement_name.value,'g' ) == "" ){
 		layer_dialog_show("广告名称不能为空!","",3);
+		return false;
+	}
+	if( Trim( data_AdvertisementI18n_start_time.value,'g' ) == "" ){
+		layer_dialog_show("开始时间不能为空!","",3);
+		return false;
+	}
+	if( Trim( data_AdvertisementI18n_end_time.value,'g' ) == "" ){
+		layer_dialog_show("结束时间不能为空!","",3);
 		return false;
 	}
 }
@@ -485,9 +545,19 @@ function virtual_cards_check(){
 //促销活动管理
 function promotions_check(){
 	var promotion_title = document.getElementById('promotion_title_'+now_locale);
+	var data_Promotion_end_time = document.getElementById("date2");
+	var data_Promotion_start_time = document.getElementById("date");
 	layer_dialog();
 	if( Trim( promotion_title.value,'g' ) == "" ){
 		layer_dialog_show("商品名称不能为空!","",3);
+		return false;
+	}	
+	if( Trim( data_Promotion_end_time.value,'g' ) == "" ){
+		layer_dialog_show("促销结束日期不能为空!","",3);
+		return false;
+	}	
+	if( Trim( data_Promotion_start_time.value,'g' ) == "" ){
+		layer_dialog_show("促销起始日期不能为空!","",3);
 		return false;
 	}
 }
@@ -505,9 +575,29 @@ function cards_check(){
 //电子优惠券管理
 function coupons_check(){
 	var coupontype_name = document.getElementById('coupontype_name_'+now_locale);
+	var date = document.getElementById("date");
+	var date2 = document.getElementById("date2");
+	var date3 = document.getElementById("date3");
+	var date4 = document.getElementById("date4");
 	layer_dialog();
 	if( Trim( coupontype_name.value,'g' ) == "" ){
 		layer_dialog_show("电子优惠券名称不能为空!","",3);
+		return false;
+	}	
+	if( Trim( date.value,'g' ) == "" ){
+		layer_dialog_show("发放起始日期不能为空!","",3);
+		return false;
+	}
+	if( Trim( date2.value,'g' ) == "" ){
+		layer_dialog_show("发放结束日期不能为空!","",3);
+		return false;
+	}
+	if( Trim( date3.value,'g' ) == "" ){
+		layer_dialog_show("使用起始日期不能为空!","",3);
+		return false;
+	}
+	if( Trim( date4.value,'g' ) == "" ){
+		layer_dialog_show("使用结束日期不能为空!","",3);
 		return false;
 	}
 
@@ -573,10 +663,15 @@ function check() {
 	} 
 } 
 //onkeydown
-document.onkeydown = function(evt){
-	var evt = window.event?window.event:evt;
-	if(evt.keyCode==13)
-	{
+/*
+function login_event(e){
+	if(window.event){
+		keynum = e.keyCode
+	}else if(e.which){
+		keynum = e.which
+	}
+	if(keynum==13)
+	{	
 		var UserName = document.getElementById('operator_id').value;
 		var UserPassword = document.getElementById('operator_pwd').value;
 		var UserCaptcha = document.getElementById('authnum').value;
@@ -584,7 +679,8 @@ document.onkeydown = function(evt){
 			check();
 		}
 	}
-}
+
+}*/
 function ajax_login(cookie){
 		YAHOO.example.container.wait.show();
 		var operator_pwd =document.getElementById("operator_pwd").value;
@@ -632,3 +728,36 @@ function break_config(){
 
 
 }
+
+//分页回车
+function pagers_onkeypress(obj,e){
+	if(window.event){
+		keynum = e.keyCode
+	}else if(e.which){
+		keynum = e.which
+	} 
+	if(keynum==13){
+	
+		YAHOO.example.container.wait.show();  
+		var input_obj = GetTag('input');
+		for( var i=0;i<input_obj.length;i++){
+			if(input_obj[i].type == "submit"){
+				input_obj[i].type = "button";
+			}
+		}
+		var sUrl = webroot_dir+"pages/pagers_num/"+obj.value;
+		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, ajax_pagers_callback);
+	}  
+}   
+var ajax_pagers_Success = function(o){
+	window.location.reload();
+}
+var ajax_pagers_Failure = function(o){
+	YAHOO.example.container.wait.hide();
+}
+var ajax_pagers_callback ={
+	success:ajax_pagers_Success,
+	failure:ajax_pagers_Failure,
+	timeout : 30000,
+	argument: {}
+};

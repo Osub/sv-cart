@@ -28,13 +28,20 @@
 	margin-right:4px;
 }
 #Left{
-	float:left;margin-left:8px;display:inline;
+	float:left;margin-left:8px;display:inline;width:176px;
 }
 #Right{
-	margin-right:7px;float:right;width:741px;display:inline;
+	margin-right:7px;float:right;width:742px;display:inline;
 }
 .submit_btn input.submit{background:url(../img/cencle.gif) no-repeat;border:0;width:63px;height:21px;cursor:pointer;}
 .submit_btn input.reset{background:url(../img/btn_reset.gif) no-repeat;border:0;width:63px;height:21px;cursor:pointer;}
+
+h1.headers{padding:5px 0 0 27px;color:#fff;background:url(../img/headers.gif) 0 -36px repeat-x;height:31px;position:relative;margin:0 30px;}
+h1.headers span.l{width:41px;height:36px;background:url(../img/headers.gif) 0 0 no-repeat;position:absolute;left:-30px;top:0;;overflow:hidden}
+h1.headers span.r{width:41px;height:36px;background:url(../img/headers.gif) 100% -72px no-repeat;position:absolute;right:-30px;top:0;z-index:-1;overflow:hidden}
+h1.headers b{font-size:15px;line-height:28px;}
+
+* html h1.friendheader{height:36px;padding-top:0;line-height:30px;}
 
 /*buttons*/
 .gray_btn a{display:block;background:url(../img/find.gif) 100% -20px no-repeat;padding-right:2px;cursor:pointer;}

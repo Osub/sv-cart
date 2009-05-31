@@ -15,8 +15,8 @@
 <!--帮助中心显示开始-->
 <?if(isset($link_info) && sizeof($link_info)>0){?>
 <div class="category_box brand_box">
-<h3><?=$SCLanguages['links'];?></h3>
-<div class="category brands">
+<h3><span class="l"></span><span class="r"></span><?=$SCLanguages['links'];?></h3>
+<div class="category brands box">
 <ul>
 <?foreach($link_info as $key=>$link){?>
 
@@ -27,6 +27,6 @@
 <?}?>	
 <?}?>
 </ul>
-</div><?=$html->image('category_ulbt.gif',array("alt"=>"","align"=>"left"))?></div>
+</div><p><?=$html->image('category_ulbt.gif',array("alt"=>""))?></p></div>
 <?}?>
 <!--帮助中心显示结束-->

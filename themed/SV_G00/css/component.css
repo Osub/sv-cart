@@ -52,14 +52,22 @@
 }
 /*================== Left ====================*/
 .category_box{
-	width:175px;
-	background:url(../img/category_ulbg.gif) repeat-y;
+	height:100%;
+}
+.category_box .box{
+	border-left:1px solid #B8D5B7;border-right:1px solid #B8D5B7;height:100%;
 }
 .category_box h3{
-	background:url(../img/category_titlebg.gif) no-repeat;height:33px;line-height:33px;white-space:nowrap;padding:0 0 0 20px;color:#fff;font-size:14px;font-weight:bold;
+	background:url(../img/category.gif) 0 -29px repeat-x;height:29px;line-height:29px;white-space:nowrap;padding:0 0 0 20px;color:#fff;font-size:14px;font-weight:bold;position:relative;
 }
-.category {
-	width:175px;height:auto;position:relative;margin:0;padding:10px 0 5px 0;
+.category_box h3 .l{
+	background:url(../img/category.gif) 0 0 no-repeat;width:5px;height:29px;left:0;top:0;position:absolute;
+}
+.category_box h3 .r{
+	background:url(../img/category.gif) 0 -58px no-repeat;width:5px;height:29px;right:0;top:0;position:absolute;
+}
+.category{
+	height:auto;position:relative;margin:0;padding:10px 0 5px 0;
 }
 .category_box .Help ul li img{
 	margin:0 10px 3px 0;
@@ -417,7 +425,6 @@
 .product_l{margin-top:4px;}
 .product_r{margin-top:5px;}
 #main_right h1 img{
-	
 	margin:0 10px 0 15px;
 }
 #main_right #item_infos{
@@ -442,7 +449,7 @@
 	float:left;margin:20px 10px 20px 5px;width:60%;
 }
 .item_box ul li{
-	margin:6px 0;vertical-align:middle;color:#808080;height:100%;overflow:hidden;
+	margin:6px 0;vertical-align:middle;color:#808080;height:100%;overflow:hidden;width:100%;
 }
 .item_box ul dd.l{width:35%;}
 .item_box ul dd.number{padding-top:3px;*padding-top:4px;}
@@ -548,9 +555,7 @@
 /*  ==================== carts ====================  */
 
 #Right #Products{
-	width:739px;background:#fff;border:1px solid #909592;margin-top:5px;
-}
-#Right #Products .List_bg{
+	background:#fff;border:1px solid #909592;margin-top:5px;
 }
 #Products .ur_here{
 	height:20px;line-height:20px;color:#40AAFE;
@@ -661,10 +666,10 @@
 	background:url(../img/view_info_over.gif) no-repeat;width:68px;
 }
 #Products #balance{
-	width:741px;height:58px;padding-top:15px;
+	height:58px;padding-top:15px;
 }
 #Products #balance span{
-	font-weight:bold;color:#20BE63;margin:0 30px;font-size:14px;
+	font-weight:bold;color:#20BE63;margin:0 5px;font-size:14px;
 }
 #Item_List .info .Add_toCart{
 	margin-top:10px;
@@ -674,22 +679,23 @@
 	margin:20px 0;text-align:center;height:100%;overflow:hidden;
 }
 #buyshop_btn p{
-	padding-left:251px;
+	padding-left:150px;
 }
 #buyshop_btn span{
 	margin:0 20px;text-align:center;
 }
 #buyshop_btn a{
-	float:left;height:24px;color:#fff;text-align:center;margin:0 15px;
+	float:left;height:24px;text-align:center;margin:0 15px;
 }
 #buyshop_btn a span{
 	display:block;background:url(../img/btn_addfav.gif) no-repeat 100% -24px;margin:0;padding:6px 10px 4px;white-space:nowrap;
 }
 #buyshop_btn a.last-shop{
-	background:url(../img/btn_addcart.gif) no-repeat;text-align:right;padding-left:25px;
+	text-align:right;padding-left:25px;padding-top:5px;text-decoration:underline;
 }
+#buyshop_btn a.last-shop span{background:none;}
 #buyshop_btn a.checkout{
-	background:url(../img/btn_addfav.gif) no-repeat left top;
+	background:url(../img/btn_addfav.gif) no-repeat left top;color:#fff;
 }
 .outstock dl{height:100%;float:none;overflow:hidden;color:#15A35B;margin:10px 0;}
 .outstock dd{width:25%;padding-left:40px;}
@@ -697,27 +703,20 @@
 .outstock dt input{width:50%;}
 /*========================= articles ==========================*/
 #all_article{
-	width:741px;overflow:hidden;
+	overflow:hidden;height:100%;
 }
 #all_article #left_article{
-	float:left;width:366px;
+	float:left;width:49.4%;
 }
 #all_article #right_article{
-	float:right;width:370px;
+	float:right;width:50%;
 }
-.information{
-	width:366px;margin-bottom:5px;
-	
-}
-.information h1{
-	height:36px;background:url(../img/article_titlebg.gif) left no-repeat;position:relative;
-}
-.information h1 cite{font-size:15px;font-weight:bold;color:#fff;line-height:36px;margin-left:48px;}
+.information{margin-bottom:5px;}
 .information h1 img,.activity_column h1 img{
 	margin:6px 0 0 15px;
 }
 .information h1 .more,.activity_column h1 .more{
-	position:absolute;right:10px;top:10px;width: 46px;font-size:14px;
+	position:absolute;right:-22px;top:10px;width: 46px;font-size:14px;
 }
 .information h1 .more a,.activity_column h1 .more a{
 	color:#fff;
@@ -731,18 +730,10 @@
 .information .infos .txt{
 	margin:18px 20px 0;text-indent:2em;line-height:22px;color:#8F8F8F;
 }
-.activity_column{
-	width:370px;
-	margin-bottom:5px;
-}
-.activity_column h1{
-	height:36px;background:url(../img/clunm_bg.gif) left no-repeat;position:relative;
-}
-.activity_column h1.option{
-	background:url(../img/article-option.gif) no-repeat;
-}
-.activity_column h1 cite{
-	margin-left:48px;color:#fff;font-size:15px;font-weight:bold;line-height:36px;
+.activity_column{margin-bottom:5px;}
+.activity_column h1{margin-left:10px;}
+.activity_column h1 span.l{
+	background:url('../img/headers.png') 0 0 no-repeat;height:36px;width:10px;left:-10px;
 }
 .activity_column .main{
 	margin-top:2px;position:relative;padding-top:5px;border:1px solid #909592;
@@ -758,7 +749,7 @@
 	/*background:url(../img/option_bg.gif) no-repeat;*/
 }
 .activity_column .main .subject{
-	border-top:1px dashed #C6C6C6;overflow:hidden;
+	border-top:1px dashed #C6C6C6;overflow:hidden;height:100%;
 }
 .main sub{
 	text-align:center;width:354px;padding:3px 8px;
@@ -1059,11 +1050,7 @@ table .list .selece_input{
 /*========================= History ==========================*/
 
 .category_box .history{
-	width:175px;
-	height:auto;
-	position:relative;
-	margin:0;
-	padding:2px 0 5px 0;
+	height:auto;position:relative;margin:0;padding:2px 0 5px 0;
 }
 .category_box .history ul{
 	margin:0 5px;overflow:hidden;
@@ -1082,9 +1069,7 @@ table .list .selece_input{
 	text-align:center;margin-top:5px;white-space:nowrap;overflow:hidden;width:80px;
 }
 .history ul li .price{
-	text-align:center;
-	margin:5px 0 10px 0;
-	color:#004B1C;
+	text-align:center;margin:5px 0 10px 0;color:#004B1C;
 }
 /*==================== Language =========================*/
 #language{
@@ -1218,7 +1203,7 @@ table .list .selece_input{
 #navigation h1{margin-left:10px;}
 #navigation h1 span.l{background:url(../img/headers.png) 0 -108px no-repeat;height:36px;width:10px;left:-10px;}
 #navigation .list_box{
-	padding:10px 0 20px;border:1px solid #909493;
+	padding:10px 0 20px;border:1px solid #909493;height:100%;
 }
 #navigation .article_box{
 	padding:0;height:100%;
@@ -1227,10 +1212,10 @@ table .list .selece_input{
 	position:relative;height:36px;margin-top:-33px;margin-left:8px;margin-bottom:-2px;
 }
 #navigation ul li{
-	height:36px;float:left;background:url(../img/option_bg_over.gif) 100% -35px no-repeat;text-align:center;font-size:14px;line-height:36px;padding-right:10px;
+	height:36px;float:left;background:url(../img/option.gif) 100% -105px no-repeat;text-align:center;font-size:14px;line-height:36px;padding-right:10px;
 }
-#navigation ul li span{display:block;background:url(../img/option_bg_over.gif) 0 0 no-repeat;padding-left:10px;}
-#navigation li b{color:#028632;cursor:default}
+#navigation ul li span{display:block;background:url(../img/option.gif) 0 -70px no-repeat;padding-left:10px;}
+#navigation li b{color:#028632;}
 #navigation .list_box .sorts{
 	padding:5px 0 5px;border-bottom:1px #C6C6C6 dashed;
 }
@@ -1253,10 +1238,7 @@ border-bottom:none;
 	color:#16A85D;font-weight:bold;
 }
 .list_box .sorts p.sort_name{
-	padding:5px 10px 0 30px;
-	height:18px;
-	min-height:18px;
-	line-height:normal;
+	padding:5px 10px 0 30px;height:18px;min-height:18px;line-height:normal;
 }
 #navigation .list_box .article{
 	border-bottom:none;float:left;width:215px;border-right:1px dashed #C5C5C5;margin-left:15px;display:inline;padding-top:15px;overflow:hidden;
@@ -1298,10 +1280,16 @@ ul.article_tab{
 	height:100%;overflow:hidden;padding-left:10px;margin-top:5px;position:relative;margin-top:-40px;
 }
 ul.article_tab li{
-	float:left;cursor:pointer;height:35px;color:#fff;background:url(../img/option_bg.gif);width:90px;text-align:center;line-height:35px;margin:0 1px;
+	float:left;cursor:pointer;height:35px;color:#fff;background:url(../img/option.gif) 100% -35px;line-height:35px;margin:0 1px;padding-right:10px;font-weight:bold;
+}
+ul.article_tab li span{
+	display:block;background:url(../img/option.gif) 0 0;text-align:center;line-height:35px;padding:0 0 0 10px;
 }
 ul.article_tab li.hover{
-	color:#008832;background:url(../img/option_bg_over.gif);font-weight:bold;
+	color:#008832;background:url(../img/option.gif) 100% -105px no-repeat;
+}
+ul.article_tab li.hover span{
+	display:block;background:url(../img/option.gif) 0 -70px;text-align:center;line-height:35px;padding:0 0 0 10px;
 }
 /*===================Login out======================*/
 #loginout{

@@ -9,39 +9,25 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: page.ctp 1273 2009-05-08 16:49:08Z huangbo $
+ * $Id: page.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<?php echo $html->charset(); ?>
+<?php echo $html->charset(); ?>
 <title><?php echo $title_for_layout; ?> - <?php __('Powered by Seevia'); ?></title>
-	<?php
-		echo $html->meta('icon');
-
-		echo $html->css('style');
-
-		echo $scripts_for_layout;
-		
-	//	pr($this);
-	?>
 <?php
-		echo $html->css('style');
+		echo $html->meta('icon');
 ?>
-<?=$javascript->link('/../js/yui/yahoo-dom-event.js');?>
-<?=$javascript->link('/../js/yui/animation-min.js');?>
-<?=$javascript->link('/../js/yui/connection-min.js');?>
-<?=$javascript->link('/../js/yui/json-min.js');?>
-<?=$javascript->link('/../js/yui/container-min.js');?>
+
 <script type="text/javascript">
 	var webroot_dir = "<?=$this->webroot;?>";
 	var themePath = "<?=$this->themeWeb;?>";
 </script>
-<?=$javascript->link('common');?>
-<?=$javascript->link('forget_pwd');?>
+<?=$minify->css(array('/css/layout','/css/admin','/css/calendar','/css/menu','/css/container','/css/treeview','/css/image','/css/swfupload','/css/tabview','css/style'));?>
+<?=$minify->js(array('/../js/yui/yahoo-dom-event.js','/../js/yui/animation-min.js','/../js/yui/connection-min.js','/../js/yui/container-min.js','/../js/yui/json-min.js','/js/common.js','/js/forget_pwd.js','/../js/swfobject.js'));?>
 
-	
 </head>
 <body id="body" class="yui-skin-sam svcart-skin-g00">
 <div class="home" style="height:550px">

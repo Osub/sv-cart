@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: routes.php 1201 2009-05-05 13:30:17Z huangbo $
+ * $Id: routes.php 1732 2009-05-25 12:03:32Z huangbo $
 *****************************************************************************/
 
 	Router::connect('/', array('controller' => 'pages', 'action' => 'home'));
@@ -20,6 +20,6 @@
 	Router::parseExtensions('rss','xml'); 
 	Router::connect('/sitemaps', array('controller' => 'sitemaps', 'action' => 'index')); 
 	Router::connect('/sitemap', array('controller' => 'sitemaps', 'action' => 'view')); 
-
+	Router::connect('/categories/*', array('controller' => 'categories', 'action' => 'view')); 
 	Router::connect('/:controller/:id',array('action' => 'view'),array('pass' => array('id'),'id' => '[0-9]+'));
 ?>

@@ -9,9 +9,10 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: home.ctp 1153 2009-04-30 08:55:43Z huangbo $
+ * $Id: home.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?>
+
 <!--热门话题-->	
 <?if(isset($home_article) && is_array($home_article) && sizeof($home_article)>0){?>
 <div id="hot-list">
@@ -87,11 +88,12 @@
 <? foreach($products_promotion as $k=>$v){?>
 	<li>
 		<p class="pic">
-		<?echo $svshow->productimagethumb($v['Product']['img_thumb'],"/products/{$v['Product']['id']}",array("alt"=>$v['ProductI18n']['name']));?></p>
+		<?echo $svshow->productimagethumb($v['Product']['img_thumb'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("alt"=>$v['ProductI18n']['name']));?>
+		</p>
 		<p class="info">
-		<span class="name"><?echo $html->link( $v['ProductI18n']['name'],"/products/{$v['Product']['id']}","",false,false);?></span>
-		<span class="Price"><?php echo $SCLanguages['original_price'];?>:<font color="#ff0000">
-<?=$svshow->price_format($v['Product']['shop_price'],$SVConfigs['price_format']);?>	
+		<span class="name"><?echo $html->link( $v['ProductI18n']['name'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?></span>
+		<span class="Price"><font style="letter-spacing:4px;"><?php echo $SCLanguages['market_price'];?></font>:<font color="#ff0000">
+		<?=$svshow->price_format($v['Product']['market_price'],$SVConfigs['price_format']);?>	
 			</font></span>
 		<span class="Price"><?php echo $SCLanguages['promotion'].$SCLanguages['price'];?>:<font color="#ff0000">
 <?if(isset($v['Product']['user_price']) && isset($SVConfigs['show_member_level_price']) && $SVConfigs['show_member_level_price'] >0){?>	
@@ -100,7 +102,10 @@
 <?=$svshow->price_format($v['Product']['promotion_price'],$SVConfigs['price_format']);?>	
 <?}?>
 			</font></span>
-		<span class="stow"><?=$html->link($SCLanguages['favorite'],"javascript:favorite({$v['Product']['id']},'p')","",false,false)?>|
+		<span class="stow">
+	<?if(isset($_SESSION['User'])){?>
+				<?=$html->link($SCLanguages['favorite'],"javascript:favorite({$v['Product']['id']},'p')","",false,false)?>|<?}?>
+				
 		<?if($v['Product']['quantity'] == 0){?>
 		<a href="javascript:show_booking(<?=$v['Product']['id']?>,'<?=$v['ProductI18n']['name']?>');"><?php echo $SCLanguages['booking'];?></a>
 		<?}else{?>
@@ -122,11 +127,11 @@
 <?foreach($products_newarrival as $k=>$v){?>
 	<li>
 	<p class="pic">
-	<?echo $svshow->productimagethumb($v['Product']['img_thumb'],"/products/{$v['Product']['id']}",array("alt"=>$v['ProductI18n']['name']));?></p>
+	<?echo $svshow->productimagethumb($v['Product']['img_thumb'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("alt"=>$v['ProductI18n']['name']));?></p>
 	<p class="info">
-	<span class="name"><?php echo $html->link( $v['ProductI18n']['name'],"/products/{$v['Product']['id']}","",false,false);?></span>
+	<span class="name"><?php echo $html->link( $v['ProductI18n']['name'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?></span>
 	<?if($v['Product']['market_price'] > $v['Product']['shop_price'] && isset($SVConfigs['show_market_price']) && $SVConfigs['show_market_price'] == 1){?>
-	<span class="Price"><?php echo $SCLanguages['original_price'];?>:<font color="#ff0000">
+	<span class="Price"><font style="letter-spacing:4px;"><?php echo $SCLanguages['market_price'];?></font>:<font color="#ff0000">
 <?=$svshow->price_format($v['Product']['market_price'],$SVConfigs['price_format']);?>	
 		</font></span>
 	<?}?>
@@ -137,7 +142,9 @@
 <?=$svshow->price_format($v['Product']['shop_price'],$SVConfigs['price_format']);?>	
 <?}?>
 		</font></span>
-	<span class="stow"><?=$html->link($SCLanguages['favorite'],"javascript:favorite({$v['Product']['id']},'p')","",false,false)?>|
+	<span class="stow">
+	<?if(isset($_SESSION['User'])){?>
+	<?=$html->link($SCLanguages['favorite'],"javascript:favorite({$v['Product']['id']},'p')","",false,false)?>|<?}?>
 	<?if($v['Product']['quantity'] == 0){?>
 	<a href="javascript:show_booking(<?=$v['Product']['id']?>,'<?=$v['ProductI18n']['name']?>');"><?php echo $SCLanguages['booking'];?></a>
 	<?}else{?>
@@ -160,11 +167,11 @@
 <?foreach($products_recommand as $kk=>$vv){?>
 	<li>
 	<p class="pic">
-	<?echo $svshow->productimagethumb($vv['Product']['img_thumb'],"/products/{$vv['Product']['id']}",array("alt"=>$vv['ProductI18n']['name']));?></p>
+	<?echo $svshow->productimagethumb($vv['Product']['img_thumb'],$svshow->sku_product_link($vv['Product']['id'],$vv['ProductI18n']['name'],$vv['Product']['code'],$SVConfigs['use_sku']),array("alt"=>$vv['ProductI18n']['name']));?></p>
 	<p class="info">
-	<span class="name"><?php echo $html->link( $vv['ProductI18n']['name'],"/products/{$vv['Product']['id']}","",false,false);?></span>
+	<span class="name"><?php echo $html->link( $vv['ProductI18n']['name'],$svshow->sku_product_link($vv['Product']['id'],$vv['ProductI18n']['name'],$vv['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?></span>
 	<?if($vv['Product']['market_price'] > $vv['Product']['shop_price'] && isset($SVConfigs['show_market_price']) && $SVConfigs['show_market_price'] == 1){?>
-	<span class="Price"><?php echo $SCLanguages['original_price'];?>:<font color="#ff0000">
+	<span class="Price"><font style="letter-spacing:4px;"><?php echo $SCLanguages['market_price'];?></font>:<font color="#ff0000">
 <?=$svshow->price_format($vv['Product']['market_price'],$SVConfigs['price_format']);?>	
 		</font></span>
 	<?}?>
@@ -175,7 +182,9 @@
 <?=$svshow->price_format($vv['Product']['shop_price'],$SVConfigs['price_format']);?>	
 <?}?>	
 		</font></span>
-	<span class="stow"><?=$html->link($SCLanguages['favorite'],"javascript:favorite({$vv['Product']['id']},'p')","",false,false)?>|
+	<span class="stow">
+	<?if(isset($_SESSION['User'])){?>
+			<?=$html->link($SCLanguages['favorite'],"javascript:favorite({$vv['Product']['id']},'p')","",false,false)?>|<?}?>
 	<?if($vv['Product']['quantity'] == 0){?>
 	<a href="javascript:show_booking(<?=$v['Product']['id']?>,'<?=$v['ProductI18n']['name']?>');"><?php echo $SCLanguages['booking'];?></a>
 	<?}else{?>

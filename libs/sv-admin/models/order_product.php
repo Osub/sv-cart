@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: order_product.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: order_product.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class OrderProduct extends AppModel{
 	var $name = 'OrderProduct';
@@ -25,6 +25,7 @@ class OrderProduct extends AppModel{
     function get_virtual_products($order_id){
     	
     	$virtual_products_list = $this->findAll(array("OrderProduct.order_id"=>$order_id,"OrderProduct.extension_code >"=>""));
+
     	$new_virtual_products_list  = array();
     	foreach( $virtual_products_list as $k=>$v ){
     		if($v['OrderProduct']['product_quntity']-$v['OrderProduct']['send_quntity']>0){

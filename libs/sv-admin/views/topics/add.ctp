@@ -9,11 +9,11 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 943 2009-04-23 10:38:44Z huangbo $
+ * $Id: add.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ?>
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+
+
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
 <p class="add_categories"><strong><?=$html->link($html->image('add.gif',array('align'=>'absmiddle'))."专题列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
@@ -40,6 +40,20 @@
 <? if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
 		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input type="text" style="width:360px;" id="topic_title_<?=$v['Language']['locale']?>" name="data[TopicI18n][<?=$k;?>][title]"  /> <font color="#ff0000">*</font></span></p>
+		
+<?	}
+   } ?>
+   		<h2>SEO分类关键字：</h2>
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input type="text" style="width:360px;" id="meta_keywords_<?=$v['Language']['locale']?>" name="data[TopicI18n][<?=$k;?>][meta_keywords]"  /> <font color="#ff0000">*</font></span></p>
+		
+<?	}
+   } ?>
+   		<h2>SEO分类描述：</h2>
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input type="text" style="width:360px;" id="meta_description_<?=$v['Language']['locale']?>" name="data[TopicI18n][<?=$k;?>][meta_description]"  /> <font color="#ff0000">*</font></span></p>
 		
 <?	}
    } ?>		

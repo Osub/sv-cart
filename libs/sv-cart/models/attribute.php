@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: attribute.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: attribute.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class Attribute extends AppModel
 {
@@ -18,7 +18,7 @@ class Attribute extends AppModel
                         array('className'    => 'AttributeI18n',   
                               'order'        => '',   
                               'dependent'    =>  true,   
-                              'foreignKey'   => 'Attribute_id'  
+                              'foreignKey'   => 'attribute_id'  
                         )
                   );
     

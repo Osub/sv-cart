@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: default_search.ctp 1327 2009-05-11 11:01:20Z huangbo $
+ * $Id: default_search.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -41,23 +41,19 @@ echo $scripts_for_layout;
 </head>
 <body class="svcart-skin-g00" id="svcart-com">
 <?php echo $this->element('dragl', array('cache'=>'+0 hour'));?>
-	<div id="container">
-		<div id="header">
-			<?php echo $this->element('header', array('cache'=>'+0 hour'));?>
+<div id="header"><?php echo $this->element('header', array('cache'=>'+0 hour'));?></div>
+<div id="container">
+	<div id="content">
+		<div id="Left">
+		<?php echo $this->element('category', array('cache'=>'+0 hour'));?>
+		<?php echo $this->element('history', array('cache'=>'+0 hour'));?>
 		</div>
-		<div id="content">
-			<div id="Left">
-				<?php echo $this->element('category', array('cache'=>'+0 hour'));?>
-				<?php echo $this->element('history', array('cache'=>'+0 hour'));?>
-			</div>
-			<div id="Right">
-				<?php echo $content_for_layout; ?>
-			</div>
+		<div id="Right">
+		<?php echo $content_for_layout; ?>
 		</div>
 	</div>
-	<div id="footer">
-		<?php echo $this->element('footer', array('cache'=>'+0 hour'));?>
-	</div>
-	<?php echo $cakeDebug; ?>
+</div>
+<div id="footer"><?php echo $this->element('footer', array('cache'=>'+0 hour'));?></div>
+<?php echo $cakeDebug; ?>
 </body>
 </html>

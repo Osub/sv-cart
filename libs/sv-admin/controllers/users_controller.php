@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: users_controller.php 1329 2009-05-11 11:29:59Z huangbo $
+ * $Id: users_controller.php 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 class UsersController extends AppController {
 
@@ -21,44 +21,47 @@ class UsersController extends AppController {
 
  
 	function index($orderby='id',$ordertype='ASC'){
+		/*判断权限*/
+		$this->operator_privilege('member_view');
+		/*end*/
 	   	$this->pageTitle = "会员管理" ." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'会员管理','url'=>'/users/');
-	    $condition=" 1=1 ";
+	    $condition="";
 	   //会员搜索筛选条件
 	   if(isset($this->params['url']['user_email']) && $this->params['url']['user_email'] != ''){
-	   	    $condition .=" and User.email like '%".$this->params['url']['user_email']."%'";
+	   	    $condition["User.email like"]="%".$this->params['url']['user_email']."%";
 	   	    $this->set('user_email',$this->params['url']['user_email']);
 	   }
 	   if(isset($this->params['url']['user_name']) && $this->params['url']['user_name'] != ''){
-	   	    $condition .=" and User.name like '%".$this->params['url']['user_name']."%'";
+	   	    $condition["User.name like"]="%".$this->params['url']['user_name']."%";
 	   	    $this->set('user_name',$this->params['url']['user_name']);
 	   }
 	   if(isset($this->params['url']['user_rank']) && $this->params['url']['user_rank'] != 0){
-	   	    $condition .=" and User.rank= '".$this->params['url']['user_rank']."'";
+	   	    $condition["User.rank"]=$this->params['url']['user_rank'];
 	   	    $this->set('user_rank',$this->params['url']['user_rank']);
 	   }
 	   if(isset($this->params['url']['min_balance']) && $this->params['url']['min_balance'] != ''){
-	   	    $condition .=" and User.balance >= '".$this->params['url']['min_balance']."'";
+	   	    $condition["User.balance >="]=$this->params['url']['min_balance'];
 	   	    $this->set('min_balance',$this->params['url']['min_balance']);
 	   }
 	   if(isset($this->params['url']['max_balance']) && $this->params['url']['max_balance'] != ''){
-	   	    $condition .=" and User.balance <= '".$this->params['url']['max_balance']."'";
+	   	    $condition["User.balance <="]=$this->params['url']['max_balance'];
 	   	    $this->set('max_balance',$this->params['url']['max_balance']);
 	   }
 	   if(isset($this->params['url']['min_points']) && $this->params['url']['min_points'] != ''){
-	   	    $condition .=" and User.point >= '".$this->params['url']['min_points']."'";
+	   	    $condition["User.point >="]=$this->params['url']['min_points'];
 	   	    $this->set('min_points',$this->params['url']['min_points']);
 	   }
 	   if(isset($this->params['url']['max_points']) && $this->params['url']['max_points'] != ''){
-	   	    $condition .=" and User.point <= '".$this->params['url']['max_points']."'";
+	   	    $condition["User.point <="]=$this->params['url']['max_points'];
 	   	    $this->set('max_points',$this->params['url']['max_points']);
 	   }
 	   if(isset($this->params['url']['date']) && $this->params['url']['date'] != ''){
-	   	    $condition .=" and User.created  >= '".$this->params['url']['date']."'";
+	   	    $condition["User.created  >="]=$this->params['url']['date'];
 	   	    $this->set('date',$this->params['url']['date']);
 	   }
 	   if(isset($this->params['url']['date2']) && $this->params['url']['date2'] != ''){
-	   	    $condition .=" and User.created  <= '".$this->params['url']['date2']." 23:59:59'";
+	   	    $condition["User.created  <="]=$this->params['url']['date2']." 23:59:59";
 	   	    $this->set('date2',$this->params['url']['date2']);
 	   }
 	   $total = $this->User->findCount($condition,0);
@@ -112,24 +115,28 @@ class UsersController extends AppController {
 	  $this->set('navigations',$this->navigations);
 	}
 	function search($act='unvalidate',$id=''){
-
+		/*判断权限*/
+		$this->operator_privilege('member_undeal_view');
+		/*end*/
+		$user_info = $this->User->findById($id);
 		if($act=="cancel"&&($id>0)){
 			if($this->User->findById($id)){
 					$this->User->updateAll(
-					    array('User.verify_status' => 2),
+					    array('User.verify_status' => '2'),
 					    array('User.id' => $id)
 					);
-			$this->flash("取消认证成功",'/users/search/',10);
+			
+			$this->flash("会员 ".$user_info['User']['name']." 取消认证成功",'/users/search/',10);
 			}
 				
 		}
 		if($act=="userconfirm"&&($id>0)){
 			if($this->User->findById($id)){
 					$this->User->updateAll(
-					    array('User.verify_status' => 3),
+					    array('User.verify_status' => '3'),
 					    array('User.id' => $id)
 					);
-			$this->flash("认证成功",'/users/search/',10);
+			$this->flash("会员 ".$user_info['User']['name']." 认证成功",'/users/search/',10);
 			}
 				
 		}
@@ -137,7 +144,7 @@ class UsersController extends AppController {
 		$this->navigations[] = array('name'=>'待处理会员管理','url'=>'/users/search/unvalidate');
 		$this->set('navigations',$this->navigations);
 		
-		$condition = 'User.verify_status=1';
+		$condition = "User.verify_status='1'";
 		$page = 1;
 		$rownum=isset($this->configs['show_count']) ? $this->configs['show_count']:((!empty($rownum)) ?$rownum:20);
 		$parameters = array($rownum,$page);
@@ -153,6 +160,10 @@ class UsersController extends AppController {
 //-- 编辑会员页
 /*------------------------------------------------------ */
 	function view($id){
+		/*判断权限*/
+		$this->operator_privilege('member_operation');
+		/*end*/
+
 		$this->pageTitle = "编辑会员-会员管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'会员管理','url'=>'/users/');
 		$this->navigations[] = array('name'=>'编辑会员','url'=>'');
@@ -162,7 +173,7 @@ class UsersController extends AppController {
 		  	   $user_info=$this->User->findbyid($this->data['User']['id']);
 		  	   if(!empty($this->data['User']['new_password']) && !empty($this->data['User']['new_password2'])){
 		               if(strcmp($this->data['User']['new_password'],$this->data['User']['new_password2']) != 0){
-		       	             $this->flash("两次输入的新密码不一样",'/users/'.$this->data['User']['id'],10);
+		       	             $this->flash("两次输入的新密码不一样",'/users/'.$this->data['User']['id'],10,false);
 		               }
 		               else{
 		             	     $this->data['User']['password']=md5($this->data['User']['new_password']);
@@ -220,7 +231,7 @@ class UsersController extends AppController {
                if(!empty($_POST['point']) && is_numeric($_POST['point'])){
                 	if($_POST['point_type']){
                	    	$PointLog['UserPointLog']['user_id'] = $id;
-               	    	$PointLog['UserPointLog']['point'] = $_POST['balance'];
+               	    	$PointLog['UserPointLog']['point'] = $_POST['point'];
                	    	$PointLog['UserPointLog']['admin_user'] = $_SESSION['Operator_Info']['Operator']['name'];
                	    	$PointLog['UserPointLog']['admin_note'] = "";
                	    	$PointLog['UserPointLog']['system_note'] = "管理员:".$_SESSION['Operator_Info']['Operator']['name']." 增加该用户积分";
@@ -235,7 +246,7 @@ class UsersController extends AppController {
 					}
 					else {
                	    	$PointLog['UserPointLog']['user_id'] = $id;
-               	    	$PointLog['UserPointLog']['point'] = '-'.$_POST['balance'];
+               	    	$PointLog['UserPointLog']['point'] = '-'.$_POST['point'];
                	    	$PointLog['UserPointLog']['admin_user'] = $_SESSION['Operator_Info']['Operator']['name'];
                	    	$PointLog['UserPointLog']['admin_note'] = "";
                	    	$PointLog['UserPointLog']['system_note'] = "管理员:".$_SESSION['Operator_Info']['Operator']['name']." 扣除该用户积分";
@@ -253,20 +264,26 @@ class UsersController extends AppController {
 		      
 		       if(!empty($this->params['form']['info_value']) && is_array($this->params['form']['info_value'])){
 		       	       $this->UserInfoValue->deleteall(array('user_id'=>$this->data['User']['id']));
+		       	      
 		       	      foreach($this->params['form']['info_value'] as $k=>$v){
-			       	      	  if(isset($this->params['form']['info_value'][$k])&&is_array($this->params['form']['info_value'][$k])){
+			       	      	  if(is_array($this->params['form']['info_value'][$k])){
 										$this->params['form']['info_value'][$k] = implode(';',$this->params['form']['info_value'][$k]);
 							  }
+							  
 		       	      	      $info_value=array(
 		                                     'id'=>	"",
 		                                     'user_id'=>$this->data['User']['id'],
-		                                     'user_info_id'=>	$this->params['form']['info_value_id'][$k],
-		                                     'value'=>	!empty($this->params['form']['info_value'][$k])?$this->params['form']['info_value'][$k]:""
+		                                     'user_info_id'=>	$k,
+		                                     'value'=>	!empty($this->params['form']['info_value'][$k])?$this->params['form']['info_value'][$k]:"0"
 		                      );
+		                     
 	                          $this->UserInfoValue->save(array('UserInfoValue'=>$info_value));
  		       	       }
 		       }
-			   $this->flash("编辑成功",'/users/',10);
+			
+			$this->flash("会员  ".$this->data['User']['name']." 编辑成功。点击继续编辑该会员。",'/users/'.$id,10);
+		       
+
 		   }
 		   //会员基本信息
 		   $this->data=$this->User->findbyid($id);
@@ -293,7 +310,7 @@ class UsersController extends AppController {
            
 		   $user_infoarr=$this->UserInfo->findAll();
 		   
-		   $arres = "";
+		   $arres = array();
 		   foreach( $user_infoarr as $k=>$v){
 		   		$arres[$v['UserInfo']['id']] = $v;
 		   
@@ -316,11 +333,23 @@ class UsersController extends AppController {
 		    }
 		   //默认收货地址
 		   $user_address=$this->UserAddress->find(" user_id = '".$id."'");
-
+		   //pr($user_address);
 		   //会员订单
-		   $orders_list=$this->Order->findAll(" user_id = '".$id."'");
-		   foreach($orders_list as $k=>$v){
-   	   	         $orders_list[$k]['Order']['should_pay']=sprintf($this->configs['price_format'],$v['Order']['subtotal']-$v['Order']['money_paid']);
+		   $orders_list=$this->Order->findAll(" user_id = '".$id."'","","created desc");
+			foreach($orders_list as $k=>$v){
+				$price_format = $this->configs['price_format'];
+				//DAM
+				if( isset($this->configs["mlti_currency_module"])&&$this->configs["mlti_currency_module"]==1 ){
+					if($v["Order"]["order_locale"]!=' '){
+						$price_format = $this->currency_format[$v["Order"]["order_locale"]];
+					}else{
+						$price_format = $this->configs['price_format'];
+					}
+				}
+				// 
+				$orders_list[$k]['Order']['subtotal']	=	sprintf($price_format,$v['Order']['subtotal']);
+				$orders_list[$k]['Order']['total']		=	sprintf($price_format,$v['Order']['total']);
+				$orders_list[$k]['Order']['should_pay']=sprintf($price_format,$v['Order']['subtotal']-$v['Order']['money_paid']);
    	       }
 		   //pr($orders_list);
 		   //资金日志
@@ -359,6 +388,14 @@ class UsersController extends AppController {
 		$this->set('navigations',$this->navigations);
 		if($this->RequestHandler->isPost()){
 		$this->data['User']['password']=md5($this->data['User']['new_password']);
+		$this->data['User']['question']=!empty($this->data['User']['question'])?$this->data['User']['question']:"";
+		$this->data['User']['answer']=!empty($this->data['User']['answer'])?$this->data['User']['answer']:"";
+		$this->data['User']['balance']=!empty($this->data['User']['balance'])?$this->data['User']['balance']:"0";
+		$this->data['User']['frozen']=!empty($this->data['User']['frozen'])?$this->data['User']['frozen']:"0";
+		$this->data['User']['login_times']=!empty($this->data['User']['login_times'])?$this->data['User']['login_times']:"0";
+		$this->data['User']['login_ipaddr']=!empty($this->data['User']['login_ipaddr'])?$this->data['User']['login_ipaddr']:"";
+		$this->data['User']['unvalidate_note']=!empty($this->data['User']['unvalidate_note'])?$this->data['User']['unvalidate_note']:"";
+		
 		$this->User->saveAll($this->data);
 		
 		if(!empty($this->params['form']['info_value']) && is_array($this->params['form']['info_value'])){
@@ -375,7 +412,7 @@ class UsersController extends AppController {
 	                          $this->UserInfoValue->save(array('UserInfoValue'=>$info_value));
  		       	       }
 		       }
-		 $this->flash("编辑成功",'/users/'.$this->User->getLastInsertId(),10);
+			$this->flash("会员  ".$this->data['User']['name']." 编辑成功。点击继续编辑该会员。",'/users/'.$this->User->getLastInsertId(),10);
 		}
 		//用户项目信息
 		$this->UserInfo->set_locale($this->locale);
@@ -385,13 +422,16 @@ class UsersController extends AppController {
 		    $user_infoarr[$k]['UserInfo']['values'] = $v['UserInfoI18n']['values'];
 		    			
 		}
-		//pr($user_infoarr);
+		
 		$this->set('user_infoarr',$user_infoarr);
 	}
 /*------------------------------------------------------ */
 //-- 删除会员
 /*------------------------------------------------------ */
 	function remove($id){
+		/*判断权限*/
+		$this->operator_privilege('member_operation');
+		/*end*/
 		$this->pageTitle = "删除会员-会员管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'会员管理','url'=>'/users/');
 		$this->navigations[] = array('name'=>'删除会员','url'=>'');

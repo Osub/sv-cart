@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: brands_controller.php 1144 2009-04-29 11:41:30Z huangbo $
+ * $Id: brands_controller.php 1907 2009-05-31 14:34:18Z huangbo $
 *****************************************************************************/
 
 class BrandsController extends AppController {
@@ -34,13 +34,13 @@ function view($id="",$orderby="",$rownum='',$showtype=""){
  	  //取得该品牌信息
 	  $brand_info=$this->Brand->findbyid($id);
 	if(empty($brand_info)){
-	       	 $this->pageTitle = $this->languages['brand_unexist']." - ".$this->configs['shop_title'];
-			 $this->flash($this->languages['brand_unexist'],"/",5);
+	       	 $this->pageTitle = $this->languages['brand'].$this->languages['not_exist']." - ".$this->configs['shop_title'];
+			 $this->flash($this->languages['brand'].$this->languages['not_exist'],"/",5);
 			 $flag = 0;
 	  }
 	elseif($brand_info['Brand']['status'] == 0){
-	       	 $this->pageTitle = $this->languages['brand_has_been_forbidden']." - ".$this->configs['shop_title'];
-			 $this->flash($this->languages['brand_has_been_forbidden'],"/",5);
+	       	 $this->pageTitle = $this->languages['brand'].$this->languages['not_exist']." - ".$this->configs['shop_title'];
+			 $this->flash($this->languages['brand'].$this->languages['not_exist'],"/",5);
 			 $flag = 0;
 	  }
 	  
@@ -64,7 +64,7 @@ function view($id="",$orderby="",$rownum='',$showtype=""){
 
  	  $this->Product->set_locale($this->locale);
       //取得属于该品牌的商品,以及分页
-	  $condition = " Product.brand_id='$id' ";
+	  $condition = " Product.brand_id='$id' and Product.forsale ='1'";
 	  $total = $this->Product->findCount($condition,0);
 	  $sortClass='Product';
 	  //pr($parameters);
@@ -79,7 +79,24 @@ function view($id="",$orderby="",$rownum='',$showtype=""){
 							$products_list[$k]['ProductI18n']['name'] = $this->Product->sub_str($v['ProductI18n']['name'], $this->configs['products_name_length']);
 	 				 }
 					$category_info = $this->ProductsCategory->find('ProductsCategory.product_id ='.$v['Product']['id'].' and ProductsCategory.category_id ='.$v['Product']['category_id']);
-					$products_list[$k]['ProductsCategory'] = $category_info['ProductsCategory'];					
+					
+					if($this->configs['use_sku'] == 1){
+						$this->Category->set_locale($this->locale);						
+						$info = $this->Category->findbyid($v['Product']['category_id']);						
+						$products_list[$k]['use_sku'] = 1;
+						if($info['Category']['parent_id']>0){
+							$parent_info = $this->Category->findbyid($info['Category']['parent_id']);
+							if(isset($parent_info['Category'])){
+								$products_list[$k]['parent'] = $parent_info['CategoryI18n']['name'];
+							}
+						}
+					}
+					
+					$products_list[$k]['ProductsCategory'] = $category_info['ProductsCategory'];	
+					$products_list[$k]['Product']['shop_price'] =$this->Product->locale_price($v['Product']['id'],$v['Product']['shop_price'],$this);
+					if($this->Product->is_promotion($v['Product']['id'])){
+						$products_list[$k]['Product']['shop_price'] = $v['Product']['promotion_price'];
+					}					
 					$products_list[$k]['Product']['user_price'] =$this->Product->user_price($k,$v,$this);
   			}
 				

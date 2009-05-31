@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: balances_controller.php 1329 2009-05-11 11:29:59Z huangbo $
+ * $Id: balances_controller.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class BalancesController extends AppController {
 
@@ -19,6 +19,9 @@ class BalancesController extends AppController {
 	var $uses = array("Order","UserBalanceLog","PaymentApiLog","Payment","PaymentI18n","User","UserAccount");
 	
 	function index(){
+		/*判断权限*/
+		$this->operator_privilege('fund_log_view');
+		/*end*/
 		$this->pageTitle = "资金日志" ." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'资金日志','url'=>'/balances/');
 		$this->set('navigations',$this->navigations);
@@ -120,6 +123,9 @@ class BalancesController extends AppController {
 	}
 	
 	function search(){
+		/*判断权限*/
+		$this->operator_privilege('voucher_undeal_view');
+		/*end*/
 		$this->pageTitle = "待处理冲值" ." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'待处理冲值','url'=>'/balances/');
 		$this->set('navigations',$this->navigations);
@@ -151,8 +157,8 @@ class BalancesController extends AppController {
 	//确认
 	function verify( $id ){
         $this->PaymentApiLog->updateAll(
-			              array('is_paid' =>1),
-			              array('id' =>$id)
+			              array('is_paid' =>'1'),
+			              array('id' =>"'".$id."'")
 			           );
 		$this->flash("确认成功",'/balances/',10);
 
@@ -160,8 +166,8 @@ class BalancesController extends AppController {
 
 	function cancel( $id ){
         $this->PaymentApiLog->updateAll(
-			              array('is_paid' =>0),
-			              array('id' =>$id)
+			              array('is_paid' =>'0'),
+			              array('id' =>"'".$id."'")
 			           );
 		$this->flash("取消成功",'/balances/',10);
 	}
@@ -175,12 +181,12 @@ class BalancesController extends AppController {
 		}
 		else{
 			$this->User->updateAll(
-				              array('User.balance' => 'User.balance + '.$account['UserAccount']['amount']),
-				              array('id' =>$account['UserAccount']['user_id'])
+				              array('User.balance' => 'User.balance + '."'".$account['UserAccount']['amount']."'"),
+				              array('id' =>"'".$account['UserAccount']['user_id']."'")
 				           );
 			$this->UserAccount->updateAll(
 				              array('status' =>'1'),
-				              array('id' =>$id)
+				              array('id' =>"'".$id."'")
 				           );
    	    	$BalanceLog['UserBalanceLog']['user_id'] = $account['UserAccount']['user_id'];
    	    	$BalanceLog['UserBalanceLog']['amount'] = $account['UserAccount']['amount'];
@@ -200,13 +206,13 @@ class BalancesController extends AppController {
 		if(empty($account)){
 			$this->flash("操作失败，无效的id!",'/balances/search/processing',10);
 		}
-		else if($account['UserAccount']['status'] != 0){
+		else if($account['UserAccount']['status'] != "0"){
 			$this->flash("操作失败，请不要重复操作!",'/balances/search/processing',10);
 		}
 		else{
 			$this->UserAccount->updateAll(
 				              array('status' =>'2'),
-				              array('id' =>$id)
+				              array('id' =>"'".$id."'")
 				           );
 			$this->flash("取消成功",'/balances/search/processing/',10);
 		}

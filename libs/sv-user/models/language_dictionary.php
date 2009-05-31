@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: language_dictionary.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: language_dictionary.php 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 class LanguageDictionary extends AppModel{
 	var $name = 'LanguageDictionary'; 
@@ -17,13 +17,24 @@ class LanguageDictionary extends AppModel{
 	
 	
 	function getformatcode($locale){
-		$languages = $this->findallbylocale($locale);
-		$languages_formatcode =array();
-		if(is_array($languages))
-		foreach($languages as $v){
-			$languages_formatcode[$v['LanguageDictionary']['name']]=$v['LanguageDictionary']['value'];
+		
+		$cache_key = md5($this->name."_".$locale."_");
+		
+		$languages_formatcode = cache::read($cache_key);
+		if ($languages_formatcode){
+			return $languages_formatcode;
+		}else{
+			$languages = $this->findallbylocale($locale);
+			$languages_formatcode =array();
+			if(is_array($languages))
+			foreach($languages as $v){
+				$languages_formatcode[$v['LanguageDictionary']['name']]=$v['LanguageDictionary']['value'];
+			}
+			cache::write($cache_key,$languages_formatcode);
+			return $languages_formatcode;
 		}
-		return $languages_formatcode;
+		
 	}
+
 }
 ?>

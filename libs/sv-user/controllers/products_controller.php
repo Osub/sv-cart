@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: products_controller.php 1028 2009-04-24 12:23:26Z huangbo $
+ * $Id: products_controller.php 1841 2009-05-27 06:51:37Z huangbo $
 *****************************************************************************/
 class ProductsController extends AppController {
 
@@ -42,11 +42,14 @@ class ProductsController extends AppController {
 		 		$orderby=isset($this->configs['products_category_page_orderby_type'])? $this->configs['products_category_page_orderby_type']." ". $this->configs['products_category_page_orderby_method'] :((!empty($orderby)) ?$orderby:'created '.$this->configs['products_category_page_orderby_method']);
 			}
 	    //取得我的所有订单id
-	    $condition=" user_id='".$user_id."' ";
+	    $condition=" user_id=".$user_id;
 	    $my_orders=$this->Order->findAll($condition);
 	    $orders_id=array();
 	    foreach($my_orders as $k=>$v){
 	   	    $orders_id[$k]=$v['Order']['id'];
+	    }
+	    if(empty($orders_id)){
+	    	$orders_id[] = 0;
 	    }
 	    // pr($orders_id);
 	    //取得我购买的商品
@@ -66,17 +69,20 @@ class ProductsController extends AppController {
 	   $res_c=$this->Category->findassoc();
 	   $res_b=$this->Brand->findassoc();
 	   foreach($my_orders_products as $k=>$v){
+	   	   	$order_info = $this->Order->findbyid($v['OrderProduct']['order_id']);
+	   	   	$my_orders_products[$k]['OrderProduct']['order_code'] = $order_info['Order']['order_code'];
 	   	  	$product_category = $this->ProductsCategory->findbyproduct_id($v['Product']['id']);
 	  	   if(isset($res_c[$product_category['ProductsCategory']['id']]['Category']['id'])){
-	  	  	  $my_orders_products[$k]['Category']=$res_c[$v['ProductsCategory']['id']]['Category'];
-	  	  	  $my_orders_products[$k]['CategoryI18n']=$res_c[$v['ProductsCategory']['id']]['CategoryI18n'];
+	  	  //	  $my_orders_products[$k]['Category']=$res_c[$v['ProductsCategory']['id']]['Category'];
+	  	  //	  $my_orders_products[$k]['CategoryI18n']=$res_c[$v['ProductsCategory']['id']]['CategoryI18n'];
+	  	  	  $my_orders_products[$k]['Category']=$res_c[$res_c[$product_category['ProductsCategory']['id']]['Category']['id']]['Category'];
+	  	  	  $my_orders_products[$k]['CategoryI18n']=$res_c[$res_c[$product_category['ProductsCategory']['id']]['Category']['id']]['CategoryI18n'];	  	  
 	  	  }
 	  	  if(isset($res_b[$v['Product']['brand_id']]['Brand']['id'])){
 	  	  	  $my_orders_products[$k]['Brand']=$res_b[$v['Product']['brand_id']]['Brand'];
 	  	  	  $my_orders_products[$k]['BrandI18n']=$res_b[$v['Product']['brand_id']]['BrandI18n'];
 	  	  }
 	   }
-	  //pr($my_orders_products);
 	  
 	  $this->pageTitle = $this->languages['purchased'].$this->languages['information']." - ".$this->configs['shop_title'];
 	  	  //一步购买

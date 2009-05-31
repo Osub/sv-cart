@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: category.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: category.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class Category extends AppModel
 {
@@ -18,7 +18,7 @@ class Category extends AppModel
                         array('className'    => 'CategoryI18n',   
                               'order'        => '',   
                               'dependent'    =>  true,
-                              'foreignKey'   => 'Category_id'  
+                              'foreignKey'   => 'category_id'  
                         )
                   );
     var $actsAs = array('Tree');

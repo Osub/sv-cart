@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: header.ctp 899 2009-04-22 15:03:02Z huangbo $
+ * $Id: header.ctp 1852 2009-05-27 11:04:35Z huangbo $
 *****************************************************************************/
 ?>
 <div id="header">
@@ -36,26 +36,25 @@
 	<?php //echo $html->link("{$v['Operator_menu']['name']}","",array("class"=>"svcartmenubaritemlabel"),false,false);?>
 	<?}?>
 	<div <?php echo $id;?> class="svcartmenu">
-       
-         <?php if(isset($v['SubMenu'])&&  !empty($v['SubMenu'])){
-         	 ?>
+         <?php if(isset($v['SubMenu'])&&  !empty($v['SubMenu'])){?>
           <div class="bd">
              <ul>
-             	 <?if(isset($v['SubMenu']) && sizeof($v['SubMenu'])>0){?>
-        <?php	foreach($v['SubMenu'] as $k=>$val){ ?>
-                 <li class="svcartmenuitem">
-                 	 <?php echo $html->link("{$val['Operator_menu']['name']}","{$val['Operator_menu']['link']}",array("class"=>"svcartmenuitemlabel"),false,false);?> 
-                 </li>
-         <?php }?>    
-         			 <?}?>
-             </ul>
-         </div>
-         <p style='border:0px solid red;margin-top:0;'><?=$html->image('menu_bottom.gif')?></p>
+        <?if(isset($v['SubMenu']) && sizeof($v['SubMenu'])>0){?>
+        <?php foreach($v['SubMenu'] as $k=>$val){?>
+        <li class="svcartmenuitem">
+        <?php echo $html->link("{$val['Operator_menu']['name']}","{$val['Operator_menu']['link']}",array("class"=>"svcartmenuitemlabel"),false,false);?> 
+
+        </li>
+         <?php }?>
+         <?}?>
+      </ul>
+      </div>
+         <p style='margin-top:0;'><?=$html->image('menu_bottom.gif')?></p>
      <?php }?>
          
      </div>
 	</li>
-<?php }}?>	
+<?php }}?>
 	</ul>
 </div>
 </div>
@@ -72,7 +71,7 @@
 		<p class="login-alettr" style="border:0;padding-bottom:15px;">管理员:<b><?if(isset($Operator_Name)){echo $Operator_Name;}else{ echo $operatorLogin['Operator']['name'];}?></b></p>
 		 <dl><dt><b class="green_2">旧密码:</b></dt><dd><input class="text_input" type="password" id="old_pwd" /></dd></dl>
 		 <dl><dt><b class="green_2">新密码:</b></dt><dd><input class="text_input" type="password" id="new_pwd" /></dd></dl>
-		 <dl><dt><b class="green_2">确认密码:</b></dt><dd><input class="text_input" type="password" id="new_pwd_confirm"></dd></dl>
+		 <dl><dt><b class="green_2">确认密码:</b></dt><dd><input class="text_input" type="password" id="new_pwd_confirm" /></dd></dl>
 		 <dl><dt><b class="green_2"></b></dt><dd><span id="pwd_information"></span></dd></dl>
 
  		<br />
@@ -86,7 +85,7 @@
 		<p class="buy_btn" style="padding-right:170px;"><?=$html->link("确定","javascript:password_big_panel.hide();");?></p>
 		</div></div>
 		
-	<p><?=$html->image("loginout-bottom.gif");?></p>
+	<p><?=$html->image("loginout-bottom.png");?></p>
 	</div>
 </div>	
 </div>

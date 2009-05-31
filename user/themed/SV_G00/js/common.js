@@ -8,7 +8,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: common.js 1273 2009-05-08 16:49:08Z huangbo $
+ * $Id: common.js 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 
 YAHOO.namespace("example.container");
@@ -655,6 +655,8 @@ function show_edit(id){
  		Address.id =document.getElementById('UserAddressId').value;
  	    Address.name =document.getElementById('UserAddressName').value;
  		Address.consignee =document.getElementById('UserAddressConsignee').value;
+ 		Address.sign_building =document.getElementById('UserAddressSignBuilding').value;
+ 		Address.best_time =document.getElementById('UserAddressBestTime').value;
  		Address.address =document.getElementById('UserAddressAddress').value;
  		Address.mobile =document.getElementById('UserAddressMobile').value;
  	//	Address.sign_building =document.getElementById('EditAddressSignBuilding').value;
@@ -790,6 +792,8 @@ function show_edit(id){
  	//	Address.id =document.getElementById('UserAddressId').value;
  	    Address.name =document.getElementById('UserAddressName').value;
  		Address.consignee =document.getElementById('UserAddressConsignee').value;
+ 		Address.sign_building =document.getElementById('UserAddressSignBuilding').value;
+ 		Address.best_time =document.getElementById('UserAddressBestTime').value;
  		Address.address =document.getElementById('UserAddressAddress').value;
  		Address.mobile =document.getElementById('UserAddressMobile').value;
  	//	Address.sign_building =document.getElementById('EditAddressSignBuilding').value;

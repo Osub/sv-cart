@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: flashes_controller.php 946 2009-04-24 00:36:19Z huangbo $
+ * $Id: flashes_controller.php 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 class FlashesController extends AppController {
 	var $name = 'Flashes';
@@ -21,14 +21,16 @@ class FlashesController extends AppController {
 	var $uses = array('FlashImage','Flash','Flashe','Brand','Category','Language');
 
 	function index(){
+		/*判断权限*/
+		$this->operator_privilege('flash_play_view');
+		/*end*/
 		$this->pageTitle = 'Flash轮播管理'." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'Flash轮播管理','url'=>'/flashes/');
 		$this->set('navigations',$this->navigations);
-		
 		if($this->RequestHandler->isPost()){
 			$this->Flashe->hasMany=array();
 			$this->Flashe->saveAll( $this->data );	
-			$this->flash("编辑成功","/..".$_SESSION['cart_back_url'],10);
+			$this->flash("Flsah参数编辑成功","/".$_SESSION['cart_back_url'],10);
 		}else{
 			$_SESSION['cart_back_url'] = str_replace($this->webroot, "", $_SERVER['REQUEST_URI']); 
 		}
@@ -67,16 +69,7 @@ class FlashesController extends AppController {
 	
 	
 		$data = $this->FlashImage->find('all',array('page'=>$page,'limit'=>$rownum,'conditions'=>$condition,'order'=>'FlashImage.orderby,FlashImage.created,FlashImage.id'));
-	/*	foreach($data as $k=>$v){
-			switch($v['Flash']['type']){
-				case 'H': $v['Flash']['typename'] = "首页";break;
-				case 'PC': $v['Flash']['typename'] = "分类";break;
-				case 'B': $v['Flash']['typename'] = "品牌";break;
-				case 'AC': $v['Flash']['typename'] = "文章分类";break;
-				default :$v['Flash']['typename'] = "未知分类";
-			}
-			$data[$k] = $v;
-		}*/
+
 		
 		$flashtypes = array('H'=>'首页','PC'=>'分类','B'=>'品牌','AC'=>'文章分类');
 		$b = array();
@@ -85,9 +78,7 @@ class FlashesController extends AppController {
 		foreach($brands as $k => $v){
 			$b[$v['Brand']['id']] = "";
 			if(!empty($v['BrandI18n'])){
-			 	//foreach($v['BrandI18n'] as $key=>$val){
-			 	  	@$b[$v['Brand']['id']] = $v['BrandI18n']['name'];
-			 	//}
+				@$b[$v['Brand']['id']] = $v['BrandI18n']['name'];
 			} 
 		}
 		$this->Category->set_locale($this->locale);
@@ -153,13 +144,13 @@ class FlashesController extends AppController {
 				
 				if(empty($value)){
 					$this->FlashImage->saveAll($this->data);
-					$this->flash("编辑成功",'/flashes/edit/'.$id,10);
+					$this->flash("Flash编辑成功。点击继续编辑该flash",'/flashes/edit/'.$id,10);
 				}else{
-				
 					$this->FlashImage->belongsTo = array();
 					$this->data['FlashImage']['flash_id'] = $values['Flashe']['id'];
 					$this->FlashImage->save(array('FlashImage'=>$this->data['FlashImage']));
-					$this->flash("编辑成功",'/flashes/edit/'.$id,10);
+					$this->flash("Flash编辑成功。点击继续编辑该flash",'/flashes/edit/'.$id,10);
+
 				}
 			}else{
 				$this->flash("该类型已经存在",'/flashes/edit/'.$id,10);
@@ -202,6 +193,7 @@ class FlashesController extends AppController {
 		$this->set('navigations',$this->navigations);
 		if($this->RequestHandler->isPost()){
 			$this->data["FlashImage"]["orderby"] = !empty($this->data["FlashImage"]["orderby"])?$this->data["FlashImage"]["orderby"]:50;
+			$this->data["FlashImage"]["title"] = !empty($this->data["FlashImage"]["title"])?$this->data["FlashImage"]["title"]:50;
 			$locale = $this->data['FlashImage']['locale'];
 			$condition['type'] = $this->data['Flash']['type'];
 			$condition['type_id'] = isset($this->data['Flash']['type_id'])?$this->data['Flash']['type_id']:"0";
@@ -218,7 +210,7 @@ class FlashesController extends AppController {
 			if(empty( $values )){
 				$this->FlashImage->saveAll($this->data);
 				
-				$this->flash("添加成功",'/flashes/',10);
+					$this->flash("Flash添加成功。点击继续编辑该flash",'/flashes/edit/'.$this->FlashImage->getLastInsertId(),10);
 			}else{
 				
 				if(empty($flasheimg)){
@@ -226,12 +218,12 @@ class FlashesController extends AppController {
 					$data['FlashImage']['flash_id'] = $values['Flashe']['id'];
 					$this->data = $data;
 					$this->FlashImage->saveAll($this->data);
-					$this->flash("添加成功",'/flashes/',10);
+					$this->flash("Flash添加成功。点击继续编辑该flash",'/flashes/edit/'.$this->FlashImage->getLastInsertId(),10);
 				}else{
 					$this->FlashImage->belongsTo = array();
 					$this->data['FlashImage']['flash_id'] = $flasheimg['FlashImage']['flash_id'];
 					$this->FlashImage->save(array('FlashImage'=>$this->data['FlashImage']));
-					$this->flash("添加成功",'/flashes/',10);
+					$this->flash("Flash添加成功。点击继续编辑该flash",'/flashes/edit/'.$this->FlashImage->getLastInsertId(),10);
 				}
 			}
 		}

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: ajaxeditregion.ctp 899 2009-04-22 15:03:02Z huangbo $
+ * $Id: ajaxeditregion.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ob_start();
 ?>
@@ -18,7 +18,7 @@ ob_start();
 	<div style="border-left:1px solid #909592;border-right:1px solid #909592;background:#fff">
 		<p class="login-alettr"><?=$html->image('icon-10.gif',array('align'=>'absmiddle'))?><b><?php echo $result['msg']?></b></p>
 	</div>
-	<p><?=$html->image("loginout-bottom.gif",array("align"=>"texttop"))?></p>
+	<p><?=$html->image("loginout-bottom.png",array("align"=>"texttop"))?></p>
 </div>
 
 <?php	

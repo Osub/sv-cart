@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: newsletter_controller.php 1201 2009-05-05 13:30:17Z huangbo $
+ * $Id: newsletter_controller.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class NewsletterController extends AppController {
 	var $name = 'Newsletter';
@@ -58,6 +58,8 @@ class NewsletterController extends AppController {
 		 	  	$this->Email->smtpHostNames = "".$this->configs['smtp_host']."";
 			    $this->Email->smtpUserName = "".$this->configs['smtp_user']."";
 			    $this->Email->smtpPassword = "".$this->configs['smtp_pass']."";
+				$this->Email->is_ssl = $this->configs['smtp_ssl'];
+				$this->Email->smtp_port = $this->configs['smtp_port'];
 			    $this->Email->from = "".$this->configs['smtp_user']."";
 			    $this->Email->to = "".$_POST['email']."";
 			    $this->Email->fromName =$shop_name;
@@ -96,13 +98,15 @@ class NewsletterController extends AppController {
 				$send_date=date('Y-m-d');
 				$email = $email['NewsletterList']['email'];
 				$this->MailTemplate->set_locale($this->locale);
-				$template=$this->MailTemplate->find("code = 'email_notification' and status = 1");
+				$template=$this->MailTemplate->find("code = 'email_notification' and status = '1'");
 				$template_str=$template['MailTemplateI18n']['html_body'];
 				/* 商店网址 */
 				$host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
 				$webroot = str_replace("/".WEBROOT_DIR."/","",$this->webroot);
 				$shop_url = "http://".$host.$webroot;
 				eval("\$template_str = \"$template_str\";");
+				$this->Email->is_ssl = $this->configs['smtp_ssl'];
+				$this->Email->smtp_port = $this->configs['smtp_port'];
 				$this->Email->smtpHostNames = "".$this->configs['smtp_host']."";
 				$this->Email->smtpUserName = "".$this->configs['smtp_user']."";
 				$this->Email->smtpPassword = "".$this->configs['smtp_pass']."";

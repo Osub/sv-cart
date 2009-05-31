@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: email.ctp 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: email.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -18,17 +18,10 @@
 <?php echo $html->charset(); ?>
 <title><?php __('SV-Cart: ??? '); ?><?php echo $title_for_layout; ?></title>
 <?echo $html->meta('icon');
-echo $html->css('style');
-if(isset($_SESSION['Config']['locale'])){
-echo $html->css($_SESSION['Config']['locale']);
-}else{
-echo $html->css('zh_cn');
-}
-echo $scripts_for_layout;
+$lang_css = isset($_SESSION['Config']['locale']) ? $_SESSION['Config']['locale']:'chi';
 ?>
-<?=$javascript->link('/../js/yui/yahoo-dom-event.js');?>
-<?=$javascript->link('/../js/yui/container_core.js');?>
-<?=$javascript->link('/../js/yui/menu.js');?>
+<?=$minify->css(array($this->themeWeb.'css/layout',$this->themeWeb.'css/component',$this->themeWeb.'css/login',$this->themeWeb.'css/menu',$this->themeWeb.'css/containers',$this->themeWeb.'css/autocomplete',$this->themeWeb.'css/calendar',$this->themeWeb.'css/treeview',$this->themeWeb.'css/container',$this->themeWeb.'css/style',$this->themeWeb.'css/'.$lang_css));?>
+<?=$minify->js(array('/../js/yui/yahoo-dom-event.js','/../js/yui/container_core-min.js','/../js/yui/menu-min.js','/../js/yui/element-beta-min.js','/../js/yui/animation-min.js','/../js/yui/connection-min.js','/../js/yui/container-min.js','/../js/yui/json-min.js','/../js/yui/button-min.js','/../js/yui/calendar-min.js',$this->themeWeb.'/js/regions.js',$this->themeWeb.'/js/common.js'));?>
 <script type="text/javascript">
     YAHOO.util.Event.onContentReady("productsandservices", function () {
 

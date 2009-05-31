@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: view.ctp 1314 2009-05-11 07:20:51Z huangbo $
+ * $Id: view.ctp 1732 2009-05-25 12:03:32Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
@@ -50,10 +50,10 @@
 			echo $html->tag('li',$html->para('pic',
 				 $html->link(
 				 $html->image("{$v['Product']['img_thumb']}",array('width'=>'108','height'=>'108',))
-				 ,"/products/{$v['Product']['id']}",'',false,false)
+				 ,$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),'',false,false)
 				 ,array(),false)
 				 .$html->para('info',
-				 $html->tag('span',$html->link("{$v['ProductI18n']['name']}","/products/{$v['Product']['id']}",array(),false,false),'name')
+				 $html->tag('span',$html->link("{$v['ProductI18n']['name']}",$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false),'name')
 				 .$html->tag('span',$html->tag('font',"{$v['Product']['shop_price']}",array('color'=>'#F9630C')),'Price')		 		
 				 ,array(),false),'');				
 			}
@@ -68,8 +68,6 @@
 <div id="Edit_box">
   <div id="Edit_info">
 	  <p class="note article_title">
-	  <?=$html->image('comment-left.gif',array('class'=>'comment-left'))?>
-	  <?=$html->image('comment-rigth.gif',array('class'=>'comment-right'))?>
 	  <b><?=$SCLanguages['user'];?><?=$SCLanguages['comments'];?></b>
 		<a id="comments" class="comments"><span><?php echo $SCLanguages['issue_comments'];?></span></a>
 	</p>
@@ -83,7 +81,7 @@
 <div id="user_msg">
 		<p class="msg_title"><span class="title"><?php echo $SCLanguages['comments'];?>:<?php echo $v['Comment']['name'] ?> <font color="#A7A9A8">
 		<?php echo $v['Comment']['modified'] ?></font></span></p>
-		<p class="msg_txt"><span><?php echo $v['Comment']['content'] ?></span></p>
+		<div class="msg_txt"><?php echo $v['Comment']['content'] ?></div>
 	  </div>
 <?php
 	if(isset($v['reply']) && sizeof($v['reply'])>0){

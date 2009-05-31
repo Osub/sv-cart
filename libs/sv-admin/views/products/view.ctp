@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: view.ctp 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: view.ctp 1895 2009-05-31 13:03:01Z huangbo $
 *****************************************************************************/
 //pr($this->data);
 ?>
@@ -18,13 +18,13 @@
 <?=$html->css('button');?>
 <?=$html->css('slider');?>
 <?=$html->css('color_font');?>
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+
+
 <?=$javascript->link('/../js/yui/dragdrop-min.js');?>
 <?=$javascript->link('/../js/yui/button-min.js');?>
 <?=$javascript->link('/../js/yui/slider-min.js');?>
 <?=$javascript->link('/../js/yui/colorpicker-min.js');?>
-<?=$javascript->link('/../js/yui/element-beta-min.js');?>
+
 <?=$javascript->link('color_picker');?>	
 <?=$javascript->link('selectzone');?>	
 <?=$javascript->link('product');?>	
@@ -108,7 +108,20 @@
 <?
 	}
 }?>
-		
+		<h2>商品网站网址：</h2>
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input id="ProductI18n<?=$k;?>api_site_url" name="data[ProductI18n][<?=$k;?>][api_site_url]" type="text" style="width:215px;" <?if(isset($this->data['ProductI18n'][$v['Language']['locale']])){?>value="<?= $this->data['ProductI18n'][$v['Language']['locale']]['api_site_url'];?>"<?}else{?>value=""<?}?>> </span></p>
+<?
+	}
+}?>
+		<h2>购物车快捷网址：</h2>
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input id="ProductI18n<?=$k;?>api_cart_url" name="data[ProductI18n][<?=$k;?>][api_cart_url]" type="text" style="width:215px;" <?if(isset($this->data['ProductI18n'][$v['Language']['locale']])){?>value="<?= $this->data['ProductI18n'][$v['Language']['locale']]['api_cart_url'];?>"<?}else{?>value=""<?}?>> </span></p>
+<?
+	}
+}?>
 		<h2><?=$html->image('help_icon.gif',array('align'=>'absmiddle'))?>商家备注：</h2>
 <? if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
@@ -200,7 +213,19 @@
 		     <?}}?></dd>
 		</dl>
 	<?}?>
-		
+	 <?if(isset($SVConfigs['mlti_currency_module'])&&$SVConfigs['mlti_currency_module']==1){?>
+		<dl>
+		   <dt><?=$html->image('help_icon.gif',array('align'=>'absmiddle'))?>语言价格：</dt>
+		   <dd>
+		    <?if(isset($languages) && sizeof($languages) >0){?>
+		   <?foreach($languages as $k=>$v){?>
+		       <p style="overflow:hidden;height:100%;width:305px;padding-top:2px">
+		<span style="float:left">
+		<?=$v['Language']['name']?>: <input type="text"  class="text_inputs" style="width:30px;margin:-1px 0 0;padding:0;text-align:center"  name="locale_product_price[<?=$v['Language']['locale']?>][product_price]"  size="8" />
+		</span>
+		     <?}}?></dd>
+		</dl>
+	<?}?>
 		
 		<dl><dt>市场售价：</dt><dd><input type="text" class="text_inputs" id="ProductMarketPrice" name="data[Product][market_price]"<?if(isset($this->data['Product']['market_price'])){?>value="<?= $this->data['Product']['market_price'];?>"<?}else{?>value=""<?}?>/><input class="pointer" type="button" value="取整数" onclick="integral_market_price()"/></dd></dl>
 		<dl><dt>赠送积分数：</dt><dd><input type="text" class="text_inputs" name="data[Product][point]" value="<?=@$this->data['Product']['point'];?>" /></dd></dl>
@@ -268,7 +293,32 @@
 	  </div>
 	</div>
 <!--profile End-->
-
+<!--商品邮费-->
+<?if(isset($SVConfigs["use_product_shipping_fee"])&&$SVConfigs["use_product_shipping_fee"] == 1){?>
+	<div class="order_stat properies">
+	  <div class="title"><h1>
+	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <span>商品邮费</span></h1></div>
+	  <div class="box">
+<?php echo $form->create('',array('action'=>$this->data['Product']['id']));?>
+	  <input type="hidden" name="action_type" value="product_shoping_fee" />
+	  <div class="properies_left">
+		<dl><dt>&nbsp</dt>
+		<dd></dd></dl><table>
+	<?foreach( $shipping_list as $k=>$v ){?>
+		<tr><td><?=$v["ShippingI18n"]["name"]?>：</td>
+		<td><input type="text" style="width:120px;border:1px solid #649776" name="product_shoping_fee[<?=@$v['Shipping']['id']?>]" value="<?=@$productshippingfee_list_format[$v['Shipping']['id']]['ProductShippingFee']['shipping_fee']?>"></td><td>是否有效：<input type="checkbox" value="1" name="product_shoping_fee_status[<?=@$v['Shipping']['id']?>]" style="border:1px solid #649776" <?if( @$productshippingfee_list_format[$v['Shipping']['id']]['ProductShippingFee']['status']==1 ){?>checked<?}?> /></td></tr>
+	<input type="hidden" style="width:120px;border:1px solid #649776" name="product_shoping_fee_id[<?=@$v['Shipping']['id']?>]" value="<?=@$productshippingfee_list_format[@$v['Shipping']['id']]['ProductShippingFee']['id']?>">
+	<?}?></table>
+		</div>
+		<div style="clear:both"></div>
+		<p class="submit_btn"><input type="submit" value="确定" /><input type="reset" value="重置" /></p>
+<? echo $form->end();?>
+  	  </div>
+	</div>
+<?}?>
+<!--end-->
 <!--Properies Stat-->
 <?$product_type_list=$this->requestAction("/commons/product_type_list/".$this->data['Product']['product_type_id']."");?>
 	<?if(!empty($product_type_list)){?>
@@ -280,7 +330,7 @@
 	  <div class="box">
 <?php echo $form->create('',array('action'=>$this->data['Product']['id'],'name'=>"ProAttrForm","id"=>"ProAttrForm"));?>
 
-	  <input type="hidden" name="action_type" value="product_attr"></>
+	  <input type="hidden" name="action_type" value="product_attr" />
       <input id="ProductId" name="data[Product][id]" type="hidden" value="<?= $this->data['Product']['id'];?>">
 	  <div class="properies_left">
 	  
@@ -321,12 +371,20 @@
 		<p>[<?=$html->link("-","javascript:;",array("onclick"=>"layer_dialog();layer_dialog_show('确定要删除相册图片吗?','dropImg({$v['id']})',5);"),false,false);?>]</p>
 		<p><?if($v['img_thumb']){?><?=$html->link($html->image("/..{$v['img_thumb']}",array('align'=>'absmiddle','width'=>'108','height'=>'108')),"/..{$v['img_thumb']}",'',false,false);?>
 <?}else{?><?=$html->image("/..{$v['img_detail']}",'');?><?}?></p>
-		
 		<dl class="edit_photo">
 		<dd>图片描述 :</dd>
-		<dt><input class="green_border" type="text" style='width:98%' value="<?echo $v['description']?>" name="data[ProductGallery][<?echo $k?>][description]"  id="ProductGallery<?echo $k?>Description"/>
+		<dt></dt></dl>
+		<? if(isset($languages) && sizeof($languages)>0){
+		foreach ($languages as $lk => $lv){?>
+		<dl class="edit_photo">
+		<dd><?=$html->image($lv['Language']['img01'])?></dd>
+		<dt>
+			<input class="green_border" type="text" style='width:98%'  name="ProductGalleryI18ndescription[<?=$k?>][ProductGalleryI18n][<?=$lk?>][description]"   value="<?echo @$v['ProductGalleryI18n'][$lv['Language']['locale']]['description']?>" id="ProductGallery<?echo $k?>Description"/>
+			<input type="hidden" name="ProductGalleryI18ndescription[<?=$k?>][ProductGalleryI18n][<?=$lk?>][product_gallery_id]" value="<?echo $v['id']?>">
+			<input type="hidden" name="ProductGalleryI18ndescription[<?=$k?>][ProductGalleryI18n][<?=$lk?>][locale]" value="<?echo $lv['Language']['locale']?>">
+
 		</dt>
-		</dl>
+		</dl><?}}?>
 		<dl class="edit_photo">
 		<dd>排序: </dd>
 		<dt><input class="green_border" type="text" style='width:98%' size="3" value="<?echo $v['orderby']?>" name="data[ProductGallery][<?echo $k?>][orderby]"  id="ProductGallery<?echo $k?>Orderby" />
@@ -353,12 +411,16 @@
 	  <p class="add_photo"><font face="宋体">[<?=$html->link("+","javascript:;",array("onclick"=>"addImg()"),false,false);?>]</font></p>
 	  <div id="Pro_img_div">
 		<p class="add_photo">
-		图片描述 : <input type="text" name="img_desc[]" id="img_desc[]"/>
+		图片描述 : 
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+		  <?=$html->image($v['Language']['img01'])?><input type="text" name="img_desc[<?=$v['Language']['locale']?>][]" id="img_desc[]"/>
+<?}}?>
 		排序: <input type="text" name="img_sort[]" id="img_sort[]" size="2"/>
 		<span id="new_file">上传文件 : <input type="text" name="img_url[]" id="upload_img_text_1"/>
 <?=$html->link($html->image('select_img.gif',array("align"=>"absmiddle","height"=>"23")),"javascript:img_sel(1,'products')",'',false,false)?></span></p>
 <li>
-	<?=@$html->image("",array('id'=>'logo_thumb_img_1','height'=>'150'))?>
+	<?=@$html->image("",array('id'=>'logo_thumb_img_1','height'=>'150','style'=>'display:none'))?>
 
 		  </li>
 
@@ -372,12 +434,15 @@
 	</div>
 <!--用来创造要替换的字符串start-->
   	<span id="imgupload" style="display:none">
-	<p class="add_photo">
-		图片描述 : <input type="text" name="img_desc[]" id="img_desc[]"/>
+	<p class="add_photo">图片描述 : 
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+		  <?=$html->image($v['Language']['img01'])?><input type="text" name="img_desc[<?=$v['Language']['locale']?>][]" id="img_desc[]"/>
+<?}}?>
 		排序: <input type="text" name="img_sort[]" id="img_sort[]" size="2"/>
 		<span id="new_file">上传文件 : <input type="text" name="img_url[]" id="upload_img_text_&id&"/>
 <?=$html->link($html->image('select_img.gif',array("align"=>"absmiddle","height"=>"23")),"javascript:img_sel(&id&,'products')",'',false,false)?></span></p>
-			  <?=@$html->image("",array('id'=>'logo_thumb_img_&id&','height'=>'150'))?>
+			  <?=@$html->image("",array('id'=>'logo_thumb_img_&id&','height'=>'150','style'=>'display:none'))?>
 
 
  
@@ -482,13 +547,15 @@
 		<?=$html->image('serach_icon.gif',array('align'=>'absmiddle'))?>
 		<input type="text" class="text_input" name="keywords_id" id="keywords_id">
 		<select name="article_cat" id="article_cat">
-		  <option value="0">文章分类</option>
-		    <?if(isset($article_cat) && sizeof($article_cat)>0){?>
-		    <?foreach($article_cat as $k=>$v){?>
-		      <option value="<?echo $v['CategoryI18n']['name']?>"><?echo $v['CategoryI18n']['name']?></option>
-		    <?}}?>
-		    	  
-		</select>
+		  <option value="all">文章分类</option>
+<?if(isset($article_cat) && sizeof($article_cat)>0){?><?foreach($article_cat as $first_k=>$first_v){if($first_v["Category"]["type"] == "A"){?>
+<option value="<?=$first_v['Category']['id'];?>"  ><?=$first_v['CategoryI18n']['name'];?></option>
+<?if(isset($first_v['SubCategory']) && sizeof($first_v['SubCategory'])>0){?><?foreach($first_v['SubCategory'] as $second_k=>$second_v){?>
+<option value="<?=$second_v['Category']['id'];?>"  >&nbsp;&nbsp;<?=$second_v['CategoryI18n']['name'];?></option>
+<?if(isset($second_v['SubCategory']) && sizeof($second_v['SubCategory'])>0){?><?foreach($second_v['SubCategory'] as $third_k=>$third_v){?>
+<option value="<?=$third_v['Category']['id'];?>" >&nbsp;&nbsp;&nbsp;&nbsp;<?=$third_v['CategoryI18n']['name'];?></option>
+<?}}}}}}}?>
+</select>
 		<input type="button" value="搜 索" class="search" onclick="searchArticles()"/></p>
 		<table cellspacing="0" cellpadding="0" width="100%" class="relative_product">
 			<tr>

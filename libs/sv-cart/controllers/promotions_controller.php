@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: promotions_controller.php 1144 2009-04-29 11:41:30Z huangbo $
+ * $Id: promotions_controller.php 1841 2009-05-27 06:51:37Z huangbo $
 *****************************************************************************/
 class PromotionsController extends AppController {
 
@@ -46,7 +46,7 @@ class PromotionsController extends AppController {
        	$now = date("Y-m-d H:i:s");
        	$yestoday = date("Y-m-d H:i:s",strtotime ("-1 day"));
        	$filter = "1=1";
-        $filter .= " and  Promotion.status = 1 and Promotion.created <= '".$now."' and  Promotion.created >='".$yestoday."'";     	
+        $filter .= " and  Promotion.status = '1' and Promotion.created <= '".$now."' and  Promotion.created >='".$yestoday."'";     	
        	
        	$one_day_promotions = $this->Promotion->findall($filter);
 		$this->set("one_day_time",count($one_day_promotions));

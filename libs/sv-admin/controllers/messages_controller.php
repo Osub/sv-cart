@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: messages_controller.php 1201 2009-05-05 13:30:17Z huangbo $
+ * $Id: messages_controller.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class MessagesController extends AppController {
 	var $name = 'Messages';
@@ -19,6 +19,9 @@ class MessagesController extends AppController {
 	
 
 	function index($user_id="none") {
+		/*判断权限*/
+		$this->operator_privilege('message_view');
+		/*end*/
 		$this->pageTitle = "留言管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'留言管理','url'=>'/messages/');
 		$this->set('navigations',$this->navigations);
@@ -63,12 +66,15 @@ class MessagesController extends AppController {
 	}
 
 	function search(){
+		/*判断权限*/
+		$this->operator_privilege('message_undeal_view');
+		/*end*/
 		$this->pageTitle = "留言管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'留言管理','url'=>'/messages/search/');
 		$this->set('navigations',$this->navigations);
 		
-		$condition["UserMessage.status ="]=0;
-		$condition["UserMessage.parent_id ="]=0;
+		$condition["UserMessage.status ="]="0";
+		$condition["UserMessage.parent_id ="]="0";
 		$total = $this->UserMessage->findCount($condition,0);
 	    $sortClass='UserMessage';
 	    $page=1;
@@ -103,6 +109,9 @@ class MessagesController extends AppController {
 	}
 
 	function remove($id){
+		/*判断权限*/
+		$this->operator_privilege('message_view_cancel');
+		/*end*/
 		$this->UserMessage->deleteAll("UserMessage.id='$id'");
 		$this->flash("删除成功",'/messages/',10);
 	}
@@ -111,6 +120,9 @@ class MessagesController extends AppController {
 		$this->flash("删除成功",'/messages/search/',10);
 	}
 	function view($id){
+		/*判断权限*/
+		$this->operator_privilege('message_view_cancel');
+		/*end*/
 		$this->pageTitle = "回复留言 - 留言管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'留言管理','url'=>'/operators/');
 		$this->navigations[] = array('name'=>'回复留言','url'=>'');
@@ -121,68 +133,20 @@ class MessagesController extends AppController {
 				$this->data['UserMessage']['created'] = date('Y-m-d H:i:s');
 				$this->UserMessage->save( $this->data );
 				$this->UserMessage->updateAll(
-			              array('UserMessage.status' => 1),
+			              array('UserMessage.status' => "1"),
 			              array('UserMessage.id' => $id)
 			           );
 			    		$usermessage = $this->UserMessage->findById( $id );
 						$wh['parent_id'] = $id;
 						$restore = $this->UserMessage->find( $wh );
 						$usermessage = $this->UserMessage->findById( $id );
-						$template = 'message_revert';
-		
 						$this->MailTemplate->set_locale($this->locale);
-						$template=$this->MailTemplate->find("code = '$template' and status = 1");
-						$template_str = $template['MailTemplateI18n']['html_body'];
-						$message = "";
-						$revert = "";
-						$message.= $usermessage['UserMessage']['msg_content']."<br />";
-						
-						$revert.= $restore['UserMessage']['msg_content']."<br />";
-						$this->Email->sendAs = 'html';
-						$this->Email->smtpHostNames = $this->configs['smtp_host'];
-						$this->Email->smtpUserName = $this->configs['smtp_user'];
-						$this->Email->smtpPassword = "".$this->configs['smtp_pass']."";
-						$this->Email->fromName = $this->configs['shop_name'];//$template['MailTemplateI18n']['title'];
-						$this->Email->subject = $this->configs['shop_name'];
-						$this->Email->from = "".$this->configs['smtp_user']."";
-						/* 商店网址 */
-						$host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
-						$webroot = str_replace("/".WEBROOT_DIR."/","",$this->webroot);
-						$shop_url = "http://".$host.$webroot;
-						eval("\$template_str = \"$template_str\";");
-						$this->Email->html_body = $template_str;
-						$this->Email->to = $usermessage['UserMessage']['user_email'];
-						$this->Email->send();
-				$this->flash("回复成功",'/messages/',10);
-			}else{
-				$this->flash("- 回复内容不能为空!",'/messages/view/'.$id,10);
-			}
-		}
-		$usermessage = $this->UserMessage->findById( $id );
-		$wh['parent_id'] = $id;
-		$restore = $this->UserMessage->find( $wh );
-		//$restore = $this->UserMessage->findAll( $wh );
-		//pr( $restore );
-		$this->set("usermessage",$usermessage);
-		if( !empty( $restore ) ){
-			$this->set("restore",$restore);
-		}
-	}
-
-	function view_search($id){
-		$this->pageTitle = "回复留言 - 留言管理"." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'留言管理','url'=>'/operators/');
-		$this->navigations[] = array('name'=>'回复留言','url'=>'');
-		//pr( $usermessage );
-		if($this->RequestHandler->isPost()){
-			if($this->data['UserMessage']['msg_content'] != "" ){
-				$this->MailTemplate->set_locale($this->locale);
 				$template = 'message_revert';
-				$template=$this->MailTemplate->find("code = '$template' and status = 1");
+				$template=$this->MailTemplate->find("code = '$template' and status = '1'");
 				$this->UserMessage->deleteAll("UserMessage.parent_id=".$this->data['UserMessage']['parent_id']);
 				$this->UserMessage->save( $this->data );
 				$this->UserMessage->updateAll(
-			              array('UserMessage.status' => 1),
+			              array('UserMessage.status' => "1"),
 			              array('UserMessage.id' => $id)
 			           );
 	    		$shop_name=$this->configs['shop_name'];
@@ -219,6 +183,8 @@ class MessagesController extends AppController {
 
 				
 				$this->Email->sendAs = 'html';
+				$this->Email->is_ssl = $this->configs['smtp_ssl'];
+				$this->Email->smtp_port = $this->configs['smtp_port'];
 				$this->Email->smtpHostNames = $this->configs['smtp_host'];
 				$this->Email->smtpUserName = $this->configs['smtp_user'];
 				$this->Email->smtpPassword = "".$this->configs['smtp_pass']."";
@@ -233,9 +199,91 @@ class MessagesController extends AppController {
 			  	$this->Email->text_body = $text_body;
 				$this->Email->to = $usermessage['UserMessage']['user_email'];
 				$this->Email->send();
-				$this->flash("回复成功",'/messages/search/',10);
+				$this->flash("留言 ".$msg_title." 回复成功",'/messages/',10);
 			}else{
-				$this->flash("- 回复内容不能为空!",'/messages/view_search/'.$id,10);
+				$this->flash("- 回复内容不能为空!",'/messages/view/'.$id,10,false);
+			}
+		}
+		$usermessage = $this->UserMessage->findById( $id );
+		$wh['parent_id'] = $id;
+		$restore = $this->UserMessage->find( $wh );
+		//$restore = $this->UserMessage->findAll( $wh );
+		//pr( $restore );
+		$this->set("usermessage",$usermessage);
+		if( !empty( $restore ) ){
+			$this->set("restore",$restore);
+		}
+	}
+
+	function view_search($id){
+		$this->pageTitle = "回复留言 - 留言管理"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'留言管理','url'=>'/operators/');
+		$this->navigations[] = array('name'=>'回复留言','url'=>'');
+		//pr( $usermessage );
+		if($this->RequestHandler->isPost()){
+			if($this->data['UserMessage']['msg_content'] != "" ){
+				$this->MailTemplate->set_locale($this->locale);
+				$template = 'message_revert';
+				$template=$this->MailTemplate->find("code = '$template' and status = '1'");
+				$this->UserMessage->deleteAll("UserMessage.parent_id=".$this->data['UserMessage']['parent_id']);
+				$this->UserMessage->save( $this->data );
+				$this->UserMessage->updateAll(
+			              array('UserMessage.status' => "1"),
+			              array('UserMessage.id' => $id)
+			           );
+	    		$shop_name=$this->configs['shop_name'];
+				$usermessage = $this->UserMessage->findById( $id );
+				$wh['parent_id'] = $id;
+				$restore = $this->UserMessage->find( $wh );
+				$sent_date=date('Y-m-d H:m:s');
+				$restore_content = $restore['UserMessage']['msg_content'];
+				$msg_content = $usermessage['UserMessage']['msg_content'];
+				$user_name = $usermessage['UserMessage']['user_name'];
+				$created = $usermessage['UserMessage']['created'];
+				$msg_title = $usermessage['UserMessage']['msg_title'];
+				$msg_type = $usermessage['UserMessage']['msg_type'];
+				if($msg_type == 0){
+					$msg_type = "留言";
+				}
+				else if($msg_type == 1){
+					$msg_type = "投诉";
+				}
+				else if($msg_type == 2){
+					$msg_type = "询问";
+				}
+				else if($msg_type == 3){
+					$msg_type = "售后";
+				}
+				/* 商店网址 */
+				$host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
+				$webroot = str_replace("/".WEBROOT_DIR."/","",$this->webroot);
+				$shop_url = "http://".$host.$webroot;
+				$url = $shop_url."/user/messages/";
+				$subject=$template['MailTemplateI18n']['title'];
+				eval("\$subject = \"$subject\";");
+				$this->Email->subject = "=?utf-8?B?" . base64_encode($subject) . "?=";
+
+				
+				$this->Email->sendAs = 'html';
+				$this->Email->is_ssl = $this->configs['smtp_ssl'];
+				$this->Email->smtp_port = $this->configs['smtp_port'];
+				$this->Email->smtpHostNames = $this->configs['smtp_host'];
+				$this->Email->smtpUserName = $this->configs['smtp_user'];
+				$this->Email->smtpPassword = "".$this->configs['smtp_pass']."";
+				$this->Email->fromName = $shop_name;
+				$this->Email->from = "".$this->configs['smtp_user']."";
+				
+				$template_str = $template['MailTemplateI18n']['html_body'];
+				eval("\$template_str = \"$template_str\";");
+				$this->Email->html_body = $template_str;
+			    $text_body = $template['MailTemplateI18n']['text_body'];
+			    eval("\$text_body = \"$text_body\";");
+			  	$this->Email->text_body = $text_body;
+				$this->Email->to = $usermessage['UserMessage']['user_email'];
+				$this->Email->send();
+				$this->flash("留言 ".$msg_title." 回复成功",'/messages/search/',10);
+			}else{
+				$this->flash("- 回复内容不能为空!",'/messages/view_search/'.$id,10,false);
 			}
 		}
 		$usermessage = $this->UserMessage->findById( $id );

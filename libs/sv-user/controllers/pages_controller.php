@@ -9,12 +9,13 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: pages_controller.php 1329 2009-05-11 11:29:59Z huangbo $
+ * $Id: pages_controller.php 1841 2009-05-27 06:51:37Z huangbo $
 *****************************************************************************/
+uses('sanitize');
 class PagesController extends AppController {
 	var $name = 'Pages';
 	var $helpers = array('Html','Javascript');
-	var $uses = array("Order","User","Config","UserInfo","UserRank","MailTemplate","UserAddress","UserInfoValue","UserPointLog","UserFavorite","CouponType","Coupon");//,"UserRank"
+	var $uses = array("Order","User","Config","UserInfo","UserRank","MailTemplate","UserAddress","UserInfoValue","UserPointLog","UserFavorite","CouponType","Coupon","Article");//,"UserRank"
 	var $components = array('RequestHandler','Captcha','Email');
 	
 	function display() {
@@ -32,7 +33,7 @@ class PagesController extends AppController {
 		    $this->set('locations',$this->navigations);
 		    //pr($this->configs);
 //		    pr($this->languages);
-		    $user_info=$this->User->find(" User.id='".$_SESSION['User']['User']['id']."'");
+		    $user_info=$this->User->findbyid($_SESSION['User']['User']['id']);
 		    $coupons = $this->Coupon->findallbyuser_id($_SESSION['User']['User']['id']);
 		    $this->CouponType->set_locale($this->locale);
 		    $coupon_num = 0;
@@ -47,9 +48,10 @@ class PagesController extends AppController {
 		    }
 		    $this->set('coupon_num',$coupon_num);
 		    $this->set('coupon_fee',$coupon_fee);
+		 //   echo $user_info['User']['rank'];
 		    //取得用户等级
 		    if($user_info['User']['rank'] == 0){
- 	 	           $user_rank= $this->languages['normal'].$this->languages['user'];
+ 	 	         $user_rank= $this->languages['normal'].$this->languages['user'];
  	         }
  	         else{
  	         	 $user_rank=$this->requestAction("/commons/get_rank/".$user_info['User']['rank']."");
@@ -58,13 +60,16 @@ class PagesController extends AppController {
 	        //pr($user_rank);
 		    $this->set("user_info",$user_info);
 			//规定时间内提交的订单
-			$start_time=date("Y-m-d H:m:s");
+			$start_time=date("Y-m-d").' 23:59:59';
 			$middle_time=(strtotime($start_time))-(30*24*60*60);
-			$end_time=date("Y-m-d H:m:s",$middle_time);
+			$end_time=date("Y-m-d",$middle_time).' 00:00:00';
+			
+			
 			$my_orders30=$this->Order->time_orders($start_time,$end_time);
 			$this->set("my_orders30",$my_orders30);
 			$this->pageTitle = $this->languages['user_center']." - ".$this->configs['shop_title'];
 			$this->set("user_rank",$user_rank);
+			
 	}
 	
 	function login(){
@@ -73,6 +78,13 @@ class PagesController extends AppController {
 				      Configure::write('debug', 0);
 				      //type定义 0:没有错误 1:报错 2:其他
 				      $result['type'] = 2;
+						$mrClean = new Sanitize();		
+						
+						$_POST['captcha'] = $mrClean->html($_POST['captcha'],true);
+						$_POST['name'] = $mrClean->html($_POST['name'],true);
+						$_POST['password'] = $mrClean->html($_POST['password'],true);
+						
+						
 				      if(isset($_POST['captcha']) && $this->captcha->check($_POST['captcha']) == false){
 					         $result['type'] ="1";
 					         $result['message'] ="".$this->languages['verify_code'].$this->languages['not_correct']."";
@@ -159,11 +171,15 @@ class PagesController extends AppController {
  	 						"fill_security_question" => $this->languages['please_enter'].$this->languages['security_question'],
  	 						"fill_answer" => $this->languages['please_enter'].$this->languages['answer'],
  	 						"others" => $this->languages['others'],
+ 	 						"can_be_registered" => $this->languages['can_be_registered'],
  	 						"email_not_empity" => $this->languages['email'].$this->languages['can_not_empty'],
  	 						"length_of_cell_phone_not_correct" => $this->languages['mobile'].$this->languages['not_correct'],
  	 						"length_of_tel_not_correct" => $this->languages['telephone'].$this->languages['not_correct']
  	 						);
 		$this->set('js_languages',$js_languages);
+		$this->Article->set_locale($this->locale);
+		$article = $this->Article->findbyid('5');
+		$this->set('article',$article);
 		//判断注册是否被关闭
 		if(isset($this->configs['enable_registration_closed']) && $this->configs['enable_registration_closed'] == 0){
 			   $this->page_init();
@@ -218,9 +234,11 @@ class PagesController extends AppController {
 	 }
  	 //忘记密码用户名确认
      function need_user_question($need_name){
+		   $mrClean = new Sanitize();		
+	       $need_name = $mrClean->html($need_name,true);
      	   $condition = " User.name = '".$need_name."'";
 		   $need_user_info = $this->User->find($condition);
-		   
+
 		   if(isset($need_user_info['User']['id']) && !empty($need_user_info['User']['id'])){
 		   	      $err=0;
 		   	      $err_msg='';
@@ -274,7 +292,9 @@ class PagesController extends AppController {
 		              //$template_str=str_replace(" ","",$template_str);
 					  $to_email = $user_info['User']['email'];
 					  $this->set_email_config();
-					  $this->Email->fromName = "".$shop_name."";  //标题
+						$this->Email->is_ssl = $this->configs['smtp_ssl'];
+						$this->Email->smtp_port = $this->configs['smtp_port'];			
+						 $this->Email->fromName = "".$shop_name."";  //标题
 					  $this->Email->html_body = "".$template_str."";
 				      $text_body = $template['MailTemplateI18n']['text_body'];
 				      eval("\$text_body = \"$text_body\";");
@@ -284,7 +304,7 @@ class PagesController extends AppController {
 					  $subject = $template['MailTemplateI18n']['title'];
 					  eval("\$subject = \"$subject\";");
 					  $this->Email->subject = "=?utf-8?B?" . base64_encode($subject) . "?=";
-			          if($this->Email->send()){
+			          if(@$this->Email->send()){
 							$this->pageTitle = $this->languages['reset_password_sent_please_view']." - ".$this->configs['shop_title'];
 			          		$this->flash($this->languages['reset_password_sent_please_view'],'/','');
 			          }else{
@@ -672,6 +692,7 @@ class PagesController extends AppController {
 		$this->page_init();
 		$real_ip = $this->requestAction('/commons/real_ip/'); 
 		//密码保护问题
+		
 		$question=isset($this->params['form']['question'])?$this->params['form']['question']:'';
 		if(isset($this->params['form']['question']) && $this->params['form']['question'] == $this->languages['others']){
 			  $question=isset($this->params['form']['other_question'])?$this->params['form']['other_question']:'';
@@ -689,15 +710,18 @@ class PagesController extends AppController {
 			'login_ipaddr'	=>	$real_ip,
 			'rank'			=>	0,
 			'sex'			=>	isset($this->params['form']['prov'])?$this->params['form']['prov']:'',
-			'birthday'		=>	isset($this->params['form']['date'])?$this->params['form']['date']:'',
 			'verify_status' => 0,
 			'status'		=>	1
 			);
+		if(isset($this->params['form']['date']) && $this->params['form']['date'] !=''){
+			$user_infos['birthday'] = $this->params['form']['date'];
+		}
+
 	    //pr($user_info);
-		$this->User->save(array('User'=>$user_infos));
+		$this->User->save($user_infos);
 		$id=$this->User->id;
-		$condition = " User.id = '".$id."'";
-		$user_info = $this->User->find($condition);
+		
+		$user_info = $this->User->findbyid($id);
 		//收货地址
 		$region='';
 		foreach($this->data['Address']['Region'] as $k=>$v){
@@ -711,11 +735,15 @@ class PagesController extends AppController {
 			'consignee'		=>	isset($this->params['form']['name'])?$this->params['form']['name']:'',
 			'user_id'		=>	$id,
 			'email'			=>	isset($this->params['form']['email'])?$this->params['form']['email']:'',
-			'address'		=>	isset($this->params['form']['address'])?$this->params['form']['address']:'',
 			'mobile'		=>	isset($this->params['form']['mobile'])?$this->params['form']['mobile']:'',
 			'regions'		=>	$region,
 			'telephone'		=>	$telephone
 			);
+		
+		if($this->params['form']['address'] != $this->languages['please_choose'] && $this->params['form']['address'] != ''){
+			$user_address['address'] = $this->params['form']['address'];
+		}
+		
 		$this->UserAddress->save(array('UserAddress'=>$user_address));
 		
 		//可选信息新增
@@ -752,7 +780,7 @@ class PagesController extends AppController {
 									"point" => $this->configs['first_points'],
 									"log_type" => "R",
 									"system_note" => "注册赠送积分",
-									"type_id"=> $user_info['User']['id']
+									"type_id"=> '0'
 									);
 			$this->UserPointLog->save($user_point_log);
 		}
@@ -760,7 +788,7 @@ class PagesController extends AppController {
 		if(isset($this->configs['register_coupons']) && $this->configs['register_coupons'] == 1){
 	       	$now = date("Y-m-d H:i:s");
 	       	$this->CouponType->set_locale($this->locale);
-			$coupon_type = $this->CouponType->findall("CouponType.send_type = 4 and CouponType.send_start_date <= '".$now."' and  CouponType.send_end_date >='".$now."'"); 
+			$coupon_type = $this->CouponType->findall("CouponType.send_type = '4' and CouponType.send_start_date <= '".$now."' and  CouponType.send_end_date >='".$now."'"); 
 			if(is_array($coupon_type) && sizeof($coupon_type)>0){
 				$coupon_arr = $this->Coupon->findall("1=1",'DISTINCT Coupon.sn_code');
 				$coupon_count = count($coupon_arr);
@@ -794,7 +822,7 @@ class PagesController extends AppController {
 			  $shop_name = $this->configs['shop_name'];
 			  $user_password = $user_info['User']['password'];
 			  $this->MailTemplate->set_locale($this->locale);
-			  $template=$this->MailTemplate->find("code = 'register_validate' and status = 1");
+			  $template=$this->MailTemplate->find("code = 'register_validate' and status = '1'");
 			  $template_str=$template['MailTemplateI18n']['html_body'];
 			  $host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
 			  $code = md5($user_info['User']['id'] . $user_info['User']['email']);
@@ -806,6 +834,8 @@ class PagesController extends AppController {
 			  eval("\$template_str = \"$template_str\";");
 			  $to_email = $user_info['User']['email'];
 			  $this->set_email_config();
+			  	$this->Email->is_ssl = $this->configs['smtp_ssl'];
+				$this->Email->smtp_port = $this->configs['smtp_port'];
 			  $this->Email->fromName = "".$shop_name."";  //标题
 			  $this->Email->html_body = "".$template_str."";
 		      $text_body = $template['MailTemplateI18n']['text_body'];
@@ -815,7 +845,7 @@ class PagesController extends AppController {
 			  $subject = $template['MailTemplateI18n']['title'];
 			  eval("\$subject = \"$subject\";");
 			  $this->Email->subject = "=?utf-8?B?" . base64_encode($subject) . "?=";
-			  $this->Email->send();
+			  @$this->Email->send();
 		}
         //用户设置初始值
 	    
@@ -844,7 +874,7 @@ class PagesController extends AppController {
 		$shop_name = $this->configs['shop_name'];
 		$user_password = $user_info['User']['password'];
 		$this->MailTemplate->set_locale($this->locale);
-		$template=$this->MailTemplate->find("code = 'register_validate' and status = 1");
+		$template=$this->MailTemplate->find("code = 'register_validate' and status = '1'");
 		$template_str=$template['MailTemplateI18n']['html_body'];
 		$host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
 		$code = md5($user_info['User']['id'] . $to_email);
@@ -858,14 +888,16 @@ class PagesController extends AppController {
 		$this->set_email_config();
 		$this->Email->fromName = "".$shop_name."";  //标题
 		$this->Email->html_body = "".$template_str."";
-        $text_body = $template['MailTemplateI18n']['text_body'];
+		$this->Email->is_ssl = $this->configs['smtp_ssl'];
+		$this->Email->smtp_port = $this->configs['smtp_port'];
+		$text_body = $template['MailTemplateI18n']['text_body'];
      	eval("\$text_body = \"$text_body\";");
   	    $this->Email->text_body = $text_body;
 		$this->Email->to = "".$to_email."";
 		$subject = $template['MailTemplateI18n']['title'];
 		eval("\$subject = \"$subject\";");
 		$this->Email->subject = "=?utf-8?B?" . base64_encode($subject) . "?=";
-		if($this->Email->send()){
+		if(@$this->Email->send()){
 	    $message=array(
 	    'msg'=>"".$this->languages['send_confirm_mail'].$this->languages['send'].$this->languages['successfully']."",
 	    	'send_confirm_mail'=>"".$this->languages['send_confirm_mail']."",

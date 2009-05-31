@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: coupons_controller.php 1232 2009-05-06 12:14:41Z huangbo $
+ * $Id: coupons_controller.php 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 class CouponsController extends AppController {
 	var $name = 'Coupons';
@@ -18,6 +18,9 @@ class CouponsController extends AppController {
 	var $uses = array('CouponType','CouponTypeI18n','Coupon','Category','Brand','User','Product','MailTemplate','UserRank');
 
 	function index(){
+		/*判断权限*/
+		$this->operator_privilege('coupon_view');
+		/*end*/
 		$this->pageTitle = '电子优惠券管理'." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'电子优惠券管理','url'=>'/coupons/');
 		$this->set('navigations',$this->navigations);
@@ -28,7 +31,8 @@ class CouponsController extends AppController {
 	    $rownum=isset($this->configs['show_count']) ? $this->configs['show_count']:((!empty($rownum)) ?$rownum:20);
 		$parameters = array($rownum,$page);		
 		$options = array();
-		$total = $this->CouponType->findCount($condition,0);
+   	    $total = count($this->CouponType->find("all",array("conditions"=>$condition,"fields"=>"DISTINCT CouponType.id")));
+
 		$sortClass = 'CouponType';
 		$page = $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass);
 		//取得优惠券列表
@@ -63,22 +67,26 @@ class CouponsController extends AppController {
 		//查找已发放的优惠券数量
 		$data2 = $this->Coupon->find('all',array(
 												'conditions' => $condition, 
-												'fields' => array('Coupon.coupon_type_id', 'count(Coupon.id) as count_coupon'), 
+												'fields' => array('Coupon.coupon_type_id'), 
 												'group' => array('Coupon.coupon_type_id')
 											));
+		$count_coupon = count($this->Coupon->find("all",array("conditions"=>$condition,"fields"=>"DISTINCT Coupon.id")));
+
 		$sent_coupons = array();
 		foreach($data2 as $v){
-			if(!empty($v['Coupon']))$sent_coupons[$v['Coupon']['coupon_type_id']]['count_coupon'] = $v[0]['count_coupon'];
+			if(!empty($v['Coupon']))$sent_coupons[$v['Coupon']['coupon_type_id']]['count_coupon'] = $count_coupon;
 		}
 		//查找已使用的优惠券数量
 		$condition2 = $condition." and Coupon.used_time > '2008-02-02'";
+		$count_coupon = count($this->Coupon->find("all",array("conditions"=>$condition,"fields"=>"DISTINCT Coupon.id")));
+
 		$data3 = $this->Coupon->find('all',array(
 												'conditions' => $condition2, 
-												'fields' => array('Coupon.coupon_type_id', 'count(Coupon.id) as count_coupon'), 
+												'fields' => array('Coupon.coupon_type_id'), 
 												'group' => array('Coupon.coupon_type_id')
 											));
 		foreach($data3 as $v){
-			if(!empty($v['Coupon']))$sent_coupons[$v['Coupon']['coupon_type_id']]['count_coupon_used'] = $v[0]['count_coupon'];
+			if(!empty($v['Coupon']))$sent_coupons[$v['Coupon']['coupon_type_id']]['count_coupon_used'] = $count_coupon;
 		}
 		$this->set('coupons',$data);
 		$this->set('sent_coupons',$sent_coupons);		
@@ -86,11 +94,14 @@ class CouponsController extends AppController {
 	}
 	
 	function view($id){
+		/*判断权限*/
+		$this->operator_privilege('coupon_operation');
+		/*end*/
 		$this->pageTitle = '查看电子优惠券'." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'电子优惠券管理','url'=>'/coupons/');
 		$this->navigations[] = array('name'=>'查看电子优惠券','url'=>'');
 		$this->set('navigations',$this->navigations);
-		$condition ="1=1 and Coupon.coupon_type_id =".$id;
+		$condition["Coupon.coupon_type_id"] = $id;
 		$page = 1;
 	    $rownum=isset($this->configs['show_count']) ? $this->configs['show_count']:((!empty($rownum)) ?$rownum:20);
 		$parameters = array($rownum,$page);		
@@ -113,6 +124,7 @@ class CouponsController extends AppController {
 	
 	
 	function remove($id){
+		
 		$this->CouponType->deleteAll("CouponType.id='$id'");
 		$this->flash("删除成功",'/coupons/',10);
 	
@@ -130,9 +142,20 @@ class CouponsController extends AppController {
 		$this->set('navigations',$this->navigations);
 		
 		if($this->RequestHandler->isPost()){
+			$this->data['CouponType']['max_amount'] = !empty($this->data['CouponType']['max_amount'])?$this->data['CouponType']['max_amount']:0;
+			$this->data['CouponType']['send_end_date'] = date("Y-m-d",strtotime($this->data['CouponType']['send_end_date']))." 23:59:59";
+			$this->data['CouponType']['use_end_date'] = date("Y-m-d",strtotime($this->data['CouponType']['use_end_date']))." 23:59:59";
 			//pr($this->data);
 			//$this->CouponType->deleteall("id = '".$this->data['CouponType']['id']."'",false);
 			//$this->CouponTypeI18n->deleteall("coupon_type_id = '".$this->data['CouponType']['id']."'",false);
+			if(empty($this->data['CouponType']['money'])){
+				$this->flash("电子优惠券金额 不能为空  编辑失败。点击继续编辑电子优惠券。",'/coupons/add/',10,false);
+				return false;
+			}
+			if(empty($this->data['CouponType']['min_amount'])){
+				$this->flash("电子优惠券最小订单金额 不能为空  编辑失败。点击继续编辑电子优惠券。",'/coupons/add/',10,false);
+				return false;
+			}			
 			foreach($this->data['CouponTypeI18n'] as $v){
               	     	    $couponTypeI18n_info=array(
 		                           'id'=>	isset($v['id'])?$v['id']:'',
@@ -144,7 +167,12 @@ class CouponsController extends AppController {
 		                     $this->CouponTypeI18n->saveall(array('CouponTypeI18n'=>$couponTypeI18n_info));//更新多语言
             }
 			$this->CouponType->save($this->data); //保存
-			$this->flash("编辑成功",'/coupons/edit/'.$id,10);
+			foreach( $this->data['CouponTypeI18n'] as $k=>$v ){
+				if($v['locale'] == $this->locale){
+					$userinformation_name = $v['name'];
+				}
+			}
+			$this->flash("电子优惠券  ".$userinformation_name." 编辑成功。点击继续编辑该电子优惠券。",'/coupons/edit/'.$id,10);
 		}
 		
 		$coupontype = $this->CouponType->localeformat( $id );
@@ -160,9 +188,23 @@ class CouponsController extends AppController {
 		$this->set('navigations',$this->navigations);
 		
 		if($this->RequestHandler->isPost()){
+			if(empty($this->data['CouponType']['money'])){
+				$this->flash("电子优惠券金额 不能为空  添加失败。点击继续添加电子优惠券。",'/coupons/add/',10,false);
+				return false;
+			}
+			if(empty($this->data['CouponType']['min_amount'])){
+				$this->flash("电子优惠券最小订单金额 不能为空  添加失败。点击继续添加电子优惠券。",'/coupons/add/',10,false);
+				return false;
+			}
+
+			
+			
 			if($this->data['CouponType']['min_products_amount'] == ""){
 				$this->data['CouponType']['min_products_amount'] = 0;
 			}
+			$this->data['CouponType']['max_amount'] = !empty($this->data['CouponType']['max_amount'])?$this->data['CouponType']['max_amount']:0;
+			$this->data['CouponType']['send_end_date'] = date("Y-m-d",strtotime($this->data['CouponType']['send_end_date']))." 23:59:59";
+			$this->data['CouponType']['use_end_date'] = date("Y-m-d",strtotime($this->data['CouponType']['use_end_date']))." 23:59:59";
 			$this->CouponType->save($this->data); //保存
 			$id=$this->CouponType->id;
 			//新增多语言
@@ -173,7 +215,12 @@ class CouponsController extends AppController {
 				            $this->CouponTypeI18n->id='';
 				            $this->CouponTypeI18n->save($v); 
 			           }
-			$this->flash("添加成功",'/coupons/edit/'.$id,10);
+			foreach( $this->data['CouponTypeI18n'] as $k=>$v ){
+				if($v['locale'] == $this->locale){
+					$userinformation_name = $v['name'];
+				}
+			}
+			$this->flash("电子优惠券  ".$userinformation_name." 添加成功。点击继续编辑该电子优惠券。",'/coupons/edit/'.$id,10);
 		}
 	}
 	
@@ -198,7 +245,7 @@ class CouponsController extends AppController {
 	   		$this->Brand->set_locale($this->locale);
 	        $brands_tree=$this->Brand->getbrandformat();
 			$this->Product->set_locale($this->locale);
-	        $product_arr = $this->Product->findall('Product.coupon_type_id ='.$id);
+	        $product_arr = $this->Product->findall("'Product.coupon_type_id ='".$id."'");
 	       // pr($product_arr);
 			$this->set('product_relations',$product_arr);
 			$this->set('categories_tree',$categories_tree);
@@ -217,33 +264,33 @@ class CouponsController extends AppController {
 	}
 	
 	function searchusers($keywords="0"){
-		   $condition="1=1 ";
-		   if($keywords != "0"){
-		          $condition .=" and User.name like '%$keywords%'";
-		   }
-	       $Pids=$this->User->findall($condition,'DISTINCT User.id');
-	       $pid_array=array();
-	      if(is_array($Pids)){
-	    	   foreach($Pids as $v ){
-	    		   $pid_array[]=$v['User']['id'];
-	    	   }
-	      }
- 	      $condition = array("User.id"=>$pid_array);
-	      $users=$this->User->findall($condition);
-	      $this->set('users',$users);
-	      
-	      //显示的页面
-	      Configure::write('debug',0);
-          $result['type'] = "0";
-          $result['message']=$users;
-          die(json_encode($result));
+		$condition="";
+		if($keywords != "0"){
+			$condition["User.name like"]="%".$keywords."%";
+		}
+		$Pids=$this->User->findall($condition,'DISTINCT User.id');
+		$pid_array=array();
+		if(is_array($Pids)){
+			foreach($Pids as $v ){
+				$pid_array[]=$v['User']['id'];
+			}
+		}
+		$condition = array("User.id"=>$pid_array);
+		$users=$this->User->findall($condition);
+		$this->set('users',$users);
+		
+		//显示的页面
+		Configure::write('debug',0);
+		$result['type'] = "0";
+		$result['message']=$users;
+		die(json_encode($result));
 	
 	}
 	
 	function insert_link_users($link_id,$id){
 		$this->CouponType->set_locale($this->locale);
 		$coupon_info = $this->CouponType->findbyid($id);
-		$coupon_arr = $this->Coupon->findall("1=1",'DISTINCT Coupon.sn_code');
+		$coupon_arr = $this->Coupon->findall("",'DISTINCT Coupon.sn_code');
 		$coupon_count = count($coupon_arr);
 		$num = 0;
 		if($coupon_count > 0){
@@ -269,7 +316,7 @@ class CouponsController extends AppController {
 		$this->send_coupon_email($coupon_id);
 
 	
-			//页面显示
+		//页面显示
 		Configure::write('debug',0);
         $result['type'] = "0";
         $result['msg'] = $user_info['User'];
@@ -324,7 +371,7 @@ class CouponsController extends AppController {
 		$times = $_POST['num'];
 		$this->CouponType->set_locale($this->locale);
 		$coupon_info = $this->CouponType->findbyid($_POST['coupon_type_id']);
-		$coupon_arr = $this->Coupon->findall("1=1",'DISTINCT Coupon.sn_code');
+		$coupon_arr = $this->Coupon->findall("",'DISTINCT Coupon.sn_code');
 		$coupon_count = count($coupon_arr);
 		$num = 0;
 		if($coupon_count > 0){
@@ -351,7 +398,7 @@ class CouponsController extends AppController {
 	function send_coupon(){
 		$this->CouponType->set_locale($this->locale);
 		$coupon_info = $this->CouponType->findbyid($_POST['coupon_type_id']);
-		$coupon_arr = $this->Coupon->findall("1=1",'DISTINCT Coupon.sn_code');
+		$coupon_arr = $this->Coupon->findall("",'DISTINCT Coupon.sn_code');
 		$coupon_count = count($coupon_arr);
 		$num = 0;
 		if($coupon_count > 0){
@@ -389,11 +436,13 @@ class CouponsController extends AppController {
 			$money = $coupon_type['CouponType']['money'];
 			
 			$this->MailTemplate->set_locale($this->locale);
-			$template=$this->MailTemplate->find("code = '$template' and status = 1");
+			$template=$this->MailTemplate->find("code = '$template' and status = '1'");
 		
 			$fromName=$shop_name;
 			$subject=$template['MailTemplateI18n']['title'];
 			$this->Email->sendAs = 'html';
+			$this->Email->is_ssl = $this->configs['smtp_ssl'];
+			$this->Email->smtp_port = $this->configs['smtp_port'];
 			$this->Email->smtpHostNames = "".$this->configs['smtp_host']."";
 			$this->Email->smtpUserName = "".$this->configs['smtp_user']."";
 			$this->Email->smtpPassword = "".$this->configs['smtp_pass']."";
@@ -412,7 +461,7 @@ class CouponsController extends AppController {
 	     	eval("\$text_body = \"$text_body\";");
 	  	    $this->Email->text_body = $text_body;
 			$this->Email->to = "".$to_email."";
-			if($this->Email->send()){
+			if(@$this->Email->send()){
 				$coupon['Coupon']['emailed'] = 1;
 				$this->Coupon->save($coupon);
 				return true;			
@@ -438,7 +487,7 @@ class CouponsController extends AppController {
 		$users = $this->User->findall('User.rank ='.$_POST['user_rank']);
 		$this->CouponType->set_locale($this->locale);
 		$coupon_info = $this->CouponType->findbyid($_POST['coupon_type_id']);
-		$coupon_arr = $this->Coupon->findall("1=1",'DISTINCT Coupon.sn_code');
+		$coupon_arr = $this->Coupon->findall("",'DISTINCT Coupon.sn_code');
 		$coupon_count = count($coupon_arr);
 		$num = 0;
 		if($coupon_count > 0){

@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: cart_packaging.ctp 791 2009-04-18 16:04:23Z huangbo $
+ * $Id: cart_packaging.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ?>
 <?if(isset($svcart['packagings']) && sizeof($svcart['packagings'])>0){?>
@@ -23,7 +23,7 @@
 <?foreach($svcart['packagings'] as $i=>$p){?>
 <div id="Item_box">
 <div class="Item_info" id="products_<?=$i;?>">
-<p class="pic"><?=$html->link($html->image($p['Packaging']['img01'],array("width"=>108,"height"=>108)),"/carts/#","",false,false);?></p>
+<p class="pic"><?=$html->image($p['Packaging']['img01'],array("width"=>108,"height"=>108));?></p>
 <p class="info">
 <span><?php echo $p['PackagingI18n']['name'];?></span>
 </p>

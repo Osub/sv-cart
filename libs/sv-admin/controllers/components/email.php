@@ -24,9 +24,9 @@ class EmailComponent
     var $bcc = null;
     var $template = 'email/default';
     var $attachments = null;
-
     var $controller;
-
+	var $is_ssl = 0;//ÊÇ·ñ¿ªÆôSSL
+	var $smtp_port = 25;//email¶Ë¿Ú
     function startup( &$controller ) {
       $this->controller = &$controller;
     }
@@ -67,49 +67,50 @@ class EmailComponent
       }
     }
 
-    function send()
-    {
+    function send(){
+    	//$this->Config->findall();
+		$mail = new PHPMailer();
+		$mail->IsSMTP();            // set mailer to use SMTP
+    	$mail->SMTPAuth = true;     // turn on SMTP authentication
+    	if($this->is_ssl==1){
+    		$mail->SMTPSecure = "ssl";
+    		
+    	}
+    	$mail->Port = $this->smtp_port;
+    	$mail->Host   = $this->smtpHostNames;
+	    $mail->Username = $this->smtpUserName;
+	    $mail->Password = $this->smtpPassword;
+	   	//$mail->SMTPDebug = 10;
 
+	    $mail->From     = $this->from;
+	    $mail->FromName = $this->fromName;
+	    $mail->AddAddress($this->to, $this->toName );
+	    $mail->AddReplyTo($this->from, $this->fromName );
+	    
+	    $mail->CharSet  = 'UTF-8';
+	    $mail->WordWrap = 50;  
 
+	    if (!empty($this->attachments)) {
+	      foreach ($this->attachments as $attachment) {
+	        if (empty($attachment['asfile'])) {
+	          $mail->AddAttachment($attachment['filename']);
+	        } else {
+	          $mail->AddAttachment($attachment['filename'], $attachment['asfile']);
+	        }
+	      }
+	    }
+	    $mail->IsHTML(true); 
+	    $mail->Subject = $this->subject;
+	    $mail->Body    = $this->html_body;
+	    $mail->AltBody = $this->text_body;
 
-    $mail = new PHPMailer();
+	    $result = $mail->Send();
 
-    $mail->IsSMTP();            // set mailer to use SMTP
-    $mail->SMTPAuth = true;     // turn on SMTP authentication
-    $mail->Host   = $this->smtpHostNames;
-    $mail->Username = $this->smtpUserName;
-    $mail->Password = $this->smtpPassword;
-  //$mail->SMTPDebug = 10;
-
-    $mail->From     = $this->from;
-    $mail->FromName = $this->fromName;
-    $mail->AddAddress($this->to, $this->toName );
-    $mail->AddReplyTo($this->from, $this->fromName );
-
-    $mail->CharSet  = 'UTF-8';
-    $mail->WordWrap = 50;  // set word wrap to 50 characters
-
-    if (!empty($this->attachments)) {
-      foreach ($this->attachments as $attachment) {
-        if (empty($attachment['asfile'])) {
-          $mail->AddAttachment($attachment['filename']);
-        } else {
-          $mail->AddAttachment($attachment['filename'], $attachment['asfile']);
-        }
-      }
-    }
-
-    $mail->IsHTML(true);  // set email format to HTML
-
-    $mail->Subject = $this->subject;
-    $mail->Body    = $this->html_body;
-    $mail->AltBody = $this->text_body;
-
-    $result = $mail->Send();
-
-    if($result == false ) $result = $mail->ErrorInfo;
-
-    return $result;
+	    if($result == false ){
+		    $result = $mail->ErrorInfo;
+		}
+		return $result;
+	    
     }
 }
 ?>

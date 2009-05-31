@@ -25,9 +25,9 @@
 <li>
 <p class="pic">
 <?if($v['Packaging']['img01'] != ""){?>
-<?=$html->link($html->image($v['Packaging']['img01'],array("alt"=>$v['PackagingI18n']['name'], "width"=>isset($SVConfigs['thumbl_image_width'])?$SVConfigs['thumbl_image_width']:108,"height"=>isset($SVConfigs['thumb_image_height'])?$SVConfigs['thumb_image_height']:108)),"/carts/#","",false,false);?> 
+<?=$html->image($v['Packaging']['img01'],array("alt"=>$v['PackagingI18n']['name'],"title"=>$v['PackagingI18n']['description'], "width"=>isset($SVConfigs['thumbl_image_width'])?$SVConfigs['thumbl_image_width']:108,"height"=>isset($SVConfigs['thumb_image_height'])?$SVConfigs['thumb_image_height']:108));?> 
 <?}else{?>
-<?=$html->link($html->image("/img/product_default.jpg",array("alt"=>$v['PackagingI18n']['name'], "width"=>isset($SVConfigs['thumbl_image_width'])?$SVConfigs['thumbl_image_width']:108,"height"=>isset($SVConfigs['thumb_image_height'])?$SVConfigs['thumb_image_height']:108)),"/carts/#","",false,false);?> 	
+<?=$html->image("/img/product_default.jpg",array("alt"=>$v['PackagingI18n']['name'],"title"=>$v['PackagingI18n']['description'], "width"=>isset($SVConfigs['thumbl_image_width'])?$SVConfigs['thumbl_image_width']:108,"height"=>isset($SVConfigs['thumb_image_height'])?$SVConfigs['thumb_image_height']:108));?> 	
 <?}?>
 </p>
 <p class="info">
@@ -35,6 +35,15 @@
 <span class="Price"><?=$SCLanguages['our_price'];?>：<font color="#ff0000">
 	<?=$svshow->price_format($v['Packaging']['fee'],$SVConfigs['price_format']);?>	
 	</font></span>
+	
+<?if($v['Packaging']['free_money'] > 0){?> 
+<span class="Price"><?=$SCLanguages['free'];?><?=$SCLanguages['limit'];?>：<font color="#ff0000">
+<?=$svshow->price_format($v['Packaging']['free_money'],$SVConfigs['price_format']);?>	
+</font>
+</span>	
+<?}?>	
+	
+	
 <span class="stow cart"><?=$html->link(__($SCLanguages['put_into_cart'],array("alt"=>$SCLanguages['put_into_cart'])),"javascript:buy_on_cart_page('packaging',".$v['Packaging']['id'].")");?></span>
 </p>
 </li>

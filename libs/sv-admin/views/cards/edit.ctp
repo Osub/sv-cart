@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: edit.ctp 943 2009-04-23 10:38:44Z huangbo $
+ * $Id: edit.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -73,9 +73,9 @@
 	  
 	  <div class="box">
 	  <br />
-		<dl><dt>上传图片1：</dt><dd><input type="text" size="35" style="font-size:12px;" id="upload_img_text_1" name="data[Card][img01]" value="<?=$card['Card']['img01']?>" /><br /><br /><?=$html->image("/..{$card['Card']['img01']}",array('id'=>'logo_thumb_img_1','height'=>'150'))?></dd><dd><?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(1,'cards')",'',false,false)?></dd></dl>
+		<dl><dt>上传图片1：</dt><dd><input type="text" size="35" style="font-size:12px;" id="upload_img_text_1" name="data[Card][img01]" value="<?=$card['Card']['img01']?>" /><br /><br /><?=$html->image("/..{$card['Card']['img01']}",array('id'=>'logo_thumb_img_1','height'=>'150','style'=>'display:none'))?></dd><dd><?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(1,'cards')",'',false,false)?></dd></dl>
 		
-		<dl><dt>上传图片2：</dt><dd><input type="text" size="35" style="font-size:12px;" id="upload_img_text_2" name="data[Card][img02]" value="<?=$card['Card']['img02']?>" /><br /><br /><?=$html->image("/..{$card['Card']['img02']}",array('id'=>'logo_thumb_img_1','height'=>'150'))?></dd><dd><?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(2,'cards')",'',false,false)?></dd></dl>
+		<dl><dt>上传图片2：</dt><dd><input type="text" size="35" style="font-size:12px;" id="upload_img_text_2" name="data[Card][img02]" value="<?=$card['Card']['img02']?>" /><br /><br /><?=$html->image("/..{$card['Card']['img02']}",array('id'=>'logo_thumb_img_1','height'=>'150','style'=>'display:none'))?></dd><dd><?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(2,'cards')",'',false,false)?></dd></dl>
 		
 		
 		

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: operator_menu.php 1031 2009-04-24 12:48:28Z huangbo $
+ * $Id: operator_menu.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class Operator_menu extends AppModel
 {
@@ -42,7 +42,6 @@ class Operator_menu extends AppModel
 			{	$v['Operator_menu']['name'] = $v['Operator_menuI18n']['name'];
 				$this->acionts_parent_format[$v['Operator_menu']['parent_id']][]=$v;
 			}
-	//	pr($this->acionts_parent_format);
 		return $this->subcat_get('0');
 	}
 	

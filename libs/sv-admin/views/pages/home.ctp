@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: home.ctp 1250 2009-05-07 13:59:20Z huangbo $
+ * $Id: home.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -113,7 +113,7 @@
 	      <div class="box">
 	        <ul>
 	        <li class="hdblock3_on">
-			  文章列表</li>
+			  官方信息</li>
 			  <!--
 	          <li class="hdblock3_on" id="hdblock3_t21" onmouseover="show_intro('hdblock3_c2','hdblock3_t2',2,1,'hdblock3')">
 			  文章列表</li>
@@ -126,14 +126,7 @@
 	      <div class="article_box" id="r">
 		    <div class="hdblock3_c" id="hdblock3_c21" style="display:block;">
 	        <ul class="list">
-	        	<?if(isset($rss_str) && sizeof($rss_str)>0){?>
-	        	<?foreach( $rss_str as $k=>$v ){?>
-					<li>
-					<!--
-					<span class="title"><a href="#"></a></span>
-					-->
-					<span>.<?=$v;?></span></li>
-				<?}}?>
+	          <span id="rss_load"></span>
 			</ul>
 		    </div>
 			
@@ -152,6 +145,35 @@
 </div>
 </div>
 <script type="text/javascript">
+function rss_load(){
+	var urlimg = webroot_dir+"pages/rss_str/";
+	YAHOO.util.Connect.asyncRequest('POST', urlimg, rss_load_callback);
+}
+var rss_load_img_Success = function(oResponse){
+	var oResults = eval("(" + oResponse.responseText + ")");
+	var rss_load = document.getElementById('rss_load'); 
+	rss_load.innerHTML = "";
+	var url_str = "";
+	for( var i=0;i<oResults.length;i++){
+		url_str+="<li><span>."+oResults[i]+"</span></li>";
+	}
+	rss_load.innerHTML = url_str;
+	//alert(oResponse.responseText);
+}
+
+var rss_load_img_Failure = function(o){
+	//alert("异步请求失败");
+}
+
+var rss_load_callback ={
+	success:rss_load_img_Success,
+	failure:rss_load_img_Failure,
+	timeout : 3000000,
+	argument: {}
+};		
+				
+rss_load();
+
 /*文章列表的切换Tab
 	function show_intro(pre,pree, n, select_n,css) {
 	for (i = 1; i <= n; i++) {

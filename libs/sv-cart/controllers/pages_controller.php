@@ -9,13 +9,13 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: pages_controller.php 1144 2009-04-29 11:41:30Z huangbo $
+ * $Id: pages_controller.php 1902 2009-05-31 13:56:19Z huangbo $
 *****************************************************************************/
 class PagesController extends AppController {
 	var $name = 'Pages';
 	var $helpers = array('Html','Flash');
 	var $uses = array('Product','Flash','Article','UserRank','ProductRank');
-
+	var $components = array('RequestHandler','Cookie','Session');
 	function home(){
 	//	Configure::write('debug', 0);
 		$this->page_init();
@@ -26,13 +26,14 @@ class PagesController extends AppController {
 	//	$this->set('js_languages',$this->languages);
 		$this->Flash->set_locale($this->locale);
 		$this->set('flashes',$this->Flash->find("type ='H'")); //flash轮播
+		//pr($this->Flash->find("type ='H'"));
 		$this->Product->set_locale($this->locale);
 	
 		$this->Article->set_locale($this->locale);
-		$condition = "Article.status = 1 and Article.front = 1" ;
+		$condition = "Article.status = '1' and Article.front = '1'" ;
 	    $home_article=$this->Article->find('all',array('order' => array('Article.modified DESC'),
-	    												'conditions' => array('Article.status'=>1,
-	    																	'Article.front' => 1
+	    												'conditions' => array('Article.status'=>'1',
+	    																	'Article.front' => '1'
 	    																		),
 	    												'LIMIT' => 10
 	    												));
@@ -47,21 +48,29 @@ class PagesController extends AppController {
 				if(isset($this->configs['products_name_length']) && $this->configs['products_name_length'] >0){
 					$products_recommand[$k]['ProductI18n']['name'] = $this->Product->sub_str($v['ProductI18n']['name'], $this->configs['products_name_length']);
 				}
+				$products_recommand[$k]['Product']['shop_price'] =$this->Product->locale_price($v['Product']['id'],$v['Product']['shop_price'],$this);
 				$products_recommand[$k]['Product']['user_price'] =$this->Product->user_price($k,$v,$this);
+				if($this->Product->is_promotion($v['Product']['id'])){
+					$products_recommand[$k]['Product']['shop_price'] = $products_recommand[$k]['Product']['promotion_price'];
+				}
 			}
 			foreach($products_newarrival as $kk=>$vv){
 				if(isset($this->configs['products_name_length']) && $this->configs['products_name_length'] >0){
 					$products_newarrival[$kk]['ProductI18n']['name'] = $this->Product->sub_str($vv['ProductI18n']['name'], $this->configs['products_name_length']);
 				}
 				$products_newarrival[$kk]['Product']['user_price'] =$this->Product->user_price($kk,$vv,$this);
+				$products_newarrival[$kk]['Product']['shop_price'] =$this->Product->locale_price($vv['Product']['id'],$vv['Product']['shop_price'],$this);
+				if($this->Product->is_promotion($vv['Product']['id'])){
+					$products_newarrival[$kk]['Product']['shop_price'] = $products_newarrival[$kk]['Product']['promotion_price'];
+				}
 			}
 			foreach($products_promotion as $kkk=>$vvv){
 				if(isset($this->configs['products_name_length']) && $this->configs['products_name_length'] >0){
 					$products_promotion[$kkk]['ProductI18n']['name'] = $this->Product->sub_str($vvv['ProductI18n']['name'], $this->configs['products_name_length']);
 				}
 				$products_promotion[$kkk]['Product']['user_price'] =$this->Product->user_price($kkk,$vvv,$this);
+				//$products_promotion[$kkk]['Product']['shop_price'] =$this->Product->locale_price($vvv['Product']['id'],$vvv['Product']['shop_price'],$this);
 			}
-		
 //be_integer
 		if(isset($this->configs['enable_one_step_buy']) && $this->configs['enable_one_step_buy'] == 1){
 					$js_language = array("enable_one_step_buy" => "1"

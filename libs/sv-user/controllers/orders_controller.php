@@ -9,8 +9,9 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: orders_controller.php 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: orders_controller.php 1841 2009-05-27 06:51:37Z huangbo $
 *****************************************************************************/
+uses('sanitize');		
 class OrdersController extends AppController {
 
 	var $name = 'Orders';
@@ -25,6 +26,9 @@ class OrdersController extends AppController {
 				$this->redirect('/login/');
 		}
 		$this->page_init();
+			$mrClean = new Sanitize();		
+			
+			$order_id = $mrClean->html($order_id, true);
 		
 		//当前位置
 		$this->navigations[] = array('name'=>__($this->languages['order_list'],true),'url'=>"");
@@ -37,13 +41,13 @@ class OrdersController extends AppController {
 	   //取得我的订单
 	   $condition=" Order.user_id='".$user_id."' ";
 	   if($order_status == 1){
-	   	   $condition .=" and Order.status = 0 ";
+	   	   $condition .=" and Order.status = '0' ";
 	   }
 	   elseif($order_status == 2){
-	   	   $condition .=" and Order.payment_status = 0 ";
+	   	   $condition .=" and Order.payment_status = '0' ";
 	   }
 	   elseif($order_status == 3){
-	   	   $condition .=" and Order.shipping_status = 0 ";
+	   	   $condition .=" and Order.shipping_status = '0' ";
 	   }
 	   if($start_date){
 	   	   $condition .=" and Order.created >= '".$start_date."' ";
@@ -63,12 +67,24 @@ class OrdersController extends AppController {
 	   $options=Array();
 	   $page= $this->Pagination->init($condition,"",$options,$total,$rownum,$sortClass);
 	   $my_orders=$this->Order->findAll($condition,'',"Order.created DESC","$rownum",$page);
-	   if(empty($my_orders)){
+	   if(empty($my_orders)){	   		
 	   	   $my_orders=array();
+	   }else{
+	   		foreach($my_orders as $k=>$v){
+		        if($v['Order']['coupon_id'] >0){
+		        	$coupon = $this->Coupon->findbyid($v['Order']['coupon_id']);
+		        	$this->CouponType->set_locale($this->locale);
+		        	$coupon_type = $this->CouponType->findbyid($coupon['Coupon']['coupon_type_id']);
+		        	$my_orders[$k]['Order']['coupon_fee'] = $coupon_type['CouponType']['money'];
+		        }else{
+		        	$my_orders[$k]['Order']['coupon_fee'] = 0;
+		        }
+		        $my_orders[$k]['Order']['need_paid'] = number_format($v['Order']['total']-$v['Order']['money_paid']-$v['Order']['point_fee']-$my_orders[$k]['Order']['coupon_fee']-$v['Order']['discount'],2 ,'.','')+0;
+	   		}
 	   }
-	   $condition=" Order.user_id='".$user_id."' and  Order.payment_status =0 ";
+	   $condition=" Order.user_id='".$user_id."' and  Order.payment_status ='0' ";
 	   $no_paid=$this->Order->findCount($condition);
-	   $condition=" Order.user_id='".$user_id."' and Order.status = 0 ";
+	   $condition=" Order.user_id='".$user_id."' and Order.status = '0' ";
 	   $no_confirm=$this->Order->findCount($condition);
 
 	   
@@ -77,7 +93,7 @@ class OrdersController extends AppController {
 	   "order_delivered_not_cancel" => $this->languages['order_delivered_not_cancel']);
 	   $this->set('js_languages',$js_languages);
 	   $this->pageTitle = $this->languages['order_list']." - ".$this->configs['shop_title'];
-	   //pr($my_orders);
+//	   pr($my_orders);
 	   $this->set('total',$total);
 	   $this->set('order_status',$order_status);
 	   $this->set('my_orders',$my_orders);
@@ -165,16 +181,19 @@ class OrdersController extends AppController {
               $order_info['Order']['shipping_time'] = '';
         }
         //是否使用积分
-        $point_log_filter = "1=1";
-        $point_log_filter .= " and UserPointLog.type_id = ".$id." and UserPointLog.user_id = ".$user_id." and UserPointLog.log_type = 'O'";
-        $point_log = $this->UserPointLog->find($point_log_filter);
-        $this->set('point_log',$point_log);
+        if($order_info['Order']['point_use']>0){
+	        $point_log_filter = "1=1";
+	        $point_log_filter .= " and UserPointLog.type_id = ".$id." and UserPointLog.user_id = ".$user_id." and UserPointLog.log_type = 'O'";
+	        $point_log = $this->UserPointLog->find($point_log_filter);
+	        $this->set('point_log',$point_log);
+        }
         
         //是否使用余额
         if($payment_info['Payment']['code'] == "account_pay"){
         	$balance_log_filter = "1=1";
        	 	$balance_log_filter .= " and UserBalanceLog.type_id = ".$id." and UserBalanceLog.user_id = ".$user_id." and UserBalanceLog.log_type = 'O'";
         	$balance_log = $this->UserBalanceLog->find($balance_log_filter);
+        //	pr($balance_log);
         	$this->set('balance_log',$balance_log);
         }
         //是否用优惠券
@@ -182,10 +201,17 @@ class OrdersController extends AppController {
         	$coupon = $this->Coupon->findbyid($order_info['Order']['coupon_id']);
         	$this->CouponType->set_locale($this->locale);
         	$coupon_type = $this->CouponType->findbyid($coupon['Coupon']['coupon_type_id']);
+        	$order_info['Order']['coupon_fee'] = $coupon_type['CouponType']['money'];
         	$this->set('coupon_fee',$coupon_type['CouponType']['money']);
         	$this->set('coupon_discount',$coupon['Coupon']['order_amount_discount']);
+        }else{
+        	$order_info['Order']['coupon_fee'] = 0;
         }
         //是否有包装
+        $show_note = 0;
+        if($order_info['Order']['note'] != ""){
+        	        $show_note = 1;
+        }
         $order_packaging = $this->OrderPackaging->findallbyorder_id($order_info['Order']['id']);
 		if(is_array($order_packaging) && sizeof($order_packaging)>0){
 			$this->Packaging->set_locale($this->locale);
@@ -195,7 +221,10 @@ class OrdersController extends AppController {
 				$packaging[$k] = $packaging_info;
 				$packaging[$k]['Packaging']['fee'] = $v['OrderPackaging']['packaging_fee'];
 				$packaging[$k]['Packaging']['note'] = $v['OrderPackaging']['note'];
-				$packaging[$k]['Packaging']['quntity'] = $v['OrderPackaging']['packaging_quntity'];			
+				$packaging[$k]['Packaging']['quntity'] = $v['OrderPackaging']['packaging_quntity'];		
+				if($v['OrderPackaging']['note'] != ""){
+	        		$show_note = 1;
+				}	
 	        	$this->set('packaging',$packaging);
         	}
 		}
@@ -210,10 +239,16 @@ class OrdersController extends AppController {
 				$card[$k] = $card_info;
 				$card[$k]['Card']['fee'] = $v['OrderCard']['card_fee'];
 				$card[$k]['Card']['note'] = $v['OrderCard']['note'];
+				if($v['OrderCard']['note'] != ""){
+	        		$show_note = 1;
+				}	
 				$card[$k]['Card']['quntity'] = $v['OrderCard']['card_quntity'];			
 	        	$this->set('card',$card);
         	}
 		}  
+		$this->set('show_note',$show_note);
+		
+		
 		//pr($order_info);
 		//订单商品详细  /*****订单商品部分的处理********/
 		$condition=" OrderProduct.order_id='".$order_info['Order']['id']."' and  ProductI18n.locale='".$this->locale."' ";
@@ -221,11 +256,20 @@ class OrdersController extends AppController {
 	//	pr($order_products);
 		static $market_subtotal=0;
 		static $shop_subtotal=0;
+		$size = count($order_products);
+		
 		foreach($order_products as $k=>$v){
 			$shop_subtotal += $v['OrderProduct']['product_price']*$v['OrderProduct']['product_quntity'];
 			$market_subtotal+=$v['Product']['market_price']*$v['OrderProduct']['product_quntity'];
 			$order_products[$k]['OrderProduct']['one_pro_subtotal']=$v['OrderProduct']['product_price']*$v['OrderProduct']['product_quntity'];
+			if($v['OrderProduct']['extension_code'] == 'virtual_card'){
+				$size -- ;
+			}
 		}
+		if($size < 1){
+			$this->set('all_virtual',1);
+		}
+		
 		$this->set('shop_subtotal',$shop_subtotal);
 	//	$save_price=$market_subtotal-$order_info['Order']['subtotal'];
 		$save_price=$market_subtotal-$shop_subtotal;
@@ -238,7 +282,8 @@ class OrdersController extends AppController {
 		$order_info['Order']['discount_price']= 100;
 		}
 		$order_info['Order']['save_price']=$save_price;
-		
+		$order_info['Order']['need_paid'] = number_format($order_info['Order']['total']-$order_info['Order']['money_paid']-$order_info['Order']['point_fee']-$order_info['Order']['coupon_fee']-$order_info['Order']['discount'],2 ,'.','')+0;
+
 		$region_array = explode(" ",trim($order_info['Order']['regions']));
 		$order_info['Order']['regions'] = "";
 		$this->Region->set_locale($this->locale);
@@ -322,12 +367,11 @@ class OrdersController extends AppController {
         }
 //pr($virtual_card);
 		
-		
 		/* 支持纯虚拟物品购买 */
 		if(isset($shipping_info['Shipping']['support_cod']))
-			$condition=" Payment.status =1 and PaymentI18n.status =1 and Payment.is_cod >= ".$shipping_info['Shipping']['support_cod']."";
+			$condition=" Payment.status = '1' and PaymentI18n.status = '1' and Payment.is_cod >= '".$shipping_info['Shipping']['support_cod']."'";
 		else 
-			$condition=" Payment.status =1 and PaymentI18n.status =1 and Payment.is_cod = 0";
+			$condition=" Payment.status ='1' and PaymentI18n.status ='1' and Payment.is_cod = '0'";
 		$this->Payment->set_locale($this->locale);
 		$payment_list=$this->Payment->findAll($condition);
 	   	$this->pageTitle = $this->languages['my_order']." - ".$this->configs['shop_title'];
@@ -366,11 +410,11 @@ function change_payment($payment_id,$order_id){
     	   'payment_name'=>$payment_info['PaymentI18n']['name']
     	);
 
-	$pay_log = $this->PaymentApiLog->findbytype_id($order_id);
-	$pay_log['PaymentApiLog']['payment_code'] = $payment_info['Payment']['code'];
-	$this->PaymentApiLog->save($pay_log);
-	$order = $this->Order->findbyid($order_id);
-	$pay = $payment_info;
+		$pay_log = $this->PaymentApiLog->findbytype_id($order_id);
+		$pay_log['PaymentApiLog']['payment_code'] = $payment_info['Payment']['code'];
+		$this->PaymentApiLog->save($pay_log);
+		$order = $this->Order->findbyid($order_id);
+		$pay = $payment_info;
 	    	if($payment_info['Payment']['code'] == "post"){  
 				$order_info['payment_status'] 			= 1;											
 			}else if($payment_info['Payment']['code'] == "bank"){ 
@@ -378,16 +422,15 @@ function change_payment($payment_id,$order_id){
 			}else{
 				$order_info['payment_status'] 			= 0;												
 			}
-	$order_pr = $order['Order'];
-	$order_pr['log_id'] = $pay_log['PaymentApiLog']['id'];
-	$result['msg'] = $this->languages['pay'];
-	$pay_php = $pay['Payment']['php_code'];	
-	/* -start- */
-	if($pay['Payment']['code'] == "alipay"){  //支付宝
+		$order_pr = $order['Order'];
+		$order_pr['log_id'] = $pay_log['PaymentApiLog']['id'];
+		$result['msg'] = $this->languages['pay'];
+		$pay_php = $pay['Payment']['php_code'];	
+		/* -start- */
+			if($pay['Payment']['code'] == "alipay"){  //支付宝
 				eval($pay_php);    // - -! 执行数据库取出的php代码
 				$pay_class = new alipay();	
 				$url = $pay_class->get_code($order_pr,$pay,$this);
-				
 				$this->set('pay_button',$url);
 			}
 			
@@ -450,6 +493,18 @@ function change_payment($payment_id,$order_id){
 			$order_pr['log_id'] = $pay_log['PaymentApiLog']['id'];
 			$result['msg'] = $this->languages['pay'];
 			$pay_php = $pay['Payment']['php_code'];
+			
+	        if($order['Order']['coupon_id'] >0 ){
+	        	$coupon = $this->Coupon->findbyid($order['Order']['coupon_id']);
+	        	$this->CouponType->set_locale($this->locale);
+	        	$coupon_type = $this->CouponType->findbyid($coupon['Coupon']['coupon_type_id']);
+	        	$order['Order']['coupon_fee'] = $coupon_type['CouponType']['money'];
+	        }else{
+	        	$order['Order']['coupon_fee'] = 0;
+	        }			
+			
+		//	$order['Order']['need_paid'] = number_format($order['Order']['total']-$order['Order']['money_paid']-$order['Order']['point_fee']-$order['Order']['coupon_fee']-$order['Order']['discount'],2 ,'.','')+0;
+			$order_pr['total'] = $pay_log['PaymentApiLog']['amount'];
 			
 			if($pay['Payment']['code'] == "alipay"){  //支付宝
 				eval($pay_php);    // - -! 执行数据库取出的php代码

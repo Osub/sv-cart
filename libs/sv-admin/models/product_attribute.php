@@ -19,7 +19,7 @@ class ProductAttribute extends AppModel
 												  'className'    => 'ProductI18n',   
 					                              'order'        => '',   
 					                              'dependent'    =>  true,   
-					                              'foreignKey'   => 'Product_id'
+					                              'foreignKey'   => 'product_id'
 					                        	 ) ,
 					   		
 					   		'ProviderProduct' =>array

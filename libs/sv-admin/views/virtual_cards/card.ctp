@@ -12,8 +12,8 @@
  * $Id: index.ctp 517 2009-04-14 01:18:28Z huangbo $
 *****************************************************************************/
 ?>
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+
+
 <?=$javascript->link('listtable');?>
 
 <div class="content">

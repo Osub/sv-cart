@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1250 2009-05-07 13:59:20Z huangbo $
+ * $Id: index.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ?> 
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
@@ -83,7 +83,7 @@
 			<input type="button" value="取消" onclick="big_panel.hide()">
 			</p>
 		</div>
-		<p><?=$html->image("loginout-bottom.gif");?></p>
+		<p><?=$html->image("loginout-bottom.png");?></p>
 	</div><? echo $form->end();?>
 
 </div>

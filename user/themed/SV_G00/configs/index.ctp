@@ -9,13 +9,13 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1116 2009-04-28 11:04:43Z huangbo $
+ * $Id: index.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <?echo $this->element('ur_here',array('cache'=>'+0 hour'))?>
 <!--我的设置-->
 <div id="Products_box">
-<h1><span><?=$SCLanguages['set'];?></span></h1>
+<h1 class="headers"><span class="l"></span><span class="r"></span><b><?=$SCLanguages['set'];?></b></h1>
 <div id="setting">
 	<div class="set-box">
 	<form name="set_myconfig" action='update_config' method="POST">

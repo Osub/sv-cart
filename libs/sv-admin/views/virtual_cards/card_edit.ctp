@@ -12,8 +12,8 @@
  * $Id: index.ctp 517 2009-04-14 01:18:28Z huangbo $
 *****************************************************************************/
 ?>
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+
+
 <?php echo $form->create('virtual_cards',array('action'=>'/card_edit/'.$id.'/'.$product_id));?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
@@ -42,7 +42,7 @@
 	<dl><dt style="width:100px;">卡片密码： </dt>
 	<dd><input type="text" style="width:300px;*width:180px;border:1px solid #649776" name="data[VirtualCard][card_password]" value="<?=$virtualcard_info['VirtualCard']['card_password']?>" /></dd></dl>
 	<dl><dt style="width:100px;">截至使用日期： </dt>
-	<dd><input type="text" style="width:120px;*width:180px;border:1px solid #649776" name="data[VirtualCard][end_date]" id="date" value="<?=$virtualcard_info['VirtualCard']['end_date']?>"  readonly="readonly" /></dd><button id="show" type="button"><?=$html->image('calendar.gif')?></button></dl>
+	<dd><input type="text" style="width:120px;*width:180px;border:1px solid #649776" name="data[VirtualCard][end_date]" id="date" value="<?=date('Y-m-d',strtotime($virtualcard_info['VirtualCard']['end_date']))?>"  readonly="readonly" /></dd><button id="show" type="button"><?=$html->image('calendar.gif')?></button></dl>
 	
 
 	</div>

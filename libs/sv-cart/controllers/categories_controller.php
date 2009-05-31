@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: categories_controller.php 1162 2009-04-30 11:17:42Z huangbo $
+ * $Id: categories_controller.php 1907 2009-05-31 14:34:18Z huangbo $
 *****************************************************************************/
 
 class CategoriesController extends AppController {
@@ -19,7 +19,7 @@ class CategoriesController extends AppController {
     var $helpers = array('html','Pagination','Flash');
     var $uses = array('Category','Product','Flash','ProductsCategory','UserRank','ProductRank'); 
 
-	function view($id,$orderby="",$rownum='',$showtype=""){
+	function view($id,$name1='',$name2 = '',$orderby="",$rownum='',$showtype=""){
 		$orderby = UrlDecode($orderby);
 		$rownum = UrlDecode($rownum);
 		$showtype = UrlDecode($showtype);
@@ -36,19 +36,30 @@ class CategoriesController extends AppController {
 		$this->Category->set_locale($this->locale);
 		$info=$this->Category->findbyid($id);
 		
-		
 		if(empty($info)){
-	       	 $this->pageTitle = $this->languages['category_not_exist']." - ".$this->configs['shop_title'];
-			 $this->flash($this->languages['category_not_exist'],"/",5);
+	       	 $this->pageTitle = $this->languages['classificatory'].$this->languages['not_exist']." - ".$this->configs['shop_title'];
+			 $this->flash($this->languages['classificatory'].$this->languages['not_exist'],"/",5);
 			 $flag = 0;
 		}elseif($info['Category']['status'] == 0){
-	       	 $this->pageTitle = $this->languages['category_forbidden']." - ".$this->configs['shop_title'];
-			 $this->flash($this->languages['category_forbidden'],"/",5);
+	       	 $this->pageTitle = $this->languages['classificatory'].$this->languages['not_exist']." - ".$this->configs['shop_title'];
+			 $this->flash($this->languages['classificatory'].$this->languages['not_exist'],"/",5);
 			 $flag = 0;
 		}
 		
 		if($flag == 1){
+			if($this->configs['use_sku'] == 1){
+				$this->set('use_sku',1);
+				if($info['Category']['parent_id']>0){
+					$parent_info = $this->Category->findbyid($info['Category']['parent_id']);
+					if(isset($parent_info['Category'])){
+						$this->set('parent',$parent_info['CategoryI18n']['name']);
+					}
+				}
+			}
+			
+			
 			$this->pageTitle = $info['CategoryI18n']['name']." - ".$this->configs['shop_title'];
+			$this->set('CategoryI18n_name',$info['CategoryI18n']['name']);
 			//当前位置
 			$navigations = $this->Category->tree('P',$id);
 			//pr($navigations);
@@ -101,7 +112,7 @@ class CategoriesController extends AppController {
 			$parameters=Array($orderby,$rownum,$page);
 			$options=Array();
 			//pr($category_ids);
-			$condition = array("Product.category_id"=>$category_ids,'Product.status'=>1);
+			$condition = array("Product.category_id"=>$category_ids,'Product.status'=>1,'Product.forsale' =>'1');
 			$products=$this->Product->findAll($condition,'',"Product.$orderby","$rownum",$page);
 			$total = count($products);
 			$page = $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass); // Added 
@@ -111,7 +122,13 @@ class CategoriesController extends AppController {
 					$products[$k]['ProductsCategory'] = $category_info['ProductsCategory'];		
 					if(isset($this->configs['products_name_length']) && $this->configs['products_name_length'] >0){
 						$products[$k]['ProductI18n']['name'] = $this->Product->sub_str($v['ProductI18n']['name'], $this->configs['products_name_length']);
-					}				
+					}
+					$products[$k]['Product']['shop_price'] =$this->Product->locale_price($v['Product']['id'],$v['Product']['shop_price'],$this);
+					if($this->Product->is_promotion($v['Product']['id'])){
+						$products[$k]['Product']['shop_price'] = $v['Product']['promotion_price'];
+					}						
+					
+					
 				}
 		    
 			$this->set('products',$products);

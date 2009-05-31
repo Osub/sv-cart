@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: edit.ctp 943 2009-04-23 10:38:44Z huangbo $
+ * $Id: edit.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -77,11 +77,16 @@
 	  
 	  <div class="box">
 		<br />
-		  <dl><dt>上传图片：</dt>
+		  <dl><dt>上传图片1：</dt>
 			<dd><input type="text" id="upload_img_text_1" name="data[Packaging][img01]" class="text_inputs" style="width:195px;" value="<?=$packaging['Packaging']['img01']?>"/><br /><br />
-			
-			<?=@$html->image("{$packaging['Packaging']['img01']}",array('id'=>'logo_thumb_img_1','height'=>'150'))?>
+
+			<?=@$html->image("/..{$packaging['Packaging']['img01']}",array('id'=>'logo_thumb_img_1','height'=>'150','style'=>'display:none'))?>
 			</dd><dd><?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(1,'packs')",'',false,false)?></dd></dl>
+		  <dl><dt>上传图片2：</dt>
+			<dd><input type="text" id="upload_img_text_2" name="data[Packaging][img02]" class="text_inputs" style="width:195px;" value="<?=$packaging['Packaging']['img02']?>"/><br /><br />
+
+			<?=@$html->image("/..{$packaging['Packaging']['img02']}",array('id'=>'logo_thumb_img_2','height'=>'150','style'=>'display:none'))?>
+			</dd><dd><?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(2,'packs')",'',false,false)?></dd></dl>
 		<dl><dt>费用：</dt>
 			<dd><input type="text" name="data[Packaging][fee]" class="text_inputs" style="width:115px;" value="<?=$packaging['Packaging']['fee'];?>"/></dd></dl>
 			<dl><dt>免费额度：</dt>

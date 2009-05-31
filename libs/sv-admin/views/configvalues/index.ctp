@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 899 2009-04-22 15:03:02Z huangbo $
+ * $Id: index.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -40,10 +40,10 @@ td select,td input{font-size:12px;font-family:arial;}
 
  <ul class="cat_tab">
     
-    <?if(isset($config_group) && sizeof($config_group)>0){?>
+    <?if(isset($config_group_code) && sizeof($config_group_code)>0){?>
   <?php $i=0;$n=1;
-   foreach($config_group as $k=>$v){ ?>
- <?if($k==$groupss){?>
+   foreach($config_group_code as $k=>$v){ ?>
+ <?if($k==$group_codess){?>
  <li class="hdblock3_on" id="hdblock3_t<?php echo $sumbasic.$n;?>" onclick="show_intro('<?=$k?>')"><?php echo $v?></li> 
  <?}else{?>
  <li class="hdblock3_off" id="hdblock3_t<?php echo $sumbasic.$n;?>" onclick="show_intro('<?=$k?>')"><?php echo $v?></li> 
@@ -161,7 +161,7 @@ if($info['Config']['type']=="select"){?>
  <?=$html->link($html->image('select_img.gif',$title_arr['select_img'],array("align"=>"absmiddle")),"javascript:img_sel(".$i.",'others')",'',false,false)?>
  </td>
  <td>
- <?=@$html->image("{$info['ConfigI18n'][$v['Language']['locale']]['value']}",array('id'=>'logo_thumb_img_'.$i,'height'=>'150'))?>
+ <?=@$html->image("{$info['ConfigI18n'][$v['Language']['locale']]['value']}",array('id'=>'logo_thumb_img_'.$i,'height'=>'150','style'=>'display:none'))?>
 </td>
  <td valign="middle">
  <?=@$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:config_help({$info['ConfigI18n'][$v['Language']['locale']]['id']})",'',false,false)?>

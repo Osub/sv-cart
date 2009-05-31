@@ -13,8 +13,8 @@
 *****************************************************************************/
 ?>
 
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+
+
 <?=$javascript->link('listtable');?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
@@ -57,9 +57,9 @@
 	<?foreach($types_tree as $k=>$v){?>
 	  <option value="<?echo $v['ProductType']['id']?>" <?if($type_id == $v['ProductType']['id']){?>selected<?}?>><?echo $v['ProductType']['name']?></option>
 	<?}}?>
-	</select> <?}?>
+	</select> <?}?>推荐:
 	<select name="is_recommond">
-	<option value="-1">推荐</option>
+	<option value="-1">所有</option>
 	<option value="0" <?if($is_recommond == 0){?>selected<?}?>>非推荐商品</option>
 	<option value="1" <?if($is_recommond == 1){?>selected<?}?>>推荐商品</option>
 	</select>
@@ -85,7 +85,7 @@
 
 <!--Main Start-->
 <div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' );">
-<?php echo $form->create('',array('action'=>'/',"name"=>"ProForm","type"=>"get"));?>
+<?php echo $form->create('',array('action'=>'/',"name"=>"ProForm","type"=>"get",'onsubmit'=>"return false"));?>
 
 	<ul class="product_llist">
 	<li class="number"><input type="checkbox" name="checkbox" value="checkbox" onclick='javascript:selectAll(this, "checkboxes")'/>编号<?=$html->image('sort_desc.gif',array('align'=>'absmiddle'))?></li>
@@ -100,18 +100,18 @@
 <?foreach($products_list as $k=>$v){?>	
 	<ul class="product_llist products">
 	<li class="number"><input type="checkbox" name="checkboxes[]" value="<?echo $v['Product']['id']?>" /><?echo $v['Product']['id']?></li>
-	<li class="name" style="width:18%"><span><?echo $v['ProductI18n']['name']?></span></li>
+	<li class="name" style="width:18%"><span><?php echo $html->link($v['ProductI18n']['name'],"../../products/{$v['Product']['id']}",array('target'=>'_blank'));?></span></li>
 	<li class="item_number"><?echo $v['Product']['code']?></li>
 	<li class="best"><?echo $v['Product']['quantity']?></li>
 	<li class="price"><?echo $v['Product']['shop_price']?></li>
 	<li class="best"><?if($v['Product']['forsale'] == 1){?><?=$html->image('yes.gif')?><?}else{?><?=$html->image('no.gif')?><?}?></li>
 	<li class="best"><?if($v['Product']['recommand_flag'] == 1){?><?=$html->image('yes.gif')?><?}else{?><?=$html->image('no.gif')?><?}?></li>
 	<li class="hadle" style="width:23%">
-	 <?php echo $html->link("查看","../../products/{$v['Product']['id']}",array('target'=>'_blank'));?>
+	<?php echo $html->link("查看","../../products/{$v['Product']['id']}",array('target'=>'_blank'));?>
 	|<?php echo $html->link("编辑","/virtual_cards/{$v['Product']['id']}");?>
 	|<?php echo $html->link("复制","/virtual_cards/copy_pro/{$v['Product']['id']}");?>
-	|<?php echo $html->link("回收站","javascript:;",array("onclick"=>"layer_dialog_show('确定进回收站?','{$this->webroot}products/trash/{$v['Product']['id']}')"));?>
-	|<?php echo $html->link("查看虚拟卡信息","/virtual_cards/card/{$v['Product']['id']}");?>
+	|<?php echo $html->link("放入回收站","javascript:;",array("onclick"=>"layer_dialog_show('确定进回收站?','{$this->webroot}products/trash/{$v['Product']['id']}')"));?>
+	<br />&nbsp&nbsp&nbsp<?php echo $html->link("查看虚拟卡信息","/virtual_cards/card/{$v['Product']['id']}");?>
 	|<?php echo $html->link("补货","/virtual_cards/card_add/{$v['Product']['id']}");?>
 	|<?php echo $html->link("批量补货","/virtual_cards/batch_card_add/{$v['Product']['id']}");?>
 	</li></ul>
@@ -123,7 +123,7 @@
   <!--  <option value="0">请选择...</option>
     --><option value="del">删除</option>
     </select> 
-<input type="submit" value="回收站" onclick="batch_action()"/></p>
+<?if($total>0){?><input type="submit" id="submit_button" value="放入回收站" onclick="batch_action()"/><?}?></p>
 <?php echo $this->element('pagers', array('cache'=>'+0 hour'));?>
 </div>
 <? echo $form->end();?>
@@ -152,6 +152,7 @@
 function batch_action() 
 { 
 document.ProForm.action=webroot_dir+"virtual_cards/batch";
+document.ProForm.onsubmit= "";
 document.ProForm.submit(); 
 }
 </script>

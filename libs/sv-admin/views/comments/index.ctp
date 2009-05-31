@@ -9,17 +9,17 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 899 2009-04-22 15:03:02Z huangbo $
+ * $Id: index.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ?> 
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+
+
 <?=$javascript->link('listtable');?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 <!--Search-->
 <div class="search_box">
-<?php echo $form->create('',array('action'=>'/','name'=>'UserForm','type'=>'get'));?>
+<?php echo $form->create('',array('action'=>'/','name'=>'UserForm','type'=>'get','onsubmit'=>"return false"));?>
 	<dl>
 	<dt style="padding-top:0;"><?=$html->image('serach_icon.gif',array('align'=>'left'))?></dt>
 	<dd><p class="reg_time article">评论内容：<input type="text" class="name" name="content" value="<?=@$content?>"/>&nbsp;&nbsp;发布时间：<input type="text" name="start_time" class="time" id="date" value="<?=@$start_time?>" readonly="readonly" /><button id="show" type="button"><?=$html->image('calendar.gif')?></button>－<input type="text" name="end_time" value="<?=@$end_time?>" class="time" id="date2" readonly="readonly" /><button id="show2" type="button"><?=$html->image('calendar.gif')?></button></p></dd>
@@ -86,11 +86,13 @@
 function batch_action() 
 { 
 document.UserForm.action=webroot_dir+"comments/batch"; 
+document.UserForm.onsubmit= "";
 document.UserForm.submit(); 
 } 
 function search_user() 
 { 
 document.UserForm.action=webroot_dir+"comments/"; 
+document.UserForm.onsubmit= "";
 document.UserForm.submit(); 
 } 
 

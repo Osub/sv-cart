@@ -9,15 +9,13 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1232 2009-05-06 12:14:41Z huangbo $
+ * $Id: index.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ?>
-<?=$javascript->link('profiles');?>
-<?=$javascript->link('regions');?>
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+<?=$javascript->link(array('profiles','calendar'));?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
-<div id="Editinfo_title"><h1><span><?=$SCLanguages['my_information']?></span></h1></div>
+<div id="Editinfo_title">
+<h1 class="headers"><span class="l"></span><span class="r"></span><b><?=$SCLanguages['my_information']?></b></h1></div>
 <div id="Edit_box">
   <div id="Edit_info">
 <form action="" name="EditUserInfoForm" id="EditUserInfoForm" method="POST" onsubmit="return:false;">

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: index.ctp 1841 2009-05-27 06:51:37Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -47,7 +47,7 @@
 <?}?>
 <!--Products Processing List End-->
 <div class="pagers" style="position:relative">
-<?php //echo $this->element('pagers',array('cache'=>'+0 hour'));?>
+<?php echo $this->element('pagers',array('cache'=>'+0 hour'));?>
 </div>
 </div>
 	

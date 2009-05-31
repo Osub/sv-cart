@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: category_articles_controller.php 1215 2009-05-06 05:46:48Z huangbo $
+ * $Id: category_articles_controller.php 1841 2009-05-27 06:51:37Z huangbo $
 *****************************************************************************/
 class  CategoryArticlesController extends AppController {
     var $name = 'CategoryArticles';
@@ -42,8 +42,8 @@ class  CategoryArticlesController extends AppController {
 	        $this->Category->set_locale($this->locale);
 	        $cat_detail=$this->Category->findbyid($cat_id);
         	if(empty($cat_detail)){
-	       	 $this->pageTitle = $this->languages['category_not_exist']." - ".$this->configs['shop_title'];
-			 $this->flash($this->languages['category_not_exist'],"/",5);
+	       	 $this->pageTitle = $this->languages['classificatory'].$this->languages['not_exist']." - ".$this->configs['shop_title'];
+			 $this->flash($this->languages['classificatory'].$this->languages['not_exist'],"/",5);
 			 $flag = 0;
         	}
         }
@@ -60,14 +60,14 @@ class  CategoryArticlesController extends AppController {
             $total = count($hot_list);
             $sortClass='Product';
         }else{
-            $condition = " ArticleCategory.category_id ='$cat_id' ";
+            $condition = " ArticleCategory.category_id =".$cat_id ;
             $total = $this->ArticleCategory->findCount($condition,0);
             $sortClass='Product';
         }
 		$now = date("Y-m-d H:i:s");
        	$yestoday = date("Y-m-d H:i:s",strtotime ("-1 day"));
        	$filter = "1=1";
-        $filter .= " and  Article.status = 1 and Article.created <= '".$now."' and  Article.created >='".$yestoday."'";     	
+        $filter .= " and  Article.status = '1' and Article.created <= '".$now."' and  Article.created >='".$yestoday."'";     	
         $this->Article->set_locale($this->locale);
        	$today = $this->Article->findall($filter);
 		$this->set("today",count($today));        

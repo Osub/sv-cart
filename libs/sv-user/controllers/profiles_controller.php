@@ -9,8 +9,9 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: profiles_controller.php 1028 2009-04-24 12:23:26Z huangbo $
+ * $Id: profiles_controller.php 1841 2009-05-27 06:51:37Z huangbo $
 *****************************************************************************/
+uses('sanitize');		
 class ProfilesController extends AppController {
 
 	var $name = 'Profiles';
@@ -109,9 +110,13 @@ class ProfilesController extends AppController {
 	}
 	
 	function edit_profiles(){
+		$mrClean = new Sanitize();
 		if($this->RequestHandler->isPost()){
 			$address=(array)json_decode(StripSlashes($_POST['address']));
 			$user=(array)json_decode(StripSlashes($_POST['user']));
+			if($user['birthday'] == ''){
+				unset($user['birthday']);
+			}
 			$info=$_POST['info'];
 			$info_arr = explode(",",$info);
 			$this->User->save($user); 

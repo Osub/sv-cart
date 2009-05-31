@@ -12,23 +12,19 @@
  * $Id: checkout_point.ctp 1190 2009-05-05 04:58:22Z huangbo $
 *****************************************************************************/
 ?>
-<table cellpadding="0" cellspacing="0" class="address_list" id="checkout_shipping_choice">
+<table cellpadding="0" cellspacing="0" class="address_list" id="checkout_shipping_choice" style="width:97.5%;">
 <tr class="list">
 <td width="34%" height="25" valign="middle" class="bewrite">
 <div class="btn_list" style="padding-top:10px;">
-<p class="float_l" style="padding:1px 4px 0 20px;*margin-top:-2px;">
-<span id="order_note_value" style="display:none">
-</span>
+<span id="order_note_value" style="display:none"></span>
 <span id="order_note_textarea">
-<textarea name="order_note" id="order_note_add" class="green_border" style="width:340px;overflow-y:scroll;vertical-align:top" onblur="javascript:add_remark();" ></textarea>
+<textarea name="order_note" rows="3" id="order_note_add" class="green_border" style="width:90%;overflow-y:scroll;vertical-align:top" onblur="javascript:add_remark();" ></textarea>
 </span>
 
-</p><br/><br/><br/><br/>
-<span id="remark_msg" style='padding:1px 4px 0 20px;*margin-top:-2px;color:red'></span>
-<div style="padding:2px 4px 0 160px;*margin-top:-2px;">
-</div>
+<p id="remark_msg" style='padding:1px 4px 0 20px;*margin-top:-2px;color:red'><br /></p>
 </div>
 </td>
-<td width="36%" height="25" valign="middle" class="bewrite"><?=$SCLanguages['if_requirements_in_orders']?><br/><?=$SCLanguages['remark_here']?><br /><br/>
+<td width="36%" height="25" valign="middle" class="handel">
+	<div valign="middle"  style="padding-left:20px;"><?=$SCLanguages['if_requirements_in_orders']?><br/><?=$SCLanguages['remark_here']?></div></td>
 </tr>
 </table>

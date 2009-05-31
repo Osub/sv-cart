@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: core.php 1329 2009-05-11 11:29:59Z huangbo $
+ * $Id: core.php 1732 2009-05-25 12:03:32Z huangbo $
 *****************************************************************************/
 
 	Configure::write('debug', 0);
@@ -25,11 +25,13 @@
 	Configure::write('Session.timeout', '120');
 	Configure::write('Session.start', true);
 	Configure::write('Session.checkAgent', true);
-	Configure::write('Security.level', 'high');
+	Configure::write('Security.level', 'medium');
 	Configure::write('Security.salt', 'a1b9f79d12e5d1f3db8393165155b839');
 //	Configure::write('Asset.filter.css', 'css.php');
 //	Configure::write('Asset.filter.js', 'custom_javascript_output_filter.php');
 //	Configure::write('Acl.classname', 'DbAcl');
 //	Configure::write('Acl.database', 'default');
 	Cache::config('default', array('engine' => 'File'));
+	
+		Configure::write('MinifyAsset',true);
 ?>

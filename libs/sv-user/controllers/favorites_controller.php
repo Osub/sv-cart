@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: favorites_controller.php 899 2009-04-22 15:03:02Z huangbo $
+ * $Id: favorites_controller.php 1908 2009-05-31 14:36:16Z huangbo $
 *****************************************************************************/
 class FavoritesController extends AppController {
 	var $name = 'Favorites';
@@ -97,6 +97,10 @@ class FavoritesController extends AppController {
 	     $page= $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass);
 	  	  //$this->Product->set_locale($this->locale);
 	  	  $fav_products=$this->Product->findAll($condition,'',"Product.$orderby","$rownum",$page);
+		  foreach($fav_products as $k=>$v){
+			 $fav_products[$k]['Product']['shop_price'] = $this->Product->locale_price($v['Product']['id'],$v['Product']['shop_price'],$this);
+		  }	  	  
+	  	  
 	     }
 	  else{
 	  	  $fav_products=array();

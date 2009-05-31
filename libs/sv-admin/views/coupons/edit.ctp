@@ -9,11 +9,11 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: edit.ctp 1201 2009-05-05 13:30:17Z huangbo $
+ * $Id: edit.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ?>
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+
+
 <?=$javascript->link('coupon');?>
 <div class="content">
 <?php  echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>

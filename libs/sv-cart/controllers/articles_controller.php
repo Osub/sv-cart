@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: articles_controller.php 1162 2009-04-30 11:17:42Z huangbo $
+ * $Id: articles_controller.php 1902 2009-05-31 13:56:19Z huangbo $
 *****************************************************************************/
 
 class   ArticlesController extends AppController {
@@ -99,8 +99,12 @@ class   ArticlesController extends AppController {
 				$article_list_temp[15] = array();
 				$article_list_temp[16] = array();
 				$news['Article_list'] = $article_list_temp[$news['Category']['id']];
-				$actives_news['Article_list']=$article_list_temp[$actives_news['Category']['id']];
-				$wondeful_news['Article_list']=$article_list_temp[$wondeful_news['Category']['id']];
+				if(isset($actives_news['Category']['id']) &&  isset($article_list_temp[$actives_news['Category']['id']])){
+					$actives_news['Article_list']=$article_list_temp[$actives_news['Category']['id']];
+				}
+				if(isset($wondeful_news['Category']['id']) && isset($article_list_temp[$wondeful_news['Category']['id']])){
+					$wondeful_news['Article_list']=$article_list_temp[$wondeful_news['Category']['id']];
+				}
 				$brands = array();
 			    $this->set('categories_tree',$all_subcat['tree']);
 			    $this->set('category_type','A'); //判断是文章
@@ -175,6 +179,9 @@ class   ArticlesController extends AppController {
 				//商品详细
 				$this->Product->set_locale($this->locale);
 				$product_list = $this->Product->get_list($product_id);
+				foreach($product_list as $k=>$v){
+					$product_list[$k]['Product']['shop_price'] = $this->Product->locale_price($v['Product']['id'],$v['Product']['shop_price'],$this);
+				}
 				//pr($product_list);
 				$this->set('product_list',$product_list);
 			}
@@ -267,7 +274,7 @@ class   ArticlesController extends AppController {
 		$this->layout = '/rss/articles';
 		
 		$this->Article->set_locale($this->locale);
-        $article_list = $this->Article->find('all',array('conditions'=>array('ArticleCategory.category_id'=>$category_id,'Article.status'=>1),'limit'=>10));
+        $article_list = $this->Article->find('all',array('conditions'=>array('ArticleCategory.category_id'=>$category_id,'Article.status'=>1),'limit'=>10,'order'=>'Article.created desc'));
        	
        	$this->set('dynamic',"文章动态"); 
        	$this->set('this_config',$this->configs); 

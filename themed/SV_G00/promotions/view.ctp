@@ -9,12 +9,12 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: view.ctp 1153 2009-04-30 08:55:43Z huangbo $
+ * $Id: view.ctp 1732 2009-05-25 12:03:32Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 	<div id="Products_box">
-    	<h1><b><? echo $promotion['PromotionI18n']['title']; ?></b></h1>
+<h1 class="headers"><span class="l"></span><span class="r"></span><b><? echo $promotion['PromotionI18n']['title']; ?></b></h1>
         <div id="Edit_box">
   <div id="article_info">
     
@@ -52,10 +52,10 @@
 			echo $html->tag('li',$html->para('pic',
 				 $html->link(
 				 $html->image("{$v['Product']['img_thumb']}",array('width'=>'108','height'=>'108',))
-				 ,"/products/{$v['Product']['id']}",'',false,false)
+				 ,$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),'',false,false)
 				 ,array(),false)
 				 .$html->para('info',
-				 $html->tag('span',$html->link("{$v['ProductI18n']['name']}","/products/{$v['Product']['id']}",array(),false,false),'name')
+				 $html->tag('span',$html->link("{$v['ProductI18n']['name']}",$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false),'name')
 				 .$html->tag('span',$html->tag('font',"{$v['Product']['shop_price']}",array('color'=>'#F9630C')),'Price')		 		
 				 ,array(),false),'');				
 			}

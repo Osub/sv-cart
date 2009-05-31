@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1273 2009-05-08 16:49:08Z huangbo $
+ * $Id: index.ctp 1732 2009-05-25 12:03:32Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
@@ -18,7 +18,7 @@
 <h1 class="headers"><span class="l"></span><span class="r"></span>
 <p class="address btn_list clear_all">
 <?if(isset($svcart['products']) && sizeof($svcart['products'])>0){?>
-	<?=$html->link("<span>".$SCLanguages['delete'].$SCLanguages['all'].$SCLanguages['products']."</span>","javascript:del_cart_product();",array("class"=>"amember"),false,false);?>
+	<?=$html->link("<span>".$SCLanguages['clear_out'].$SCLanguages['cart']."</span>","javascript:del_cart_product();",array("class"=>"amember"),false,false);?>
 	<?}?>
 	</p>	
 	
@@ -27,10 +27,51 @@
 <div class="Titles"></div>
 <div id="my_cart"><?php echo $this->element('cart_products', array('cache'=>'+0 hour'));?></div>
 </div>
+	
+	
+<!--促销begin -->
+<?if(isset($svcart['promotion']) || (isset($promotions) && sizeof($promotions)>0)){?>
+<div id="Balance_info" style="width:auto;">
+<div id="promotions" style="width:auto;">
+<?if(isset($svcart['promotion'])){?>
+<? echo $this->element('checkout_promotion_confirm', array('cache'=>'+0 hour'));?>
+<?}else if(isset($promotions) && count($promotions) > 0){?>
+<? echo $this->element('checkout_promotion', array('cache'=>'+0 hour'));?>
+<br/><br/>
+<?}?>
+</div>
+</div>
+<?}?>
+
+<!--促销end-->
+	
+	
+	
+	
+<?if(isset($svcart['products']) && sizeof($svcart['products'])>0){?>
+<!-- 订单备注-->	
+<?=$form->create('carts',array('action'=>'/checkout','name'=>'cart_info','type'=>'POST'));?>
+<div id="Balance_info" style="width:auto;">
+<div id="order_note" style="width:auto;">
+<p class="address btn_list">
+<span class="l"></span><span class="r"></span>
+<span id="change_remark" style="display:none">
+<a href="javascript:change_remark()" class="amember"><span><?=$SCLanguages['mmodify']?></span></a>
+</span>
+<?=$SCLanguages['order'].$SCLanguages['remark'];?>: 
+</p>
+<? echo $this->element('checkout_remark', array('cache'=>'+0 hour'));?><br />
+</div>	</div>	
+<!-- 订单备注-->	
+<?}?>
+	
+	
 <? if(isset($promotion_products) && sizeof($promotion_products)>0) { ?>
+<!-- PromotionProduct-->
 <ul class="content_tab">
 <li id="one1" class="hover"><span><b style="letter-spacing:1px;"><?=$SCLanguages['promotion'];?><?=$SCLanguages['products'];?></b></span></li>
 </ul>
+
 <?=$html->image('protion-top.gif',array('align'=>'absbottom'))?>
 <div id="Item_List" class="border_side" style="padding-bottom:5px;">
 <ul id="con_one_1" style="height:100%;overflow:hidden;">
@@ -38,13 +79,13 @@
 <li>
 <p class="pic">
 <?if($v['Product']['img_thumb'] != ""){?>
-<?=$html->link($html->image($v['Product']['img_thumb'],array("alt"=>$v['ProductI18n']['name'], "width"=>isset($SVConfigs['thumbl_image_width'])?$SVConfigs['thumbl_image_width']:108,"height"=>isset($SVConfigs['thumb_image_height'])?$SVConfigs['thumb_image_height']:108)),"/products/".$v['Product']['id']."/","",false,false);?> 
+<?=$html->link($html->image($v['Product']['img_thumb'],array("alt"=>$v['ProductI18n']['name'], "width"=>isset($SVConfigs['thumbl_image_width'])?$SVConfigs['thumbl_image_width']:108,"height"=>isset($SVConfigs['thumb_image_height'])?$SVConfigs['thumb_image_height']:108)),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),"",false,false);?> 
 <?}else{?>
-<?=$html->link($html->image("/img/product_default.jpg",array("alt"=>$v['ProductI18n']['name'], "width"=>isset($SVConfigs['thumbl_image_width'])?$SVConfigs['thumbl_image_width']:108,"height"=>isset($SVConfigs['thumb_image_height'])?$SVConfigs['thumb_image_height']:108)),"/products/".$v['Product']['id']."/","",false,false);?> 
+<?=$html->link($html->image("/img/product_default.jpg",array("alt"=>$v['ProductI18n']['name'], "width"=>isset($SVConfigs['thumbl_image_width'])?$SVConfigs['thumbl_image_width']:108,"height"=>isset($SVConfigs['thumb_image_height'])?$SVConfigs['thumb_image_height']:108)),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),"",false,false);?> 
 <?}?>
 </p>
 <p class="info">
-<span class="name carts"><?=$html->link($v['ProductI18n']['name'],"/products/".$v['Product']['id']."/");?></span>
+<span class="name carts"><?=$html->link($v['ProductI18n']['name'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?></span>
 <span class="Price"><?=$SCLanguages['our_price'];?>：<font color="#ff0000">
         <?if(isset($v['Product']['user_price']) && isset($SVConfigs['show_member_level_price']) && $SVConfigs['show_member_level_price'] >0 && isset($_SESSION['User']['User'])){?>	
 		<?=$svshow->price_format($v['Product']['user_price'],$SVConfigs['price_format']);?>	
@@ -59,6 +100,7 @@
 </ul>
 </div>
 <?=$html->image('protion-bottom.gif',array('align'=>'texttop'))?>
+<!-- PromotionProduct-->
 <?}?>
 <!-- 购物车没商品不显示 -->
 <div id="show_package">
@@ -70,11 +112,13 @@
 <!--   card  end    -->
 
 <div id="buyshop_btn">
-<p>
-<?=$html->link("<span>".$SCLanguages['continue'].$SCLanguages['buy']."</span>","/",array("class"=>"last-shop"),false,false);?>
+<?=$html->link("<span>".$SCLanguages['continue'].$SCLanguages['buy']."</span>","/",array('class'=>'green_3 last-shop'),false,false);?>
+<div style='margin-left:600px;margin-top:2px;'>
 <?if(isset($svcart['products']) && sizeof($svcart['products'])>0){?>
-<?=$html->link("<span>".$SCLanguages['checkout']."<font face='宋体'>>></font></span>","/carts/checkout",array("class"=>"checkout"),false,false);?>
-
+<?=$html->link("<span >".$SCLanguages['checkout']."<font face='宋体'>>></font></span>","javascript:to_checkout();",array("class"=>"checkout"),false,false);?>
 <?}?>
-</p></div>
+</div>	
+<?=$form->end();?>
+	
+	</div>
 </div>

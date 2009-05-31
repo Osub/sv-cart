@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: checkout.ctp 1329 2009-05-11 11:29:59Z huangbo $
+ * $Id: checkout.ctp 1908 2009-05-31 14:36:16Z huangbo $
 *****************************************************************************/
 ?>
 <div class="Balance_alltitle">
@@ -22,7 +22,9 @@
 <div id="globalBalance">
 <p class="buy_title"><?php echo $SCLanguages['purchased_products'];?>:</p>
 <p class="list_title">
-<span class="name"><?=$SCLanguages['products'];?><?=$SCLanguages['name'];?></span><span class="attribute"><?=$SCLanguages['products'];?><?=$SCLanguages['attribute'];?></span>
+<span class="name"><?=$SCLanguages['products'];?><?=$SCLanguages['names'];?></span>
+<span class="attribute"><?=$SCLanguages['products'];?><?=$SCLanguages['attribute'];?>
+</span>
 <?if(isset($SVConfigs['show_market_price']) && $SVConfigs['show_market_price'] == 1){?>
 <span class="martprice"><?php echo $SCLanguages['market_price'];?></span>
 <?}?>
@@ -34,12 +36,16 @@
 <?foreach($svcart['products'] as $i=>$p){?>
 <p class="list_title lists">
 <span class="pic"></span>
-<span class="name"><?=$html->link($p['ProductI18n']['name'],"/products/".$i."/","",false,false);?></span>
+<span class="name"><?=$html->link($p['ProductI18n']['name'],$svshow->sku_product_link($i,$p['ProductI18n']['name'],$p['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?></span>
 <span class="attribute">
 <?if(isset($p['is_promotion'])){?>
 <? if($p['is_promotion']==1) echo $SCLanguages['promotion'].$SCLanguages['products']; else echo $SCLanguages['normal'].$SCLanguages['products'];?>
 <?}else{?>
 <?php echo $SCLanguages['normal'].$SCLanguages['products'];?>
+<?}?>
+&nbsp;
+<?if(isset($p['attributes'])){?>
+( <?=$p['attributes'];?> )
 <?}?>
 </span>
 <?if(isset($SVConfigs['show_market_price']) && $SVConfigs['show_market_price'] == 1){?>
@@ -70,7 +76,7 @@
 <?foreach($svcart['packagings'] as $i=>$p){?>
 <p class="list_title lists">
 <span class="pic"></span>
-<span class="name"><?=$html->link($p['PackagingI18n']['name'],"/carts/checkout/#","",false,false);?></span>
+<span class="name"><?=$p['PackagingI18n']['name'];?></span>
 <span class="attribute"><?//php echo $SCLanguages['package_fee'];?>
 <?if(isset($p['Packaging']['note'])){?>
 	<?=$p['Packaging']['note'];?>	
@@ -90,7 +96,7 @@
 <?foreach($svcart['cards'] as $i=>$p){?>
 <p class="list_title lists">
 <span class="pic"></span>
-<span class="name"><?=$html->link($p['CardI18n']['name'],"/carts/checkout/#","",false,false);?></span>
+<span class="name"><?=$p['CardI18n']['name'];?></span>
 <span class="attribute"><?//php echo $SCLanguages['card_fee'];?>
 <?if(isset($p['Card']['note'])){?>
 <?=$p['Card']['note'];?>	
@@ -106,6 +112,32 @@
 	</span></p>
 <?}?>
 <?}?>
+	
+<? if(isset($svcart['promotion']['type']) && $svcart['promotion']['type'] == 2 && isset($svcart['Product_by_Promotion']) && sizeof($svcart['Product_by_Promotion'])>0){?>
+<?foreach($svcart['Product_by_Promotion'] as $k=>$value){?>
+<p class="list_title lists">
+<span class="pic"></span>
+<span class="name"><?=$value['ProductI18n']['name']?></span>
+<span class="attribute"><?//php echo $SCLanguages['card_fee'];?>
+<?=$SCLanguages['favorable_products']?>
+</span><span class="productsprice"></span>
+
+<span class="martprice">
+<?=$svshow->price_format($value['Product']['now_fee'],$SVConfigs['price_format']);?>	
+	</span>
+<span class="number">1</span>
+<span class="sum">
+<?=$svshow->price_format($value['Product']['now_fee'],$SVConfigs['price_format']);?>	
+	</span></p>
+<?}?>
+<?}?>
+
+
+
+	
+	
+	
+	
 <p class="buy_allmeny"><?php echo $SCLanguages['amount'].$SCLanguages['total'];?> 
 <?=$svshow->price_format($svcart['cart_info']['sum_subtotal'],$SVConfigs['price_format']);?>	
 <?if($svcart['cart_info']['discount_price'] > 0){?>
@@ -118,7 +150,8 @@
 <br />
 		<?if(isset($send_point['order_smallest'])){?>
 				<?if($send_point['order_smallest'] > 0){?>
-		<br />	<?=$SCLanguages['more_than_order_total']?><?=$SCLanguages['present_points']?> ： <?=$send_point['order_smallest']?> <?=$SCLanguages['point_unit'];?>
+		<br />	<?=$SCLanguages['more_than_order_total']?> <?=$svshow->price_format($send_point['order_smallest'],$SVConfigs['price_format']);?>	
+  <?=$SCLanguages['present_points']?> ：<?=$send_point['order_gift_points']?> <?=$SCLanguages['point_unit'];?>
 		<?}?>
 		<?}?>
 		<?if(isset($send_point['order_gift_points'])){?>
@@ -156,8 +189,9 @@
 <?=$javascript->link('cart');?>
 <br />
 <div id="Balance_info">
-<!--促销begin -->
-<div id="promotions">
+		
+<!--促销begin 暂时取消-->
+<div id="promotions" style="display:none">
 <?if(isset($svcart['promotion'])){?>
 <? echo $this->element('checkout_promotion_confirm', array('cache'=>'+0 hour'));?>
 <?}else if(isset($promotions) && count($promotions) > 0){?>
@@ -166,11 +200,13 @@
 <?}?>
 </div>
 <!--促销end-->
+
+
 <!--Address-->
 <div id="address_shipping" >
 <div id="checkout_address">
 <?if(isset($svcart['address'])){?>
-<?if($svcart['address']['zipcode'] != ""){?>
+<?if($svcart['address']['zipcode'] != "" || $all_virtual == 1){?>
 <? echo $this->element('checkout_address_confirm', array('cache'=>'+0 hour'));?>
 <?}else{?>
 <? echo $this->element('checkout_address_update', array('cache'=>'+0 hour'));?>
@@ -180,6 +216,45 @@ show_two_regions(regions_add);
 </script>
 <?}?>
 <?}else if ($checkout_address =="new_address"){?>
+<?if($all_virtual){?>
+<p class="address btn_list border_bottom" style="padding-bottom:0;">
+<a href="javascript:checkout_new_virtual_address();" class="amember"><span><?=$SCLanguages['add']?></span></a>
+<span class="l"></span><span class="r"></span><?php echo $SCLanguages['consignee'].$SCLanguages['information'];?>:
+</p>
+<table cellpadding="0" cellspacing="0" class="address_table" border=0 style="width:97%;margin:0 auto;border:none">
+<tr>
+<td class="lan-name">&nbsp;<?=$SCLanguages['address'];?><?=$SCLanguages['label'];?>:</td>
+<td class="lan-info"><input name="data['address']['name']" id="AddressName" value="">&nbsp;<font id="add_address_name" color="red">*</font></td>
+</tr>
+
+<tr>
+<td class="lan-name">&nbsp;<?php echo $SCLanguages['consignee'].$SCLanguages['name'];?>:</td>
+<td class="lan-info"><input name="data['address']['consignee']" id="AddressConsignee" value="">&nbsp;<font id="add_address_consignee" color="red">*</font></td>
+</tr>
+<tr>
+<td class="lan-name">&nbsp;<?php echo $SCLanguages['mobile'];?>:</td><td class="lan-info"><input name="data['address']['mobile']" onKeyUp="is_int(this);" id="AddressMobile" value="">&nbsp;<font id="add_address_mobile" color="red">*</font></td>
+</tr>
+<tr>
+<td class="lan-name">&nbsp;<?php echo $SCLanguages['telephone'];?>:</td><td class="lan-info">
+
+<input style="width:30px;" type="text" name="user_tel0" id="add_tel_0" onKeyUp="is_int(this);" maxLength="30" size="6" />
+-<input type="text" name="user_tel1" id="add_tel_1" style="width:80px;" onKeyUp="is_int(this);" size="10" />
+-<input style="width:30px;" type="text" name="user_tel2" id="add_tel_2" onKeyUp="is_int(this);" size="6" />
+&nbsp;<font id="add_address_telephone" color="red">*</font></td>
+</tr>
+<tr>
+<td class="lan-name">&nbsp;<?php echo $SCLanguages['email'];?>:</td><td class="lan-info"><input name="data['address']['email']" id="AddressEmail" value="">&nbsp;<font id="add_address_email" color="red">*</font></td>
+</tr>
+<tr class='btn_list'>
+<td colspan="1" align="right" style="*padding-top:8px;">
+
+</td>
+</tr>
+</table>
+
+
+
+<?}else{?>
 <p class="address btn_list border_bottom" style="padding-bottom:0;">
 <a href="javascript:checkout_new_address();" class="amember"><span><?=$SCLanguages['add']?></span></a>
 <span class="l"></span><span class="r"></span><?php echo $SCLanguages['consignee'].$SCLanguages['information'];?>:
@@ -219,7 +294,9 @@ show_two_regions(regions_add);
 </table>
 <script type="text/javascript">
 show_regions("");
-</script>
+</script>	
+<?}?>
+
 <?}else if (isset($checkout_address) && $checkout_address == "confirm_address"){?>
 <? echo $this->element('checkout_address', array('cache'=>'+0 hour'));?>
 <?}else if (isset($checkout_address) && $checkout_address == "select_address"){?>
@@ -252,10 +329,10 @@ show_regions("");
 <!--Shipping-->
 <?=$form->create('carts',array('action'=>'/done','name'=>'cart_info','type'=>'POST'));?>
 <div id="checkout_shipping" <?php if($all_virtual){?>style="display:none"<?php }?>>
-<?if(isset($svcart['shipping'])){?>
+<?if(isset($svcart['shipping']['shipping_fee'])){?>
 <p class="address btn_list" id="address_btn_list">
 <span class="l"></span><span class="r"></span>
-<?if(!isset($svcart['shipping']['not_show_change'])){?>
+<?if(!isset($svcart['shipping']['not_show_change']) || $svcart['shipping']['not_show_change'] == '0'){?>
 <a href="javascript:change_shipping();" class="amember"><span><?=$SCLanguages['mmodify']?></span></a>
 <?}?>
 <?php echo $SCLanguages['shipping_method'];?>:</p>
@@ -283,10 +360,10 @@ show_regions("");
 
 <!--Payment-->
 <div id="payment">
-<?if(isset($svcart['payment'])){?>
+<?if(isset($svcart['payment']['payment_fee'])){?>
 <p class="address btn_list">
 <span class="l"></span><span class="r"></span>
-<?if(!isset($svcart['payment']['not_show_change'])){?>
+<?if(!isset($svcart['payment']['not_show_change']) || $svcart['payment']['not_show_change'] == '0'){?>
 <a href="javascript:change_payment()" class="amember"><span><?=$SCLanguages['mmodify']?></span></a>
 <?}?>
 <?php echo $SCLanguages['payment'];?>:
@@ -353,6 +430,36 @@ show_regions("");
 <!-- order_note start -->	
 <div id="order_note">
 
+<?if(isset($svcart['order_note'])){?>
+<p class="address btn_list">
+<span class="l"></span><span class="r"></span>
+<span id="change_remark">
+<a href="javascript:change_remark()" class="amember"><span><?=$SCLanguages['mmodify']?></span></a>
+</span>
+<table cellpadding="0" cellspacing="0" class="address_list" id="checkout_shipping_choice" style="width:97.5%;border:1px solid blue">
+<tr class="list">
+<td width="34%" height="25" valign="middle" class="bewrite">
+<div class="btn_list" style="padding-top:10px;">
+<p class="float_l" style="padding:1px 4px 0 20px;*margin-top:-2px;">
+<span id="order_note_value" >
+<?=$svcart['order_note']?>
+</span>
+<span id="order_note_textarea" style="display:none">
+<textarea name="order_note" id="order_note_add" class="green_border" style="width:340px;overflow-y:scroll;vertical-align:top" onblur="javascript:add_remark();" ><?=$svcart['order_note']?></textarea>
+</span>
+
+</p><br/><br/><br/><br/>
+<span id="remark_msg" style='padding:1px 4px 0 20px;*margin-top:-2px;color:red'></span>
+<div style="padding:2px 4px 0 160px;*margin-top:-2px;">
+</div>
+</div>
+</td>
+<td width="36%" height="25" valign="middle" class="handel">
+	<div valign="middle"  style="padding-left:20px;"><?=$SCLanguages['if_requirements_in_orders']?><br/><?=$SCLanguages['remark_here']?></div><br /><br/>
+</td>
+</tr>
+</table>	
+<?}else{?>
 <p class="address btn_list">
 <span class="l"></span><span class="r"></span>
 <span id="change_remark" style="display:none">
@@ -361,6 +468,7 @@ show_regions("");
 <?=$SCLanguages['order'].$SCLanguages['remark'];?>: 
 </p>
 <? echo $this->element('checkout_remark', array('cache'=>'+0 hour'));?>
+<?}?>
 </div>
  <!--order_note end -->  
 <p class="address">

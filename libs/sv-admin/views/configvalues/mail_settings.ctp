@@ -146,7 +146,7 @@ if($info['Config']['type']=="select"){?>
  <input name="data[<?=$i;?>][id]" type="hidden" value="<?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['id'])) echo $info['ConfigI18n'][$v['Language']['locale']]['id'];?>">
  <td>
  <?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['options'])){$options = $info['ConfigI18n'][$v['Language']['locale']]['options'];foreach($options as $option){$text =explode(":",$option); if(@$text[1]!=""){?>
- <label><input type="radio" name="data[<?=$i;?>][value]" value="<?php echo $text[0];?>" <?php if(@$text[0]==$info['ConfigI18n'][$v['Language']['locale']]['value']) echo 'checked';?>/><?php if(@$text[1]){ echo $text[1];}?></label>
+ <label><input type="radio" id="<?=$info['Config']['code'].$v['Language']['locale']?>" name="data[<?=$i;?>][value]" value="<?php echo $text[0];?>" <?php if(@$text[0]==$info['ConfigI18n'][$v['Language']['locale']]['value']) echo 'checked';?>/><?php if(@$text[1]){ echo $text[1];}?></label>
  <?php }}?><?=$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:config_help({$info['ConfigI18n'][$v['Language']['locale']]['id']})",'',false,false)?><span id="config_help_<?=$info['ConfigI18n'][$v['Language']['locale']]['id']?>" style="visibility :hidden" ><?=$info['ConfigI18n'][$v['Language']['locale']]['description']?>
  </td>
  <?} ?>
@@ -171,7 +171,7 @@ if($info['Config']['type']=="select"){?>
  <?=$html->link($html->image('select_img.gif',$title_arr['select_img'],array("align"=>"absmiddle")),"javascript:img_sel(".$i.",'others')",'',false,false)?>
  </td>
  <td>
- <?=@$html->image("{$info['ConfigI18n'][$v['Language']['locale']]['value']}",array('id'=>'logo_thumb_img_'.$i,'height'=>'150'))?>
+ <?=@$html->image("{$info['ConfigI18n'][$v['Language']['locale']]['value']}",array('id'=>'logo_thumb_img_'.$i,'height'=>'150','style'=>'display:none'))?>
 </td>
  <td valign="middle">
  <?=@$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:config_help({$info['ConfigI18n'][$v['Language']['locale']]['id']})",'',false,false)?>
@@ -245,8 +245,20 @@ function test_email(){
 	var smtp_pass = document.getElementById('smtp_pass'+now_locale);
 	var smtp_host = document.getElementById('smtp_host'+now_locale);
 	var smtp_user = document.getElementById('smtp_user'+now_locale);
+	var smtp_port = document.getElementById('smtp_port'+now_locale);
+	var smtp_ssl = document.getElementById('smtp_ssl'+now_locale);
+	if(!smtp_ssl.checked){
+		if(smtp_ssl.value==1){
+			smtp_ssl_value = 0;
+		}else{
+			smtp_ssl_value = 1;
+		
+		}
+	}else{
+		smtp_ssl_value = smtp_ssl.value;
+	}
 	
-	var sUrl = webroot_dir+"configvalues/test_email/"+email_addr.value+"/"+smtp_host.value+"/"+smtp_user.value+"/"+smtp_pass.value;
+	var sUrl = webroot_dir+"configvalues/test_email/"+email_addr.value+"/"+smtp_host.value+"/"+smtp_user.value+"/"+smtp_pass.value+"/"+smtp_port.value+"/"+smtp_ssl_value;
 	
 	var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, test_email_callback);
 
@@ -258,7 +270,7 @@ var test_email_Success = function(o){
 	if(o.responseText==1){
 		layer_dialog_show("恭喜！测试邮件已成功发送到 "+document.getElementById('email_addr').value,"",3);
 	}else{
-		layer_dialog_show("邮件服务器验证帐号或密码不正确","",3);
+		layer_dialog_show(o.responseText,"",3);
 	}
 }
 	

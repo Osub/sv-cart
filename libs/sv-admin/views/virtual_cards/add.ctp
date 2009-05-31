@@ -18,13 +18,13 @@
 <?=$html->css('slider');?>
 <?=$html->css('color_font');?>
 
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+
+
 <?=$javascript->link('/../js/yui/dragdrop-min.js');?>
 <?=$javascript->link('/../js/yui/button-min.js');?>
 <?=$javascript->link('/../js/yui/slider-min.js');?>
 <?=$javascript->link('/../js/yui/colorpicker-min.js');?>
-<?=$javascript->link('/../js/yui/element-beta-min.js');?>
+
 <?=$javascript->link('color_picker');?>
 <?=$javascript->link('product');?>
 <?php echo $form->create('virtual_cards',array('action'=>'add','name'=>'thisForm','id'=>'thisForm','OnSubmit'=>'return virtual_cards_check();'));?>
@@ -173,8 +173,7 @@
 					<input type="hidden" id="productrank_id<?=$k?>" name="productrank_id[<?=$k?>]" value="<?echo @$v['UserRank']['productrank_id']?>"   />
 		     <?}}?></dd>
 		</dl>
-	<?}?>
-		<dl><dt>市场售价：</dt><dd><input type="text" class="text_inputs" id="ProductMarketPrice" name="data[Product][market_price]" value=""/><input class="pointer" type="button" value="取整数" /></dd></dl>
+	<?}?>		<dl><dt>市场售价：</dt><dd><input type="text" class="text_inputs" id="ProductMarketPrice" name="data[Product][market_price]" value=""/><input class="pointer" type="button" value="取整数" /></dd></dl>
 		<dl><dt>赠送积分数：</dt><dd><input type="text" class="text_inputs" name="data[Product][point]" /></dd></dl>
 		<dl><dt><?=$html->image('help_icon.gif',array('align'=>'absmiddle'))?>积分购买额度：</dt><dd><input type="text" class="text_inputs" name="data[Product][point_fee]" /><br />购买该商品时最多可以使用多少的积分</dd></dl>
 	<dl style="padding:3px 0;*padding:4px 0;">
@@ -271,18 +270,20 @@
 	  <p class="add_photo"><font face="宋体">[<?=$html->link("+","javascript:;",array("onclick"=>"addImg()"),false,false);?>]</font></p>
 	  <div id="Pro_img_div">
 		<p class="add_photo">
-		图片描述 : <input type="text" name="img_desc[]" id="img_desc[]"/>
+		图片描述 : 
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+		  <?=$html->image($v['Language']['img01'])?><input type="text" name="img_desc[<?=$v['Language']['locale']?>][]" id="img_desc[]"/>
+<?}}?>
 		排序: <input type="text" name="img_sort[]" id="img_sort[]" size="2"/>
 		<span id="new_file">上传文件 : <input type="text" name="img_url[]" id="upload_img_text_1"/>
 <?=$html->link($html->image('select_img.gif',array("align"=>"absmiddle","height"=>"23")),"javascript:img_sel(1,'products')",'',false,false)?></span></p>
-		  
 <li>
-	<?=@$html->image("",array('id'=>'logo_thumb_img_1','height'=>'150'))?>
+	<?=@$html->image("",array('id'=>'logo_thumb_img_1','height'=>'150','style'=>'display:none'))?>
 
 		  </li>
 
 		</div>
-
 		<li><div id="other_imgs"></div></li>
 
 		</div>
@@ -290,12 +291,15 @@
 	</div>
 <!--用来创造要替换的字符串start-->
   	<span id="imgupload" style="display:none">
-	<p class="add_photo">
-		图片描述 : <input type="text" name="img_desc[]" id="img_desc[]"/>
+	<p class="add_photo">图片描述 : 
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+		  <?=$html->image($v['Language']['img01'])?><input type="text" name="img_desc[<?=$v['Language']['locale']?>][]" id="img_desc[]"/>
+<?}}?>
 		排序: <input type="text" name="img_sort[]" id="img_sort[]" size="2"/>
 		<span id="new_file">上传文件 : <input type="text" name="img_url[]" id="upload_img_text_&id&"/>
 <?=$html->link($html->image('select_img.gif',array("align"=>"absmiddle","height"=>"23")),"javascript:img_sel(&id&,'products')",'',false,false)?></span></p>
-			  <?=@$html->image("",array('id'=>'logo_thumb_img_&id&','height'=>'150'))?>
+			  <?=@$html->image("",array('id'=>'logo_thumb_img_&id&','height'=>'150','style'=>'display:none'))?>
 
 
  

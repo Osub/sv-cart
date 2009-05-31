@@ -9,11 +9,11 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 943 2009-04-23 10:38:44Z huangbo $
+ * $Id: add.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?>
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+
+
 <?=$javascript->link('product');?>
 <div class="content">
 <?php  echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
@@ -74,30 +74,31 @@
 			<dd><input type="text" name="data[Promotion][start_time]" class="text_inputs" style="width:120px;" id="date" readonly="readonly"/><button  id="show" type="button"><?=$html->image('calendar.gif')?></button></dd></span></dl>
 		
 		<dl><dt>促销结束日期：</dt><span class="search_box" style="background:none;padding:0;border:0" >
-			<dd><input type="text" name="data[Promotion][end_time]" class="text_inputs" style="width:120px;" id="date2" readonly="readonly" /><button  id="show2" type="button"><?=$html->image('calendar.gif')?></button></dd></span></dl>
+			<dd><input type="text"  name="data[Promotion][end_time]" class="text_inputs" style="width:120px;" id="date2" readonly="readonly" /><button  id="show2" type="button"><?=$html->image('calendar.gif')?></button></dd></span></dl>
 			<dl><dt><?=$html->image('help_icon.gif',array('align'=>'absmiddle'))?>优惠方式：</dt>
-			<dd><select name="data[Promotion][type]">
+			<dd><select name="data[Promotion][type]" onchange="pagesizeq(this.options[this.options.selectedIndex].value)">
 				<option value="2"  >特惠品</option>
-				<option value="1"  >减免</option>
-				<option value="0"  >折扣</option>
+				<option value="0"  >减免</option>
+				<option value="1"  >折扣</option>
 				</select>&nbsp<input type="text"  class="text_inputs" name="data[Promotion][type_ext]" style="width:50px;"   /></dd>
 			</dl>
 				<dl><dt></dt>
 			<dd>当优惠方式为“享受赠品（特惠品）”时，<br />请输入允许买家选择赠品（特惠品）的最大数量，<br />数量为0表示不限数量；当优惠方式为“享受现金减免”时，<br />请输入现金减免的金额；当优惠方式为“享受价格折扣”时，<br />请输入折扣（1－99），如：打9折，就输入90。</dd>
 			</dl>
-				
+				<span  id="show_hide">
 					赠品（特惠品）<span id="tt">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span> 价格<br />
 						<span id="special_preference"></span>
 			<dl><dt>搜索并加入赠品：</dt>
 			<dd><input type="text" name="keywords" id="keywords" class="text_inputs" style="width:120px;" />
 			<input type="button" value="搜索" onclick="searchProducts();" />
 			<input type="hidden" name="brand_id" id="brand_id">
+			<input type="hidden" name="products_id" id="products_id" value="0" />
 			<input type="hidden" name="category_id" id="category_id">
 				<select name="source_select1" id="source_select1">
 				</select>
 				<input type="button" value="+" name="" onclick="special_preferences()" />
 			</dd></dl>
-		
+		</span>
 		<br /><br /><br /><br /><br />
 		
 	  </div>
@@ -155,4 +156,16 @@ function special_preferences(){
     }
 	
 }	
+function pagesizeq(s){
+	var show_hide = document.getElementById('show_hide');
+	var gg = document.getElementById('gg');
+	if( s!=2 ){
+		show_hide.style.display = "none";
+	}else{
+		show_hide.style.display = "block";
+		if(show_hide.innerHTML.length == 5){
+			show_hide.innerHTML = gg.innerHTML;
+		}
+	}
+}
 </script>

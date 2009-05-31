@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 943 2009-04-23 10:38:44Z huangbo $
+ * $Id: add.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -44,6 +44,12 @@
 		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input type="text" style="width:280px;" id="name<?=$v['Language']['locale']?>" name="data[LinkI18n][<?=$k?>][name]" /> <font color="#ff0000">*</font></span></p>
 <? }
 } ?>
+	<h2>友情链接描述：</h2>
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input type="text" style="width:280px;" id="name<?=$v['Language']['locale']?>" name="data[LinkI18n][<?=$k?>][description]"  /> <font color="#ff0000">*</font></span></p>
+<? }
+} ?>
 		
 		
 		<h2>连接地址：</h2>
@@ -60,7 +66,7 @@
 <br /><span style="margin-left:32px;color:#646464;">请上传图片，做为链接的LOGO！</span>
 
 <br />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-	<?=@$html->image('',array('id'=>'logo_thumb_img_'.$k,'height'=>'150'))?>
+	<?=@$html->image('',array('id'=>'logo_thumb_img_'.$k,'height'=>'150','style'=>'display:none'))?>
 
 
 			</p>

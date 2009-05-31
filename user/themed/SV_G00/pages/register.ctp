@@ -9,13 +9,10 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: register.ctp 1140 2009-04-29 09:39:40Z huangbo $
+ * $Id: register.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ?>
-<?=$javascript->link('/../js/yui/button-min.js');?> 
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
-<?=$javascript->link('register');?>
+<?=$javascript->link(array('calendar','register'));?>
 <!--注册步骤一 End-->
 <div id="reguser_box_user" style="position:absolute;visibility:hidden;">
 <p><?=$html->image('reg_top.gif')?></p>
@@ -31,23 +28,31 @@
 <form name="user_info" id="user_info" method="post" action="<?=$this->webroot;?>act_register/">
 <ul>
   <li>
-    <dd class="l"><?=$SCLanguages['member']?>：</dd>
-    <dt><input name="name" id="name" type="text">&nbsp;<font color="red">*</font></dt>
+    <dd class="l"><?=$SCLanguages['member']?><?=$SCLanguages['names']?>：</dd>
+    <dt><input name="name" id="name" type="text">&nbsp;
+    <span id="name_loading" style='display:none'><?=$html->image('regions_loader.gif',array('class'=>'vmiddle'));?></span>
+    <font color="red">*</font></dt>
     <dd id="name_msg"><?=$SCLanguages['3_20_characters']?>。 </dd>
     </li>
   <li>
   <dd class="l"><?=$SCLanguages['password']?>：</dd>
-  <dt><input name="password" id="password" type="password" />&nbsp;<font color="red">*</font></dt>
+  <dt><input name="password" id="password" type="password" />&nbsp;
+  <span id="password_loading" style='display:none'><?=$html->image('regions_loader.gif',array('class'=>'vmiddle'));?></span>
+ 	<font color="red">*</font></dt>
   <dd><span id="password_msg"><?=$SCLanguages['password_is_consist']?>。</span><span id="span_unick" class="z_c"></span></dd>
   </li>
   <li>
     <dd class="l"><?=$SCLanguages['affirm'].$SCLanguages['password']?>：</dd>
-    <dt><input name="password_confirm" id="password_confirm" type="password" />&nbsp;<font color="red">*</font></dt>
+    <dt><input name="password_confirm" id="password_confirm" type="password" />&nbsp;
+  <span id="password_confirm_loading" style='display:none'><?=$html->image('regions_loader.gif',array('class'=>'vmiddle'));?></span>
+      <font color="red">*</font></dt>
     <dd id="password_confirm_msg"><?=$SCLanguages['type_again_password']?>。</dd>
   </li>
   <li>
     <dd class="l"><?=$SCLanguages['email']?>：</dd>
-    <dt><input name="email" id="email" />&nbsp;<font color="red">*</font></dt>  
+    <dt><input name="email" id="email" />&nbsp;
+ 	 <span id="email_loading" style='display:none'><?=$html->image('regions_loader.gif',array('class'=>'vmiddle'));?></span>
+      <font color="red">*</font></dt>  
     <dd id="email_msg"><?=$SCLanguages['please_enter'].$SCLanguages['email']?>。</dd>
   </li>
 
@@ -73,21 +78,26 @@
       <?}?>
       	  
       <option value="<?=$SCLanguages['others']?>"><?=$SCLanguages['others']?></option>
-    </select>
+    </select> 	 <span id="question_loading" style='display:none'><?=$html->image('regions_loader.gif',array('class'=>'vmiddle'));?></span>
+
   <font color="red">*</font></dt>
   <dd id="question_msg"><?=$SCLanguages['please_choose'].$SCLanguages['security_question']?></dd>
   </li>
   
   <li style="display:none" id="other_span">
       <dd class="l"><?=$SCLanguages['please_enter'].$SCLanguages['security_question']?>：</dd>
-      <dt><input name="other_question" id="other_question"/>&nbsp;<font color="red">*</font>
+      <dt><input name="other_question" id="other_question"/>&nbsp;
+  <span id="other_question_loading" style='display:none'><?=$html->image('regions_loader.gif',array('class'=>'vmiddle'));?></span>
+      <font color="red">*</font>
       <dd><span id="other_question_msg"></span></dd>
       </dt>
   </li>
   
   <li>
   <dd class="l"><?=$SCLanguages['security_answer']?>：</dd>
-  <dt><input type="text" name="answer" id="answer" />&nbsp;<font color="red">*</font></dt>
+  <dt><input type="text" name="answer" id="answer" />&nbsp;
+  <span id="answer_loading" style='display:none'><?=$html->image('regions_loader.gif',array('class'=>'vmiddle'));?></span>
+  	  <font color="red">*</font></dt>
   <dd><span id="answer_msg"><?=$SCLanguages['enter_hint_answer']?>。</span> <span id="ischkEmail"></span></dd>
   </li>
   <li class="sorty"><a id="Select_info">
@@ -98,7 +108,6 @@
   <li>
   <dd class="l"><?=$SCLanguages['region']?>：</dd>
   <dt><span id="regions"></span><span id="region_loading" style='display:none'><?=$html->image('regions_loader.gif',array('class'=>'vmiddle'));?></span></dt>
-	<?=$javascript->link('regions');?>
 	<script type="text/javascript">show_regions("");</script>
 	</li>
   <li>
@@ -205,7 +214,7 @@
 </ul>
 <div class="big_buttons">
 <p style="padding-left:227px;margin-bottom:15px;">
-		  <span class="float_l" style="text-indent:0;"><input id="button" onfocus="blur()" name="Submit" value="<?=$SCLanguages['user'].$SCLanguages['register']?>"  onclick="javascript:check_user_info();" type="button"></span>
+		  <span class="float_l" style="text-indent:0;"><input id="button" onfocus="blur()" name="Submit" value="<?=$SCLanguages['register']?>"  onclick="javascript:check_user_info();" type="button"></span>
 		  <span class="float_l" style="text-indent:0;margin-left:4px;"><input onfocus="blur()" id="Reset" value="<?=$SCLanguages['reset']?>" onclick="javascript:document.forms.user_info.reset();" type="button"></span>
 </p>
 </div>
@@ -221,18 +230,8 @@
   <div id="reguser_gut01" class="Agreement_box">
 <div id="Title"><b><?=$SCLanguages['user'].$SCLanguages['register'].$SCLanguages['agreement']?></b></div>
     <div class="Agreement">
-     <p class="text">八、 责任范围及责任限制 <br />
-    （一） 本公司仅对本协议中列明的责任承担范围负责。 <br />
-    （二） 您明确因交易所产生的任何风险应由您与交易对方承担。 <br />
-    （三） 支付宝用户信息是由用户本人自行提供的，本公司无法保证该信息之准确、及时和完整，您应对您的判断承担全部责任。 <br />
-    （四） 本公司不对交易标的及本服务提供任何形式的保证，包括但不限于以下事项： <br />
-    1、本服务符合您的需求。 <br />
-    2、本服务不受干扰、及时提供或免于出错。 <br />
-    3、您经由本服务购买或取得之任何产品、服务、资讯或其他资料符合您的期望。 <br />
-    （五） 本服务之合作单位，所提供之服务品质及内容由该合作单位自行负责。 <br />
-    （六） 您经由本服务之使用下载或取得任何资料，应由您自行考量且自负风险，因资料之下载而导致您电脑系统之任何损坏或资料流失，您应负完全责任。 <br />
-    （七） 您自本公司及本公司工作人员或经由本服务取得之建议和资讯，无论其为书面或口头形式，均不构成本公司对本服务之保证。<br />
-</div>
+     <div class="text"><span class='green_3'><?=$article['ArticleI18n']['content']?></span></div>
+	</div>
 
 <div class="Agreement_btn big_buttons" style="padding-bottom:5px;">
 	<p style="padding-left: 385px;margin-top:30px;">

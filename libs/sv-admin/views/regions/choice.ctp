@@ -9,10 +9,16 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: choice.ctp 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: choice.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ob_start();?>
 <?foreach($regions_selects as $k=>$r){?>
+		<?if(isset($r['select']) && sizeof($r['select']) == 2){?>
+			<?foreach($r['select'] as $kk=>$vv){?>
+				<?$r['default'] = $kk;?>
+			<?}?>
+	<?}?>	
+	
 <?if(isset($address_id)){?>
     <?=$form->select('Address.Region.'.$k.$address_id,$r['select'],$r['default'],array("onchange"=>"reload_edit_regions($address_id)"),false); ?>
 <?}else{?>

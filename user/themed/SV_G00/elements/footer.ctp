@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: footer.ctp 1116 2009-04-28 11:04:43Z huangbo $
+ * $Id: footer.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <?
@@ -19,9 +19,9 @@ $navigations_footer = $this->requestAction('commons/get_navigations/F');
 <? foreach($navigations_footer as $navigation){?><?=$html->link($navigation['NavigationI18n']['name'],$navigation['NavigationI18n']['url'],"",false,false);?> | 
 <?}?></p><?}?>
 <!--Footer-->
-<p class="copyRight"><font face="Arial">&copy;</font>2009 <?printf($SCLanguages['copyright'],$SVConfigs['shop_name']);?></p>
-<p class="Power">
-<?=$html->link("Powered by<span class='number'>SV-Cart</span>","http://www.seevia.cn",array(),false,false);?>	
+<p class="copyRight green_3"><font face="Arial">&copy;</font>2009 <?printf($SCLanguages['copyright'],$SVConfigs['shop_name']);?></p>
+<p class="pwoered green_3">
+<?=$html->link(" <span class='number green_3'>Powered by SV-Cart</span>","http://www.seevia.cn",array("target"=>"_blank"),false,false);?>
 </p>
 <?=$SVConfigs['statistic_code']?>
 <!--Footer End-->

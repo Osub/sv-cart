@@ -28,7 +28,14 @@ class SVshowHelper extends HTMLHelper {
 		return sprintf($config,$price);
 	}
 	
+	function sku_product_link($id,$name,$code,$config){
+		if($config == 1){
+			return "/products/sku/".$name."/".$code;
+		}else{
+			return "/products/".$id;
+		}
+	}
 	
-
+	
 }
 ?>

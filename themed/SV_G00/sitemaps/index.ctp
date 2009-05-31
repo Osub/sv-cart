@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1273 2009-05-08 16:49:08Z huangbo $
+ * $Id: index.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?>
 <div id="globalRight" style="width:926px;margin:0 auto;">
@@ -21,16 +21,13 @@
     <div id="navigation"><h1 class="headers"><span class="l"></span><span class="r"></span></h1>
     <ul><li><span><b><?php echo $SCLanguages['products'];?><?php echo $SCLanguages['classificatory'];?></b></span></li></ul>
     <div class="list_box">
-    
-    <!--商品类目-->
+<!--商品类目-->
 <?php 
 	   	foreach($product_cat as $key=>$v){ 
  ?>
-    	<div class="sorts">
-        	<h2><?php echo $html->image("right_icon02.gif",array("alt"=>'right_icon02.gif'))?><span>
-            <?php echo $html->link("{$v['CategoryI18n']['name']}","/categories/{$v['Category']['id']}",array(),false,false);?>
-     </span></h2>
-     <p>
+<div class="sorts">
+<h2><?php echo $html->image("right_icon02.gif",array("alt"=>'right_icon02.gif'))?><span><?php echo $html->link("{$v['CategoryI18n']['name']}","/categories/{$v['Category']['id']}",array(),false,false);?></span></h2>
+<p>
 <?php
 	 $first=1; 
 	 if(isset($v['SubCategory']) && count($v['SubCategory'])>0){
@@ -45,7 +42,7 @@
 	</p>
         </div>
 <?php }?> 
-       <!--商品类目end-->
+<!--商品类目end-->
     </div>
 </div>
 <?}?>
@@ -61,7 +58,7 @@
 		   		$first=1; 
 			   	foreach($brands as $key=>$v){ 
 		?>
-			   <?php if(!$first&&$val){ ?> <span>|</span><?php }?>
+			   <?php if(!$first&&$v){ ?> <span>|</span><?php }?>
 			
 		<?php
 			   	echo $html->link("{$v['BrandI18n']['name']}","/brands/{$v['Brand']['id']}");

@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: done.ctp 1232 2009-05-06 12:14:41Z huangbo $
+ * $Id: done.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <div class="Balance_alltitle"><h1 class="headers"><span class="l"></span><span class="r"></span><b><?=$SCLanguages['checkout_center'];?></b></h1></div>
@@ -45,7 +45,7 @@
     <br /><br /><br />
     <p class="succeed"> 
     <?=$html->image("icon-10.gif",array("align"=>"middle","alt"=>$SCLanguages['order_generated'].$SCLanguages['successfully']))?>
-    <?=$html->link($order_code,'/user/orders/'.$order_id,array(),false,false)?>
+    <?=$html->link($order_code,'/user/orders/'.$order_id,array("target"=>"_blank"),false,false)?>
     <b><?=$SCLanguages['order_generated'].$SCLanguages['successfully'];?></b><br/><br/>
    <?if(isset($is_show_virtual_msg) && $is_show_virtual_msg == 1){?>
      <b>	<?=$SCLanguages['no_stock']?>,<?=$SCLanguages['send_after_products_arrived']?> <b>

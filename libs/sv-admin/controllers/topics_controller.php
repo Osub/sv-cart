@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: topics_controller.php 1116 2009-04-28 11:04:43Z huangbo $
+ * $Id: topics_controller.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class TopicsController extends AppController {
 	var $name = 'Topics';
@@ -18,12 +18,15 @@ class TopicsController extends AppController {
 	var $uses = array('Topic','TopicI18n','Brand','ProductType','Category','Product','TopicProduct');
 
 	function index(){
+		/*判断权限*/
+		$this->operator_privilege('special_topic_view');
+		/*end*/
 		$this->pageTitle = '专题管理'." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'专题管理','url'=>'/topics/');
 		$this->set('navigations',$this->navigations);
 		
 		$this->Topic->set_locale($this->locale);
-		$condition = '1=1';
+		$condition = '';
 		$page = 1;
 	    $rownum=isset($this->configs['show_count']) ? $this->configs['show_count']:((!empty($rownum)) ?$rownum:20);
 		$parameters = array($rownum,$page);		
@@ -46,15 +49,15 @@ class TopicsController extends AppController {
 	}
 	
 	function edit( $id ){
+		/*判断权限*/
+		$this->operator_privilege('special_topic_operation');
+		/*end*/
 		$this->pageTitle = "专题部门 - 专题管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'专题管理','url'=>'/topics/');
 		$this->navigations[] = array('name'=>'专题部门','url'=>'');
 		$this->set('navigations',$this->navigations);
 		
 		if($this->RequestHandler->isPost()){
-
-			//$this->Topic->deleteall("id = '".$this->data['Topic']['id']."'",false); 
-			//$this->TopicI18n->deleteall("topic_id = '".$this->data['Topic']['id']."'",false); //删除原有多语言
 			foreach($this->data['TopicI18n'] as $v){
               	     	    $topicI18n_info=array(
 		                           'id'=>	isset($v['id'])?$v['id']:'',
@@ -66,7 +69,15 @@ class TopicsController extends AppController {
 		                $this->TopicI18n->saveall(array('TopicI18n'=>$topicI18n_info));//更新多语言
             }
 			$this->Topic->save($this->data); //保存
-			$this->flash("编辑成功",'/topics/edit/'.$id,10);
+			foreach( $this->data['TopicI18n'] as $k=>$v ){
+				if($v['locale'] == $this->locale){
+					$userinformation_name = $v['title'];
+				}
+			}
+			$id=$this->Topic->id;
+
+			$this->flash("专题  ".$userinformation_name." 编辑成功。点击继续编辑该专题。",'/topics/edit/'.$id,10);
+		
 		}
 		$topic = $this->Topic->localeformat( $id );
 		$categories_tree=$this->Category->tree('P',$this->locale);
@@ -111,12 +122,27 @@ class TopicsController extends AppController {
 			           $this->TopicI18n->id='';
 			           $this->TopicI18n->save($v); 
 			     }
-			$this->flash("编辑成功",'/topics/edit/'.$id,10);
+			
+			foreach( $this->data['TopicI18n'] as $k=>$v ){
+				if($v['locale'] == $this->locale){
+					$userinformation_name = $v['title'];
+				}
+			}
+			$id=$this->Topic->id;
+
+			$this->flash("专题  ".$userinformation_name." 添加成功。点击继续编辑该专题。",'/topics/edit/'.$id,10);
+		
+
+		
+		
 		}
 		
 	}
 	
 	function remove( $id ){
+		/*判断权限*/
+		$this->operator_privilege('special_topic_operation');
+		/*end*/
 		$this->Topic->deleteall("Topic.id = '".$id."'",false); 
 		$this->TopicI18n->deleteall("TopicI18n.topic_id = '".$id."'",false); //删除原有多语言
 		$this->flash("删除成功",'/topics/',10);
@@ -129,7 +155,7 @@ class TopicsController extends AppController {
            	$condition = "";
            	for( $i=0;$i<=count( $id_arr )-1;$i++ ){
            		if ( $this->params['url']['act_type'] == 'delete' ){
-           			$condition['id'] = $id_arr[$i];
+           			$condition['Topic.id'] = $id_arr[$i];
                     $this->Topic->deleteAll( $condition );
                     
            		}

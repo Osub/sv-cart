@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: balances_controller.php 1273 2009-05-08 16:49:08Z huangbo $
+ * $Id: balances_controller.php 1841 2009-05-27 06:51:37Z huangbo $
 *****************************************************************************/
 class BalancesController extends AppController {
 
@@ -94,7 +94,10 @@ class BalancesController extends AppController {
 		      $all_fee += $v['UserBalanceLog']['amount'];
 		   }
 	   }
-			
+		if(empty($orders_id)){
+			$orders_id[] = 0;
+		}
+	
 	   $orders_info=$this->Order->findassoc($orders_id);
 	   foreach($my_balance_list as $k=>$v){
 	   	       $my_balance_list[$k]['Order']=array();
@@ -110,7 +113,7 @@ class BalancesController extends AppController {
 	   //pr($today_consumer[0][0]);
 	   //支付方式列表
 	   $this->Payment->set_locale($this->locale);
-	   $condition=" Payment.status =1 and PaymentI18n.status =1 and Payment.supply_use_flag = 1 and Payment.code <> 'COD'";
+	   $condition=" Payment.status = '1' and PaymentI18n.status = '1' and Payment.supply_use_flag = '1' and Payment.code <> 'COD'";
 	   $payment_list=$this->Payment->findAll($condition);
 	   	   
 	   $this->pageTitle = $this->languages['my_balance']." - ".$this->configs['shop_title'];

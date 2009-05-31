@@ -1,17 +1,8 @@
-﻿@import url(layout.css); /*布局*/
-@import url(admin.css); /*模块部分*/
-@import url(menu.css); /*Header Menu*/
-@import url(calendar.css);
-@import url(container.css);
-@import url(treeview.css);
-@import url(image.css);
-@import url(swfupload.css);
-@import url(fonts-min.css);
-@import url(tabview.css);
-
+﻿/*****************************/
+/* SVCART V1.0.2 */
+/*****************************/
 body {
 	font-size: 12px; margin: 0 auto;position:relative;
-
 }
 img{
 	border:0px;
@@ -51,3 +42,4 @@ input{font-size:100%}
 .text_input{border:1px solid #78828D;}
 .green_border{border:1px solid #659B77;}
 .border_green_6{border:1px solid #699F7D;}
+/************ layout.css ******************

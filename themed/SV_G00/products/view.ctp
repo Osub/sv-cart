@@ -9,38 +9,33 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: view.ctp 1327 2009-05-11 11:01:20Z huangbo $
+ * $Id: view.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?>
 
-<?=$javascript->link('/js/yui/yahoo-min.js');?>
-<?=$javascript->link('/js/yui/event-min.js');?>
-<?=$javascript->link('/js/yui/connection-min.js');?>
+<?=$javascript->link(array('/js/yui/yahoo-min.js','/js/yui/event-min.js'));?>
 <div id="globalMain">
 <?echo $this->element('ur_here', array('cache'=>'+0 hour'));?>	
 <div id="main_left" class="product_l">
 <h1>·<span><?echo $info['ProductI18n']['name']?><span>·</h1>
 
-<?if(isset($galleries) && sizeof($galleries)){
-?>
+<?if(isset($galleries) && sizeof($galleries)){?>
 
 <div id="show_pic_original" onclick="javascript:show_pic_original();">
 <?
-echo $html->div('picc',$html->image($galleries[0]['ProductGallery']['img_detail'],array("id"=>"img1","alt"=>"","width"=>isset($SVConfigs['image_width'])?$SVConfigs['image_width']:441,"height"=>isset($SVConfigs['image_height'])?$SVConfigs['image_height']:391)),'',false);
+echo $html->div('picc',$html->image($galleries[0]['ProductGallery']['img_detail'],array("id"=>"img1","title"=>isset($galleries[0]['ProductGalleryI18n']['description'])?$galleries[0]['ProductGalleryI18n']['description']:"","alt"=>isset($galleries[0]['ProductGalleryI18n']['description'])?$galleries[0]['ProductGalleryI18n']['description']:'',"width"=>isset($SVConfigs['image_width'])?$SVConfigs['image_width']:441,"height"=>isset($SVConfigs['image_height'])?$SVConfigs['image_height']:391)),'',false);
 ?>
 <input type="hidden" value="<?=$galleries[0]['ProductGallery']['img_detail']?>" id="img_original_src" />
 </div>
-<?
-?>
 
-<?if(isset($galleries) && sizeof($galleries)>0){?>
-<?foreach($galleries as $k=>$g){?>
-<div class="pic_select">
-<? echo $html->link($html->image($g['ProductGallery']['img_thumb'],array("alt"=>$g['ProductGallery']['description'])),"javascript:show_pic('".$g['ProductGallery']['img_detail']."');","",false,false);?></div>
-<?}?>
-<?}?>
-<?
-}else{?>
+	<?if(isset($galleries) && sizeof($galleries)>0){?>
+		<?foreach($galleries as $k=>$g){?>
+			<div class="pic_select">
+				<? echo $html->link($html->image($g['ProductGallery']['img_thumb'],array("title"=>isset($galleries[0]['ProductGalleryI18n']['description'])?$galleries[0]['ProductGalleryI18n']['description']:'',"alt"=>isset($g['ProductGalleryI18n']['description'])?$galleries[0]['ProductGalleryI18n']['description']:'' )),"javascript:show_pic('".$g['ProductGallery']['img_detail']."');","",false,false);?>
+			</div>
+		<?}?>
+	<?}?>
+<?}else{?>
 
 <?
 echo $html->div('picc',$html->image("/img/product_default.jpg",array("id"=>"img1","alt"=>"","width"=>isset($SVConfigs['image_width'])?$SVConfigs['image_width']:441,"height"=>isset($SVConfigs['image_height'])?$SVConfigs['image_height']:391)),'',false);
@@ -77,9 +72,10 @@ echo $html->div('picc',$html->image("/img/product_default.jpg",array("id"=>"img1
 			</dd></li>
 		<?}?>
 		<?}?>
-			
-		<?if(isset($SVConfigs['show_member_level_price']) && $SVConfigs['show_member_level_price']> 0 && isset($my_product_rank) && $my_product_rank < $info['Product']['shop_price']){?>
+		<?//pr($info['Product']);?>
+		<?if(isset($SVConfigs['show_member_level_price']) && $SVConfigs['show_member_level_price']> 0 && isset($my_product_rank)){?><?// && $my_product_rank < $info['Product']['shop_price']?>
 		<li><dd class="l"><?//php echo $SCLanguages['membership_price'];?><?php echo $SCLanguages['our_price'];?>:</dd><dd>
+		<?=$svshow->price_format($my_product_rank,$SVConfigs['price_format']);?>
 		</dd></li>
 		<?}else{?>
 		<li><dd class="l"><?php echo $SCLanguages['our_price'];?>:</dd><dd>
@@ -101,18 +97,16 @@ echo $html->div('picc',$html->image("/img/product_default.jpg",array("id"=>"img1
 			<?foreach($format_product_attributes as $k=>$v){?>
 				<li>
 				<dd class="l"><?=$product_attributes_name[$k];?>:</dd>
-				<dd>					<select>
-
-					<?foreach($v as $kk=>$vv){?>
-						<option><?=$vv['value']?>  [
-		<?=$svshow->price_format($vv['price'],$SVConfigs['price_format']);?>	
-							]</option>
-					<?}?>					</select>
-</dd>
+				<dd>
+					<select id="attributes_<?=$k?>"><?foreach($v as $kk=>$vv){?>
+						<option value="<?=$vv['id']?>"><?=$vv['value']?>  
+						<?//=$svshow->price_format($vv['price'],$SVConfigs['price_format']);?>	
+							</option>
+					<?}?></select>
+				</dd>
 				</li>
 					
 			<?}}?>
-			
 		<?}?>
 
 		<?if (isset($SVConfigs['products_show_brand']) && isset($brands[$info['Product']['brand_id']])){?>
@@ -202,20 +196,31 @@ echo $html->div('picc',$html->image("/img/product_default.jpg",array("id"=>"img1
 				<?}?>
 		</dd></li>
 		<?}}}?>
-
+		
+		<?if(isset($shipping_fee)){?>
+		<li><dd class="l">-<?php echo $SCLanguages['shipping_fee'];?>-</dd><dd></li>
+			<?foreach($shipping_fee as $k=>$v){?>
+			<li><dd class="l"><?=$v['shipping_name']?>:</dd><dd>
+			<?=$svshow->price_format($v['shipping_fee'],$SVConfigs['price_format']);?>
+			</dd></li>
+			<?}?>
+		<?}?>
 	
 		<?if(isset($info['Product']['quantity']) && $info['Product']['quantity'] == 0){?>
 		<li class="btn_list">
 		<?if($SVConfigs['enable_out_of_stock_handle'] == 1){?>
-		<a class="addfav" href="javascript:show_booking(<?=$info['Product']['id']?>,'<?=$info['ProductI18n']['name']?>')"><span><?=$SCLanguages['booking']?></span></a></li>
+		<a class="addfav" href="javascript:show_booking(<?=$info['Product']['id']?>,'<?=$info['ProductI18n']['name']?>')"><span><?=$SCLanguages['booking']?></span></a>
 		<?}?>
+		</li>
 		<?}else{?>
 		<li><dd class="l number"><?=$SCLanguages['quantity'];?>:</dd><dt><input type="text" name="buy_num" id="buy_num" size="1" class="text_input" value="1"></dt></li>
 		<li class="btn_list">
 		<a class="addcart" href="javascript:buy_now(<?=$info['Product']['id']?>,document.getElementById('buy_num').value)"><span><?=$SCLanguages['buy']?></span></a>
-		<a href="javascript:favorite(<?=$info['Product']['id']?>,'p')" class="addfav"><span><?=$SCLanguages['favorite']?></span></a>
-		</ul><?=$html->image('thuoline.gif')?>
-	<?}?>
+		<?if(isset($_SESSION['User'])){?>
+			<a href="javascript:favorite(<?=$info['Product']['id']?>,'p')" class="addfav"><span><?=$SCLanguages['favorite']?></span></a>
+		<?}?></li>
+		<?=$html->image('thuoline.gif')?>
+	<?}?></ul>
 	</div>
 <!--End-->
 
@@ -246,8 +251,8 @@ echo $html->div('picc',$html->image("/img/product_default.jpg",array("id"=>"img1
 		<ul>
 	<?if(isset($relation_products) && sizeof($relation_products)>0){?>
 		<?foreach($relation_products as $k=>$r){
-		echo $html->tag('li',$html->para('pic',	$html->link($html->image(empty($r['Product']['img_thumb'])?"/img/product_default.jpg":$r['Product']['img_thumb'],array('width'=>'108','height'=>'108',)),"/products/".$r['Product']['id']."/",'',false,false),array(),false)
-			.$html->para('info',$html->tag('span',$html->link($r['ProductI18n']['name'],"/products/".$r['Product']['id']."/",array(),false,false),'name').
+		echo $html->tag('li',$html->para('pic',	$html->link($html->image(empty($r['Product']['img_thumb'])?"/img/product_default.jpg":$r['Product']['img_thumb'],array('width'=>'108','height'=>'108',)),$svshow->sku_product_link($r['Product']['id'],$r['ProductI18n']['name'],$r['Product']['code'],$SVConfigs['use_sku']),'',false,false),array(),false)
+			.$html->para('info',$html->tag('span',$html->link($r['ProductI18n']['name'],$svshow->sku_product_link($r['Product']['id'],$r['ProductI18n']['name'],$r['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false),'name').
 			$html->tag('span',$html->tag('font',$svshow->price_format($r['Product']['shop_price'],$SVConfigs['price_format'])	
 		,array('color'=>'#F9630C')),'Price'),array(),false),'');
 		}?>
@@ -286,7 +291,6 @@ echo $html->div('picc',$html->image("/img/product_default.jpg",array("id"=>"img1
 		<a id="comments" class="comments"><span><?php echo $SCLanguages['issue_comments'];?></span></a>
 		<?}?></p>
 		<? echo $this->element('comment', array('cache'=>'+0 hour'));?>
-		
 		<div class="border" style="border-top:0;margin-left:0;position:relative;height:100%;">
 		<span id="waitcheck"></span>
 		<?if(isset($comments) && sizeof($comments)){foreach($comments as $k=>$c){?><div id="user_msg">

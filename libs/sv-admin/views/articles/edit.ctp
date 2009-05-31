@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: edit.ctp 1093 2009-04-28 04:02:04Z huangbo $
+ * $Id: edit.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -43,6 +43,7 @@
 <?
 	}
 }?>
+<input id="products_id" type="hidden" value="0">
 
 		<h2>文章作者：</h2> 
 	  	<? if(isset($languages) && sizeof($languages)>0){
@@ -88,7 +89,7 @@
 			<span><input type="text" id="upload_img_text_<?=$k?>" name="data[ArticleI18n][<?=$k;?>][img01]" value="<? if(isset($article['ArticleI18n'][$v['Language']['locale']]['img01'])){echo $article['ArticleI18n'][$v['Language']['locale']]['img01'];}?>" style="width:260px;"  />
 			<?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel($k,'articles')",'',false,false)?>
 			</span><br />
-			<?=@$html->image("/..{$article['ArticleI18n'][$v['Language']['locale']]['img01']}",array('id'=>'logo_thumb_img_'.$k,'height'=>'150'))?>
+			<?=@$html->image("/..{$article['ArticleI18n'][$v['Language']['locale']]['img01']}",array('id'=>'logo_thumb_img_'.$k,'height'=>'150','style'=>'display:none'))?>
 			</p>
 		<?}}?>
 	  </div>
@@ -105,17 +106,31 @@
 	  <div class="box">
 	  	<dl><dt>文章分类：</dt><dd>
 
-	  			<select class="all"  name="article_categories_id">
+	  		<select class="all"  name="data[Article][category_id]">
 	<option value="0">所有分类</option>
 <?if(isset($categories_tree_A) && sizeof($categories_tree_A)>0){?><?foreach($categories_tree_A as $first_k=>$first_v){?>
-<option value="<?=$first_v['Category']['id'];?>" <? if($category_id == $first_v['Category']['id']){ echo "selected";}?> ><?=$first_v['CategoryI18n']['name'];?></option>
+<option value="<?=$first_v['Category']['id'];?>" <? if($article['Article']['category_id'] == $first_v['Category']['id']){ echo "selected";}?> ><?=$first_v['CategoryI18n']['name'];?></option>
 <?if(isset($first_v['SubCategory']) && sizeof($first_v['SubCategory'])>0){?><?foreach($first_v['SubCategory'] as $second_k=>$second_v){?>
-<option value="<?=$second_v['Category']['id'];?>" <? if($category_id == $second_v['Category']['id']){ echo "selected";}?> >&nbsp;&nbsp;<?=$second_v['CategoryI18n']['name'];?></option>
+<option value="<?=$second_v['Category']['id'];?>" <? if($article['Article']['category_id'] == $second_v['Category']['id']){ echo "selected";}?> >&nbsp;&nbsp;<?=$second_v['CategoryI18n']['name'];?></option>
 <?if(isset($second_v['SubCategory']) && sizeof($second_v['SubCategory'])>0){?><?foreach($second_v['SubCategory'] as $third_k=>$third_v){?>
-<option value="<?=$third_v['Category']['id'];?>" <? if($category_id == $third_v['Category']['id']){ echo "selected";}?> >&nbsp;&nbsp;&nbsp;&nbsp;<?=$third_v['CategoryI18n']['name'];?></option>
+<option value="<?=$third_v['Category']['id'];?>" <? if($article['Article']['category_id'] == $third_v['Category']['id']){ echo "selected";}?> >&nbsp;&nbsp;&nbsp;&nbsp;<?=$third_v['CategoryI18n']['name'];?></option>
 <?}}}}}}?>
 	</select>
 	</dd></dl>
+	  	<dl><dt>扩展分类：</dt><dd><input type="button" value="添加" onclick="addOtherCat()">
+	  <?foreach( $category_arr as $k=>$v ){?>
+	  			<select class="all"  name="article_categories_id[]" id="ArticlesCategory">
+	<option value="0">所有分类</option>
+<?if(isset($categories_tree_A) && sizeof($categories_tree_A)>0){?><?foreach($categories_tree_A as $first_k=>$first_v){?>
+<option value="<?=$first_v['Category']['id'];?>" <? if($v['ArticleCategorie']['category_id'] == $first_v['Category']['id']){ echo "selected";}?> ><?=$first_v['CategoryI18n']['name'];?></option>
+<?if(isset($first_v['SubCategory']) && sizeof($first_v['SubCategory'])>0){?><?foreach($first_v['SubCategory'] as $second_k=>$second_v){?>
+<option value="<?=$second_v['Category']['id'];?>" <? if($v['ArticleCategorie']['category_id']== $second_v['Category']['id']){ echo "selected";}?> >&nbsp;&nbsp;<?=$second_v['CategoryI18n']['name'];?></option>
+<?if(isset($second_v['SubCategory']) && sizeof($second_v['SubCategory'])>0){?><?foreach($second_v['SubCategory'] as $third_k=>$third_v){?>
+<option value="<?=$third_v['Category']['id'];?>" <? if($v['ArticleCategorie']['category_id'] == $third_v['Category']['id']){ echo "selected";}?> >&nbsp;&nbsp;&nbsp;&nbsp;<?=$third_v['CategoryI18n']['name'];?></option>
+<?}}}}}}?>
+	</select><?}?>	<div id="other_cats"></div>
+	</dd></dl>
+	
 		<dl><dt>文章类型：</dt><dd><input type="text" class="text_inputs" name="data[Article][type]" value="<?=$article['Article']['type']?>" style="width:204px;" /></dd></dl>
 		
 		<dl style="padding:3px 0;*padding:4px 0;"><dt style="padding-top:1px">文章重要性：</dt><dd class="best_input"><input type="radio" name="data[Article][importance]" value="0" <? if($article['Article']['importance'] == 0){echo "checked";} ?> />普通<input type="radio" name="data[Article][importance]" value="1" <? if($article['Article']['importance'] == 1){echo "checked";} ?> />置顶 <font color="#ff0000">*</font></dd></dl>
@@ -254,3 +269,28 @@
 </div>
 <!--Main Start End-->
 </div>
+<script>
+function addOtherCat(){
+     var sel = document.createElement("SELECT");
+      var selCat = document.getElementById('ArticlesCategory');
+
+      for (i = 0; i < selCat.length; i++)
+      {
+          var opt = document.createElement("OPTION");
+          opt.text = selCat.options[i].text;
+          opt.value = selCat.options[i].value;
+          if (Browser.isIE)
+          {
+              sel.add(opt);
+          }
+          else
+          {
+              sel.appendChild(opt);
+          }
+      }
+      var conObj=document.getElementById('other_cats');
+      conObj.appendChild(sel);
+      sel.name = "article_categories_id[]";
+      sel.onChange = function() {checkIsLeaf(this);};
+  }
+</script>

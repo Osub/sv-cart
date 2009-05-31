@@ -19,7 +19,7 @@ var dropImg_callback ={
 function searchArticles(){
         var Article_keywords=document.getElementById('keywords_id').value;
         var Article_cat=document.getElementById('article_cat').value;
-		var sUrl = webroot_dir+"articles/searcharticles/"+Article_keywords+"/"+Article_cat;
+		var sUrl = webroot_dir+"articles/searcharticles/"+Article_cat+"/"+Article_keywords;
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, searchArticles_callback);
 	}
 

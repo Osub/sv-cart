@@ -12,8 +12,8 @@
  * $Id: index.ctp 517 2009-04-14 01:18:28Z huangbo $
 *****************************************************************************/
 ?>
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+
+
 <?php echo $form->create('virtual_cards',array('action'=>'/card_add/'.$product_id.'/'));?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>

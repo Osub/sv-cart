@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: product.php 1144 2009-04-29 11:41:30Z huangbo $
+ * $Id: product.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class Product extends AppModel
 {
@@ -19,7 +19,7 @@ class Product extends AppModel
 												  'className'    => 'ProductI18n',   
 					                              'order'        => '',   
 					                              'dependent'    =>  true,   
-					                              'foreignKey'   => 'Product_id'
+					                              'foreignKey'   => 'product_id'
 					                        	 ) ,
 					   		
 					   		'ProviderProduct' =>array

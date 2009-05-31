@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: commons_controller.php 1201 2009-05-05 13:30:17Z huangbo $
+ * $Id: commons_controller.php 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 class CommonsController extends AppController {
 
@@ -19,7 +19,7 @@ class CommonsController extends AppController {
 
 	//$languages = $this->requestAction('commons/get_languages_front/'); 
  	function get_languages_front(){
- 		$languages = $this->Language->findall("Language.front <> 0 ");
+ 		$languages = $this->Language->findall("Language.front <> '0' ");
 		return $languages;
  	}
  	
@@ -37,7 +37,7 @@ class CommonsController extends AppController {
         $result = NULL;
         $default_locale="chi";
         
-        $languages=$this->Language->findall("Language.front <> 0 ");
+        $languages=$this->Language->findall("Language.front <> '0' ");
         
         if(is_array($languages) && sizeof($languages)>0 ){
             $has=false;
@@ -196,6 +196,7 @@ function real_ip()
 
 //会员等级
  function get_rank($rank_id){
+ 	    $this->layout = 'blank';
  	 	$this->UserRank->set_locale($this->locale);
  	    $rank=$this->UserRank->find("UserRank.id = $rank_id");
  	    $rank_name=$rank['UserRankI18n']['name'];
@@ -215,6 +216,8 @@ function real_ip()
   		$this->Email->smtpHostNames = "".$this->configs['smtp_host']."";
         $this->Email->smtpUserName = "".$this->configs['smtp_user']."";
         $this->Email->smtpPassword = "".$this->configs['smtp_pass']."";
+				$this->Email->is_ssl = $this->configs['smtp_ssl'];
+				$this->Email->smtp_port = $this->configs['smtp_port'];        
         $this->Email->from = "".$this->configs['smtp_user']."";
         $this->Email->to = "".$to_email."";
         $this->Email->fromName = "liying";

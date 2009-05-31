@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 943 2009-04-23 10:38:44Z huangbo $
+ * $Id: add.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -59,7 +59,7 @@
 		<dl><dt style="width:105px;">图片显示： </dt>
 		<dd><input type="text" style="width:280px;*width:180px;border:1px solid #649776" name="data[FlashImage][image]" id="upload_img_text_1" size= "35" /><br /><br />
 			
-		<?=@$html->image('',array('id'=>'logo_thumb_img_1','height'=>'150'))?>
+		<?=@$html->image('',array('id'=>'logo_thumb_img_1','height'=>'150','style'=>'display:none'))?>
 
 		</dd><dd><?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(1,'all')",'',false,false)?></dd></dl>
 

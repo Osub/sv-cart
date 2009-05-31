@@ -9,12 +9,11 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1273 2009-05-08 16:49:08Z huangbo $
+ * $Id: index.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?>
 
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
 <!--Search-->
@@ -85,7 +84,7 @@
 		<span><?echo $v['Order']['consignee']?><?if(isset($v['Order']['telephone']) && !empty($v['Order']['telephone'])){?>[TEL:<?echo $v['Order']['telephone']?>]<?}?></span>
 		<span><?echo $v['Order']['address']?></span></li>
 	<li class="expenses">
-		<span>总金额: <code style="margin-left:12px"><?echo $v['Order']['subtotal']?></code></span>
+		<span>总金额: <code style="margin-left:12px"><?echo $v['Order']['total']?></code></span>
 		<span>应付金额: <?echo $v['Order']['should_pay']?></span></li>
 		<li class="payment"><?echo $v['Order']['payment_name']?></li>
 		<li class="deliver"><?echo $v['Order']['shipping_name']?></li>

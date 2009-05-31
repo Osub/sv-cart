@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: flash.ctp 943 2009-04-23 10:38:44Z huangbo $
+ * $Id: flash.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -18,21 +18,9 @@
 <title><?php echo $page_title; ?></title>
 <?php
 		echo $html->meta('icon');
-
-		echo $html->css('style');
-
-		echo $scripts_for_layout;
-		
-	//	pr($this);
 	?>
-<?=$javascript->link('/../js/yui/yahoo-dom-event.js');?>
-<?=$javascript->link('/../js/yui/container_core-min.js');?>
-<?=$javascript->link('/../js/yui/menu-min.js');?>
-<?=$javascript->link('/../js/yui/element-beta-min.js');?>
-<?=$javascript->link('/../js/yui/connection-min.js');?>
-<?=$javascript->link('/../js/yui/json-min.js');?>
-<?=$javascript->link('/../js/yui/container-min.js');?>
-<?=$javascript->link('/../js/yui/tabview-min.js');?><!--删除层遮罩-->
+<?=$minify->css(array('/css/layout','/css/admin','/css/calendar','/css/menu','/css/container','/css/treeview','/css/image','/css/swfupload','/css/tabview','css/style'));?>
+<?=$minify->js(array('/../js/yui/yahoo-dom-event.js','/../js/yui/container_core-min.js','/../js/yui/menu-min.js','/../js/yui/element-beta-min.js','/../js/yui/animation-min.js','/../js/yui/connection-min.js','/../js/yui/container-min.js','/../js/yui/tabview-min.js','/../js/yui/json-min.js','/js/common.js','/../js/swfobject.js'));?>
 	
 <!--菜单-->
 <script type="text/javascript">
@@ -64,17 +52,17 @@
 <div class="content">
 <div id="ur_here">当前位置：系统提示</div>
 <!--Main Start-->
-<?if(@$_SESSION['cart_back_url']!=""){$href="/".$_SESSION['cart_back_url'];unset($_SESSION['cart_back_url']);}else{$href=$this->params['controller'];}?>
+<?if(!empty($_SESSION['cart_back_url'])){$href="/".$_SESSION['cart_back_url'];}else{$href=$this->params['controller'];}?>
 <div class="home_main">
 	<div class="informations">
 	<br /><br /><Br /><br /><Br /><br />
-	<p><?=$html->image('msg.gif',array('align'=>'absmiddle'))?> &nbsp;&nbsp;<strong><a href="<?php echo $url; ?>"><?php echo $message; ?></a></strong></p>
+	<p><?if($type=='true'){echo $html->image('success.jpg',array('align'=>'absmiddle'));}else{ echo $html->image('failure.jpg',array('align'=>'absmiddle'));}?> &nbsp;&nbsp;<a href="<?php echo $url; ?>" style="color:<?if($type=='true'){?>#188B40<?}else{?>#EE6203<?}?>"><?php echo $message; ?></a></p>
 	<br /><br /><Br /><br /><Br /><br /><Br /><br />
 	<p class="handdle"><span><?=$html->link("返回列表页","/{$href}",'',false,false);?></span>|<span><?php echo $html->link('返回管理首页', '/')?></span></p>
 	<br /><Br /><br /><Br /><br /><Br /><br />
 	</div>
 
-<?  unset($_SESSION['cart_back_url']); ?>
+
 </div>
 <!--Main Start End-->
 </div>

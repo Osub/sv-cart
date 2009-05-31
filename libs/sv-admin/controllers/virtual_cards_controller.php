@@ -3,17 +3,20 @@
 		var $name = 'VirtualCards';
 	    var $components = array ('Pagination','RequestHandler'); // Added 
 	    var $helpers = array('Pagination','Html', 'Form', 'Javascript', 'Fck'); // Added    
-		var $uses = array('Order',"OrderProduct","VirtualCard","ProductRank","TopicProduct","Product","UserRank","Category","Brand","Provider","BookingProduct","ProductType","ProductGallery","ProductRelation","ProductArticle","ProductI18n","ProductTypeAttribute","ProductAttribute","ProductsCategory","BrandI18n");
+		var $uses = array('ProductGalleryI18n','Order',"OrderProduct","VirtualCard","ProductRank","TopicProduct","Product","UserRank","Category","Brand","Provider","BookingProduct","ProductType","ProductGallery","ProductRelation","ProductArticle","ProductI18n","ProductTypeAttribute","ProductAttribute","ProductsCategory","BrandI18n");
 		
 		
 		
 		function index(){
+			/*判断权限*/
+			$this->operator_privilege('virtual_card_view');
+			/*end*/
 			$this->pageTitle = "虚拟卡管理" ." - ".$this->configs['shop_name'];
 			$this->navigations[] = array('name'=>'虚拟卡管理','url'=>'/virtual_cards/');
 			$this->set('navigations',$this->navigations);
 			$this->Product->set_locale($this->locale);
-			$condition = "1=1";
-			$condition .=" and Product.status = 1 and Product.extension_code='virtual_card'";
+		
+			$condition ="  Product.status = '1' and Product.extension_code='virtual_card'";
 
 			//商品筛选查询条件
 			if(isset($this->params['url']['forsale']) && $this->params['url']['forsale'] != '99'){
@@ -30,7 +33,7 @@
 				if($parent_id['Category']['parent_id'] == 0){
 					$category_id=$this->Category->findAll(array("Category.parent_id"=>$this->params['url']['category_id']),"DISTINCT Category.id");
 					
-					$str = " 1=1 ";
+					$str = " ProductsCategory.category_id !='none' ";
 					foreach( $category_id as $k=>$v ){
 						$str .=" or ProductsCategory.category_id = '".$v['Category']['id']."'";
 					}
@@ -40,11 +43,10 @@
 	   	   			$condition .=" and ProductsCategory.category_id = '".$this->params['url']['category_id']."'";
 
 				}
-				
-		   	
 		   	}
 		   	if(isset($this->params['url']['keywords']) && $this->params['url']['keywords'] != ''){
-		   	   	$condition .=" and ProductI18n.name like '%".$this->params['url']['keywords']."%' or Product.code= '%".$this->params['url']['keywords']."%'";
+	   		    $keywords = $this->params['url']['keywords'];
+		    	$condition .=" and (Product.code like '%$keywords%' or ProductI18n.name like '%$keywords%' or ProductI18n.description like '%$keywords%' or Product.id='$keywords') ";
 		   	}
 		   	if(isset($this->params['url']['min_price']) && $this->params['url']['min_price'] != ''){
 		   	   	$condition .=" and Product.shop_price >= '".$this->params['url']['min_price']."'";
@@ -92,17 +94,17 @@
 	       //供应商列表
 	       $provides_tree=$this->Provider->findAll();
 	        //pr($types_tree);
-	        $forsale=isset($this->params['url']['forsale'])?$this->params['url']['forsale']:99;
-	       $category_id=isset($this->params['url']['category_id'])?$this->params['url']['category_id']:0;
-	   	   $brand_id=isset($this->params['url']['brand_id'])?$this->params['url']['brand_id']:0;
-	   	   $type_id=isset($this->params['url']['type_id'])?$this->params['url']['type_id']:0;
+	        $forsale=isset($this->params['url']['forsale'])?$this->params['url']['forsale']:"99";
+	       $category_id=isset($this->params['url']['category_id'])?$this->params['url']['category_id']:"0";
+	   	   $brand_id=isset($this->params['url']['brand_id'])?$this->params['url']['brand_id']:"0";
+	   	   $type_id=isset($this->params['url']['type_id'])?$this->params['url']['type_id']:"0";
 	   	   $keywords=isset($this->params['url']['keywords'])?$this->params['url']['keywords']:'';
 	   	   $min_price=isset($this->params['url']['min_price'])?$this->params['url']['min_price']:'';
 	   	   $max_price=isset($this->params['url']['max_price'])?$this->params['url']['max_price']:'';
 	   	   $start_date=isset($this->params['url']['start_date'])?$this->params['url']['start_date']:'';
 	   	   $end_date=isset($this->params['url']['end_date'])?$this->params['url']['end_date']:'';
-	   	   $is_recommond=isset($this->params['url']['is_recommond'])?$this->params['url']['is_recommond']:-1;
-	   	   $provider_id=isset($this->params['url']['provider_id'])?$this->params['url']['provider_id']:-1;
+	   	   $is_recommond=isset($this->params['url']['is_recommond'])?$this->params['url']['is_recommond']:"-1";
+	   	   $provider_id=isset($this->params['url']['provider_id'])?$this->params['url']['provider_id']:"-1";
 	   	   //pr($products_list);
 	   	   
 	   	   $this->set('forsale',$forsale);
@@ -122,6 +124,7 @@
 	   	   $this->set('end_date',$end_date);
 	   	   $this->set('is_recommond',$is_recommond);
 	   	   $this->set('provider_id',$provider_id);
+   	   		$this->set('total',$total);
 		}
 		
 		function add(){
@@ -132,13 +135,17 @@
 			$this->UserRank->set_locale($this->locale);
 			 if($this->RequestHandler->isPost()){
 	    	
-	    	$this->data['Product']['weight'] = !empty($this->data['Product']['weight'])?$this->data['Product']['weight']:"0";
+			$this->data['Product']['weight'] = !empty($this->data['Product']['weight'])?$this->data['Product']['weight']:"0";
 	    	$this->data['Product']['shop_price'] = !empty($this->data['Product']['shop_price'])?$this->data['Product']['shop_price']:"0";
 			$this->data['Product']['market_price'] = !empty($this->data['Product']['market_price'])?$this->data['Product']['market_price']:"0";
 			$this->data['Product']['product_name_style']=$this->params['form']['product_style_color'] . '+'.$this->params['form']['product_style_word'];
 			$this->data['Product']['point'] = !empty($this->data['Product']['point'])?$this->data['Product']['point']:"0";
+			$this->data['Product']['img_thumb'] = !empty($this->data['Product']['img_thumb'])?$this->data['Product']['img_thumb']:"";
+			$this->data['Product']['img_detail'] = !empty($this->data['Product']['img_detail'])?$this->data['Product']['img_detail']:"";
+			$this->data['Product']['img_original'] = !empty($this->data['Product']['img_original'])?$this->data['Product']['img_original']:"";
+			$this->data['Product']['product_rank_id'] = !empty($this->data['Product']['product_rank_id'])?$this->data['Product']['product_rank_id']:"0";
 			$this->data['Product']['extension_code'] = "virtual_card";
-			  $this->data['Product']['is_real'] = 0;
+			$this->data['Product']['is_real'] = "0";
 
 	  	       //新增商品
 	  	       if(empty($this->data['Product']['code'])){
@@ -147,9 +154,9 @@
 	  	       	      //pr($max_product);
 	  	       	      $this->data['Product']['code']=$this->generate_product_code($max_id);
 	  	       }
-			    $this->data['Product']['quantity']=0;
+			    $this->data['Product']['quantity']="0";
 			   if(!isset($this->data['Product']['promotion_status'])){
-              	             $this->data['Product']['promotion_status'] = 0;
+              	             $this->data['Product']['promotion_status'] = "0";
               	     }
               	if(isset($this->params['form']['date'])){
               	     	    $this->data['Product']['promotion_start'] = $this->params['form']['date'];
@@ -158,6 +165,7 @@
               	     	    $this->data['Product']['promotion_end'] = $this->params['form']['date2']." 23:59:59";
               }
 			   //pr($this->data);die();
+			$this->data['Product']['coupon_type_id'] = "0";
 			   $this->Product->save($this->data['Product']); //关联保存
 			   $id=$this->Product->id;
 			   //新增商品多语言
@@ -185,16 +193,16 @@
               
               $crdir = "../img/products/".$product_code;
 			  if(!is_dir($crdir)){
-				 mkdir($crdir, 0700);
-			  }
+				 mkdir($crdir, 0777);
+				 @chmod($crdir, 0777);			  }
 			  $crdir = "../img/products/".$product_code."/detail/";
 			  if(!is_dir($crdir)){
-				 mkdir($crdir, 0700);
-			  }
+				 mkdir($crdir, 0777);
+				 @chmod($crdir, 0777);			  }
 			  $crdir = "../img/products/".$product_code."/original/";
 			  if(!is_dir($crdir)){
-				 mkdir($crdir, 0700);
-			  }
+				 mkdir($crdir, 0777);
+				 @chmod($crdir, 0777);			  }
               //rename($file, $newfile));
               
               //商品相册
@@ -227,7 +235,7 @@
 	              	      	        	    'img_thumb'=> $img_thumb,
 	              	      	        	    'img_detail'=> $img_detail,
 			                                'orderby'=> !empty($img_sort[$k])?$img_sort[$k]:50,
-			                                'description'=>$img_desc[$k],
+			                                //'description'=>$img_desc[$k],
 			                                'product_id'=> $id
 			                         );
 			                        $this->ProductGallery->saveAll(array('ProductGallery'=>$product_gallery));//更新多语言
@@ -237,14 +245,22 @@
 	              	      	        	    'img_detail'=> $img_detail,
 			                                'id'=> $id
 			                         );
+			                        foreach( $this->languages as $lk=>$lv ){
+			                        	$product_gallery_i18n=array(
+			                        		'product_gallery_id'=>$this->ProductGallery->id,
+			                        		'locale'=>$lv['Language']['locale'],
+			                        		'description'=>$this->params['form']['img_desc'][$lv['Language']['locale']][$k],
+			                         	);
+			                        	$this->ProductGalleryI18n->saveAll(array('ProductGalleryI18n'=>$product_gallery_i18n));//更新多语言
 			                        
+			                        }
 			                        $this->Product->saveAll(array('Product'=>$product));
 		                        
 		                  }
               
               }
               
-              //会员等级价格
+//会员等级价格
 			  if(isset($this->params['form']['user_rank']) && is_array($this->params['form']['user_rank'])){
 			         	    
 			         	     foreach($this->params['form']['user_rank'] as $k=>$v){
@@ -253,17 +269,17 @@
 		                                     'discount'=>$this->params['form']['user_price_discount'][$k]
 		                             );
 		                       
-		                        $this->UserRank->save(array('UserRank'=>$user_rank));
+		                        $this->UserRank->saveall(array('UserRank'=>$user_rank));
 		                        
 			         	     }
 			         	     foreach($this->params['form']['user_rank'] as $k=>$v){
-			         	     	 	$is_d_rank = !empty($this->params['form']['is_default_rank'][$k])?$this->params['form']['is_default_rank'][$k]:0;
+			         	     	 	$is_d_rank = !empty($this->params['form']['is_default_rank'][$k])?$this->params['form']['is_default_rank'][$k]:"0";
 			         	     	    $ProductRank=array(
 		                                     'product_id'=>	$id,
 		                                	 'rank_id'=>$v,
 		                                	 'id'=>$this->params['form']['productrank_id'][$k],
 		                                     'product_price'=>$this->params['form']['rank_product_price'][$k],
-		                                	'is_default_rank'=>!empty($this->params['form']['is_default_rank'][$k])?$this->params['form']['is_default_rank'][$k]:0
+		                                	'is_default_rank'=>!empty($this->params['form']['is_default_rank'][$k])?$this->params['form']['is_default_rank'][$k]:"0"
 		                             );
 
 		                        $this->ProductRank->saveAll(array('ProductRank'=>$ProductRank));
@@ -271,12 +287,13 @@
 			         	     }
 			         	     
 			         }
-			  $this->flash("虚拟卡 ".$product_code." ".$product_name." 添加成功。点击继续编辑该虚拟卡。",'/virtual_cards/'.$id,10);
+			  $this->flash("虚拟卡 ".$product_code." ".$product_name." 添加成功。点击为虚拟卡补货。",'/virtual_cards/card_add/'.$id,10);
 			  //$this->flash("添加成功",'/products/','');
 	    }
 	    //分类下拉列表
         $categories_tree=$this->Category->tree('P',$this->locale);
         //品牌下拉列表
+        $new_brands_tree = array();
         $brands_tree=$this->Brand->getbrandformat();
         foreach( $brands_tree as $k=>$v ){
         	if( $v['BrandI18n']['locale'] == $this->locale ){
@@ -304,13 +321,18 @@
 			$this->UserRank->set_locale($this->locale);
 			if($this->RequestHandler->isPost()){
               
-              $this->data['Product']['recommand_flag'] = isset($this->data['Product']['recommand_flag'])?$this->data['Product']['recommand_flag']:0;
-              $this->data['Product']['forsale'] = isset($this->data['Product']['forsale'])?$this->data['Product']['forsale']:0;
-              $this->data['Product']['alone'] = isset($this->data['Product']['alone'])?$this->data['Product']['alone']:0;
+              $this->data['Product']['recommand_flag'] = isset($this->data['Product']['recommand_flag'])?$this->data['Product']['recommand_flag']:"0";
+              $this->data['Product']['forsale'] = isset($this->data['Product']['forsale'])?$this->data['Product']['forsale']:"0";
+              $this->data['Product']['alone'] = isset($this->data['Product']['alone'])?$this->data['Product']['alone']:"0";
               $this->data['Product']['weight'] = !empty($this->data['Product']['weight'])?$this->data['Product']['weight']:"0";
 	    	  $this->data['Product']['shop_price'] = !empty($this->data['Product']['shop_price'])?$this->data['Product']['shop_price']:"0";
 			  $this->data['Product']['market_price'] = !empty($this->data['Product']['market_price'])?$this->data['Product']['market_price']:"0";
-			  $this->data['Product']['point'] = !empty($this->data['Product']['point'])?$this->data['Product']['point']:"0";
+			  	$this->data['Product']['point'] = !empty($this->data['Product']['point'])?$this->data['Product']['point']:"0";
+				$this->data['Product']['product_name_style']=@$this->params['form']['product_style_color'] . '+'.@$this->params['form']['product_style_word'];
+				$this->data['Product']['img_thumb'] = !empty($this->data['Product']['img_thumb'])?$this->data['Product']['img_thumb']:"";
+				$this->data['Product']['img_detail'] = !empty($this->data['Product']['img_detail'])?$this->data['Product']['img_detail']:"";
+				$this->data['Product']['img_original'] = !empty($this->data['Product']['img_original'])?$this->data['Product']['img_original']:"";
+				$this->data['Product']['product_rank_id'] = !empty($this->data['Product']['product_rank_id'])?$this->data['Product']['product_rank_id']:"0";
 			  $this->data['Product']['extension_code'] = "virtual_card";
 			  $this->data['Product']['is_real'] = 0;
            	  
@@ -333,7 +355,7 @@
 		                     $this->ProductI18n->saveall(array('ProductI18n'=>$producti18n_info));//更新多语言
               	     }
               	     if(!isset($this->data['Product']['promotion_status'])){
-              	             $this->data['Product']['promotion_status'] = 0;
+              	             $this->data['Product']['promotion_status'] = "0";
               	     }
               	     if(isset($this->params['form']['date'])){
               	     	    $this->data['Product']['promotion_start'] = $this->params['form']['date'];
@@ -388,7 +410,7 @@
 		                                	 'rank_id'=>$v,
 		                                	 'id'=>$this->params['form']['productrank_id'][$k],
 		                                     'product_price'=>$this->params['form']['rank_product_price'][$k],
-		                                	'is_default_rank'=>!empty($this->params['form']['is_default_rank'][$k])?$this->params['form']['is_default_rank'][$k]:0
+		                                	'is_default_rank'=>!empty($this->params['form']['is_default_rank'][$k])?$this->params['form']['is_default_rank'][$k]:"0"
 		                             );
 
 		                        $this->ProductRank->saveAll(array('ProductRank'=>$ProductRank));
@@ -400,16 +422,34 @@
 			         $this->flash("虚拟卡 ".$product_code." ".$product_name." 编辑成功。点击继续编辑该虚拟卡。",'/virtual_cards/'.$id,10);
               	     
               }
-              //更新商品相册
+ //更新商品相册
               if(isset($this->params['form']['action_type']) && $this->params['form']['action_type'] == 'product_gallery'){
               	     // pr($this->params);
               	      /*foreach($this->data['ProductGallery'] as $k=>$v){
               	    	      $this->ProductGallery->save($this->data['ProductGallery'][$k]); //关联保存
               	      }*/
+              	      //
+              	      $ProductGalleryI18ndescription = !empty($_REQUEST['ProductGalleryI18ndescription'])?$_REQUEST['ProductGalleryI18ndescription']:array();
+              	      foreach( $ProductGalleryI18ndescription as $k=>$v ){
+              	      		foreach($v['ProductGalleryI18n'] as $kk=>$vv){
+              	      			$product_gallery_id = $vv['product_gallery_id'];
+              	      			$this->ProductGalleryI18n->deleteall(array('product_gallery_id'=>$product_gallery_id));
+              	      		}
+              	      }
+          			  foreach( $ProductGalleryI18ndescription as $k=>$v ){
+              	      		foreach($v['ProductGalleryI18n'] as $kk=>$vv){
+              	      			$product_gallery_id = $vv['product_gallery_id'];
+              	      			$this->ProductGalleryI18n->saveall(array('ProductGalleryI18n'=>$vv));
+              	      		
+              	      		}
+              	      }
+              	      
+              	      
               	      if(!empty($this->params['form']['img_url'])){
               	      	  //缩略图,详细图,原图
               	      	  $pro_info=$this->Product->findbyid($this->params['form']['product_id']);
-              	      	  
+              	      	 // pr($this->params['form']);
+              	      	  //pr($this->languages);
               	      	  $imgurl = $this->params['form']['img_url'];
               	      	  foreach($imgurl as $k=>$v){
               	      	  	  if(!empty($v)){
@@ -425,10 +465,21 @@
 	              	      	        	    'img_thumb'=> $img_thumb,
 	              	      	        	    'img_detail'=> $img_detail,
 			                                'orderby'=> !empty($this->params['form']['img_sort'][$k])?$this->params['form']['img_sort'][$k]:50,
-			                                'description'=>	 $this->params['form']['img_desc'][$k],
+			                                //'description'=>	 $this->params['form']['img_desc'][$k],
 			                                'product_id'=> $this->params['form']['product_id']
 			                         );
-			                        $this->ProductGallery->saveAll(array('ProductGallery'=>$product_gallery));//更新多语言
+			                        $this->ProductGallery->saveAll(array('ProductGallery'=>$product_gallery));
+			                        
+			                        foreach( $this->languages as $lk=>$lv ){
+			                        	$product_gallery_i18n=array(
+			                        		'product_gallery_id'=>$this->ProductGallery->id,
+			                        		'locale'=>$lv['Language']['locale'],
+			                        		'description'=>$this->params['form']['img_desc'][$lv['Language']['locale']][$k],
+			                         	);
+			                        	$this->ProductGalleryI18n->saveAll(array('ProductGalleryI18n'=>$product_gallery_i18n));//更新多语言
+			                        
+			                        }
+			                        
 			                        $product=array(
 	              	      	        	    'img_original'=> $img_original,
 	              	      	        	    'img_thumb'=> $img_thumb,
@@ -436,13 +487,14 @@
 			                                'id'=> $this->params['form']['product_id']
 			                         );
 			                        $this->Product->saveAll(array('Product'=>$product));
-		                      }
-		                  }
 		                        
+		                  }
+		                  }
               	      }
               	      $product_info_img = $this->Product->findById($id);
               	      $product_code = $product_info_img['Product']['code'];
               	      $product_name = $product_info_img['ProductI18n']['name'];
+
 			          $this->flash("虚拟卡 ".$product_code." ".$product_name." 编辑相册成功。点击继续编辑该虚拟卡。",'/virtual_cards/'.$id,10);
               }
               //更新商品属性
@@ -556,7 +608,18 @@
 		foreach($product_gallery as $k=>$v){
 			$this->data['ProductGallery'][$k]=$product_gallery[$k]['ProductGallery'];
 		}
-		//扩展分类
+		//商品相册
+
+		$product_gallery=$this->ProductGallery->findAll(" ProductGallery.product_id = '".$id."'");
+		
+		foreach($product_gallery as $k=>$v){
+			foreach( $v['ProductGalleryI18n'] as $kk=>$vv ){
+				$product_gallery[$k]['ProductGalleryI18n'][$vv['locale']] = $vv;
+			}
+			$this->data['ProductGallery'][$k]=$product_gallery[$k]['ProductGallery'];
+			$this->data['ProductGallery'][$k]['ProductGalleryI18n']=$product_gallery[$k]['ProductGalleryI18n'];
+			
+		}		//扩展分类
 		$other_cat=$this->ProductsCategory->findAll(" ProductsCategory.product_id = '".$id."'");
 		foreach($other_cat as $k=>$v){
 			   $this->data['other_cat'][$k]=$v;
@@ -569,14 +632,18 @@
 	    //关联文章
 	    $product_articles=$this->requestAction("/commons/get_products_articles/".$id."");
 		//pr($product_articles);
-		//会员等级
+//会员等级
 		$user_rank_list=$this->UserRank->findrank();
 		foreach( $user_rank_list as $k=>$v ){
 			$rank_id = $v['UserRank']['id'];
 			$product_id = $id;
 			$productrank = $this->ProductRank->find(array('product_id'=>$product_id,'rank_id'=>$rank_id));
-			if(empty($productrank)){
-				$user_rank_list[$k]['UserRank']['product_price'] = "-1";($user_rank_list[$k]['UserRank']['discount']/100)*($this->data['Product']['shop_price']);
+
+			if($productrank['ProductRank']['is_default_rank']==1){
+				$user_rank_list[$k]['UserRank']['product_price'] = ($user_rank_list[$k]['UserRank']['discount']/100)*($this->data['Product']['shop_price']);
+				$user_rank_list[$k]['UserRank']['is_default_rank'] = $productrank['ProductRank']['is_default_rank'];
+				$user_rank_list[$k]['UserRank']['productrank_id'] = $productrank['ProductRank']['id'];
+			
 			}else{
 				$user_rank_list[$k]['UserRank']['product_price'] = $productrank['ProductRank']['product_price'];
 				$user_rank_list[$k]['UserRank']['is_default_rank'] = $productrank['ProductRank']['is_default_rank'];
@@ -585,10 +652,10 @@
 			}
 		}
 		
-		//pr($user_rank_list);
+		
 		//供应商
 		$provider_list = $this->Provider->get_provider_list();
-		$user_rank_list=$this->UserRank->findrank();
+		//$user_rank_list=$this->UserRank->findrank();
 		$this->set('provider_list',$provider_list);
 		$this->set('categories_tree',$categories_tree);
 		$this->set('brands_tree',$brands_tree);
@@ -599,7 +666,6 @@
 		$this->set('article_cat', $article_cat);
 		$this->set('product_articles', $product_articles);
 		$this->set('products_attr_html', $products_attr_html);
-		$this->set('user_rank_list', $user_rank_list);
 		$this->set('products_name_color', $products_name_style[0]);
         $this->set('products_name_style', $products_name_style[1]);
 		$this->set('market_price_rate',$this->configs['market_price_rate']);
@@ -651,11 +717,9 @@
 				$this->data['VirtualCard']['card_sn'] = $this->requestAction("/commons/encrypt/".$this->data['VirtualCard']['card_sn']);
 				$this->data['VirtualCard']['card_password'] = $this->requestAction("/commons/encrypt/".$this->data['VirtualCard']['card_password']);
 				$this->data['VirtualCard']['crc32'] = crc32(AUTH_KEY);
-				
 				$this->data['VirtualCard']['end_date'] = $this->data['VirtualCard']['end_date']." 23:59:59";
 				$this->data['VirtualCard']['product_id'] = $product_id;
 				$this->VirtualCard->save($this->data);
-				
 				$id = $this->VirtualCard->getLastInsertId();
 				$condition22['product_id'] = $product_id;
 				$condition22['is_saled'] = 0;
@@ -665,7 +729,9 @@
 			              array('Product.quantity' =>$total),
 			              array('Product.id' => $product_id)
 			           );
-				$this->flash("添加成功",'/virtual_cards/card_edit/'.$id.'/'.$product_id.'/',10);
+			    $this->Product->set_locale($this->locale);
+			    $product_info = $this->Product->find(array("Product.id"=>$product_id));
+				$this->flash("虚拟卡 ".$product_info["ProductI18n"]["name"]." 补货成功。点击编辑虚拟卡",'/virtual_cards/card_edit/'.$id.'/'.$product_id.'/',10);
 			}
 			$condition['product_id'] = $product_id;
 			$product_name_list=$this->ProductI18n->findall($condition,'DISTINCT ProductI18n.name,ProductI18n.locale');
@@ -761,6 +827,7 @@
 			
 			
 			if($this->RequestHandler->isPost()){
+				$this->data['VirtualCard']['end_date'] = $this->data['VirtualCard']['end_date']." 23:59:59";
 				$this->data['VirtualCard']['card_sn'] = $this->requestAction("/commons/encrypt/".$this->data['VirtualCard']['card_sn']);
 				$this->data['VirtualCard']['card_password'] = $this->requestAction("/commons/encrypt/".$this->data['VirtualCard']['card_password']);
 				$this->data['VirtualCard']['crc32'] = crc32(AUTH_KEY);
@@ -769,7 +836,9 @@
 				$this->data['VirtualCard']['end_date'] = $this->data['VirtualCard']['end_date']." 23:59:59";
 				$this->VirtualCard->save($this->data);
 				$this->params['controller']="/virtual_cards/card/".$product_id;
-         		$this->flash("编辑成功",'/virtual_cards/card_edit/'.$id.'/'.$product_id.'/',10);
+			    $this->Product->set_locale($this->locale);
+			    $product_info = $this->Product->find(array("Product.id"=>$product_id));
+				$this->flash("虚拟卡 ".$product_info["ProductI18n"]["name"]." 编辑成功。点击编辑虚拟卡",'/virtual_cards/card_edit/'.$id.'/'.$product_id.'/',10);
 
 			}
 			
@@ -816,7 +885,7 @@
          	   if ($this->params['url']['act_type'] == 'del')
                {
                	   $this->Product->updateAll(
-			              array('Product.status' => 2),
+			              array('Product.huj' => "2"),
 			              array('Product.id' => $pro_ids)
 			           );
                     

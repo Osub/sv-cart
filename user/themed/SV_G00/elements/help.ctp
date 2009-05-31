@@ -9,38 +9,27 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: help.ctp 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: help.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
-<?php
-$navigations_help = $this->requestAction('commons/get_navigations/H'); 
-
-//pr($navigations_help);
-
-//	echo "<pre>";
-//	print_r($navigations_help);
-if($navigations_help)
-{
-
-?>
-<div id="category_box" class="brand_box">
-<!--帮助中心start-->
-	<h3><?=$SCLanguages['help_center']?></h3>
+<?php $navigations_help = $this->requestAction('commons/get_navigations/H'); 
+if($navigations_help){?>
+<div class="category_box brand_box">
+<!--HelpCenter-->
+<h3><span class="l"></span><span class="r"></span><?=$SCLanguages['help_center']?></h3>
+<div class="box">
 	<div class="category Help">
 		<ul>
-
-<?if(isset($navigations_help) && sizeof($navigations_help)>0 ){?>
-<?php foreach($navigations_help as $key=>$helps){ ?>
-	<li><?=$html->image('ico_28.gif',array("alt"=>"SV-Cart"));?><?=$html->link($helps['NavigationI18n']['name']." <font face='宋体'>&gt;&gt;</font>","/../".$helps['NavigationI18n']['url'],"",false,false);?>
-	</li>
-<?}?>
-<?}?>
+		<?if(isset($navigations_help) && sizeof($navigations_help)>0 ){?>
+		<?php foreach($navigations_help as $key=>$helps){ ?>
+			<li><?=$html->image('ico_28.gif',array("alt"=>"SV-Cart"));?><?=$html->link($helps['NavigationI18n']['name']." <font face='宋体'>&gt;&gt;</font>","/../".$helps['NavigationI18n']['url'],"",false,false);?>
+		</li>
+		<?}?>
+		<?}?>
 		</ul>
 	</div>
-	<?=$html->link($html->image('category_ulbt.gif',array("alt"=>"SV-Cart","align"=>"absbottom")),"/","",false,false);?>
 </div>
-<!--帮助中心End-->
-
-<?
-}
-?>
+<p><?=$html->image('category_ulbt.gif',array("alt"=>""));?></p>
+</div>
+<!--HelpCenter End-->
+<?}?>

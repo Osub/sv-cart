@@ -9,19 +9,11 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: order_action.php 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: order_action.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class OrderAction extends AppModel{
 	var $name = 'OrderAction';
-	/*var $hasOne = array('Provider' =>   
-                        array('className'    => 'Provider', 
-                              'conditions'    =>  'Provider.id=OrderAction.from_operator_id',
-                              'order'        => '',   
-                              'dependent'    =>  true,   
-                              'foreignKey'   => ''  
-                        )
-                  );
-    */
+
     var $hasOne = array('Operator' =>   
                         array('className'    => 'Operator', 
                               'conditions'    =>  'Operator.id=OrderAction.from_operator_id',

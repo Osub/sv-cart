@@ -59,10 +59,10 @@
 			echo $html->tag('li',$html->para('pic',
 				 $html->link(
 				 $html->image("{$v['Product']['img_thumb']}",array('width'=>'108','height'=>'108',))
-				 ,"/products/{$v['Product']['id']}",'',false,false)
+				 ,$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),'',false,false)
 				 ,array(),false)
 				 .$html->para('info',
-				 $html->tag('span',$html->link("{$v['ProductI18n']['name']}","/products/{$v['Product']['id']}",array(),false,false),'name')
+				 $html->tag('span',$html->link("{$v['ProductI18n']['name']}",$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false),'name')
 				 .$html->tag('span',$html->tag('font',"{$v['Product']['shop_price']}",array('color'=>'#F9630C')),'Price')		 		
 				 ,array(),false),'');				
 			}

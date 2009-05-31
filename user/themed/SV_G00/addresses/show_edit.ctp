@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: show_edit.ctp 1116 2009-04-28 11:04:43Z huangbo $
+ * $Id: show_edit.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ob_start();
 if ($result['type'] == 0){?>
@@ -48,6 +48,12 @@ if ($result['type'] == 0){?>
  <li>
     <dd class="l"><?=$SCLanguages['street'];?>：</dd>
     <dt class="adrees" style="width:auto;"><textarea name="data[UserAddress][address]" id="UserAddressAddress"  style="width:250px;overflow-y:scroll" rows="4"><?echo $result['address']['UserAddress']['address']?></textarea></dt><dd>&nbsp;<font color="red" id="address_msg">*</font><br/><br/><br/><br/><?=$SCLanguages['duplicate_fill_province_city_district'];?>。</dd>  </li>
+  
+  <li>
+  <dd class="l"><?echo $SCLanguages['marked_building']?>：</dd>
+  <dt style="white-space:nowrap;"><input type="text" name="data[UserAddress][sign_building]" id="UserAddressSignBuilding" maxLength="40" size="27" value="<?echo $result['address']['UserAddress']['sign_building']?>" />
+  </dt></li>
+  
   <li>
     <dd class="l"><?echo $SCLanguages['post_code']?>：</dd>
     <dt style="white-space:nowrap;"><input name="data[UserAddress][zipcode]" id="UserAddressZipcode" size="27" maxLength="18" onKeyUp="is_int(this);" value="<?echo $result['address']['UserAddress']['zipcode']?>" />&nbsp;<font color="red" id="zipcode_msg">*</font></dt></li>
@@ -58,6 +64,13 @@ if ($result['type'] == 0){?>
       <li>
         <dd class="l"><span id="span_phone"><?echo $SCLanguages['mobile']?>：</span></dd>
         <dt style="white-space:nowrap;"><input type="text" name="data[UserAddress][mobile]" id="UserAddressMobile" maxLength="30" size="27" onKeyUp="is_int(this);" value="<?echo $result['address']['UserAddress']['mobile']?>" />&nbsp;<font color="red" id="mobile_msg">*</font> </dt></li>
+
+	  <li>
+	  <dd class="l"><?echo $SCLanguages['best_shipping_time']?>：</dd>
+	  <dt style="white-space:nowrap;"><input type="text" name="data[UserAddress][best_time]" id="UserAddressBestTime" maxLength="40" size="27" value="<?echo $result['address']['UserAddress']['best_time']?>" />
+	  </dt></li>		
+
+
 </ul>
 
 <ul id="ul_company" style="display:none;">

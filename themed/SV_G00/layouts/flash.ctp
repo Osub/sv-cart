@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: flash.ctp 1314 2009-05-11 07:20:51Z huangbo $
+ * $Id: flash.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -21,22 +21,8 @@
 <meta name="keywords" content="<?php if(isset($meta_keywords)){echo $meta_keywords;} ?>" />
 <title><?php echo $title_for_layout; ?> - Powered by Seevia</title>
 <?echo $html->meta('icon');
-echo $html->css('style');
-if(isset($_SESSION['Config']['locale'])){
-echo $html->css($_SESSION['Config']['locale']);
-}else{
-echo $html->css('zh_cn');
-}
-echo $scripts_for_layout;
+$lang_css = isset($_SESSION['Config']['locale']) ? $_SESSION['Config']['locale']:'chi';
 ?>
-<?=$javascript->link('/js/yui/yahoo-dom-event.js');?>
-<?=$javascript->link('/js/yui/container_core-min.js');?>
-<?=$javascript->link('/js/yui/menu-min.js');?>
-<?=$javascript->link('/js/yui/element-beta-min.js');?>
-<?=$javascript->link('/js/yui/animation-min.js');?>
-<?=$javascript->link('/js/yui/connection-min.js');?>
-<?=$javascript->link('/js/yui/json-min.js');?>
-<?=$javascript->link('/js/yui/container-min.js');?>
 
 <script type="text/javascript">
 	var webroot_dir = "<?=$this->webroot;?>";
@@ -53,18 +39,19 @@ var <?php echo $k;?> = "<?php echo $v;?>";
 <? }?>
 <?}?>
 </script>
-<?=$javascript->link('common');?>
+<?=$minify->css(array($this->themeWeb.'css/layout',$this->themeWeb.'css/component',$this->themeWeb.'css/login',$this->themeWeb.'css/menu',$this->themeWeb.'css/containers',$this->themeWeb.'css/autocomplete',$this->themeWeb.'css/style',$this->themeWeb.'css/'.$lang_css));?>
+<?=$minify->js(array('/js/yui/yahoo-dom-event.js','/js/yui/container_core-min.js','/js/yui/menu-min.js','/js/yui/element-beta-min.js','/js/yui/animation-min.js','/js/yui/connection-min.js','/js/yui/container-min.js','/js/yui/json-min.js',$this->themeWeb.'js/common.js','/js/swfobject.js'));?>
 </head>
 <body class="svcart-skin-g00" id="svcart-com">
 <?php echo $this->element('dragl', array('cache'=>'+0 hour'));?>
-	<div id="container">
-		<div id="header">
-			<?if(isset($SVConfigs['shop_temporal_closed']) && $SVConfigs['shop_temporal_closed'] == 1){?>
-			<div id="logo"><?=$html->link($html->image('logo.gif',array("alt"=>"SV-Cart")),"/","",false,false);?></div>
-			<?}else{?>
-			<?echo $this->element('header', array('cache'=>'+0 hour','languages'=>$languages,'navigations_top'=>(isset($navigations['T']))?$navigations['T']:array()));?>
-			<?}?>
-		</div>
+<div id="header">
+	<?if(isset($SVConfigs['shop_temporal_closed']) && $SVConfigs['shop_temporal_closed'] == 1){?>
+	<div id="logo"><?=$html->link($html->image('logo.gif',array("alt"=>"SV-Cart")),"/","",false,false);?></div>
+	<?}else{?>
+	<?echo $this->element('header', array('cache'=>'+0 hour','languages'=>$languages,'navigations_top'=>(isset($navigations['T']))?$navigations['T']:array()));?>
+	<?}?>
+</div>
+<div id="container">
 <div class="contents">
 <div id="ur_here"><?=$SCLanguages['current_location_system_remind']?></div>
 <p class="height_5"></p>
@@ -96,8 +83,6 @@ var <?php echo $k;?> = "<?php echo $v;?>";
 </div>
 <!--Main Start End-->
 </div>
-<div id="footer">
-<?php echo $this->element('footer', array('cache'=>'+0 hour'));?>
-</div>
+<div id="footer"><?php echo $this->element('footer', array('cache'=>'+0 hour'));?></div>
 </body>
 </html>

@@ -9,55 +9,64 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: products_controller.php 1329 2009-05-11 11:29:59Z huangbo $
+ * $Id: products_controller.php 1907 2009-05-31 14:34:18Z huangbo $
 *****************************************************************************/
+uses('sanitize');		
 class ProductsController extends AppController {
 
 	var $name = 'Products';
     var $components = array ('Pagination','RequestHandler'); // Added 
     var $helpers = array('Html','Pagination'); // Added 
-	var $uses = array('Product','ProductsCategory','Category','ProductGallery','ProductRelation','ProductArticle','Article','Comment','ProductType','UserRank','ProductRank','BookingProduct','Order','Brand','CouponType','ProductAttribute','ProductTypeAttribute');
+	var $uses = array('Product','ProductsCategory','Category','ProductGallery','ProductRelation','ProductArticle','Article','Comment','ProductType','UserRank','ProductRank','BookingProduct','Order','Brand','CouponType','ProductAttribute','ProductTypeAttribute','Shipping','ShippingArea','ShippingAreaRegion');
 
     function view($id=""){
 	//	Configure::write('debug', 0);
-		
 		if(!is_numeric($id) || $id<1){
-			$this->flash('id不合法!',"/","","");
+			$this->flash($this->languages['invalid_id'],"/","","");
 	    }
 	    $this->page_init();
 	    //商品详细
 	    $this->Product->set_locale($this->locale);
 	    $info = $this->Product->findbyid($id);
 		
-		$flat = 1;
+		$flat = "1";
 	    if(empty($info)){
 	       $this->pageTitle = $this->languages['products'].$this->languages['not_exist']." - ".$this->configs['shop_title'];
 		   $this->flash($this->languages['products'].$this->languages['not_exist'],"/","","");
-		   $flat = 0;
+		   $flat = "0";
 	    }else if($info['Product']['status']!=1){
 	       $this->pageTitle = $this->languages['products'].$this->languages['not_exist']." - ".$this->configs['shop_title'];
 	    	$this->flash($this->languages['products'].$this->languages['not_exist'],"/","","");
-	    	$flat = 0;
+	    	$flat = "0";
 	    }else if($info['Product']['forsale']!=1){
 	       $this->pageTitle = $this->languages['product_out_of_sale']." - ".$this->configs['shop_title'];
 	    	$this->flash($this->languages['product_out_of_sale'],"/","","");
-	   		$flat = 0;
+	   		$flat = "0";
 	    }
-
+		
 	    
 	    if($flat == 1){
 	    $this->Category->set_locale($this->locale);
 		$categorys = $this->Category->findbyid($info['Product']['category_id']);
 	    $info['Product']['view_stat'] =	$info['Product']['view_stat'] + 1;
 		$this->Product->save($info);
+				
+		//mlti_currency_module
+		//商品地区价
+		if(isset($this->configs['mlti_currency_module']) && $this->configs['mlti_currency_module'] == 1){
+			$product_price = $this->ProductLocalePrice->find("ProductLocalePrice.product_id =".$id." and ProductLocalePrice.status = '1' and ProductLocalePrice.locale = '".$this->locale."'");
+			if(isset($product_price['ProductLocalePrice']['product_price'])){
+				$info['Product']['shop_price'] = $product_price['ProductLocalePrice']['product_price'];
+			}
+		}
 		//pr($info);
 		$category_info = $this->ProductsCategory->find('ProductsCategory.product_id ='.$info['Product']['id'].' and ProductsCategory.category_id ='.$info['Product']['category_id']);
 		//$info['Category']
-	//	pr($category_info);exit;
+		//pr($category_info);exit;
 	    //当前位置
-		if(isset($category_info['ProductsCategory'])){
-			$info['ProductsCategory'] = $category_info['ProductsCategory'];
-		}		
+			if(isset($category_info['ProductsCategory'])){
+				$info['ProductsCategory'] = $category_info['ProductsCategory'];
+			}		
 			$navigations=$this->Category->tree('P',$info['Product']['category_id']);
 			if($categorys['Category']['parent_id'] == 0){
 				$this->navigations[] = array('name'=>$categorys['CategoryI18n']['name'],'url'=>"/categories/".$categorys['Category']['id']);
@@ -74,18 +83,7 @@ class ProductsController extends AppController {
 			$product_info['ProductsCategory'] = $category_info['ProductsCategory'];
 		}
 		//是否有会员价
-/*
-		if(isset($_SESSION['User']) && $this->configs['show_member_level_price'] == 1){
-			$product_rank=$this->ProductRank->findbyproduct_id($info['Product']['id']);
-			if(is_array($product_rank)){
-				if($product_rank['ProductRank']['is_default_rank'] == 0){
-					$info['Product']['product_rank_price'] = $product_rank['ProductRank']['product_price'];
-				}
-				if($product_rank['ProductRank']['is_default_rank'] == 1){
-					$info['Product']['product_rank_price'] = round($info['Product']['shop_price']*$_SESSION['User']['User']['rank_discount']/100,2);
-				}
-			}
-		}*/
+
 		if($product_info['Product']['coupon_type_id']>0){
 			$this->CouponType->set_locale($this->locale);
 			$coupon_type = $this->CouponType->findbyid($product_info['Product']['coupon_type_id']);
@@ -124,6 +122,9 @@ class ProductsController extends AppController {
 		if(!empty($info) && $info['Product']['status'] == 1 && $info['Product']['forsale'] == 1){
      		 $_SESSION['cookie_product']["$id"] = $info;
   		}
+		if($this->is_promotion($info)){
+			$info['Product']['shop_price'] = $info['Product']['promotion_price'];
+		}
 	//	pr($user_rank_list);
 		$this->set('product_ranks',$user_rank_list);
 		$this->set('info',$info);
@@ -139,19 +140,26 @@ class ProductsController extends AppController {
 		$product_attributes_name = array();
 		if(is_array($product_attributes) && sizeof($product_attributes)>0){
 			foreach($product_attributes as $k=>$v){
-				$this->ProductTypeAttribute->set_locale($this->locale);
-				$p_t_a = $this->ProductTypeAttribute->findbyid($v['ProductAttribute']['product_type_attribute_id']);
 				$format_product_attributes[$v['ProductAttribute']['product_type_attribute_id']][$k]['value'] = $v['ProductAttribute']['product_type_attribute_value'];
 				$format_product_attributes[$v['ProductAttribute']['product_type_attribute_id']][$k]['price'] = $v['ProductAttribute']['product_type_attribute_price'];
-				$product_attributes_name[$v['ProductAttribute']['product_type_attribute_id']] = $p_t_a['ProductTypeAttributeI18n']['name'];
+				$format_product_attributes[$v['ProductAttribute']['product_type_attribute_id']][$k]['id'] = $v['ProductAttribute']['id'];
+			}
+			$m=0;
+			foreach($format_product_attributes as $k=>$v){
+				$this->ProductTypeAttribute->set_locale($this->locale);
+				$p_t_a = $this->ProductTypeAttribute->findbyid($k);
+				$format_product_attributes_id[$m] = $v;
+				$product_attributes_name[$m] = $p_t_a['ProductTypeAttributeI18n']['name'];
+				$m++;
 			}
 			$this->set('product_attributes_name',$product_attributes_name);
-			$this->set('format_product_attributes',$format_product_attributes);
+			$this->set('format_product_attributes',$format_product_attributes_id);
 		}
-	//	pr($format_product_attributes);
+//		pr($format_product_attributes_id);
 		$this->set('product_attributes',$product_attributes);
 		//pr($product_attributes);
 	//	相册
+		$this->ProductGallery->set_locale($this->locale);
 	    $galleries = $this->ProductGallery->findall("ProductGallery.product_id = '$id'",null,"orderby");
 	    if(isset($this->configs['related_products_number']) && $this->configs['related_products_number'] > 0){
 	    	$show_gallery_number = $this->configs['related_products_number'];
@@ -159,22 +167,35 @@ class ProductsController extends AppController {
 	    	$show_gallery_number = 4;
 	    }
 	    $galleries = array_slice($galleries,'0',$show_gallery_number);
-	    if(sizeof($galleries) < $show_gallery_number){
-	    	for($i=0;$i<$show_gallery_number - sizeof($galleries) ; $i++){
+	    if(sizeof($galleries) < 1){
+	  //  	for($i=0;$i<$show_gallery_number - sizeof($galleries) ; $i++){
 	    		$galleries[] =  array('ProductGallery'=>array('img_thumb' => "/img/product_default.jpg",
 	    													'img_detail' => "/img/product_default.jpg",
 	    													'img_original' => "/img/product_default.jpg",
 	    													'description' => "/img/product_default.jpg"
 	    							));
-	    	}
+	    //	}
 	    }
-	    
 	    $this->set("galleries",$galleries);
 	
+		//是否单独有运费
+		if($this->configs['use_product_shipping_fee'] == 1){
+			$product_shippings = $this->ProductShippingFee->findall(" ProductShippingFee.status = '1' and ProductShippingFee.product_id = ".$id);
+			if(is_array($product_shippings) && sizeof($product_shippings)>0){
+				$this->Shipping->set_locale($this->locale);
+				$shipping_fee = array();
+				foreach($product_shippings as $k=>$v){
+					$shipping = $this->Shipping->findbyid($v['ProductShippingFee']['shipping_id']);
+					$shipping_fee[$k]['shipping_name'] = $shipping['ShippingI18n']['name'];
+					$shipping_fee[$k]['shipping_fee'] = $v['ProductShippingFee']['shipping_fee'];
+				}
+				$this->set('shipping_fee',$shipping_fee);
+			}
+		}
 	//	相关商品
 
-		$relation_ids = $this->ProductRelation->find("list",array('conditions'=>"ProductRelation.Product_id = '$id' and Product.status =1 and Product.forsale =1",'recursive'=>1,'fields'=>'ProductRelation.related_product_id','order'=>'ProductRelation.orderby'));
-		$relation_ids_is_double = $this->ProductRelation->find("list",array('conditions'=>"ProductRelation.related_product_id = '$id' and ProductRelation.is_double = 1 and Product.status =1 and Product.forsale =1",'recursive'=>1,'fields'=>'ProductRelation.product_id','order'=>'ProductRelation.orderby'));
+		$relation_ids = $this->ProductRelation->find("list",array('conditions'=>"ProductRelation.product_id = '$id' and Product.status ='1' and Product.forsale ='1'",'recursive'=>'1','order'=>'ProductRelation.orderby'));
+		$relation_ids_is_double = $this->ProductRelation->find("list",array('conditions'=>"ProductRelation.related_product_id = '$id' and ProductRelation.is_double = '1' and Product.status ='1' and Product.forsale ='1'",'recursive'=>'1','order'=>'ProductRelation.orderby'));
 		if(is_array($relation_ids_is_double) && sizeof($relation_ids_is_double)>0){
 			foreach($relation_ids_is_double as $k=>$v){
 				if(!in_array($v,$relation_ids)){
@@ -182,18 +203,20 @@ class ProductsController extends AppController {
 				}
 			}
 		}
-		//pr($relation_ids);
 		if(sizeof($relation_ids)>0){
 			$relation_products = $this->Product->findall(array("Product.id"=>$relation_ids));
 			if(isset($this->configs['related_products_number']) && $this->configs['related_products_number'] > 0){
 				$relation_products = array_slice($relation_products,'0',$this->configs['related_products_number']);
+			}
+			foreach($relation_products as $k=>$v){
+				$relation_products[$k]['Product']['shop_price'] =$this->Product->locale_price($v['Product']['id'],$v['Product']['shop_price'],$this);
 			}
 			$this->set("relation_products",$relation_products);
 		}
 		
 	
 	//	相关文章
-		$article_ids = $this->ProductArticle->find("list",array('conditions'=>"ProductArticle.Product_id = '$id' and Article.status =1 ",'recursive'=>1,'fields'=>'ProductArticle.article_id','order'=>'ProductArticle.orderby'));
+		$article_ids = $this->ProductArticle->find("list",array('conditions'=>"ProductArticle.product_id = '$id' and Article.status ='1' ",'recursive'=>'1','order'=>'ProductArticle.orderby'));
 		
 		
 		if(sizeof($article_ids)>0){
@@ -219,7 +242,7 @@ class ProductsController extends AppController {
 		}else{
 			$show_comments_number = 6;
 		}
-		$comments = $this->Comment->find('threaded',array('conditions'=>"Comment.type_id = '$id' and Comment.type = 'P' and Comment.status = 1",'recursive'=>1,'order'=>'Comment.modified desc','limit'=>$show_comments_number));
+		$comments = $this->Comment->find('threaded',array('conditions'=>"Comment.type_id = '$id' and Comment.type = 'P' and Comment.status = '1'",'recursive'=>'1','order'=>'Comment.modified desc','limit'=>$show_comments_number));
 		$this->set('comments',$comments);
 	
 	//是否可以评论
@@ -283,6 +306,23 @@ class ProductsController extends AppController {
 		$this->layout = 'default_full';
  	}
  	
+ 	
+ 	
+ 	
+	function sku($name ='',$code =''){
+		$name = UrlDecode($name);
+		$code = UrlDecode($code);
+		$product = $this->Product->findbycode($code);
+		if(isset($product['Product'])){
+			$this->view($product['Product']['id']);
+		 		$this->render('/products/view');
+		}else{
+	 	    $this->page_init();
+			$this->pageTitle = $this->languages['products'].$this->languages['not_exist']." - ".$this->configs['shop_title'];
+	    	$this->flash($this->languages['products'].$this->languages['not_exist'],"/","","");
+		}
+	} 	
+
 	function search($type,$keywords='',$orderby="",$rownum='',$showtype="") {
  	  $this->Category->set_locale($this->locale);
  	   //取商店设置商品数量
@@ -360,17 +400,19 @@ class ProductsController extends AppController {
 		 $this->layout = 'default_search';
 
 	}
+
 /*********商品简单搜索结束*********/
 
 	/*********高级搜索开始*********/
 	/*********ad_search   *********/
 	function advancedsearch($type,$keywords='',$category_id=0,$brand_id=0,$min_price=0,$max_price=9999999,$orderby="",$rownum='',$showtype=""){
-		
 		$this->page_init();
-		
 		$keywords = UrlDecode($keywords);
 		$orderby = UrlDecode($orderby);
 		$showtype = UrlDecode($showtype);
+		$mrClean = new Sanitize();
+		$keywords = $mrClean->html($keywords,true);
+		
 		$not_show = 0;
 		$rownum=isset($this->configs['products_list_num']) ? $this->configs['products_list_num']:((!empty($rownum)) ?$rownum:20);//取商店设置商品数量
 		$showtype=isset($this->configs['products_list_showtype']) ? $this->configs['products_list_showtype']:((!empty($showtype)) ?$showtype:'L');//取商店设置商品显示方式
@@ -419,7 +461,7 @@ class ProductsController extends AppController {
 	 	//echo "---------------";
 	 	//print_r($_SESSION);
 		$this->Product->set_locale($this->locale);
-		$condition = array("Product.id"=>$pid_array,'Product.status'=>1);
+		$condition = array("Product.id"=>$pid_array,'Product.status'=>'1','Product.forsale' =>'1');
 		//分页处理
 		$total = $this->Product->findCount($condition,0);
 		$sortClass='Product';
@@ -438,6 +480,24 @@ class ProductsController extends AppController {
 			$category_info = $this->ProductsCategory->find('ProductsCategory.product_id ='.$v['Product']['id'].' and ProductsCategory.category_id ='.$v['Product']['category_id']);
 			$products[$k]['ProductsCategory'] = $category_info['ProductsCategory'];
 			$v['ProductsCategory'] = $category_info['ProductsCategory'];
+			$products[$k]['Product']['user_price'] =$this->Product->user_price($k,$v,$this);
+			$products[$k]['Product']['shop_price'] =$this->Product->locale_price($v['Product']['id'],$v['Product']['shop_price'],$this);
+			if($this->Product->is_promotion($v['Product']['id'])){
+				$products[$k]['Product']['shop_price'] = $v['Product']['promotion_price'];
+			}				
+			
+			if($this->configs['use_sku'] == 1){
+				$this->Category->set_locale($this->locale);						
+				$info = $this->Category->findbyid($v['Product']['category_id']);						
+				$products[$k]['use_sku'] = 1;
+				if($info['Category']['parent_id']>0){
+					$parent_info = $this->Category->findbyid($info['Category']['parent_id']);
+					if(isset($parent_info['Category'])){
+						$products[$k]['parent'] = $parent_info['CategoryI18n']['name'];
+					}
+				}
+			}			
+			
 			if(isset($res_c[$v['ProductsCategory']['id']]['Category']['id'])){
 				$products[$k]['Category']=$res_c[$v['ProductsCategory']['id']]['Category'];
 				$products[$k]['CategoryI18n']=$res_c[$v['ProductsCategory']['id']]['CategoryI18n'];
@@ -508,7 +568,14 @@ class ProductsController extends AppController {
 		    				$product_result['id']=$v['Product']['id'];
 		    				foreach($type_arr as $kk=>$vv){
 		    					if($vv == 0){
-		    						$product_result['img']=$v['Product']['img_thumb'];
+		    						
+					    		if(trim($v['Product']['img_thumb']) == ""){
+					    		$product_result['img']=$this->webroot."img/product_default.jpg";
+					    		}else{
+					    		$webroot = substr($this->webroot,0,strlen($this->webroot)-1);
+					    		$product_result['img']=$webroot.$v['Product']['img_thumb'];
+					    		}
+		    						
 		    					}
 		    					if($vv == 1){
 		    						if(isset($this->configs['products_name_length']) && $this->configs['products_name_length'] >0){
@@ -523,7 +590,12 @@ class ProductsController extends AppController {
 		    		}else{
 			    		$product_result['id']=$v['Product']['id'];
 			    		$product_result['code']=$v['Product']['code'];
-			    		$product_result['img']=$v['Product']['img_thumb'];
+			    		if(trim($v['Product']['img_thumb']) == ""){
+			    		$product_result['img']=$this->webroot."img/product_default.jpg";
+			    		}else{
+					    $webroot = substr($this->webroot,0,strlen($this->webroot)-1);
+			    		$product_result['img']=$webroot.$v['Product']['img_thumb'];
+			    		}
 			    		$product_result['price']=$v['Product']['shop_price'];
 			    		if(isset($this->configs['products_name_length']) && $this->configs['products_name_length'] >0){
 			    			$product_result['name'] = $this->Product->sub_str($v['ProductI18n']['name'], $this->configs['products_name_length']);
@@ -593,12 +665,16 @@ class ProductsController extends AppController {
 		if($category_id!=0){
 			$conditions['ProductsCategory.category_id']=$category_id;
 		}
-		$conditions['Product.status']=1;
+		$conditions['Product.status']='1';
         $products_list = $this->Product->find('all',array('conditions'=>$conditions,'limit'=>10,'order'=>'Product.created desc'));
        	$this->set('dynamic',"商品动态"); 
        	$this->set('this_config',$this->configs); 
         $this->set('products',$products_list); 
         Configure::write('debug',0);
+	}
+	
+	function is_promotion($product_info){
+		return ($product_info['Product']['promotion_status'] == '1' && $product_info['Product']['promotion_start'] <= date("Y-m-d H:i:s") && $product_info['Product']['promotion_end'] >= date("Y-m-d H:i:s"));
 	}
 }//end class
 

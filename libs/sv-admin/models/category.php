@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: category.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: category.php 1841 2009-05-27 06:51:37Z huangbo $
 *****************************************************************************/
 class Category extends AppModel
 {
@@ -20,7 +20,7 @@ class Category extends AppModel
                               'conditions'    =>  '',
                               'order'        => 'locale desc',   
                               'dependent'    =>  true,   
-                              'foreignKey'   => 'Category_id'  
+                              'foreignKey'   => 'category_id'  
                         )
                   );
 
@@ -34,21 +34,17 @@ class Category extends AppModel
 	var $categories_parent_format=array();
 	var $cat_navigate_format=array();
 	
-	function tree($type,$locale){ 
+	function tree($type,$locale,$id="all"){ 
 	    $this->set_locale($locale);
-		$conditions =" type='".$type."'";
+		$conditions['type ='] =$type;
+		if($id!="all"){
+			$conditions['Category.id !='] =$id;
+		}
 		$categories=$this->findAll($conditions,'','Category.parent_id,Category.orderby,Category.id');
 		
 		if(is_array($categories))
 			foreach($categories as $k=>$v)
 			{
-				/*$v['Category']['name']="";
-				if(is_array($v['CategoryI18n'])){
-					//pr($v['CategoryI18n']);
-					foreach( $v['CategoryI18n'] as $kci => $vci){
-						$v['Category']['name'] .=$vci['name'] . " | ";
-					}
-				}*/
 				$this->categories_parent_format[$v['Category']['parent_id']][]=$v;
 			}
 		//pr($this->categories_parent_format);
@@ -75,19 +71,7 @@ class Category extends AppModel
 		return $subcat;
 	}
 	
-	//hobby@20081120 
-/*	function localeformat($id){
-		
-		$info=$this->findbyid($id);
-		if(is_array($info['CategoryI18n']))
-			foreach($info['CategoryI18n'] as $k => $v){
-				$info['CategoryI18n'][$v['locale']]=$v;
-			}
-	//	pr($info);
-		return $info;
-	}*/
-	
-	//ṹ
+
     function localeformat($id){
 		$lists=$this->findAll("Category.id = '".$id."'");
 	//	pr($lists);
@@ -113,11 +97,8 @@ class Category extends AppModel
 			foreach($categories as $k=>$v){
 				$categoryname = '';
 				if(is_array($v['CategoryI18n'])){
-					//pr($v['CategoryI18n']);
-					//foreach( $v['CategoryI18n'] as $kci => $vci){
 						$categoryname =$v['CategoryI18n']['name'];
 						
-					//}
 				}
 				$data[$v['Category']['id']] = $categoryname;
 			}
@@ -148,22 +129,16 @@ class Category extends AppModel
 		}
 		return $data;
 	}
-function getbrandformat(){
+	function getbrandformat(){
 		$condition=" Category.type = 'A'";
 		$lists=$this->findAll($condition);
 		$lists_formated = array();
 		if(is_array($lists))
 			foreach($lists as $k => $v){
-				 $lists_formated[$v['Category']['id']]['Category']=$v['Category'];
-				 $lists_formated[$v['Category']['id']]['CategoryI18n']=$v['CategoryI18n'];
-				 /*$lists_formated[$v['Category']['id']]['Category']['name']='';
-				 foreach($lists_formated[$v['Category']['id']]['CategoryI18n'] as $key=>$val){
-				 	  $lists_formated[$v['Category']['id']]['Category']['name'] .=$val['name'] . " | ";
-				 }*/
+				 $this->categories_parent_format[$v['Category']['parent_id']][]=$v;
 			}
-		//pr($lists_formated);
-		return $lists_formated;
-}
+		return $this->subcat_get(0);
+	}
 
 }
 ?>

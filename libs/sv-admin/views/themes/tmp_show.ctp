@@ -7,7 +7,7 @@
 	  
 	  <div class="box themes_backup" >
 	  <p class="picture">
-	<?=@$html->image("/../../{$curr_template['screenshot']}",array('height'=>'190'))?>
+		<?=@$html->image("/{$this->themeWeb}{$curr_template['screenshot']}",array('height'=>'190'))?>
 	</p>
 		<ul class="bak_haddle">
 		<li><?php if(isset($curr_template['name']))echo $curr_template['name'];?> &nbsp;<?php if(isset($curr_template['version']))echo $curr_template['version'];?></li>		

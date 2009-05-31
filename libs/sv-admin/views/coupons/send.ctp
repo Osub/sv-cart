@@ -16,13 +16,13 @@
 <?=$html->css('button');?>
 <?=$html->css('slider');?>
 <?=$html->css('color_font');?>
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+
+
 <?=$javascript->link('/../js/yui/dragdrop-min.js');?>
 <?=$javascript->link('/../js/yui/button-min.js');?>
 <?=$javascript->link('/../js/yui/slider-min.js');?>
 <?=$javascript->link('/../js/yui/colorpicker-min.js');?>
-<?=$javascript->link('/../js/yui/element-beta-min.js');?>
+
 <?=$javascript->link('color_picker');?>	
 <?=$javascript->link('product');?>	
 <?=$javascript->link('coupon');?>	

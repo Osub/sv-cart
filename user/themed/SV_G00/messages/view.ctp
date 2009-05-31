@@ -13,7 +13,8 @@
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
-<div id="Editinfo_title"><h1><span><?=$SCLanguages['my_message']?></span></h1></div><div id="Edit_box">
+<h1 class="headers"><span class="l"></span><span class="r"></span><b><?=$SCLanguages['my_message']?></b></h1>
+<div id="Edit_box">
   <div id="Edit_info">
   <p class="note"><?php printf($SCLanguages['totally_records_unpaid'],$total);?></p>
   <?if(isset($my_messages) && sizeof($my_messages)>0){?>
@@ -66,8 +67,11 @@
 
 </ul>
 <div class="ws_xx"></div>
-<div class="y_but submits" style="padding-left:190px;">
-<span  class="float_l"><input type="button" name="Submit2" value="<?=$SCLanguages['confirm']?>" onclick="javascript:form1_onsubmit();" /></span></div>
+<div class="y_but submits" style="padding-left:195px;">
+				<li class="handel btn_list" style="background:#fff;">
+				<a href="javascript:form1_onsubmit()" class="float_l"><span><?=$SCLanguages['confirm']?></span></a>
+				</li>
+</div>
 <?=$form->end();?>
 </div>
 </div>

@@ -9,11 +9,11 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: edit.ctp 943 2009-04-23 10:38:44Z huangbo $
+ * $Id: edit.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?>
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+
+
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 <!-- Main Start-->
@@ -57,22 +57,29 @@
 		
 		<dl><dt style="width:105px;">描述： </dt>
 		<dd></dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" name="data[AdvertisementI18n][description]" value="<?=$advertisement['AdvertisementI18n']['description']?>" /></dl>
-		
+		<dl><dt style="width:105px;">广告代码： </dt>
+		<dd></dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" name="data[AdvertisementI18n][code]" value="<?=$advertisement['AdvertisementI18n']['code']?>" /></dl>
+
 		
 		
 		
 		
 		<dl><dt style="width:105px;">开始时间：</dt><span class="search_box" style="background:none;padding:0;border:0" >
-			<dd><input type="text" name="data[AdvertisementI18n][start_time]" class="text_inputs" style="width:180px;"  value="<?=$advertisement['AdvertisementI18n']['start_time']?>" id="date" readonly="readonly"/><button id="show" type="button"><?=$html->image('calendar.gif')?></button></dd></span></dl>
+			<dd><input type="text"  name="data[AdvertisementI18n][start_time]" class="text_inputs" style="width:180px;"  value="<?=$advertisement['AdvertisementI18n']['start_time']?>" id="date" readonly="readonly"/><button id="show" type="button"><?=$html->image('calendar.gif')?></button></dd></span></dl>
 		<dl><dt style="width:105px;">结束时间：</dt><span class="search_box" style="background:none;padding:0;border:0" >
-			<dd><input type="text" name="data[AdvertisementI18n][end_time]" class="text_inputs" style="width:180px;"  value="<?=$advertisement['AdvertisementI18n']['end_time']?>" id="date2" readonly="readonly"/><button type="button" id="show2"><?=$html->image('calendar.gif')?></button></dd></span></dl>
+			<dd><input type="text"  name="data[AdvertisementI18n][end_time]" class="text_inputs" style="width:180px;"  value="<?=$advertisement['AdvertisementI18n']['end_time']?>" id="date2" readonly="readonly"/><button type="button" id="show2"><?=$html->image('calendar.gif')?></button></dd></span></dl>
 		<dl><dt style="width:105px;">连接地址： </dt>
 		<dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" name="data[AdvertisementI18n][url]" value="<?=$advertisement['AdvertisementI18n']['url']?>"  /></dd></dl>	
-		<dl><dt style="width:105px;">上传图片： </dt>
+		<dl><dt style="width:105px;">上传图片1： </dt>
 		<dd><input type="text" size='28' name="data[AdvertisementI18n][img01]" id="upload_img_text_0" value="<?=$advertisement['AdvertisementI18n']['img01']?>" />
 </dd><?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(0,'others')",'',false,false)?></dl>
 		<dl><dt style="width:105px;"></dt>
-		<dd><?=@$html->image("/..{$advertisement['AdvertisementI18n']['img01']}",array('id'=>'logo_thumb_img_0','height'=>'150'))?>
+		<dd><?=@$html->image("/..{$advertisement['AdvertisementI18n']['img01']}",array('id'=>'logo_thumb_img_0','height'=>'150','style'=>'display:none'))?>
+</dd></dl><dl><dt style="width:105px;">上传图片2： </dt>
+		<dd><input type="text" size='28' name="data[AdvertisementI18n][img02]" id="upload_img_text_1" value="<?=$advertisement['AdvertisementI18n']['img02']?>" />
+</dd><?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(1,'others')",'',false,false)?></dl>
+		<dl><dt style="width:105px;"></dt>
+		<dd><?=@$html->image("/..{$advertisement['AdvertisementI18n']['img02']}",array('id'=>'logo_thumb_img_1','height'=>'150','style'=>'display:none'))?>
 </dd></dl>
 
 		<dl><dt style="width:105px;">是否显示图片： </dt>

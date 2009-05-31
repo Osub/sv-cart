@@ -9,13 +9,13 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * 开发人员: test $
- * $Id: app_controller.php 1170 2009-04-30 14:15:05Z huangbo $
+ * $Id: app_controller.php 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 class AppController extends Controller {
 	var $view = 'Theme'; 
 	var $locale = '';
 	var $lang = '';
-	var $helpers = array('Html','Javascript','Form','Svshow');
+	var $helpers = array('Html','Javascript','Form','Svshow','Minify');
 	var $uses = array('Language','Config','Navigation','Brand','Category','Article','LanguageDictionary','Template','UserConfig');
 	var $configs = array();
 	var $navigations = array();
@@ -45,7 +45,7 @@ class AppController extends Controller {
 		}
 		
 		//可选语言
-		$this->set('languages',$this->Language->findall("Language.front = 1 "));
+		$this->set('languages',$this->Language->findall("Language.front = '1' "));
 
 				//官网导航
 		$this->Category->set_locale($this->locale);
@@ -57,13 +57,35 @@ class AppController extends Controller {
 		$this->configs = $this->Config->getformatcode();
 		$this->set('SVConfigs',$this->configs);
 		ini_set('date.timezone','Etc/GMT'.$this->configs['default_timezone']);
+	
+		
+	//	date_default_timezone_set('PRC'); 
 		/*
 		字典语言
 		
 		*/
-		
-		
-		
+/*		if(ereg('gzip',$_SERVER['HTTP_ACCEPT_ENCODING']))
+		{
+		 header('Content-type: text/html; charset: UTF-8');
+		 //ob_start('ob_gzip');
+		 header('Cache-Control: must-revalidate'); 		 
+	//	ob_start('ob_gzhandler');
+		}
+		else
+		{
+			ob_start();
+		}		*/
+	//	ob_end_flush();
+/* 判断是否支持 Gzip 模式 */
+		if ($this->gzip_enabled())
+		{
+		    @ob_start('ob_gzhandler');
+		}
+		else
+		{
+		    @ob_start();
+		}
+	
 		
 		$this->Config->set_locale($this->locale);
 		$this->languages = $this->LanguageDictionary->getformatcode($this->locale);
@@ -82,8 +104,8 @@ class AppController extends Controller {
  			$_SESSION['cart_back_url'] = $_SERVER['HTTP_REFERER'];
  		}
 
-		$template_list=$this->Template->findAll('where status=1','DISTINCT Template.name');
-		$template_default=$this->Template->find('where is_default=1','DISTINCT Template.name');//数据库模板信息
+		$template_list=$this->Template->findAll("where status='1'",'DISTINCT Template.name');
+		$template_default=$this->Template->find("where is_default='1'",'DISTINCT Template.name');//数据库模板信息
 		if(empty($_SESSION['template_use'])){
 			$template_use=$template_default['Template']['name'];
 			$_SESSION['template_use'] = $template_use;
@@ -94,7 +116,7 @@ class AppController extends Controller {
 		
 		if(isset($_GET['themes'])){
 			$filter = "1=1";
-			$filter .= " and Template.status = 1 and Template.name='".$_GET['themes']."'";
+			$filter .= " and Template.status = '1' and Template.name='".$_GET['themes']."'";
 			$select_temp = $this->Template->find($filter);
 			if(is_array($select_temp) && sizeof($select_temp) > 0){
 				$_SESSION['template_use'] = $_GET['themes'];
@@ -106,12 +128,21 @@ class AppController extends Controller {
 		}
 		$this->set('template_list',$template_list);
 		$this->set('template_use',$template_use);	
+
+		if(isset($_SERVER['HTTP_REFERER'])){
+			$referer_arr =array();
+			$referer_arr = explode('/',$_SERVER['HTTP_REFERER']);
+			$host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
+			if(!in_array($host,$referer_arr)){
+				$this->Cookie->write('referer',$_SERVER['HTTP_REFERER'],false,time()+3600 * 24 * 365);
+			}
+		}
 	}
 	
 	function page_init(){
 		
 		//可选语言
-		$this->set('languages',$this->Language->findall("Language.front = 1 "));
+		$this->set('languages',$this->Language->findall("Language.front = '1' "));
 		
 		//分类信息
  		$this->Category->set_locale($this->locale);
@@ -150,7 +181,7 @@ class AppController extends Controller {
 
     function beforeRender() {
  	    $this->Config->set_locale($this->locale);
-		$data =$this->Template->find('where is_default =1');		
+		$data =$this->Template->find("where is_default ='1'");		
 		if(empty($_SESSION['template_use'])){
 			if($data){
 				$code = $data['Template']['name'];	
@@ -163,5 +194,36 @@ class AppController extends Controller {
         $this->theme = $code;
     }
     
+		/**
+		 * 获得系统是否启用了 gzip
+		 */
+	function gzip_enabled()
+	{
+	    static $enabled_gzip = NULL;
+
+	    if ($enabled_gzip === NULL)
+		{
+		    $enabled_gzip = ($this->configs['enable_gzip'] && function_exists('ob_gzhandler'));
+		}
+
+	    return $enabled_gzip;
+	}    
+    
 }
+
+	function ob_gzip($content){   
+	
+    if(    !headers_sent() &&
+        extension_loaded("zlib") &&
+        strstr($_SERVER["HTTP_ACCEPT_ENCODING"],"gzip"))
+    {
+        $content = gzencode($content,9);
+        header("Content-Encoding: gzip");
+        header("Vary: Accept-Encoding");
+        header("Content-Length: ".strlen($content));
+    }
+    	return $content;
+	} 
+
+
 ?>

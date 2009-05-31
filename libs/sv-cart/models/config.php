@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: config.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: config.php 1732 2009-05-25 12:03:32Z huangbo $
 *****************************************************************************/
 class Config extends AppModel
 {
@@ -18,7 +18,7 @@ class Config extends AppModel
                         array('className'    => 'ConfigI18n',   
                               'order'        => '',   
                               'dependent'    =>  true,   
-                              'foreignKey'   => 'Config_id'  
+                              'foreignKey'   => 'config_id'  
                         )   
                   );
     var $cacheQueries = true;
@@ -36,17 +36,31 @@ class Config extends AppModel
 	}
 	
 	function getformatcode($store_id = 0){
-		$condition = " store_id = '".$store_id."'";
-		$configs=$this->findAll($condition,'','orderby asc');
-		$configs_formatcode =array();
-		if(is_array($configs))
-		foreach($configs as $v){
-			
-			$configs_formatcode[$v['Config']['code']]=$v['ConfigI18n']['value'];
-			
-		}
 		
-		return $configs_formatcode;
+		$cache_key = md5($this->name."_".$store_id."_");
+		
+		$configs_formatcode = cache::read($cache_key);
+		if ($configs_formatcode){
+			return $configs_formatcode;
+		}else{
+			$condition = " store_id = '".$store_id."'";
+			$configs=$this->findAll($condition,'','orderby asc');
+			
+			$configs_formatcode =array();
+			if(is_array($configs))
+			foreach($configs as $v){
+				
+				$configs_formatcode[$v['Config']['code']]=$v['ConfigI18n']['value'];
+				
+			}
+			if(!isset($configs_formatcode['use_sku'])){
+				$configs_formatcode['use_sku'] = 0;
+			}
+			
+			cache::write($cache_key,$configs_formatcode);
+			return $configs_formatcode;
+
+		}
 	}
 }
 ?>

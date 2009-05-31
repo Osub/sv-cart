@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: index.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -26,7 +26,7 @@
 <?php foreach($productstype as $producttype){?>
 	<ul class="product_llist types_title type_list">
 	<li class="products_cat"><cite><?php echo $html->link($producttype['ProductType']['name'],'look/'.$producttype['ProductType']['id'],'',false,false);?></cite></li>
-	<li class="groups"><?=$producttype['ProductType']['group']?></li>
+	<li class="groups"><?=$producttype['ProductType']['group_code']?></li>
 	<li class="profile_number"><?=$producttype['ProductType']['num']?></li>
 	<li class="state"><?php if($producttype['ProductType']['status'])echo $html->image('yes.gif',array('align'=>'absmiddle'));else echo $html->image('no.gif',array('align'=>'absmiddle')) ?></li>
 	<li class="hadle"><?php echo $html->link('属性列表','look/'.$producttype['ProductType']['id'],'',false,false);?>|<?php echo $html->link('编辑','edit/'.$producttype['ProductType']['id'],'',false,false);?>|<?php echo $html->link('移除','remove/'.$producttype['ProductType']['id'],'',false,false);?></li></ul>

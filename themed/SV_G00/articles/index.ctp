@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1215 2009-05-06 05:46:48Z huangbo $
+ * $Id: index.ctp 1732 2009-05-25 12:03:32Z huangbo $
 *****************************************************************************/
 ?>
 <script type="text/javascript"> 
@@ -31,24 +31,29 @@
 <!-- 1 -->
 <div class="information">
 <?php if(isset($news['Article_list']) && sizeof($news['Article_list'])>0){  ?>
-<h1><cite><?=$SCLanguages['latest'];?><?=$SCLanguages['news'];?></cite><span class="more"><?php echo $html->link($SCLanguages['more'],"/category_articles/{$news['Category']['id']}",array(),false,false);?></span></h1>
+<h1 class="headers"><span class="l"></span><span class="r"></span><b><?=$SCLanguages['latest'];?><?=$SCLanguages['news'];?></b><span class="more"><?php echo $html->link($SCLanguages['more'],"/category_articles/{$news['Category']['id']}",array(),false,false);?></span></h1>
 <div class="infos">   
 <div class="comment_list">
-<dl class="artic_head"><dt><?=$SCLanguages['title'];?><?=$SCLanguages['list'];?></dt><dd><?php echo $SCLanguages['issue_time'];?></dd></dl>
+<dl class="artic_head">
+	<dt><?=$SCLanguages['title'];?><?=$SCLanguages['list'];?></dt>
+	<dd><?php echo $SCLanguages['issue_time'];?></dd>
+</dl>
 <?php foreach($news['Article_list'] as $key=>$v){ ?>
-<p><span class="title">
-<?php echo $html->link($v['ArticleI18n']['title'],"/articles/{$v['Article']['id']}",array(),false,false)."</span><span>".$v['Article']['modified'];
-?>
-<?php } ?></span>
-</p></div></div>
-<?php } ?></div>
+<p>
+	<span class="title"><?php echo $html->link($v['ArticleI18n']['title'],"/articles/{$v['Article']['id']}",array(),false,false)."</span><span>".$v['Article']['modified'];
+	?></span>
+</p>
+<?}?>
+</div>
+</div>
+<?}?>
+</div>
 <!-- 1 -->
 
 <!-- 2 -->
 <div class="information">
-<h1><cite>
-<?printf($SCLanguages['this_week'],$SCLanguages['hot'].$SCLanguages['article']);?>
-</cite><span class="more"><?=$html->link($SCLanguages['more'],"/category_articles/hot","",false,false)?></span></h1>
+<h1 class="headers"><span class="l"></span><span class="r"></span><b><?printf($SCLanguages['this_week'],$SCLanguages['hot'].$SCLanguages['article']);?>
+</b><span class="more"><?=$html->link($SCLanguages['more'],"/category_articles/hot","",false,false)?></span></h1>
 <div class="infos">
 <div class="comment_list">
 <?php
@@ -67,15 +72,23 @@
 
 <div id="right_article">
 <div class="activity_column">
-<h1 class="option">&nbsp;</h1>
+<h1 class="headers"><span class="l"></span><span class="r"></span></h1>
 <ul class="article_tab" style='margin-top:-32px;margin-bottom:-3px;position:relative;zoom:1;z-index:55;'>
 <li id="one1" onmouseover="overtab('one',1,2)" class="hover">
+<span>
 <?php if(isset($wondeful_news) && $wondeful_news){  ?>
-       	  <?php echo $wondeful_news['CategoryI18n']['name']; ?> 
-<?php }?></li>
-       	 <li id="one2" onmouseover="overtab('one',2,2)" ><?php if(isset($actives_news) && $actives_news){  ?>
-       	  <?php echo $actives_news['CategoryI18n']['name']; ?> 
-<?php }?></li></ul>
+<?php echo $wondeful_news['CategoryI18n']['name']; ?> 
+<?php }?>
+</span>
+</li>
+<li id="one2" onmouseover="overtab('one',2,2)">
+<span>
+<?php if(isset($actives_news) && $actives_news){?>
+<?php echo $actives_news['CategoryI18n']['name']; ?> 
+<?php }?>
+</span>
+</li>
+</ul>
 <div class="main" style="margin-bottom:4px;">
 <!--精彩专题-->
 <div id="con_one_1">
@@ -109,14 +122,13 @@
 </ul>
 </div>
 <!--活动看板 End-->
-</div></div>
+</div>
+</div>
 	
 	
 	
 <div class="activity_column">
-<h1><cite>
-<?printf($SCLanguages['this_week'],$SCLanguages['hot'].$SCLanguages['comments']);?>
-</cite><span class="more"><?=$html->link($SCLanguages['more'],"/commons/","",false,false);?></span></h1>
+<h1 class="headers"><span class="l"></span><span class="r"></span><b><?printf($SCLanguages['this_week'],$SCLanguages['hot'].$SCLanguages['comments']);?></b><span class="more"><?=$html->link($SCLanguages['more'],"/commons/","",false,false);?></span></h1>
 <div class="main">
 <div class="comment_list">
 <?php 

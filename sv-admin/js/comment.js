@@ -5,7 +5,7 @@ function commnet_init() {
 	YAHOO.example.container.add_comment.render();
 	YAHOO.util.Event.addListener("comments", "click", YAHOO.example.container.add_comment.show, YAHOO.example.container.add_comment, true);
 	YAHOO.util.Event.addListener("submit_comment", "click", submit_comment, YAHOO.example.container.add_comment, true);
-	
+	 
 	var commentSuccess = function(o){
 	    try{   
 			var result = YAHOO.lang.JSON.parse(o.responseText);   

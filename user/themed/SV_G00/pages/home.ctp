@@ -9,14 +9,14 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: home.ctp 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: home.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <?=$javascript->link('register');?>
 	<?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 	<div id="Products_box">
-    	<h1><span><?=$SCLanguages['user_center']?> </span></h1>
-        <div id="infos" style="width:739px;">
+<h1 class="headers"><span class="l"></span><span class="r"></span><b><?=$SCLanguages['user_center']?> </b></h1>
+        <div id="infos">
         	<div id="wellcom_info">
             	<h2 class="user"><?printf($SCLanguages['welcome_back'],$user_info['User']['name'])?></h2>
                 <p><?=$SCLanguages['last_login_time']?>：<?= $user_info['User']['modified'];?></p>
@@ -31,9 +31,12 @@
                 <p><span class="title"><?=$SCLanguages['balance']?>：</span>
 	  	  		<?=$svshow->price_format($user_info['User']['balance'],$SVConfigs['price_format']);?>
                 </p>
+                <?if(isset($SVConfigs['enable_points']) && $SVConfigs['enable_points'] == 1){?>
                 <p><span class="title"><?=$SCLanguages['point']?>：</span><?echo $user_info['User']['point']?><?=$SCLanguages['point_unit']?></p>
+                <?}?>
+                <?if(isset($SVConfigs['use_coupons']) && $SVConfigs['use_coupons'] == 1){?>
                 <p><span class="title"><?=$SCLanguages['coupon']?>：</span><? printf($SCLanguages['total_record'],$coupon_num)?>,<?=$SCLanguages['value_of']?><?=$svshow->price_format($coupon_fee,$SVConfigs['price_format']);?></p>
-                
+                <?}?>
                 <h3 class="remind"><?=$SCLanguages['user_remind']?><span><?php printf($SCLanguages['submit_in_latest_30days'],$my_orders30)?></span></h3>
             
             </div>

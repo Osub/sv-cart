@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: order.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: order.php 1841 2009-05-27 06:51:37Z huangbo $
 *****************************************************************************/
 class Order extends AppModel
 {
@@ -43,7 +43,7 @@ class Order extends AppModel
     	    $start_time=(!isset($start_time))?date("Y-m-d H:m:s"):$start_time;
 			$middle_time=(strtotime($start_time))-(30*24*60*60);
 			$end_time=date("Y-m-d H:m:s",$middle_time);
-			$condition=" Order.created >= '".$end_time."' and Order.created <= '".$start_time."' and Order.user_id='".$_SESSION['User']['User']['id']."'";
+			$condition=" Order.created >= '".$end_time."' and Order.created <= '".$start_time."' and Order.user_id=".$_SESSION['User']['User']['id'];
 			$orders=$this->findCount($condition);
 			return $orders;
     }

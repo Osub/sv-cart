@@ -9,17 +9,17 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 943 2009-04-23 10:38:44Z huangbo $
+ * $Id: index.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ?>
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+
+
 <?=$javascript->link('listtable');?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
 
 <!--Search-->
 <div class="search_box">
-<?php echo $form->create('',array('action'=>'','name'=>'ArticleForm','type'=>'get'));?>
+<?php echo $form->create('',array('action'=>'','name'=>'ArticleForm','type'=>'get','onsubmit'=>"return false"));?>
 	<dl>
 	<dt style="padding-top:0;"><?=$html->image('serach_icon.gif',array('align'=>'left'))?></dt>
 	<dd><p class="reg_time article">
@@ -57,7 +57,7 @@
 <?php foreach($article as $k=>$v ){?>
 	<ul class="product_llist articles_type articles_list">
 	<li class="number"><label><input type="checkbox" name="checkbox[]" value="<?php echo $v['Article']['id']?>" /><?php echo $v['Article']['id']?></label></li>
-	<li class="headers"><span><?=$html->link("{$v['ArticleI18n']['title']}","../../articles/detail/{$v['Article']['id']}",'',false,false);?></span></li>
+	<li class="headers"><span><?=$html->link("{$v['ArticleI18n']['title']}","../../articles/{$v['Article']['id']}",'',false,false);?></span></li>
 	<li class="categries"><span><?php echo $v['Article']['category']?></span></li>
 	<li class="type"><?php echo $v['Article']['type']?></li>
 	<li class="block"><?php if( $v['Article']['status'] == 1){?><?=$html->image('yes.gif')?><?}else{ echo $html->image('no.gif'); }?></li>
@@ -79,12 +79,8 @@
     --><option value="delete">删除</option>
     </select> 
 <input type="submit" onclick="batch_action()" value="删除" /></p>
-<? echo $form->end();?>
-
-
-<?php echo $this->element('pagers', array('cache'=>'+0 hour'));?>
-
-</div>
+		<?php echo $this->element('pagers', array('cache'=>'+0 hour'));?>
+</div><? echo $form->end();?>
 </div>
 	
 	<!--时间控件层start-->
@@ -110,11 +106,13 @@
 function batch_action() 
 { 
 document.ArticleForm.action=webroot_dir+"articles/batch"; 
+document.ArticleForm.onsubmit= "";
 document.ArticleForm.submit(); 
 } 
 function search_article() 
 { 
 document.ArticleForm.action=webroot_dir+"articles/"; 
+document.ArticleForm.onsubmit= "";
 document.ArticleForm.submit(); 
 } 
 

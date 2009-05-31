@@ -9,12 +9,12 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1327 2009-05-11 11:01:20Z huangbo $
+ * $Id: index.ctp 1732 2009-05-25 12:03:32Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here',array('cache'=>'+0 hour'))?>
 <?if($my_comments){?>
-<div id="Editinfo_title"><h1><span><?=$SCLanguages['my_comments'];?></span></h1></div>
+<h1 class="headers"><span class="l"></span><span class="r"></span><b><?=$SCLanguages['my_comments'];?></b></h1>
 <div id="Edit_box">
   <div id="Edit_info">
   <p class="note"><?php printf($SCLanguages['totally_records_unpaid'],$total);?></p>
@@ -24,9 +24,9 @@
   <?foreach($my_comments as $k=>$v){?>
   <div id="user_msg">
   	<p class="msg_title"><span class="title"><?if($v['Comment']['type'] == 'P'){?>
-<?=$html->link($v['ProductI18n']['name'],"/../products/".$v['Product']['id'],array(),false,false);?>
+<?=$html->link($v['ProductI18n']['name'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?>
 		   	  	 <?}?>评论：<?echo $v['Comment']['title']?><font color="#A7A9A8"><?echo $v['Comment']['created']?></font></span></p>
-    <p class="msg_txt" style="padding-left:5px;padding-right:5px;"><span><?echo $v['Comment']['content']?></span></p>
+    <p class="msg_txt"><span><?echo $v['Comment']['content']?></span></p>
   </div>
   <?if(isset($v['Reply']) && sizeof($v['Reply'])>0){?>
      <?foreach($v['Reply'] as $key=>$val){?>
@@ -46,13 +46,10 @@
 </div>
      <?}?>
 <?}else{?> 
-<div id="Editinfo_title"><h1><span><?=$SCLanguages['my_comments'];?></span></h1></div>
+<h1 class="headers"><span class="l"></span><span class="r"></span><b><?=$SCLanguages['my_comments'];?></b></h1>
 <div id="Edit_box">
 	<div id="Edit_info">
-    	<p align="center" style="font-size:14px;">
-    	<br /><br />
-    	<b><?=$SCLanguages['no_comments'];?></b>
-    	<br /><br /></p>
+	<div class="not"><br /><?=$html->image("warning_img.gif")?><strong><?=$SCLanguages['no_comments'];?></strong></div>
     </div>
 </div>
 <?}?>

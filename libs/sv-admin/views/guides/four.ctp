@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: four.ctp 1156 2009-04-30 09:16:36Z huangbo $
+ * $Id: four.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $form->create('guides',array('action'=>'/guides_end/'));?>
@@ -37,7 +37,12 @@
 <?}}}}}}?>
 	</select></dd></dl>
 	<dl><dt style="width:240px;">商品名称： </dt>
-	<dd><input type="text" style="width:250px;*width:180px;border:1px solid #649776" name="data[Product][ProductI18n][name]" />&nbsp<font color="#ff0000" >*</font></dd></dl>
+	<dd></dd></dl>
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+	<dl><dt style="width:240px;"><?=$html->image($v['Language']['img01'])?></dt>
+	<dd><input type="text" style="width:250px;*width:180px;border:1px solid #649776" name="data[Product][ProductI18n][<?=$k?>][name]" />&nbsp<font color="#ff0000" >*</font></dd></dl>
+<?}}?>
 <!--
 	<dl><dt style="width:240px;">商品数量： </dt>
 	<dd><input type="text" style="width:75px;*width:180px;border:1px solid #649776" name="data[Product][Product][quantity]"/></dd></dl>
@@ -50,13 +55,21 @@
 	
 	<dl><dt style="width:240px;">加入推荐： </dt>
 	<dd><input type="checkbox"  value="1" name="data[Product][Product][recommand_flag]" checked />推荐</dd></dl>
-	
 	<dl><dt style="width:240px;">商品描述： </dt>
-	<dd><textarea style="width:250px;border:1px solid #649776;height:110px;" name="data[Product][ProductI18n][meta_description]" /></textarea></dd></dl>
-	
+	<dd></dd></dl>
+
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+	<input name="data[Product][ProductI18n][<?=$k?>][locale]" type="hidden" value="<?= $v['Language']['locale'];?>">
+
+	<dl><dt style="width:240px;"><?=$html->image($v['Language']['img01'])?></dt>
+	<dd><textarea style="width:250px;border:1px solid #649776;height:110px;" name="data[Product][ProductI18n][<?=$k?>][meta_description]" /></textarea></dd></dl>
+<?}}?>
 	</div>
 	</div>
-	<p class="submit_btn"><input type="button" value="上一步" onclick="history.go(-1)" /><input type="submit" value="完成向导"  /><input type="button" value="退出向导" onclick="break_config()" /></p>
+		
+	<input id="to_continue" name="to_continue" type="hidden" value="no">
+	<p class="submit_btn"><input type="button" value="上一步" onclick="history.go(-1)" /><input type="submit" value="继续添加商品" onclick="to_continues()" /><input type="submit" value="完成向导"  /><input type="button" value="退出向导" onclick="break_config()" /></p>
 	</div>
 </div>
 <script type="text/javascript">
@@ -68,5 +81,7 @@ function hid_show(name){
 		name_obj.style.display = "none";
 	}
 }
-
+function to_continues(){
+	document.getElementById('to_continue').value = "yes";
+}
 </script>

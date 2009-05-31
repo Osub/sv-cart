@@ -9,17 +9,17 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1329 2009-05-11 11:29:59Z huangbo $
+ * $Id: index.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ?>
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
 <?=$javascript->link('calendar');?>
 <div id="Products_box">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
-
-    	<h1><span><?=$SCLanguages['my_order']?></span></h1>
+<h1 class="headers"><span class="l"></span><span class="r"></span><b><?=$SCLanguages['my_order']?></b></h1>
         <div id="order_box" >
       		<?if(isset($my_orders) && sizeof($my_orders)>0){?>
+      		<?$all_price=0;?>
+      		<?$need_paid=0;?>
     	<p class="note OrderNote"><span style="float:left;"><b><?=$SCLanguages['order'].$SCLanguages['status']?>：</b><select name="order_status" id="order_status">
     	<?if($order_status == 0){?>
     	<option value="0" selected><?=$SCLanguages['please_choose']?></option>
@@ -57,6 +57,7 @@
         	<span class="order_number"><?=$SCLanguages['order_code']?></span>
             <span class="order_time"><?=$SCLanguages['order_time']?></span>
             <span class="order_menny"><?=$SCLanguages['total_order_value']?></span>
+            <span class="order_menny"><?=$SCLanguages['payable_amount']?></span>
             <span class="order_estate"><?=$SCLanguages['order'].$SCLanguages['status']?></span>
             <span class="handel"><?=$SCLanguages['operation']?></span></p>
    		
@@ -64,8 +65,12 @@
         <p class="title order_list">
         	<span class="order_number"><br /><br /><?echo $v['Order']['order_code']?></span>
             <span class="order_time"><br /><br /><?echo $v['Order']['created']?></span>
+            <span class="order_menny"><br /><br /><?=$svshow->price_format($v['Order']['total'],$SVConfigs['price_format']);?>	
+            <?$all_price+=$v['Order']['total'];?>
+			</span>
             <span class="order_menny"><br /><br />
-<?=$svshow->price_format($v['Order']['total'],$SVConfigs['price_format']);?>	
+			<?=$svshow->price_format($v['Order']['need_paid'],$SVConfigs['price_format']);?>
+      		<?$need_paid+=($v['Order']['need_paid']);?>
             </span>
             <span class="order_estate"><br /><br />
 
@@ -115,7 +120,7 @@
             <?if(!($v['Order']['status'] < 2 && $v['Order']['payment_status'] != 2  && $v['Order']['payment_status'] != 2)){?>
             <br />
             <?}?>
-			<?=$html->link("<span>".$SCLanguages['view']."</span>","/orders/".$v['Order']['id'],array(),false,false);?>            	                    
+			<?=$html->link("<span>".$SCLanguages['view']."</span>","/orders/".$v['Order']['id'],array("target"=>"_blank"),false,false);?>            	                    
 			<?if($v['Order']['status'] < 2 && $v['Order']['payment_status'] != 2  && $v['Order']['payment_status'] != 2){?>
             <a href="javascript:order_pay(<?echo $v['Order']['id']?>,<?echo $v['Order']['status']?>,'<?=$SCLanguages['order_not_paid'];?>');">
             <span><?=$SCLanguages['pay']?></span>
@@ -134,20 +139,30 @@
             </a>
             <?}?>
             </span></p>
- 
 		    <?}?>
+        	<p class="title order_list">
+        	<span class="order_number">&nbsp;</span>
+            <span class="order_time">&nbsp;</span>
+            <span class="order_menny">
+			<?=$svshow->price_format($all_price,$SVConfigs['price_format']);?>
+			</span>
+            <span class="order_menny">
+			<?=$svshow->price_format($need_paid,$SVConfigs['price_format']);?>
+            </span>
+            <span class="order_estate"><?=$SCLanguages['unpaid']?><?echo $no_paid?> / <?=$SCLanguages['waitting_for_confirm']?><?echo $no_confirm?></span>
+            <span class="handel">&nbsp;</span></p>		    	
 		    	
-   <?}else{?> 
+		    <?}else{?> 
         	<div class="not">
-		<br />		<br />
+		<br /><br />
 		<?=$html->image("warning_img.gif",array("alt"=>""))?><strong><?=$SCLanguages['no_order']?></strong></div>
-   	  <?}?>
+   	 	 <?}?>
    	  </div>
 
     </div>
 <div id="pager">
     <?if(!empty($my_orders)){?>
-<span class="totally"><?php printf($SCLanguages['totally_records_unpaid'],$total);?> <?=$SCLanguages['unpaid']?><?echo $no_paid?>/<?=$SCLanguages['waitting_for_confirm']?><?echo $no_confirm?></span>
+<span class="totally"><?php printf($SCLanguages['totally_records_unpaid'],$total);?></span>
         <?php echo $this->element('pagers', array('cache'=>'+0 hour'));?>
     <?}?>
 </div>

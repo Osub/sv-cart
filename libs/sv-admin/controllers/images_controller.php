@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: images_controller.php 1329 2009-05-11 11:29:59Z huangbo $
+ * $Id: images_controller.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class ImagesController extends AppController {
 
@@ -18,6 +18,9 @@ class ImagesController extends AppController {
 	var $uses = array("Config");
 
 	function index(){
+		/*判断权限*/
+		$this->operator_privilege('image_view');
+		/*end*/
 		$this->pageTitle = '图片管理'." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'图片管理','url'=>'/images/');
 		$this->set('navigations',$this->navigations);

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: brand.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: brand.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class Brand extends AppModel
 {
@@ -18,7 +18,7 @@ class Brand extends AppModel
                         array('className'    => 'BrandI18n',   
                               'order'        => '',   
                               'dependent'    =>  true,   
-                              'foreignKey'   => 'Brand_id'  
+                              'foreignKey'   => 'brand_id'  
                         )   
                   );
     

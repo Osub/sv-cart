@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: checkout_address.ctp 1232 2009-05-06 12:14:41Z huangbo $
+ * $Id: checkout_address.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ?>
 <p class="address btn_list border_bottom">
@@ -21,7 +21,13 @@
 </p>
 <?php if(empty($all_virtual)){?>
 <table cellpadding="0" cellspacing="0" class="address_table" border="0" align="center">
-<tr><td class="lan-name first"><?=$SCLanguages['address'];?><?=$SCLanguages['label'];?>:</td><td class="lan-info"><?=$address['UserAddress']['name'];?></td><td class="lan-name" ><?php echo $SCLanguages['region'];?>:</td><td class="lan-info" colspan="3"><?=$address['UserAddress']['regions'];?></td>
+<tr><td class="lan-name first"><?=$SCLanguages['address'];?><?=$SCLanguages['label'];?>:</td><td class="lan-info"><?=$address['UserAddress']['name'];?></td><td class="lan-name" ><?php echo $SCLanguages['region'];?>:</td><td class="lan-info" colspan="3">
+<?if(isset($address['UserAddress']['regionI18n'])){?>
+	<?=$address['UserAddress']['regionI18n']?>
+<?}else{?>
+	<?=$address['UserAddress']['regions'];?>
+<?}?>
+	</td>
 </tr>
 <tr>
 <td class="lan-name first"><?php echo $SCLanguages['consignee'].$SCLanguages['name'];?>:</td><td class="lan-info"><?=$address['UserAddress']['consignee'];?></td>

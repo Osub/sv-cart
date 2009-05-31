@@ -9,21 +9,21 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: brand.ctp 1215 2009-05-06 05:46:48Z huangbo $
+ * $Id: brand.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ?>
 <!--Brands-->
 <div class="category_box brand_box">
-<h3><?=$SCLanguages['brand'];?></h3>
-<div class="category brands">
+<h3><span class="l"></span><span class="r"></span><?=$SCLanguages['brand'];?></h3>
+<div class="category brands box">
 <ul>
 <?if(isset($brands) && sizeof($brands)>0){?>	
 <?foreach($brands as $k=>$v){
-if(isset($v['Brand']['img01']) && $v['Brand']['img01'] !=""){?>
+if(isset($v['Brand']['img01']) && !empty($v['Brand']['img01'])){?>
 <li><?=$html->link($html->image($v['Brand']['img01'],array('alt'=>$v['BrandI18n']['name'])),"/brands/".$v['Brand']['id'],"",false,false);?></li>
 <?}else{?>
 <li class="text"><?=$html->link($v['BrandI18n']['name'],"/brands/".$v['Brand']['id'],array("class"=>"color_083"),"",false,false);?></li>
 <?}?>
 <?}}?>
-</ul></div><?=$html->image('category_ulbt.gif',array("alt"=>"","align"=>"left"))?></div>
+</ul></div><p><?=$html->image('category_ulbt.gif',array("alt"=>""))?></p></div>
 <!--Brands End-->

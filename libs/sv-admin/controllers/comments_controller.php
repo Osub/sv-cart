@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: comments_controller.php 1273 2009-05-08 16:49:08Z huangbo $
+ * $Id: comments_controller.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class CommentsController extends AppController {
 
@@ -21,6 +21,9 @@ class CommentsController extends AppController {
 	
 	
 	function index() {
+ 		/*判断权限*/
+		$this->operator_privilege('comment_view');
+		/*end*/
 		$this->pageTitle = "评论管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'评论管理','url'=>'/comments/');
 		$this->set('navigations',$this->navigations);
@@ -70,10 +73,13 @@ class CommentsController extends AppController {
 	}
 	
  	function search(){
+ 		/*判断权限*/
+		$this->operator_privilege('comment_undea_view');
+		/*end*/
 		$this->pageTitle = "评论管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'待处理评论','url'=>'/comments/search');
 		$this->set('navigations',$this->navigations);
-		$condition["Comment.status"]=0;
+		$condition["Comment.status"]="0";
 		$condition["Comment.parent_id"]=0;
    	    $total = $this->Comment->findCount($condition,0);
 	    $sortClass='Comment';
@@ -115,6 +121,9 @@ class CommentsController extends AppController {
 	}
 		
    	function remove( $id ){
+ 		/*判断权限*/
+		$this->operator_privilege('comment_view_cancel');
+		/*end*/
 		$this->Comment->deleteAll("Comment.id='".$id."'");
    	}
    	function searchremove( $id ){
@@ -122,6 +131,9 @@ class CommentsController extends AppController {
    	}
    	
  	function edit( $id ){
+ 		/*判断权限*/
+		$this->operator_privilege('comment_view_cancel');
+		/*end*/
 		$this->pageTitle = "回复评论 - 评论管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'评论管理','url'=>'/comments/');
 		$this->navigations[] = array('name'=>'回复评论','url'=>'');
@@ -132,12 +144,12 @@ class CommentsController extends AppController {
 				$this->data['Comment']['ipaddr'] = $_SERVER["REMOTE_ADDR"];
 				$this->Comment->save( $this->data );
 				$this->Comment->updateAll(
-			              array('Comment.status' => 1),
+			              array('Comment.status' => "1"),
 			              array('Comment.id' => $id)
 			           );
-				$this->flash("回复成功",'/comments/edit/'.$id,10);
+				$this->flash("评论回复成功",'/comments/edit/'.$id,10);
 			}else{
-				$this->flash("- 回复的评论内容不能为空!",'/comments/edit/'.$id,10);
+				$this->flash("- 回复的评论内容不能为空!",'/comments/edit/'.$id,10 ,false);
 			}
 		}
 		
@@ -173,12 +185,12 @@ class CommentsController extends AppController {
 				$this->data['Comment']['ipaddr'] = $_SERVER["REMOTE_ADDR"];
 				$this->Comment->save( $this->data );
 				$this->Comment->updateAll(
-			              array('Comment.status' => 1),
+			              array('Comment.status' => "1"),
 			              array('Comment.id' => $id)
 			           );
-				$this->flash("回复成功",'/comments/search/',10);
+				$this->flash("评论回复成功",'/comments/search/',10);
 			}else{
-				$this->flash("- 回复的评论内容不能为空!",'/comments/',10);
+				$this->flash("- 回复的评论内容不能为空!",'/comments/',10,false);
 			}
 		}
 

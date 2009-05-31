@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: sitemaps_controller.php 1201 2009-05-05 13:30:17Z huangbo $
+ * $Id: sitemaps_controller.php 1732 2009-05-25 12:03:32Z huangbo $
 *****************************************************************************/
 class  SitemapsController extends AppController {
 	var $name = 'Sitemaps';
@@ -28,7 +28,7 @@ class  SitemapsController extends AppController {
  		$this->set('brands',$brands);
  		//商品 
 		$this->Product->set_locale($this->locale);
- 		$products = $this->Product->findall('1=1');
+ 		$products = $this->Product->findall("1=1 and Product.status = '1'");
  		$this->set('products',$products);
  		//文章
 		$this->Article->set_locale($this->locale);

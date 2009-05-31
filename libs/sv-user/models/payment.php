@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: payment.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: payment.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class Payment extends AppModel
 {
@@ -19,7 +19,7 @@ class Payment extends AppModel
                               'conditons'=>' ',
                               'order'        => '',   
                               'dependent'    =>  true,   
-                              'foreignKey'   => 'Payment_id'  
+                              'foreignKey'   => 'payment_id'  
                         ) 
                   );
     	function set_locale($locale){

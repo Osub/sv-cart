@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 1273 2009-05-08 16:49:08Z huangbo $
+ * $Id: add.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?>
 <!--Main Start-->
@@ -17,13 +17,13 @@
 <?=$html->css('button');?>
 <?=$html->css('slider');?>
 <?=$html->css('color_font');?>
-<?=$javascript->link('/../js/yui/calendar-min.js');?>
-<?=$javascript->link('calendar');?>
+
+
 <?=$javascript->link('/../js/yui/dragdrop-min.js');?>
 <?=$javascript->link('/../js/yui/button-min.js');?>
 <?=$javascript->link('/../js/yui/slider-min.js');?>
 <?=$javascript->link('/../js/yui/colorpicker-min.js');?>
-<?=$javascript->link('/../js/yui/element-beta-min.js');?>
+
 <?=$javascript->link('color_picker');?>
 <?=$javascript->link('product');?>
 <?php echo $form->create('Product',array('action'=>'add','name'=>'thisForm','id'=>'thisForm','OnSubmit'=>'return products_check();'));?>
@@ -89,8 +89,21 @@
 <?
 	}
 }?>
-		
-				<h2><?=$html->image('help_icon.gif',array('align'=>'absmiddle'))?>商家备注：</h2>
+		<h2>商品网站网址：</h2>
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input id="ProductI18n<?=$k;?>api_site_url" name="data[ProductI18n][<?=$k;?>][api_site_url]" type="text" style="width:215px;" value=""> </span></p>
+<?
+	}
+}?>
+		<h2>购物车快捷网址：</h2>
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input id="ProductI18n<?=$k;?>api_cart_url" name="data[ProductI18n][<?=$k;?>][api_cart_url]" type="text" style="width:215px;" value=""> </span></p>
+<?
+	}
+}?>
+	<h2><?=$html->image('help_icon.gif',array('align'=>'absmiddle'))?>商家备注：</h2>
 <? if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
 		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><textarea></textarea></span><br /><span class="altter">仅商家自己看的信息</span></p>
@@ -199,6 +212,27 @@
 </tr>
 
 </table>
+<!--商品邮费-->
+<?if($SVConfigs["use_product_shipping_fee"] == 1){?>
+	<div class="order_stat properies">
+	  <div class="title"><h1>
+	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <span>商品邮费</span></h1></div>
+	  <div class="box">
+	  <div class="properies_left">
+		<dl><dt>&nbsp</dt>
+		<dd></dd></dl><table>
+	<?foreach( $shipping_list as $k=>$v ){?>
+		<tr><td><?=$v["ShippingI18n"]["name"]?>：</td>
+		<td><input type="text" style="width:120px;border:1px solid #649776" name="product_shoping_fee[<?=@$v['Shipping']['id']?>]" ></td><td>是否有效：<input type="checkbox" value="1" name="product_shoping_fee_status[<?=@$v['Shipping']['id']?>]" style="border:1px solid #649776"  /></td></tr>
+	<?}?></table>
+		</div>
+		<div style="clear:both"></div>
+  	  </div>
+	</div>
+<?}?>
+<!--end-->
 
 <!--profile-->
 	<div class="order_stat properies">
@@ -271,18 +305,20 @@
 	  <p class="add_photo"><font face="宋体">[<?=$html->link("+","javascript:;",array("onclick"=>"addImg()"),false,false);?>]</font></p>
 	  <div id="Pro_img_div">
 		<p class="add_photo">
-		图片描述 : <input type="text" name="img_desc[]" id="img_desc[]"/>
+		图片描述 : 
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+		  <?=$html->image($v['Language']['img01'])?><input type="text" name="img_desc[<?=$v['Language']['locale']?>][]" id="img_desc[]"/>
+<?}}?>
 		排序: <input type="text" name="img_sort[]" id="img_sort[]" size="2"/>
 		<span id="new_file">上传文件 : <input type="text" name="img_url[]" id="upload_img_text_1"/>
 <?=$html->link($html->image('select_img.gif',array("align"=>"absmiddle","height"=>"23")),"javascript:img_sel(1,'products')",'',false,false)?></span></p>
-		  
 <li>
-	<?=@$html->image("",array('id'=>'logo_thumb_img_1','height'=>'150'))?>
+	<?=@$html->image("",array('id'=>'logo_thumb_img_1','height'=>'150','style'=>'display:none'))?>
 
 		  </li>
 
 		</div>
-
 		<li><div id="other_imgs"></div></li>
 
 		</div>
@@ -290,12 +326,15 @@
 	</div>
 <!--用来创造要替换的字符串start-->
   	<span id="imgupload" style="display:none">
-	<p class="add_photo">
-		图片描述 : <input type="text" name="img_desc[]" id="img_desc[]"/>
+	<p class="add_photo">图片描述 : 
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+		  <?=$html->image($v['Language']['img01'])?><input type="text" name="img_desc[<?=$v['Language']['locale']?>][]" id="img_desc[]"/>
+<?}}?>
 		排序: <input type="text" name="img_sort[]" id="img_sort[]" size="2"/>
 		<span id="new_file">上传文件 : <input type="text" name="img_url[]" id="upload_img_text_&id&"/>
 <?=$html->link($html->image('select_img.gif',array("align"=>"absmiddle","height"=>"23")),"javascript:img_sel(&id&,'products')",'',false,false)?></span></p>
-			  <?=@$html->image("",array('id'=>'logo_thumb_img_&id&','height'=>'150'))?>
+			  <?=@$html->image("",array('id'=>'logo_thumb_img_&id&','height'=>'150','style'=>'display:none'))?>
 
 
  

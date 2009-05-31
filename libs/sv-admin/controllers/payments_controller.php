@@ -9,15 +9,18 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: payments_controller.php 1250 2009-05-07 13:59:20Z huangbo $
+ * $Id: payments_controller.php 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 class PaymentsController extends AppController {
 	var $name = 'Payments';
 	var $helpers = array('Html','Pagination');
 	var $components = array('Pagination','RequestHandler');
-	var $uses = array('Payment','PaymentI18n');
+	var $uses = array('Payment','PaymentI18n','Language');
 
 	function index(){
+		/*判断权限*/
+		$this->operator_privilege('pay_view');
+		/*end*/
 		$this->pageTitle = '支付方式'." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'支付方式','url'=>'/payments/');
 		$this->set('navigations',$this->navigations);
@@ -39,7 +42,7 @@ class PaymentsController extends AppController {
 	}
 	//liying081212
 	function payment_info($id){
-		$list=$this->Payment->find("Payment.id = '".$id."' and Payment.status = 1");
+		$list=$this->Payment->find("Payment.id = '".$id."' and Payment.status = '1'");
 		return $list;
 	}
 	
@@ -50,10 +53,6 @@ class PaymentsController extends AppController {
 		$this->set('navigations',$this->navigations);
 		
 		if($this->RequestHandler->isPost()){
-		//	pr($_REQUEST['payment_arr']);
-			//pr( $this->data );
-			//$this->Payment->deleteall("id = '".$this->data['Payment']['id']."'",false);
-			//$this->PaymentI18n->deleteall("payment_id = '".$this->data['Payment']['id']."'",false);
 			foreach($this->data['PaymentI18n'] as $v){
               	     	    $paymentI18n_info=array(
 		                           'id'=>	isset($v['id'])?$v['id']:'',
@@ -70,20 +69,36 @@ class PaymentsController extends AppController {
                 $i = 0;
             	foreach($_REQUEST['payment_arr'] as $kk=>$vv){
 				$i++;
-				$configs .= "'".$kk."'=> array('name'=> '".$vv['name']."','value'=>'".$vv['value']."' , 'type' => '".$vv['type']."'";
-	            if(isset($vv['select_value'])){
-	            	$n=0;
-	            	$configs .= ", 'select_value' => array( ";
-	            	foreach($vv['select_value'] as $kkk=>$vvv){
-	            		$n++;
-	            		$configs .= "'".$vvv['name']."' => '".$vvv['value']."'";
-	            		if($n < count($vv['select_value'])){
-	            		$configs .= ",";
-	            		}
-	            	}
-	            	$configs .= ")";
+				if($kk == "languages_type"){
+					$configs .= "'".$kk."'=> array('name'=> '".$vv['name']."' , 'type' => '".$vv['type']."'";
+					if(isset($vv['sub']) && sizeof($vv['sub'])>0){
+						$m = 0;
+						$configs .=",'value'=>array(";
+						foreach($vv['sub'] as $a=>$b){
+							$m++;
+							$configs .="'".$a."' => array( 'name'=> '".$b['name']."' , 'value' => '".$b['value']."')";
+							if($m < count($vv['sub'])){
+								$configs .=",";
+							}
+						}
+						$configs .="))";
+					}
+				}else{
+					$configs .= "'".$kk."'=> array('name'=> '".$vv['name']."','value'=>'".$vv['value']."' , 'type' => '".$vv['type']."'";
+		            if(isset($vv['select_value'])){
+		            	$n=0;
+		            	$configs .= ", 'select_value' => array( ";
+		            	foreach($vv['select_value'] as $kkk=>$vvv){
+		            		$n++;
+		            		$configs .= "'".$vvv['name']."' => '".$vvv['value']."'";
+		            		if($n < count($vv['select_value'])){
+		            		$configs .= ",";
+		            		}
+		            	}
+		            	$configs .= ")";
+		            }
+		            $configs .= ")";
 	            }
-	            $configs .= ")";
 	            	
 	            	if($i < count($_REQUEST['payment_arr'])){
 	            		$configs .= ",";
@@ -94,30 +109,70 @@ class PaymentsController extends AppController {
             }
             $this->data['Payment']['config'] = @$configs;
 			$this->Payment->save($this->data); //保存
-			$this->flash("编辑成功",'/payments/edit/'.$id,10);
+			
+			foreach( $this->data['PaymentI18n'] as $k=>$v ){
+				if($v['locale'] == $this->locale){
+					$userinformation_name = $v['name'];
+				}
+			}
+			$this->flash("支付方式 ".$userinformation_name." 编辑成功。点击继续编辑该支付方式。",'/payments/edit/'.$id,10);
 		}
 		
 		$payment = $this->Payment->localeformat($id);
 		eval($payment['Payment']['config']);
-		$this->set("payment_arr",@$payment_arr);
+		if($payment['Payment']['code'] == 'paypal'){
+			$languages = $this->Language->findall("Language.front ='1'");
+		//	pr($languages);
+			$locale = "";
+			if(is_array($languages) && sizeof($languages)>0){
+				foreach($languages as $k=>$v){
+					$locale .= $v['Language']['locale']." ";
+					if(!isset($payment_arr['languages_type']['value'][$v['Language']['locale']])){
+						$payment_arr['languages_type']['value'][$v['Language']['locale']] = array(
+																									"name" =>$v['Language']['name'],
+																									"value" => ''
+																								//	'select_value' => array( '澳元' => 'AUD','加元' => 'CAD','欧元' => 'EUR','英镑' => 'GBP','日元' => 'JPY','美元' => 'USD','港元' => 'HKD')
+																									);
+					}
+				}
+			}
+			$locale_arr = explode(' ',$locale);
+			if(is_array($payment_arr['languages_type']['value']) && sizeof($payment_arr['languages_type']['value'])>0){
+				foreach($payment_arr['languages_type']['value'] as $k=>$v){
+					if(!in_array($k,$locale_arr)){
+						unset($payment_arr['languages_type']['value'][$k]);
+					}else{
+						$payment_arr['languages_type']['value'][$k]['select_value'] = array( '澳元' => 'AUD','加元' => 'CAD','欧元' => 'EUR','英镑' => 'GBP','日元' => 'JPY','美元' => 'USD','港元' => 'HKD');
+					}
+				}
+			}
+			//
+		//	pr($payment_arr);
+		}
 		
+		
+		$this->set("payment_arr",@$payment_arr);
 		$this->set( "payment",$payment );
 	}
 	
 	function install( $id ){
 		$this->Payment->updateAll(
-			              array('Payment.status' => 1),
+			              array('Payment.status' => '1'),
 			              array('Payment.id' => $id)
 			           );
-         $this->flash("安装成功",'/payments/',10);
+		$this->Payment->set_locale($this->locale);
+		$Payment_info = $this->Payment->find(array('Payment.id'=>$id));
+     	$this->flash($Payment_info['PaymentI18n']['name']." 安装成功",'/payments/',10);
 	}
 	
 	function uninstall( $id ){
+		$this->Payment->set_locale($this->locale);
+		$Payment_info = $this->Payment->find(array('Payment.id'=>$id));
 		$this->Payment->updateAll(
-			              array('Payment.status' => 0),
+			              array('Payment.status' => '0'),
 			              array('Payment.id' => $id)
 			           );
-         $this->flash("卸载成功",'/payments/',10);
+         $this->flash($Payment_info['PaymentI18n']['name']." 卸载成功",'/payments/',10);
 	}
 }
 

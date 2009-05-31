@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /*****************************************************************************
  * SV-Cart  导航设置列表
  * ===========================================================================
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 943 2009-04-23 10:38:44Z huangbo $
+ * $Id: add.ctp 1883 2009-05-31 11:20:54Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here',array('cache'=>'+0 hour','navigations'=>$navigations)); //pr($this->data);?>
@@ -95,7 +95,7 @@
 		<dd class="best_input"><label><input type="radio" name="data[Navigation][target]" value="_blank" checked />是</label><label><input type="radio" name="data[Navigation][target]" value="_self" />否</label></dd></dl>
 		<dl><dt style="font-family:arial;">ico图片：</dt><dd><input type="text" class="text_inputs" style="width:112px;" name="data[Navigation][icon]"  id="upload_img_text_0"  ><br /><br />
 			
-			<?=@$html->image("",array('id'=>'logo_thumb_img_0','height'=>'50'))?>
+			<?=@$html->image("",array('id'=>'logo_thumb_img_0','height'=>'50','style'=>'display:none'))?>
 
 			</dd><dd><?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(0,'others')",'',false,false)?></dd></dl>
 		<br /><br /><br /><br />

@@ -9,8 +9,9 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: configs_controller.php 1201 2009-05-05 13:30:17Z huangbo $
+ * $Id: configs_controller.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
+uses('sanitize');		
 class ConfigsController extends AppController {
 
 	var $name = 'Configs';
@@ -104,6 +105,7 @@ class ConfigsController extends AppController {
 //-- 更新我的设置
 /*------------------------------------------------------ */
    function update_config(){
+			$mrClean = new Sanitize();
 		$this->page_init();
    	$user_id=$_SESSION['User']['User']['id'];
 	foreach($_POST['code'] as $key=>$val){

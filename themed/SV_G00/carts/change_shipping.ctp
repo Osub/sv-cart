@@ -9,10 +9,10 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: change_shipping.ctp 1283 2009-05-10 13:48:29Z huangbo $
+ * $Id: change_shipping.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ob_start();?>
-<?if(isset($svcart['shipping'])){?>
+<?if(isset($svcart['shipping']['shipping_fee'])){?>
 <p class="address btn_list" id="address_btn_list">
 <span class="l"></span><span class="r"></span>
 <?if(!isset($svcart['shipping']['not_show_change'])){?>

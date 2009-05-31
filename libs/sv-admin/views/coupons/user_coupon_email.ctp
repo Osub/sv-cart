@@ -22,7 +22,7 @@
 		<p class="btns">
 			<a href="javascript:window.location.reload();"><?=$html->image('loginout-btn_right.gif');?>确定</a>
 		</p>	</div>
-		<?=$html->image('loginout-bottom.gif',array("align"=>"texttop"));?>
+		<?=$html->image('loginout-bottom.png',array("align"=>"texttop"));?>
 </div>
 
 <?php	

@@ -9,8 +9,9 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: friends_controller.php 1153 2009-04-30 08:55:43Z huangbo $
+ * $Id: friends_controller.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
+uses('sanitize');		
 class FriendsController extends AppController {
 
 	var $name = 'Friends';
@@ -34,15 +35,17 @@ class FriendsController extends AppController {
 			       //pr($this->params);
 			       $this->page_init();
 			       //新增指定分组的好友
+				   $mrClean = new Sanitize();		
                    if(isset($this->params['form']['action_type']) && $this->params['form']['action_type'] == 'insert_contact'){
 	          			   $this->pageTitle = $this->languages['add'].$this->languages['successfully']." - ".$this->configs['shop_title'];
-    				       $this->UserFriend->save($this->data['UserFriend']);
+	          			       				       $this->UserFriend->save($this->data['UserFriend']);
     			           $this->redirect("/friends/");
     			           //$this->flash($this->languages['add'].$this->languages['successfully'],'../friends','');
 			        }
 			        //编辑指定分组的好友
 			        if(isset($this->params['form']['action_type']) && $this->params['form']['action_type'] == 'edit_contact'){
-	          $this->pageTitle = $this->languages['edit'].$this->languages['successfully']." - ".$this->configs['shop_title'];
+	          $this->pageTitle = $this->languages['edit'].$this->languages['successfully']." - ".$this->configs['shop_title']; 
+	          
     				       $this->UserFriend->save($this->data['UserFriend']);
     			               			            	    $this->redirect("/friends/");
 
@@ -103,7 +106,6 @@ class FriendsController extends AppController {
 /*------------------------------------------------------ */
    function modifycat($cat_id,$new_name){
    	   	$new_name = UrlDecode($new_name);
-
 	    $cat_info=array(
 		 	  'id'=>	isset($cat_id)   ? intval($cat_id)  : 0 ,
 	     	  'cat_name'=>	isset($new_name)   ? trim($new_name)  : ''

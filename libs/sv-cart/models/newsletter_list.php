@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: newsletter_list.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: newsletter_list.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class NewsletterList extends AppModel
 {
@@ -17,7 +17,7 @@ class NewsletterList extends AppModel
 		//检查email是否重用
 	function check_unique_email($email,$id=0){
 		if($id==0)
-			$condition = " NewsletterList.email='$email' and NewsletterList.status = 1";
+			$condition = " NewsletterList.email='$email' and NewsletterList.status = '1'";
 		else
 			$condition = " NewsletterList.id <> $id and NewsletterList.email='$email'";
 		$data=$this->findCount($condition);

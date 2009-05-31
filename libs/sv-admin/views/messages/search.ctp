@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: search.ctp 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: search.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -19,7 +19,7 @@
 <!--Main Start-->
 <br />
 <div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
-<?php echo $form->create('',array('action'=>'','name'=>'UserForm'));?>
+<?php echo $form->create('',array('action'=>'','name'=>'UserForm','onsubmit'=>"return false"));?>
 
 	<ul class="product_llist unchecks unprocess">
 	<li class="number"><input type="checkbox" name="chkall" value="checkbox" onclick="selectAll(this,'checkbox');" />编号<?=$html->image('sort_desc.gif',array('align'=>'absmiddle'))?></li>
@@ -62,6 +62,7 @@
 function batch_action() 
 { 
 document.UserForm.action=webroot_dir+"messages/batch"; 
+document.UserForm.onsubmit= "";
 document.UserForm.submit(); 
 } 
 

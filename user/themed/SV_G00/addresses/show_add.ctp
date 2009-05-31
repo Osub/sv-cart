@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: show_add.ctp 1116 2009-04-28 11:04:43Z huangbo $
+ * $Id: show_add.ctp 1670 2009-05-25 00:47:18Z huangbo $
 *****************************************************************************/
 ob_start();
 if ($result['type'] == 0){?>
@@ -38,13 +38,21 @@ if ($result['type'] == 0){?>
     <dd class="l"><span id="span_Uname"><?echo $SCLanguages['region']?>：</span></dd>
     <dt style="white-space:nowrap;"><span id="regions"></span><span id="region_loading" style='display:none'><?=$html->image('regions_loader.gif',array('class'=>'vmiddle'));?></span>&nbsp;<font color="red" id="regions_msg">*</font> </dt>
  </li>
-<?=$javascript->link('regions');?>
 <script type="text/javascript">
 show_regions("");
 </script>
   <li>
     <dd class="l"><?=$SCLanguages['street'];?>：</dd>
     <dt class="adrees" style="width:auto;"><textarea name="data[UserAddress][address]" id="UserAddressAddress"  style="width:250px;overflow-y:scroll" rows="4"></textarea></dt><dd>&nbsp;<font color="red" id="address_msg">*</font><br/><br/><br/><br/><?=$SCLanguages['duplicate_fill_province_city_district'];?>。</dd>  </li>
+
+  <li>
+  <dd class="l"><?echo $SCLanguages['marked_building']?>：</dd>
+  <dt style="white-space:nowrap;"><input type="text" name="data[UserAddress][sign_building]" id="UserAddressSignBuilding" maxLength="40" size="27" value="" />
+  </dt></li>
+
+
+
+
 <li>
     <dd class="l"><?echo $SCLanguages['post_code']?>：</dd>
     <dt style="white-space:nowrap;"><input name="data[UserAddress][zipcode]" id="UserAddressZipcode" onKeyUp="is_int(this);" size="27" />&nbsp;<font color="red" id="zipcode_msg">*</font></dt></li>
@@ -56,6 +64,16 @@ show_regions("");
       <li>
         <dd class="l"><span id="span_phone"><?echo $SCLanguages['mobile']?>：</span></dd>
         <dt style="white-space:nowrap;"><input type="text" name="data[UserAddress][mobile]" id="UserAddressMobile" maxLength="30" onKeyUp="is_int(this);" size="27" />&nbsp;<font color="red" id="mobile_msg">*</font> </dt></li>
+
+	  <li>
+	  <dd class="l"><?echo $SCLanguages['best_shipping_time']?>：</dd>
+	  <dt style="white-space:nowrap;"><input type="text" name="data[UserAddress][best_time]" id="UserAddressBestTime" maxLength="40" size="27" value="" />
+	  </dt></li>		  
+	  
+	  
+	  
+
+
 </ul>
 
 <ul id="ul_company" style="display:none;">

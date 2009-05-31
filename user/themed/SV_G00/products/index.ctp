@@ -9,14 +9,14 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1329 2009-05-11 11:29:59Z huangbo $
+ * $Id: index.ctp 1732 2009-05-25 12:03:32Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here',array('cache'=>'+0 hour'))?>
 
 <div id="Products_box">
-    	<h1><span><?=$SCLanguages['purchased_products']?></span></h1>
-        <div id="infos" style="width:739px;">
+<h1 class="headers"><span class="l"></span><span class="r"></span><b><?=$SCLanguages['purchased_products']?></b></h1>
+        <div id="infos">
       <?if(isset($my_orders_products) && sizeof($my_orders_products)>0){?>
         <p class="View_item">
        	  <span class="view"><?=$SCLanguages['display_mode'];?>：</span>
@@ -101,27 +101,27 @@
 				<li class="sum">
 				<p class="pic">
 			<?if($v['Product']['img_thumb'] != ""){?>
-       	  <?=$html->link($html->image("/../".$v['Product']['img_thumb'],array("width"=>"108","height"=>"108")),"/../products/".$v['Product']['id'],array(),false,false);?>
+       	  <?=$html->link($html->image("/../".$v['Product']['img_thumb'],array("width"=>"108","height"=>"108")),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array(),false,false);?>
 			<?}else{?>
-       	  <?=$html->link($html->image("/../img/product_default.jpg",array("width"=>"108","height"=>"108")),"/../products/".$v['Product']['id'],array(),false,false);?>
+       	  <?=$html->link($html->image("/../img/product_default.jpg",array("width"=>"108","height"=>"108")),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array(),false,false);?>
 			 <?}?>
 				</p>
 				<p class="cat_name">
-		<?=$html->link($v['ProductI18n']['name'],"/../products/".$v['Product']['id'],array(),false,false);?>				
+		<?=$html->link($v['ProductI18n']['name'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?>				
 			<?if(isset($v['Category']) && isset($v['CategoryI18n'])){?>
 		<?=$html->link($v['CategoryI18n']['name'],"/../categories/".$v['Category']['id'],array(),false,false);?>				
 		<?}?><?if(isset($v['Brand']) && isset($v['BrandI18n'])){?>
 		<?=$html->link($v['BrandI18n']['name'],"/../brands/".$v['Brand']['id'],array(),false,false);?>				
 		<?}?></p>
 				</li>
-				<li class="number"><?echo $v['OrderProduct']['order_id']?></li>
+				<li class="number"><?echo $v['OrderProduct']['order_code']?></li>
 				<li class="time"><?echo $v['OrderProduct']['created']?></li>
 				<li class="many">
 <?=$svshow->price_format($v['OrderProduct']['product_price'],$SVConfigs['price_format']);?>	
 					</li>
 				<li class="handel btn_list">
-				<?=$html->link("<span>".$SCLanguages['view'].$SCLanguages['order']."</span>","../orders/".$v['OrderProduct']['order_id'],array(),false,false);?>				
-				<?=$html->link("<span>".$SCLanguages['view'].$SCLanguages['products']."</span>","/../products/".$v['Product']['id'],array(),false,false);?>				
+				<?=$html->link("<span>".$SCLanguages['view'].$SCLanguages['order']."</span>","../orders/".$v['OrderProduct']['order_code'],array(),false,false);?>				
+				<?=$html->link("<span>".$SCLanguages['view'].$SCLanguages['products']."</span>",$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array(),false,false);?>				
 				<a href="javascript:buy_now(<?echo $v['Product']['id']?>,1)"><span><?=$SCLanguages['purchase_again']?></span></a></li>
 			</ul>
 	<?}?>
@@ -139,13 +139,13 @@
 	<li>
    	  <p class="pic">
 			<?if($v['Product']['img_thumb'] != ""){?>
-       	  <?=$html->link($html->image("/../".$v['Product']['img_thumb'],array("width"=>"108","height"=>"108")),"/../products/".$v['Product']['id'],array(),false,false);?>
+       	  <?=$html->link($html->image("/../".$v['Product']['img_thumb'],array("width"=>"108","height"=>"108")),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array(),false,false);?>
 			<?}else{?>
-       	  <?=$html->link($html->image("/../img/product_default.jpg",array("width"=>"108","height"=>"108")),"/../products/".$v['Product']['id'],array(),false,false);?>
+       	  <?=$html->link($html->image("/../img/product_default.jpg",array("width"=>"108","height"=>"108")),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array(),false,false);?>
 			 <?}?>
    	    </p>
         <p class="info">
-        	<span class="name"><?php echo $html->link( $v['ProductI18n']['name'],"/products/{$v['Product']['id']}","",false,false);?></span>
+        	<span class="name"><?php echo $html->link( $v['ProductI18n']['name'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?></span>
         	<span class="Price"><?=$SCLanguages['current_price']?>：<font color="#ff0000">
 <?=$svshow->price_format($v['Product']['shop_price'],$SVConfigs['price_format']);?>	
         		</font></span>
@@ -153,9 +153,9 @@
 <?=$svshow->price_format($v['Product']['market_price'],$SVConfigs['price_format']);?>	
             	</span>
             <span class="stow">
-			<?=$html->link($SCLanguages['view'].$SCLanguages['order'],"../orders/".$v['OrderProduct']['order_id'],array(),false,false);?>
+			<?=$html->link($SCLanguages['view'].$SCLanguages['order'],"../orders/".$v['OrderProduct']['order_code'],array(),false,false);?>
 			|
-			<?=$html->link($SCLanguages['view'].$SCLanguages['products'],"/../products/".$v['Product']['id'],array(),false,false);?>
+			<?=$html->link($SCLanguages['view'].$SCLanguages['products'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array(),false,false);?>
            	|
            	<a href="javascript:buy_now(<? echo $v['Product']['id']?>,1,'P')"><?=$SCLanguages['purchase_again']?></a>
            	</span></p>
@@ -173,12 +173,12 @@
       
     	<li class="sum" style="width:274px">
         	<p class="pic">
-			<span class="name"><b><?php echo $html->link( $v['ProductI18n']['name'],"/products/{$v['Product']['id']}","",false,false);?></b>
+			<span class="name"><b><?php echo $html->link( $v['ProductI18n']['name'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?></b>
 				<?if(isset($v['Brand']) && isset($v['BrandI18n'])){?><?php echo $html->link($v['BrandI18n']['name'],"/brands/{$v['BrandI18n']['brand_id']}","",false,false);?><?}?> | <?if(isset($v['Category']) && isset($v['CategoryI18n'])){?>
 					<?=$html->link($v['CategoryI18n']['name'],"/categories/".$v['Category']['id'],array(),false,false);?>						
 						<?}?></span>
 		</p></li>
-				<li class="number"><?echo $v['OrderProduct']['order_id']?></li>
+				<li class="number"><?echo $v['OrderProduct']['order_code']?></li>
 				<li class="time">
 <?=$svshow->price_format($v['Product']['market_price'],$SVConfigs['price_format']);?>	
 			</li>
@@ -188,8 +188,8 @@
 					</font></li>
 				
 				<li class="" style="width:160px">
-							<?=$html->link($SCLanguages['view'].$SCLanguages['order'],"../orders/".$v['OrderProduct']['order_id'],array(),false,false);?>
-|<?=$html->link($SCLanguages['view'].$SCLanguages['products'],"/../products/".$v['Product']['id'],array(),false,false);?>|<a href="javascript:buy_now(<? echo $v['Product']['id']?>,1,'P')"><?=$SCLanguages['purchase_again']?></a>
+							<?=$html->link($SCLanguages['view'].$SCLanguages['order'],"../orders/".$v['OrderProduct']['order_code'],array(),false,false);?>
+|<?=$html->link($SCLanguages['view'].$SCLanguages['products'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array(),false,false);?>|<a href="javascript:buy_now(<? echo $v['Product']['id']?>,1,'P')"><?=$SCLanguages['purchase_again']?></a>
 				
 				</li>
     

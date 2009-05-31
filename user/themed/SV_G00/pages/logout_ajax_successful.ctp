@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: logout_ajax_successful.ctp 1028 2009-04-24 12:23:26Z huangbo $
+ * $Id: logout_ajax_successful.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ob_start();?>
 <div id="loginout">
@@ -17,7 +17,7 @@ ob_start();?>
 	<div style="border-left:1px solid #909592;border-right:1px solid #909592;background:#fff">
 		<p class="login-alettr">
 	<?=$html->image('icon-10.gif',array("align"=>"middle"));?>
-	<b><?=$SCLanguages['log_out'].$SCLanguages['successfully']?></b></p>
+	<b><?=$SCLanguages['have_been_logout']?></b></p>
 		<p class="btns">
 			<?=$html->link($html->image('loginout-btn_right.gif').$SCLanguages['login'],"/login/",array("class"=>"to_login"),false,false);?>
 			<?=$html->link($html->image('loginout-btn_right.gif').$SCLanguages['home'],"../../","",false,false);?>

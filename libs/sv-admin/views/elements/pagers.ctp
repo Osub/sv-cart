@@ -9,14 +9,15 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: pagers.ctp 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: pagers.ctp 1841 2009-05-27 06:51:37Z huangbo $
 *****************************************************************************/
 ?>
+<?if($paging['page']>0){?>
 	<div class="box">
-	<span class="block_number">每页显示数<?echo $paging['show']?></span>
+	<span class="block_number">每页显示数:<input type="text" style="width:20px;border:1px solid #649776" value="<?=trim($paging['show'])?>" onkeydown="pagers_onkeypress(this,event)" /></span>
 	<p class="next">
-	<?if ($paging['page'] > 1){?><a href="?page=1"><?=$html->image('back_icon.gif',array('align'=>'absmiddle','class'=>'left'))?>首页</a><?}else{?><a ><?=$html->image('back_icon.gif',array('align'=>'absmiddle','class'=>'left'))?>首页</a><?}?>
-	<?if ($paging['page'] > 1){?><a href="?page=<?echo ($paging['page']-1);?>"><?=$html->image('back_icon.gif',array('align'=>'absmiddle','class'=>'left'))?>上页</a><?}else{?><a ><?=$html->image('back_icon.gif',array('align'=>'absmiddle','class'=>'left'))?>上页</a>
+	<?if ($paging['page'] > 1){?><a href="?page=1"><?=$html->image('next_icon.gif',array('align'=>'absmiddle','class'=>'left'))?>首页</a><?}else{?><a ><?=$html->image('back_icon.gif',array('align'=>'absmiddle','class'=>'left'))?>首页</a><?}?>
+	<?if ($paging['page'] > 1){?><a href="?page=<?echo ($paging['page']-1);?>"><?=$html->image('next_icon.gif',array('align'=>'absmiddle','class'=>'left'))?>上页</a><?}else{?><a ><?=$html->image('back_icon.gif',array('align'=>'absmiddle','class'=>'left'))?>上页</a>
 	<?}?>
 	</p>
 	<p class="pages">
@@ -33,7 +34,8 @@
 ?> 
 </p>
 	<p class="next last_page">
-	<?if ($paging['page'] < $paging['pageCount']){?><a href="?page=<?echo ($paging['page']+1);?>"><?=$html->image('next_icon.gif',array('align'=>'absmiddle','class'=>'right'))?>下页</a><?}else{?><a ><?=$html->image('next_icon.gif',array('align'=>'absmiddle','class'=>'right'))?>下页</a><?}?>
-	<?if ($paging['page'] < $paging['pageCount']){?><a href="?page=<?echo $paging['pageCount']?>"><?=$html->image('next_icon.gif',array('align'=>'absmiddle','class'=>'right'))?>末页</a><?}else{?><a ><?=$html->image('next_icon.gif',array('align'=>'absmiddle','class'=>'right'))?>末页</a><?}?>
+	<?if ($paging['page'] < $paging['pageCount']){?><a href="?page=<?echo ($paging['page']+1);?>"><?=$html->image('next_icon.gif',array('align'=>'absmiddle','class'=>'right'))?>下页</a><?}else{?><a ><?=$html->image('back_icon.gif',array('align'=>'absmiddle','class'=>'right'))?>下页</a><?}?>
+	<?if ($paging['page'] < $paging['pageCount']){?><a href="?page=<?echo $paging['pageCount']?>"><?=$html->image('next_icon.gif',array('align'=>'absmiddle','class'=>'right'))?>末页</a><?}else{?><a ><?=$html->image('back_icon.gif',array('align'=>'absmiddle','class'=>'right'))?>末页</a><?}?>
 	</p><span class="last">第 <?echo $paging['page']?> 页，总页数： <?echo $paging['pageCount']?></span>
 	</div>
+<?}?>

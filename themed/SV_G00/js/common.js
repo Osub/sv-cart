@@ -8,7 +8,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: common.js 1153 2009-04-30 08:55:43Z huangbo $
+ * $Id: common.js 1902 2009-05-31 13:56:19Z huangbo $
 *****************************************************************************/
 
 YAHOO.namespace("example.container");
@@ -438,6 +438,18 @@ window.location.href=webroot_dir+"products/advancedsearch/"+type+"/"+keywords+"/
 		YAHOO.example.container.wait.show();
 		var sUrl = webroot_dir+"carts/buy_now/";
 		var postData ="id="+product_id+"&quantity="+quantity+"&type=product";
+		var i = 0;
+		while(true){
+			var aa = 'attributes_'+i;
+			if(document.getElementById(aa)==null){
+				break;
+			}
+			var a  =document.getElementById(aa).value;
+			postData +="&"+aa+"="+a
+			i++;
+ 		}
+ 	//	alert(postData);
+	//	return;
 		if(quantity != parseInt(quantity))  
 		{  
   		alert(enter_positive_integer);
@@ -793,6 +805,17 @@ function  is_int(txt){
 		YAHOO.example.container.wait.show();
 		var sUrl = webroot_dir+"carts/buy_now/";
 		var postData ="id="+product_id+"&quantity="+quantity+"&type=product&sure=1";
+		
+		var i = 0;
+		while(true){
+			var aa = 'attributes_'+i;
+			if(document.getElementById(aa)==null){
+				break;
+			}
+			var a  =document.getElementById(aa).value;
+			postData +="&"+aa+"="+a
+			i++;
+ 		}		
 		if(quantity != parseInt(quantity))  
 		{  
   		alert(enter_positive_integer);

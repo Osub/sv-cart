@@ -9,15 +9,15 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: view.ctp 1329 2009-05-11 11:29:59Z huangbo $
+ * $Id: view.ctp 1841 2009-05-27 06:51:37Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 <div id="Products_box">
-    	<h1><span><?=$SCLanguages['order'].$SCLanguages['detail']?></span></h1>
+<h1 class="headers"><span class="l"></span><span class="r"></span><b><?=$SCLanguages['order'].$SCLanguages['detail']?></b></h1>
 <!--订单状态-->
-        <div id="infos" style="width:739px;">
-        	<dl class="order_state">
+<div id="infos">
+<dl class="order_state">
 				<dt><?=$SCLanguages['order_code']?><b>：</b></dt><dd><?echo $order_info['Order']['order_code']?> [
 	<?=$html->link($SCLanguages['send'],'/messages/'.$order_info['Order']['id'],array(),false,false);?>
 	/
@@ -63,16 +63,17 @@
             <?}?>			
 			&nbsp;<?=$order_info['Order']['shipping_time']?>&nbsp;<?echo $order_info['Order']['shipping_name']?></dd>
 <!--其他信息-->	
-	  <dt><?if($order_info['Order']['note']){?><?=$SCLanguages['order']?><?=$SCLanguages['remark']?><b>：</b></dt><dd style="border:0;"><?echo $order_info['Order']['note']?></dd>
+	  <dt><?if(false){?><?=$SCLanguages['order']?><?=$SCLanguages['remark']?><b>：</b></dt><dd style="border:0;"><?echo $order_info['Order']['note']?></dd>
 	    <?}?>
 <!--其他信息 End-->
 		</dl>
-        </div> 
+</div> 
 <!--订单状态 End-->	
+
 <!-- 留言-->
-  <?if(isset($my_messages) && sizeof($my_messages)>0){?>
-	<div id="Edit_box">
-  <div id="Edit_info" style="width:739px;margin-top:5px;*margin-top:0;">
+<?if(isset($my_messages) && sizeof($my_messages)>0){?>
+<div id="Edit_box">
+<div id="Edit_info" style="margin-top:5px;*margin-top:0;">
 	  <p class="note article_title">
 	  <b><?=$SCLanguages['message']?></b></p>
   <?foreach($my_messages as $k=>$v){?>
@@ -89,81 +90,84 @@
      <?}?>
   <?}?>
   <?}?>
-  
-		</div></div><?}?>	
+</div>
+</div>
+<?}?>	
 <!-- 留言end-->	
 <!--已购买的商品-->	
-	<div id="Edit_box">
-  <div id="Edit_info" style="width:739px;margin-top:5px;*margin-top:0;">
-	  <p class="note article_title">
-	  <b><?=$SCLanguages['purchased_products']?></b></p>
-	  <ul class="already_shop"><li class="name" style="text-align:right;"><span><?=$SCLanguages['products'].$SCLanguages['apellation']?></span></li><li class="profile"><?=$SCLanguages['products'].$SCLanguages['attribute']?></li><li class="marke_price"><?=$SCLanguages['market_price']?></li><li class="shop_price"><?=$SCLanguages['our_price']?></li><li class="number"><?=$SCLanguages['quantity']?></li><li class="subtotal"><?=$SCLanguages['subtotal']?></li></ul>
-	  <div class="already_box">
-  <?foreach($order_products as $k=>$v){?>
+<div id="Edit_box">
+<div id="Edit_info" style="margin-top:5px;*margin-top:0;">
+<p class="note article_title"><b><?=$SCLanguages['purchased_products']?></b></p>
+<ul class="already_shop">
+	<li class="name" style="text-align:right;"><span><?=$SCLanguages['products'].$SCLanguages['apellation']?></span></li>
+	<li class="profile"><?=$SCLanguages['products'].$SCLanguages['attribute']?></li>
+	<li class="marke_price"><?=$SCLanguages['market_price']?></li>
+	<li class="shop_price"><?=$SCLanguages['our_price']?></li>
+	<li class="number"><?=$SCLanguages['quantity']?></li>
+	<li class="subtotal"><?=$SCLanguages['subtotal']?></li>
+</ul>
+<div class="already_box">
+  <? foreach($order_products as $k=>$v){?>
 	  <ul class="already_shop already_list">
 	  <li class="name">
 	  <p class="pic">
-			<?if($v['Product']['img_thumb'] != ""){?>
-       	  <?=$html->link($html->image("/../".$v['Product']['img_thumb'],array("width"=>"108","height"=>"108")),"/../products/".$v['Product']['id'],array(),false,false);?>
-			<?}else{?>
-       	  <?=$html->link($html->image("/../img/product_default.jpg",array("width"=>"108","height"=>"108")),"/../products/".$v['Product']['id'],array(),false,false);?>
-			 <?}?>	  	  
+		<?if($v['Product']['img_thumb'] != ""){?>
+<?=$html->link($html->image("/../".$v['Product']['img_thumb'],array("width"=>"108","height"=>"108")),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?>
+		<?}else{?>
+       	  <?=$html->link($html->image("/../img/product_default.jpg",array("width"=>"108","height"=>"108")),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?>
+		<?}?>	  	  
 	  </p>
 	  <p class="item_name">
-       	  <?=$html->link($v['ProductI18n']['name'],"/../products/".$v['Product']['id'],array(),false,false);?>	  	  
+       	  <?=$html->link($v['ProductI18n']['name'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?>	  	  
 	  </p>
-	  </li><li class="profile"><?echo $v['OrderProduct']['product_attrbute']?></li>
-	  	  <li class="marke_price">
-	  	  <?=$svshow->price_format($v['Product']['market_price'],$SVConfigs['price_format']);?>
-	  	  </li>
-	  	  <li class="shop_price">
-	  	  <?//if($v['Product']['promotion_status'] == 1){?><?//echo $v['Product']['promotion_price']?><?//}else{?><?//echo $v['Product']['shop_price']?><?//}?>
-	  	  <?=$svshow->price_format($v['OrderProduct']['product_price'],$SVConfigs['price_format']);?>
-	  	  </li>
-	  	  <li class="number"><?echo $v['OrderProduct']['product_quntity']?></li><li class="subtotal">
-	  	  <?=$svshow->price_format($v['OrderProduct']['one_pro_subtotal'],$SVConfigs['price_format']);?>
-	  	  	  </li></ul>
-	  	  <?if(isset($virtual_card[$v['Product']['id']])){?>
-	  	  <div class="cardnumber color_67">
-	  	  	  <?foreach($virtual_card[$v['Product']['id']] as $vv){?>
-	  	  	  <div>
-	  	  	  <?//=$SCLanguages['card_sn']?>卡号:<?php echo $vv['card_sn'];?>
-	  	  	  <?=$SCLanguages['password']?>:<?php echo $vv['card_password'];?>
-	  	  	  <?//=$SCLanguages['end_date']?>有效期限:<?php echo $vv['end_date'];?>
-	  	  	  </div>
-	  	  	  <?}?>
-	  	  </div>
-	  	  <?}?>
+	  </li>
+	  <li class="profile"><?echo $v['OrderProduct']['product_attrbute']?></li>
+	  <li class="marke_price"><?=$svshow->price_format($v['Product']['market_price'],$SVConfigs['price_format']);?></li>
+	  <li class="shop_price">
+	  <?//if($v['Product']['promotion_status'] == 1){?><?//echo $v['Product']['promotion_price']?><?//}else{?><?//echo $v['Product']['shop_price']?><?//}?>
+	  <?=$svshow->price_format($v['OrderProduct']['product_price'],$SVConfigs['price_format']);?>
+	  </li>
+	  <li class="number"><?echo $v['OrderProduct']['product_quntity']?></li>
+	  <li class="subtotal"><?=$svshow->price_format($v['OrderProduct']['one_pro_subtotal'],$SVConfigs['price_format']);?></li>
+	</ul>
+	<? if(isset($virtual_card[$v['Product']['id']])){?>
+	<div class="cardnumber color_67">
+		  <?foreach($virtual_card[$v['Product']['id']] as $vv){?>
+		  <div>
+		  <?=$SCLanguages['card_number']?>:<?php echo $vv['card_sn'];?>
+		  <?=$SCLanguages['password']?>:<?php echo $vv['card_password'];?>
+		  <?=$SCLanguages['expiration_date']?>:<?php echo $vv['end_date'];?>
+		  </div>
+		  <?}?>
+	</div>
+	<?}?>
   <?}?>
   	  
-<?if(isset($card) && sizeof($card)>0){?>
+<? if(isset($card) && sizeof($card)>0){?>
   <?foreach($card as $k=>$v){?>
 	  <ul class="already_shop already_list">
 	  <li class="name">
 	  <p class="pic">
-			<?if($v['Card']['img01'] != ""){?>
-       	  <?=$html->link($html->image("/../".$v['Card']['img01'],array("width"=>"108","height"=>"108")),"/#",array(),false,false);?>
-			<?}else{?>
-       	  <?=$html->link($html->image("/../img/product_default.jpg",array("width"=>"108","height"=>"108")),"/#",array(),false,false);?>
-			 <?}?>	  	  
+	<?if($v['Card']['img01'] != ""){?>
+    <?=$html->link($html->image("/../".$v['Card']['img01'],array("width"=>"108","height"=>"108")),"/#",array(),false,false);?>
+	<?}else{?>
+    <?=$html->link($html->image("/../img/product_default.jpg",array("width"=>"108","height"=>"108")),"/#",array(),false,false);?>
+	<?}?>	  	  
 	  </p>
-	  <p class="item_name">
-       	  <?=$html->link($v['CardI18n']['name'],"#",array(),false,false);?>	  	  
-	  </p>
-	  </li><li class="profile"><?=$v['Card']['note']?></li>
-	  	  <li class="marke_price">
+	  <p class="item_name"><?=$html->link($v['CardI18n']['name'],"#",array(),false,false);?></p>
+	  </li>
+	  <li class="profile"><?=$v['Card']['note']?></li>
+	  <li class="marke_price"><?=$svshow->price_format($v['Card']['fee'],$SVConfigs['price_format']);?></li>
+	  <li class="shop_price">
+	  <?//if($v['Product']['promotion_status'] == 1){?><?//echo $v['Product']['promotion_price']?><?//}else{?><?//echo $v['Product']['shop_price']?><?//}?>
 	  	  <?=$svshow->price_format($v['Card']['fee'],$SVConfigs['price_format']);?>
-	  	  </li>
-	  	  <li class="shop_price">
-	  	  <?//if($v['Product']['promotion_status'] == 1){?><?//echo $v['Product']['promotion_price']?><?//}else{?><?//echo $v['Product']['shop_price']?><?//}?>
-	  	  <?=$svshow->price_format($v['Card']['fee'],$SVConfigs['price_format']);?>
-	  	  </li>
-	  	  <li class="number"><?echo $v['Card']['quntity']?></li><li class="subtotal">
-	  	  <?=$svshow->price_format($v['Card']['fee']*$v['Card']['quntity'],$SVConfigs['price_format']);?>
-	  	  	  </li></ul>
+	  </li>
+	  <li class="number"><?echo $v['Card']['quntity']?></li>
+	 <li class="subtotal"><?=$svshow->price_format($v['Card']['fee']*$v['Card']['quntity'],$SVConfigs['price_format']);?></li>
+	</ul>
   <?}?>
-  	<?}?>
-  		<?if(isset($packaging) && sizeof($packaging)>0){?>
+<?}?>
+<?if(isset($packaging) && sizeof($packaging)>0){?>
   <?foreach($packaging as $k=>$v){?>
 	  <ul class="already_shop already_list">
 	  <li class="name">
@@ -174,46 +178,44 @@
        	  <?=$html->link($html->image("/../img/product_default.jpg",array("width"=>"108","height"=>"108")),"/#",array(),false,false);?>
 			 <?}?>	  	  
 	  </p>
-	  <p class="item_name">
-       	  <?=$html->link($v['PackagingI18n']['name'],"#",array(),false,false);?>	  	  
-	  </p>
-	  </li><li class="profile"><?=$v['Packaging']['note']?></li>
-	  	  <li class="marke_price">
-	  	  <?=$svshow->price_format($v['Packaging']['fee'],$SVConfigs['price_format']);?>
-	  	  </li>
-	  	  <li class="shop_price">
-	  	  <?//if($v['Product']['promotion_status'] == 1){?><?//echo $v['Product']['promotion_price']?><?//}else{?><?//echo $v['Product']['shop_price']?><?//}?>
-	  	  <?=$svshow->price_format($v['Packaging']['fee'],$SVConfigs['price_format']);?>
-	  	  </li>
-	  	  <li class="number"><?echo $v['Packaging']['quntity']?></li><li class="subtotal">
-	  	  <?=$svshow->price_format($v['Packaging']['fee']*$v['Packaging']['quntity'],$SVConfigs['price_format']);?>
-	  	  	  </li></ul>
-  <?}?> <?}?>		  
-  			  
-  	 	  </div>
-	  <p class="saves_many"><?=$SCLanguages['amount'].$SCLanguages['subtotal']?>
-	  	   <?//echo $order_info['Order']['subtotal']?>
-	  	  <?=$svshow->price_format($shop_subtotal,$SVConfigs['price_format']);?>
-	  	  <?if($order_info['Order']['save_price'] >0){?>
-	  	  ，<font color="#FE5F01"><?=$SCLanguages['market_price']?>
-	  	  <?=$svshow->price_format($order_info['Order']['market_subtotal'],$SVConfigs['price_format']);?>
-	  	  <?=$SCLanguages['saved']?> 
-	  	  <?=$svshow->price_format($order_info['Order']['save_price'],$SVConfigs['price_format']);?>
-	  	  	  (<?echo (100-$order_info['Order']['discount_price'])?>%)
-	  	  <?}?>
-	  	  </font></p><br />
-	</div>
+	  <p class="item_name"><?=$html->link($v['PackagingI18n']['name'],"#",array(),false,false);?></p>
+	  </li>
+	  <li class="profile"><?=$v['Packaging']['note']?></li>
+	  <li class="marke_price"><?=$svshow->price_format($v['Packaging']['fee'],$SVConfigs['price_format']);?></li>
+	  <li class="shop_price">
+	  <?//if($v['Product']['promotion_status'] == 1){?><?//echo $v['Product']['promotion_price']?><?//}else{?><?//echo $v['Product']['shop_price']?><?//}?>
+	  <?=$svshow->price_format($v['Packaging']['fee'],$SVConfigs['price_format']);?>
+	  </li>
+	  <li class="number"><?echo $v['Packaging']['quntity']?></li>
+	  <li class="subtotal"><?=$svshow->price_format($v['Packaging']['fee']*$v['Packaging']['quntity'],$SVConfigs['price_format']);?></li>
+	 </ul>
+  <?}?>
+<?}?>
 </div>
- 
-
-
+<p class="saves_many"><?=$SCLanguages['amount'].$SCLanguages['subtotal']?>
+	<?//echo $order_info['Order']['subtotal']?>
+	<?=$svshow->price_format($shop_subtotal,$SVConfigs['price_format']);?>
+	<?if($order_info['Order']['save_price'] >0){?>
+	，<font color="#FE5F01"><?=$SCLanguages['market_price']?>
+	<?=$svshow->price_format($order_info['Order']['market_subtotal'],$SVConfigs['price_format']);?>
+	<?=$SCLanguages['saved']?> 
+	<?=$svshow->price_format($order_info['Order']['save_price'],$SVConfigs['price_format']);?>
+	(<?echo (100-$order_info['Order']['discount_price'])?>%)
+	<?}?></font>
+</p>
+<br />
+</div>
+</div>
 <!--已购买的商品 End-->
+
 <!--收货人信息-->
-        <div id="infos" style="width:739px;">
+<div id="infos">
 		<p class="amend_address"><span><a href="#"><?=$SCLanguages['edit']?></a></span></p>
         	<ul class="address_info">
 			<li class="lang_title"><?=$SCLanguages['consignee']?>:</li><li class="filed"><?php if($order_info['Order']['consignee']) echo $order_info['Order']['consignee']; else echo "&nbsp;";?></li>
+    		<?if(empty($all_virtual)){?>
     			<li class="lang_title"><?=$SCLanguages['region']?>:</li><li class="filed"><?=$order_info['Order']['regions']?>&nbsp;</li>
+    		<?}?>
 			<li class="lang_title"><?=$SCLanguages['email']?>:</li><li class="filed"><?php if($order_info['Order']['email']) echo $order_info['Order']['email'];else echo "&nbsp;"; ?></li>
 			<?php if(empty($all_virtual)){?>
 			<li class="lang_title"><?=$SCLanguages['address']?>:</li><li class="filed"><?php if($order_info['Order']['address'])echo $order_info['Order']['address'];else echo "&nbsp;";?></li>
@@ -228,16 +230,49 @@
 			</ul>
         </div>
 <!--收货人信息 End-->
+
+
+
+<!-- 其他 -->
+<?if(isset($show_note) && $show_note == 1){?>
+<div id="Edit_box">
+<div id="Edit_info" style="margin-top:5px;*margin-top:0;">
+<p class="note article_title btn_list">
+<b><?=$SCLanguages['others']?></b></p>
+<p class="balances"><span class="color_4">
+<?if($order_info['Order']['note']){?>
+<br />	<?=$SCLanguages['order']?><?=$SCLanguages['remark']?>:
+		<?echo $order_info['Order']['note']?>
+	<?}?>
+<?if(isset($packaging) && sizeof($packaging)>0){?>
+  <?foreach($packaging as $k=>$v){?>
+	<?if($v['Packaging']['note'] != ""){?>
+	<br /><?=$SCLanguages['packaging']?><?=$SCLanguages['remark']?>:
+		<?=$v['Packaging']['note']?>
+<?}}}?>
+<?if(isset($card) && sizeof($card)>0){?>
+  <?foreach($card as $k=>$v){?>
+	<?if($v['Card']['note'] != ""){?>
+	<br /><?=$SCLanguages['card']?><?=$SCLanguages['remark']?>:
+		<?=$v['Card']['note']?>
+<?}}}?></span>
+</p>
+	</div>   
+</div>
+<?}?>
+
 <!--订单小计-->	
-	<div id="Edit_box">
-  <div id="Edit_info" style="width:739px;margin-top:5px;*margin-top:0;">
-	  <p class="note article_title">
-	  <b><?=$SCLanguages['products']?><?=$SCLanguages['subtotal']?></b></p>
-	  <p class="balances">
-<!--$point_log['UserPointLog']['point']-->
-		<?=$SCLanguages['products']?><?=$SCLanguages['subtotal']?>:
-	  	  <?=$svshow->price_format($shop_subtotal,$SVConfigs['price_format']);?>
-				<br />
+<div id="Edit_box">
+<div id="Edit_info" style="margin-top:5px;*margin-top:0;">
+<p class="note article_title"><b><?=$SCLanguages['amount']?><?=$SCLanguages['subtotal']?></b></p>
+<p class="balances">
+	  <span class="color_4"><br />
+	  	<?=$SCLanguages['total_order_value']?>:
+	  	<?=$svshow->price_format($order_info['Order']['total'],$SVConfigs['price_format']);?>
+		<br />
+	  	<?=$SCLanguages['products']?><?=$SCLanguages['subtotal']?>:
+	  	<?=$svshow->price_format($shop_subtotal,$SVConfigs['price_format']);?>
+		<br />
 		<?$fee=0;?>
 		<?if($order_info['Order']['card_fee'] > 0){?>
 		<?$fee=1;?>
@@ -249,24 +284,28 @@
 		<?=$SCLanguages['package_fee']?>:
 	  	  <?=$svshow->price_format($order_info['Order']['pack_fee'],$SVConfigs['price_format']);?>
 		<?}?>
+		<?if($fee > 0){?>
+			<br />
+		<?}?>
 		<?if($order_info['Order']['payment_fee'] > 0){?>
 		<?$fee=1;?>
 		<?=$SCLanguages['payment_fee']?>: 
 	  	  <?=$svshow->price_format($order_info['Order']['payment_fee'],$SVConfigs['price_format']);?>
 		<?}?>
-		<?if($order_info['Order']['shipping_fee'] > 0){?>
+		<?if(isset($order_info['Order']['shipping_fee'])){?>
 		<?$fee=1;?>
 		<?=$SCLanguages['shipping_fee']?>: 
 	  	  <?=$svshow->price_format($order_info['Order']['shipping_fee'],$SVConfigs['price_format']);?>
-		<?}?>
-		<?if($fee == 1){?>
-		<br />
+	  	    <?if($order_info['Order']['insure_fee'] >0){?>
+	  	    <?=$SCLanguages['support_value_fee']?>:<?=$svshow->price_format($order_info['Order']['insure_fee'],$SVConfigs['price_format']);?>
+	  	    <?}?>
+	  	<br />
 		<?}?>
 		<?$fee1=0;?>
-		<?if(isset($point_log['UserPointLog']['point']) && $point_log['UserPointLog']['point']>0){?>
+		<?if(isset($order_info['Order']['point_use']) && $order_info['Order']['point_use']>0){?>
 		<?$fee1=1;?>
 		<?=$SCLanguages['use']?><?=$SCLanguages['point']?>: 
-	  	  <?=$svshow->price_format($order_info['Order']['point_fee'],$SVConfigs['price_format']);?>
+	  	  <?=$order_info['Order']['point_use'];?><?=$SCLanguages['point_unit'];?><?=$SCLanguages['save_to_market_price'];?><?=$svshow->price_format($order_info['Order']['point_fee'],$SVConfigs['price_format']);?>
 		<?}?>
 		<?if(isset($coupon_fee)){?>
 		<?$fee1=1;?>
@@ -281,10 +320,10 @@
 		<?=$SCLanguages['order']?><?=$SCLanguages['discount']?>: 
 	  	  <?=$svshow->price_format($order_info['Order']['discount'],$SVConfigs['price_format']);?>
 		<?}?>			
-		<?if(isset($balance_log['UserBalanceLog']['amount']) && $balance_log['UserBalanceLog']['amount'] >0){?>
-		<?$fee1=1;?>	  <br/>	
+		<?if(isset($balance_log['UserBalanceLog']['amount'])){?>
+		<?$fee1=1;?>
 		<?=$SCLanguages['use']?><?=$SCLanguages['balance']?>:
-	  	  <?=$svshow->price_format($balance_log['UserBalanceLog']['amount'],$SVConfigs['price_format']);?>
+	  	  <?=$svshow->price_format(($balance_log['UserBalanceLog']['amount']*-1),$SVConfigs['price_format']);?>
 		<?}else{?>
 		<?$fee1=1;?>		
 		<?=$SCLanguages['use']?><?=$SCLanguages['balance']?>:
@@ -298,36 +337,40 @@
 	  	  <?=$svshow->price_format($order_info['Order']['money_paid'],$SVConfigs['price_format']);?><br/>
 		<?}?>
 		<?=$SCLanguages['payable_amount']?>: 
-	  	  <?=$svshow->price_format($order_info['Order']['total']-$order_info['Order']['money_paid']-$order_info['Order']['discount'],$SVConfigs['price_format']);?><br />
-		
+	  	  <?=$svshow->price_format($order_info['Order']['need_paid'],$SVConfigs['price_format']);?><br />
+		</span>
 			<?if($order_info['Order']['status'] < 2 && $order_info['Order']['payment_status'] != 2  && $order_info['Order']['payment_status'] != 2){?>
             <p class="title order_list">
             <span class="handel btn_list">
             <a href="javascript:order_pay(<?echo $order_info['Order']['id']?>,<?echo $order_info['Order']['status']?>,'<?=$SCLanguages['order_not_paid'];?>');">
             <span><?=$SCLanguages['pay']?>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            </a></span></p><br /><br /><br />
+            </a></span></p>
+            <br /><br /><br />
             <?}?>
 		</p>
 	</div>
 </div>
 <!--订单小计 End-->
 
+
+
+
+
+
+
 <!--支付方式-->	
-	<div id="Edit_box">
-  <div id="Edit_info" style="width:739px;margin-top:5px;*margin-top:0;">
-	  <p class="note article_title btn_list">
-	  <b><?=$SCLanguages['payment']?></b>
+<div id="Edit_box" style="display:none">
+<div id="Edit_info" style="margin-top:5px;*margin-top:0;">
+<p class="note article_title btn_list"><b><?=$SCLanguages['payment']?></b>
 <?if ($order_info['Order']['status'] == 0){?>	  
-	<span class="amenber_balances"><!--cite style="cursor:pointer;"><a id="editpayment"><?=$SCLanguages['edit']?></a></cite--></span></p>
+<span class="amenber_balances"><!--cite style="cursor:pointer;"><a id="editpayment"><?=$SCLanguages['edit']?></a></cite--></span></p>
 <?}?>
 <?if($order_info['Order']['payment_status'] != 2 && $order_info['Order']['status'] < 2){?>
 	  <?foreach($payment_list as $k=>$v){?>
 	  <?if($v['Payment']['id'] != $order_info['Order']['payment_id'] && $v['PaymentI18n']['status'] == 1){
 	  $is_show = 1;	  
 	  }?>
-  	  <?}?>	
-	
-	
+<?}?>	
 <!--修改支付方式-->
 <?if(isset($is_show) && $is_show == 1){?>
 <div id="edit_payment" style="border:1px solid #fff">
@@ -348,7 +391,6 @@
 	  	  <b>
 	  	  <?=$svshow->price_format($order_info['Order']['total'],$SVConfigs['price_format']);?></b>
 	  	  <br /><?//=$SCLanguages['delivery_versus_payment']?></p>
-	  
 	</div>
 </div>
 <!--支付方式 End-->

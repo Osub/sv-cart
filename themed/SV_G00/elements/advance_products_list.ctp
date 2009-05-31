@@ -9,12 +9,9 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: advance_products_list.ctp 1215 2009-05-06 05:46:48Z huangbo $
+ * $Id: advance_products_list.ctp 1732 2009-05-25 12:03:32Z huangbo $
 *****************************************************************************/
 ?>
-<?=$javascript->link('autocomplete');?>
-<?=$javascript->link('/../js/yui/autocomplete-min');?>
-
 <div id="ysearchcontainer_search" style="float:left;position:absolute;background:#fff;"></div>
 <!-- search end -->
 <div id="Item_ListBox">
@@ -125,16 +122,16 @@
 <li>
 <?if(isset($v['Product']['img_thumb']) && strlen($v['Product']['img_thumb'])>0){?>
 <p class="pic">
-<?php echo $html->link($html->image($v['Product']['img_thumb'],array("alt"=>$v['ProductI18n']['name'],"width"=>108,"height"=>108)),"/products/{$v['Product']['id']}","",false,false);?>
+<?php echo $html->link($html->image($v['Product']['img_thumb'],array("alt"=>$v['ProductI18n']['name'],"width"=>108,"height"=>108)),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),"",false,false);?>
 </p>
 <?}else{?>
 <p class="pic">
-<?php echo $html->link($html->image("product_default.jpg",array("alt"=>$v['ProductI18n']['name'],"width"=>108,"height"=>108)),"/products/{$v['Product']['id']}","",false,false);?>
+<?php echo $html->link($html->image("product_default.jpg",array("alt"=>$v['ProductI18n']['name'],"width"=>108,"height"=>108)),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),"",false,false);?>
 </p>	
 <?}?>
 
 <div class="right"><p class="item_info">
-	<span class="name"><?php echo $html->link( $v['ProductI18n']['name'],"/products/{$v['Product']['id']}","",false,false);?></span>
+	<span class="name"><?php echo $html->link( $v['ProductI18n']['name'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?></span>
 <?if($v['Product']['market_price'] > $v['Product']['shop_price'] && isset($SVConfigs['show_market_price']) && $SVConfigs['show_market_price'] == 1){?>
 	<span class="marketprice"><?php echo $SCLanguages['market_price'];?>:
 <?=$svshow->price_format($v['Product']['market_price'],$SVConfigs['price_format']);?>	
@@ -153,11 +150,28 @@
 
 <span class="name category-name">
 <?if(isset($categories[$v['ProductsCategory']['category_id']])){?>
-<?=$html->link($categories[$v['ProductsCategory']['category_id']]['CategoryI18n']['name'],"/categories/".$v['ProductsCategory']['category_id'],array(),false,false);?>
+		<?if(isset($use_sku)){?>
+			<?if(isset($parent)){?>
+			<?=$html->link($categories[$v['ProductsCategory']['category_id']]['CategoryI18n']['name'],"/categories/".$v['ProductsCategory']['category_id']."/".$parent."/".$categories[$v['ProductsCategory']['category_id']]['CategoryI18n']['name'],array(),false,false);?>
+			<?}else{?>
+			<?=$html->link($categories[$v['ProductsCategory']['category_id']]['CategoryI18n']['name'],"/categories/".$v['ProductsCategory']['category_id']."/".$categories[$v['ProductsCategory']['category_id']]['CategoryI18n']['name']."/0/",array(),false,false);?>
+			<?}?>
+		<?}else if(isset($v['use_sku'])){?>
+			<?if(isset($v['parent'])){?>
+			<?=$html->link($categories[$v['ProductsCategory']['category_id']]['CategoryI18n']['name'],"/categories/".$v['ProductsCategory']['category_id']."/".$v['parent']."/".$categories[$v['ProductsCategory']['category_id']]['CategoryI18n']['name'],array(),false,false);?>
+			<?}else{?>
+			<?=$html->link($categories[$v['ProductsCategory']['category_id']]['CategoryI18n']['name'],"/categories/".$v['ProductsCategory']['category_id']."/".$categories[$v['ProductsCategory']['category_id']]['CategoryI18n']['name']."/0/",array(),false,false);?>
+			<?}?>
+		<?}else{?>	
+			<?=$html->link($categories[$v['ProductsCategory']['category_id']]['CategoryI18n']['name'],"/categories/".$v['ProductsCategory']['category_id'],array(),false,false);?>
+		<?}?>
 <?}?>
 </span>
 
-<span class="buy"><a href="javascript:favorite(<? echo $v['Product']['id']?>,'p');" class="fav"><span><?php echo $SCLanguages['favorite'];?></span></a>
+<span class="buy">
+	<?if(isset($_SESSION['User'])){?>
+	<a href="javascript:favorite(<? echo $v['Product']['id']?>,'p');" class="fav"><span><?php echo $SCLanguages['favorite'];?></span></a>
+	<?}?>
 <?if($v['Product']['quantity'] == 0){?>
 <a href="javascript:show_booking(<? echo $v['Product']['id']?>,'<? echo $v['ProductI18n']['name']?>')" class="fav"><span><?php echo $SCLanguages['booking'];?></span></a>
 <?}else{?>
@@ -180,13 +194,13 @@ echo "<strong>".$SCLanguages['not_find_product']."</strong></p><br /><br /><br /
 <li>
 <p class="pic">
 <?if(isset($v['Product']['img_thumb']) && strlen($v['Product']['img_thumb'])>0){?>
-<?php echo $html->link($html->image($v['Product']['img_thumb'],array("alt"=>$v['ProductI18n']['name'],"width"=>108,"height"=>108)),"/products/{$v['Product']['id']}","",false,false);?>
+<?php echo $html->link($html->image($v['Product']['img_thumb'],array("alt"=>$v['ProductI18n']['name'],"width"=>108,"height"=>108)),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),"",false,false);?>
 <?}else{?>
-<?php echo $html->link($html->image("../img/product_default.jpg",array("alt"=>$v['ProductI18n']['name'],"width"=>108,"height"=>108)),"/products/{$v['Product']['id']}","",false,false);?>	
+<?php echo $html->link($html->image("../img/product_default.jpg",array("alt"=>$v['ProductI18n']['name'],"width"=>108,"height"=>108)),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),"",false,false);?>	
 <?}?>
 </p>
 <p class="info">
-<span class="name"><?php echo $html->link( $v['ProductI18n']['name'],"/products/{$v['Product']['id']}","",false,false);?></span>
+<span class="name"><?php echo $html->link( $v['ProductI18n']['name'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?></span>
 <?if($v['Product']['market_price'] > $v['Product']['shop_price'] && isset($SVConfigs['show_market_price']) && $SVConfigs['show_market_price'] == 1){?><span class="Mart_Price"><?php echo $SCLanguages['market_price'];?>:
 <?=$svshow->price_format($v['Product']['market_price'],$SVConfigs['price_format']);?>	
 		</span><?}?>
@@ -197,7 +211,9 @@ echo "<strong>".$SCLanguages['not_find_product']."</strong></p><br /><br /><br /
 <?=$svshow->price_format($v['Product']['shop_price'],$SVConfigs['price_format']);?>	
 <?}?>
 	</font></span>
-<span class="stow"><a href="javascript:favorite(<? echo $v['Product']['id']?>,'p')"><?php echo $SCLanguages['favorite'];?></a>|
+<span class="stow">
+	<?if(isset($_SESSION['User'])){?>
+		<a href="javascript:favorite(<? echo $v['Product']['id']?>,'p')"><?php echo $SCLanguages['favorite'];?></a>|<?}?>
 <?if($v['Product']['quantity'] == 0){?>
 <a href="javascript:show_booking(<? echo $v['Product']['id']?>,'<? echo $v['ProductI18n']['name']?>')"><?php echo $SCLanguages['booking'];?></a>
 <?}else{?>
@@ -224,10 +240,25 @@ echo "<strong>".$SCLanguages['not_find_product']."</strong></p><br /><br /><br /
 <ul class="text_itemlist"><? foreach($products as $k=>$v){ ?>
 <li>
 <p class="item_infos">
-	<span class="name"><strong><?php echo $html->link( $v['ProductI18n']['name'],"/products/{$v['Product']['id']}","",false,false);?></strong>
-	<?if(isset($brands[$v['Product']['brand_id']])) echo $html->link($brands[$v['Product']['brand_id']]['BrandI18n']['name'],"/brands/".$v['Product']['brand_id'],"",false,false);?> | 	<?if(isset($categories[$v['ProductsCategory']['category_id']])){?>
-
-<?=$html->link($categories[$v['ProductsCategory']['category_id']]['CategoryI18n']['name'],"/categories/".$v['ProductsCategory']['category_id'],array(),false,false);?><?}?>
+	<span class="name"><strong><?php echo $html->link( $v['ProductI18n']['name'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?></strong>
+	<?if(isset($brands[$v['Product']['brand_id']])) echo $html->link($brands[$v['Product']['brand_id']]['BrandI18n']['name'],"/brands/".$v['Product']['brand_id'],"",false,false);?> 
+<?if(isset($categories[$v['ProductsCategory']['category_id']])){?>
+	   |<?if(isset($use_sku)){?>
+			<?if(isset($parent)){?>
+			<?=$html->link($categories[$v['ProductsCategory']['category_id']]['CategoryI18n']['name'],"/categories/".$v['ProductsCategory']['category_id']."/".$parent."/".$categories[$v['ProductsCategory']['category_id']]['CategoryI18n']['name'],array(),false,false);?>
+			<?}else{?>
+			<?=$html->link($categories[$v['ProductsCategory']['category_id']]['CategoryI18n']['name'],"/categories/".$v['ProductsCategory']['category_id']."/".$categories[$v['ProductsCategory']['category_id']]['CategoryI18n']['name']."/0/",array(),false,false);?>
+			<?}?>
+		<?}else if(isset($v['use_sku'])){?>
+			<?if(isset($v['parent'])){?>
+			<?=$html->link($categories[$v['ProductsCategory']['category_id']]['CategoryI18n']['name'],"/categories/".$v['ProductsCategory']['category_id']."/".$v['parent']."/".$categories[$v['ProductsCategory']['category_id']]['CategoryI18n']['name'],array(),false,false);?>
+			<?}else{?>
+			<?=$html->link($categories[$v['ProductsCategory']['category_id']]['CategoryI18n']['name'],"/categories/".$v['ProductsCategory']['category_id']."/".$categories[$v['ProductsCategory']['category_id']]['CategoryI18n']['name']."/0/",array(),false,false);?>
+			<?}?>
+		<?}else{?>	
+			<?=$html->link($categories[$v['ProductsCategory']['category_id']]['CategoryI18n']['name'],"/categories/".$v['ProductsCategory']['category_id'],array(),false,false);?>
+		<?}?>
+<?}?>
 </span>
 <?if(isset($SVConfigs['show_market_price']) && $SVConfigs['show_market_price'] == 1){?>
 <span class="marketprice"> 
@@ -241,7 +272,9 @@ echo "<strong>".$SCLanguages['not_find_product']."</strong></p><br /><br /><br /
 <?=$svshow->price_format($v['Product']['shop_price'],$SVConfigs['price_format']);?>	
 <?}?>
 	</font></span>
-<span class="Territory"><a href="javascript:favorite(<? echo $v['Product']['id']?>,'p')"><?php echo $SCLanguages['favorite'];?></a> | 
+<span class="Territory">
+	<?if(isset($_SESSION['User'])){?>
+		<a href="javascript:favorite(<? echo $v['Product']['id']?>,'p')"><?php echo $SCLanguages['favorite'];?></a> | <?}?>
 	<?if($v['Product']['quantity'] == 0){?>
 <a href="javascript:show_booking(<? echo $v['Product']['id']?>,'<? echo $v['ProductI18n']['name']?>')"><?php echo $SCLanguages['booking'];?></a>
 	<?}else{?>

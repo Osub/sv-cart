@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: user_info.php 899 2009-04-22 15:03:02Z huangbo $
+ * $Id: user_info.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class UserInfo extends AppModel
 {
@@ -38,7 +38,7 @@ function set_locale($locale){
 			 						"UserInfo.front" =>1);
 		}
 		else{
-			$condition='UserInfo.status = 1 and UserInfo.front = 1';
+			$condition="UserInfo.status = '1' and UserInfo.front = '1'";
 		}
 		
 		$lists=$this->findAll($condition);

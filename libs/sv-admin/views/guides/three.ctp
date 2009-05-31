@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: three.ctp 1156 2009-04-30 09:16:36Z huangbo $
+ * $Id: three.ctp 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $form->create('guides',array('action'=>'/four/'));?>
@@ -27,17 +27,32 @@
 	<div class="shop_config menus_configs guides" style="width:600px;">
 	
 	<dl><dt style="width:80px;">分类名称： </dt>
-	<dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" id="Categorie_name" name="data[Categorie][CategorieI18n][name]" /></dd>&nbsp<font color="#ff0000" >*</font></dl>
-
+	<dd></dd></dl>
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+	<dl><dt style="width:80px;"><?=$html->image($v['Language']['img01'])?></dt>
+	<dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" id="Categorie_name" name="data[Categorie][CategorieI18n][<?=$k?>][name]" /></dd>&nbsp<font color="#ff0000" >*</font></dl>
+<?}}?>
 	<dl><dt style="width:80px;">关键字： </dt>
-	<dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" id="Categorie_keywords" name="data[Categorie][CategorieI18n][meta_keywords]" />&nbsp<?=$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:hid_show('meta_keywords');",'',false,false)?></dd><span id="meta_keywords" style="display:none">填写关键字便于用户搜索</span></dl>
-
+	<dd></dd></dl>
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+	<dl><dt style="width:80px;"><?=$html->image($v['Language']['img01'])?></dt>
+	<dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" id="Categorie_keywords" name="data[Categorie][CategorieI18n][<?=$k?>][meta_keywords]" />&nbsp<?=$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:hid_show('meta_keywords_".$v['Language']['locale']."');",'',false,false)?></dd><span id="meta_keywords_<?=$v['Language']['locale']?>" style="display:none">填写关键字便于用户搜索</span></dl>
+<?}}?>
 	<dl><dt style="width:80px;">分类描述： </dt>
-	<dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" id="Categorie_description" name="data[Categorie][CategorieI18n][meta_description]" /></dd></dl>
-	
+	<dd></dd></dl>
+<? if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+	<input name="data[Categorie][CategorieI18n][<?=$k?>][locale]" type="hidden" value="<?= $v['Language']['locale'];?>">
+
+    <dl><dt style="width:80px;"><?=$html->image($v['Language']['img01'])?></dt>
+	<dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" id="Categorie_description" name="data[Categorie][CategorieI18n][<?=$k?>][meta_description]" /></dd></dl>
+<?}}?>
 	</div>
 	</div>
-	<p class="submit_btn"><input type="button" value="上一步" onclick="history.go(-1)" /><input type="submit" value="下一步"  /><input type="button" value="退出向导" onclick="break_config()" /></p>
+	<input id="to_continue" name="to_continue" type="hidden" value="no">
+	<p class="submit_btn"><input type="button" value="上一步" onclick="history.go(-1)" /><input type="submit" value="下一步"  /><input type="submit" value="继续添加分类" onclick="to_continues()" /><input type="button" value="退出向导" onclick="break_config()" /></p>
 	</div>
 </div>
 <script type="text/javascript">
@@ -49,5 +64,7 @@ function hid_show(name){
 		name_obj.style.display = "none";
 	}
 }
-
+function to_continues(){
+	document.getElementById('to_continue').value = "yes";
+}
 </script>

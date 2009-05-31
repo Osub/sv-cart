@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: productstypes_controller.php 1250 2009-05-07 13:59:20Z huangbo $
+ * $Id: productstypes_controller.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class ProductstypesController extends AppController {
 	var $name = 'Productstypes';
@@ -21,6 +21,9 @@ class ProductstypesController extends AppController {
 	var $uses = array('ProductType','ProductTypeI18n','ProductTypeAttribute','ProductTypeAttributeI18n');
 
 	function index(){
+		/*判断权限*/
+		$this->operator_privilege('goods_type_view');
+		/*end*/
 		$this->pageTitle = '商品类型管理'." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'商品类型管理','url'=>'/productstypes/');
 		$this->set('navigations',$this->navigations);
@@ -46,6 +49,9 @@ class ProductstypesController extends AppController {
 		$this->set('productstype',$data);	
 	}
 	function edit($id){
+		/*判断权限*/
+		$this->operator_privilege('goods_type_view');
+		/*end*/
 		$this->pageTitle = "编辑商品类型 - 商品类型管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'商品类型管理','url'=>'/productstypes/');
 		$this->navigations[] = array('name'=>'编辑商品类型','url'=>'');
@@ -53,7 +59,15 @@ class ProductstypesController extends AppController {
 		if($this->RequestHandler->isPost()){
 			$this->ProductTypeI18n->deleteAll("type_id='".$this->data['ProductType']['id']."'",false);
 			$this->ProductType->saveAll($this->data);
-			$this->flash('编辑成功','/productstypes/','');
+			foreach( $this->data['ProductTypeI18n'] as $k=>$v ){
+				if($v['locale'] == $this->locale){
+					$userinformation_name = $v['name'];
+				}
+			}
+			$id=$this->ProductType->id;
+
+			$this->flash("商品类型  ".$userinformation_name." 编辑成功。点击继续编辑该商品类型。",'/productstypes/edit/'.$id,10);
+
 		}
 		$this->data = $this->ProductType->findById($id);
 		foreach($this->data['ProductTypeI18n'] as $k=>$v){
@@ -61,14 +75,24 @@ class ProductstypesController extends AppController {
 		}
 	}
 	function add(){
+		/*判断权限*/
+		$this->operator_privilege('goods_type_add');
+		/*end*/
 		$this->pageTitle = "编辑商品类型 - 商品类型管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'商品类型管理','url'=>'/productstypes/');
 		$this->navigations[] = array('name'=>'编辑商品类型','url'=>'');
 		$this->set('navigations',$this->navigations);
 		if($this->RequestHandler->isPost()){
-			$this->ProductTypeI18n->deleteAll("type_id='".$this->data['ProductType']['id']."'",false);
 			$this->ProductType->saveAll($this->data);
-			$this->flash('编辑成功','/productstypes/','');
+			foreach( $this->data['ProductTypeI18n'] as $k=>$v ){
+				if($v['locale'] == $this->locale){
+					$userinformation_name = $v['name'];
+				}
+			}
+			$id=$this->ProductType->id;
+
+			$this->flash("商品类型  ".$userinformation_name." 添加成功。点击继续编辑该商品类型。",'/productstypes/edit/'.$id,10);
+
 		}
 
 	}
@@ -212,6 +236,9 @@ class ProductstypesController extends AppController {
 		$this->set("id",$id);
 	}
 	function remove($id){
+		/*判断权限*/
+		$this->operator_privilege('goods_type_view');
+		/*end*/
 		$this->ProductType->deleteAll("ProductType.id='".$id."'");
 		$this->flash('删除成功','/productstypes',5);
 	}

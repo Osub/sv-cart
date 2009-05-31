@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: mailtemplates_controller.php 1201 2009-05-05 13:30:17Z huangbo $
+ * $Id: mailtemplates_controller.php 1608 2009-05-21 02:50:04Z huangbo $
 *****************************************************************************/
 class MailtemplatesController extends AppController {
 
@@ -17,12 +17,11 @@ class MailtemplatesController extends AppController {
 	var $helpers = array('Html');
 	var $components = array ('Pagination','RequestHandler','Email'); 
 	var $uses = array("MailTemplate","MailTemplateI18n");
-
- 
- 
-	function search(){
-	}
+	
 	function index(){
+		/*判断权限*/
+		$this->operator_privilege('mail_template_view');
+		/*end*/
 		$this->pageTitle = "邮件模板管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'邮件模板管理','url'=>'/mailtemplates/');
 	   	$this->set('navigations',$this->navigations);
@@ -32,8 +31,8 @@ class MailtemplatesController extends AppController {
 		$MailTemplate_list=$this->MailTemplate->findAll();
 		foreach($MailTemplate_list as $k=>$v){
 			$title = $v['MailTemplateI18n']['title'];
-			eval("\$title = \"$title\";");
-			$v['MailTemplateI18n']['title'] = $title;
+			@eval("\$title = \"$title\";");
+			$v['MailTemplateI18n']['title'] = @$title;
 			$MailTemplate_list[$k] = $v;
 		}
 		//pr($this->configs['shop_name']);
@@ -41,11 +40,14 @@ class MailtemplatesController extends AppController {
 	}
 	
 	function edit($id){
+		/*判断权限*/
+		$this->operator_privilege('mail_template_operation');
+		/*end*/
 		$this->pageTitle = "编辑邮件模板 - 邮件模板管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'邮件模板管理','url'=>'/mailtemplates/');
 		$this->navigations[] = array('name'=>'编辑邮件模板','url'=>'');
 		$this->set('navigations',$this->navigations);
-
+	    $shop_name = $this->configs['shop_name'];
 		if($this->RequestHandler->isPost()){
 			$id = $this->data['MailTemplate']['id'];
 			//$this->MailTemplate->deleteall("id = '$id'",false); 
@@ -62,7 +64,17 @@ class MailtemplatesController extends AppController {
 		                     $this->MailTemplateI18n->saveall(array('MailTemplateI18n'=>$mailTemplateI18n_info));//更新多语言
             }
 			$this->MailTemplate->save($this->data); //保存
-			$this->flash("编辑成功",'/mailtemplates/edit/'.$id,10);
+			foreach( $this->data['MailTemplateI18n'] as $k=>$v ){
+				if($v['locale'] == $this->locale){
+					$title = $v['title'];
+					eval("\$title = \"$title\";");
+					$userinformation_name = $title;
+				}
+			}
+			$this->flash("邮件模板 ".$userinformation_name." 编辑成功。点击继续编辑该邮件模板",'/mailtemplates/edit/'.$id,10);
+			
+			
+			
 			
 		}
 		$this->data = $this->MailTemplate->localeformat($id);
@@ -71,29 +83,40 @@ class MailtemplatesController extends AppController {
 
 	}
     function remove($id){
+		/*判断权限*/
+		$this->operator_privilege('mail_template_operation');
+		/*end*/		
 		$this->MailTemplate->deleteAll("MailTemplate.id='".$id."'");
 		$this->flash("删除成功",'/mailtemplates/',10);
     }
 	function add(){
+		/*判断权限*/
+		$this->operator_privilege('mail_template_add');
+		/*end*/
 		$this->pageTitle = "编辑邮件模板 - 邮件模板管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'邮件模板管理','url'=>'/mailtemplates/');
 		$this->navigations[] = array('name'=>'编辑邮件模板','url'=>'');
 		$this->set('navigations',$this->navigations);
-
+	    $show_name = $this->configs['shop_name'];
 		if($this->RequestHandler->isPost()){
 			$this->MailTemplate->save($this->data); //保存
 		    $id=$this->MailTemplate->id;
-			   //新增多语言
-			   
-			   	if(is_array($this->data['MailTemplateI18n']))
-			          foreach($this->data['MailTemplateI18n'] as $k => $v){
-				            $v['mail_template_id']=$id;
-				            $this->MailTemplateI18n->id='';
-				            $this->MailTemplateI18n->save($v); 
-			           }
-			
-			$this->flash("添加成功",'/mailtemplates/edit/'.$id,'');
-			
+			//新增多语言
+			if(is_array($this->data['MailTemplateI18n']))
+				foreach($this->data['MailTemplateI18n'] as $k => $v){
+					$v['mail_template_id']=$id;
+					$this->MailTemplateI18n->id='';
+					$this->MailTemplateI18n->save($v); 
+				}
+				foreach( $this->data['MailTemplateI18n'] as $k=>$v ){
+					if($v['locale'] == $this->locale){
+						$title = $v['title'];
+						eval("\$title = \"$title\";");
+						$userinformation_name = $title;
+					}
+			}
+			$this->flash("邮件模板 ".$userinformation_name." 添加成功。点击继续编辑该邮件模板",'/mailtemplates/edit/'.$id,10);
+
 		}
 	}
 
