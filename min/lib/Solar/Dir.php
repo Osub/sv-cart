@@ -11,7 +11,7 @@
  * 
  * @license http://opensource.org/licenses/bsd-license.php BSD
  * 
- * @version $Id: Dir.php 2926 2007-11-09 16:25:44Z pmjones $
+ * @version $Id: Dir.php 2703 2009-07-08 11:54:52Z huangbo $
  * 
  */
 class Solar_Dir {
