@@ -1,0 +1,117 @@
+body, h1 { margin:0;padding:0; } /* needed for known issue with Dom.getXY() in safari for absolute elements in positioned containers */
+ul {
+	padding: 0px;font-weight: normal;margin: 0px; border-style: none;  list-style-type: none;
+}
+li {
+	padding:0px;font-weight: normal;margin:0px; border-style: none; 
+}
+dl {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+dt {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+dd {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+h1 {
+	padding: 0px;margin: 0px;display:block;
+}
+h2 {
+	padding: 0px;margin: 0px;
+}
+h3 {
+	margin: 0px;padding: 0px;display:block;
+}
+h4 {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+h5 {
+	font-size:100%;position:relative;margin:8px 10px 0;padding:8px 0 8px 13px;
+}
+h5 a.amember{
+	float:right;margin:0 8px 0 0;display:inline;font-weight:normal;text-decoration:underline;
+}
+h5 img.amenber_info{
+	position:absolute;top:5px;right:8px;
+}
+
+h6 {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+p {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+img{border:none;}
+form{padding:0;margin:0;}
+.height_5{height:5px;clear:both;line-height:0;}
+.underline:hover{text-decoration:underline;}
+
+.find-btns{
+	padding-right:2px;float:left;margin-right:2px;
+}
+.find-btns input.find{
+	height:20px; line-height:20px;cursor:pointer;padding:0 0 3px 3px;*padding:1px 0 3px 3px;
+}
+.find-btns a{
+	display:block;padding-right:2px;
+}
+
+/*=========================header==========================*/
+#container{
+  width: 951px; margin: 0 auto;position:relative;
+}
+#container:after{
+content:".";display:block;clear:both;visibility:hidden;
+}
+#header{
+	width:950px;margin:0 auto;margin-bottom:10px;min-height:74px;
+}
+* html #header{
+	height:74px;
+}
+#footer{
+	width:950px;padding:15px 0 3px;margin:40px auto 0;clear:both;
+}
+#footer p{
+	text-align:center;
+}
+#footer .link{
+	line-height:30px;
+}
+#footer .link a{
+	margin:8px;
+}
+#footer .Power{line-height:20px;}
+#footer .Power .number{margin-left:10px;}
+#footer .copyRight font{
+	margin-right:4px;
+}
+#Left{
+	float:left;margin-left:10px;display:inline;width:176px;
+}
+#Right{
+	margin-right:10px;float:right;display:inline;width:740px;
+}
+.clear_all{position:absolute;right:-20px;top:3px;font-size:12px;}
+* html .clear_all{
+	top:4px;
+}
+.clear_all a{text-decoration:underline;}
+
+h1.headers{
+	padding:5px 0 0 27px;height:31px;position:relative;margin:0 30px;font-size:15px;line-height:28px;
+}
+h1.headers span.l{width:41px;height:36px;position:absolute;left:-30px;top:0;}
+h1.headers span.r{width:41px;height:36px;position:absolute;right:-30px;top:0;z-index:-1}
+
+.not{text-align:center;font-size:14px;}
+.not strong{font-weight:bold}
+.not img{vertical-align:middle;margin:-5px 15px 0 0;}
+
+#layer_gallery{
+	  display:none;background:#fff;position:absolute;
+}
+#layer_gallery .close{
+	position:absolute;right:0;top:0;
+}

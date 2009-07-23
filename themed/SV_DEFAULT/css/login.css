@@ -1,0 +1,351 @@
+ul,li{
+list-style:none;}
+
+img{border:none;}
+form{margin:0px;}
+/*====================== 用户注册 =========================*/
+#login_box {
+	width: 950px;
+	margin-right: auto;
+	margin-left: auto;
+	height: 445px;
+	
+}
+
+#reguser_box {
+	width:894px;
+	margin-right: auto;
+	margin-left: auto;
+	margin-top:20px;
+}
+#reguser_gut01 {
+	width: 896px;
+	margin-right: auto;
+	margin-left: auto;
+	padding-bottom: 12px;
+	padding-top:12px;
+}
+#reguser_gut01_01 {
+	text-align:center;
+	margin:20px 0;
+}
+#reguser_gut01 p {
+	font-size: 12px;
+	font-weight: bold;
+	margin: 0px;
+	padding: 0px;
+	height: 30px;
+	line-height: 30px;
+	text-indent: 25px;
+}
+
+#reguser_gut01 ul {
+	padding: 0px;
+	margin:30px 0 0 60px;
+	font-size: 12px;
+}
+#reguser_gut01 ul .sorty{
+	margin:30px 0;
+	padding:0px;
+}
+#reguser_gut01 ul .sorty a{
+	display:block;
+	padding:5px 0 0 25px;
+	width:122px;
+}
+#reguser_gut01 li {
+	height:28px;
+	line-height: 28px;
+	padding:4px 0 0 50px;
+}
+#reguser_gut01 ul li span.Pass_mantis select{
+	width:172px;
+}
+#reguser_gut01 li input {
+	height: 17px;
+	font-size: 12px;
+	line-height: 16px;
+}
+#reguser_gut01 li.reguser_gut01_height01 {
+	
+}
+.z_c{
+	margin-left:45px;
+}
+#reguser_gut01 ul li span.sex{
+	margin-left:190px;
+
+}
+#reguser_gut01 ul li span.motel{
+	margin-left:58px;
+
+}
+
+.ws_xx{ text-align:center; height:30px; line-height:30px; clear:both;font-size:12px}
+.ws_xx a{ text-decoration:underline; }
+
+
+
+.Agreement{
+	width:768px;
+	height:297px;
+	overflow-y:scroll;
+	margin:0 auto;
+	overflow-x:hidden
+}
+#reguser_gut01 .Agreement p.text{
+	margin:15px;
+	font-weight:normal;
+	display:block;
+	width:720px;
+	line-height:20px;
+	text-indent:0;
+	height:auto;
+}
+#reguser_box .Agreement_box{
+	padding-bottom:5px;
+}
+#reguser_gut01 .Agreement_btn {
+	margin-top:10px;
+	text-align:center;
+	margin-left:20px;
+}
+#reguser_gut01 #Title {
+	text-align:center;
+	margin:20px 0;
+	font-size:12px;
+}
+/*====================== 编辑个个人信息 =========================*/
+
+#Edit_box #Edit_info{
+	padding-bottom:12px;
+}
+#Edit_box{
+	margin-top:5px;
+}
+#Edit_info_01 {
+	text-align:center;margin:20px 0;
+}
+#Edit_info_username {
+	text-align: center;
+	font-size: 12px;
+	margin-top: 23px;
+	height: 70px;
+	width: 750px;
+}
+#Edit_info p ,#article_info p{
+	font-size: 12px;line-height: 30px;
+}
+
+#Edit_info ul {
+	padding: 0px;
+	margin:30px 0 0 60px;
+	font-size: 12px;
+}
+#Edit_info ul .sorty{
+	margin:30px 0;
+	padding:0px;
+}
+
+#Edit_info li {
+	line-height: 28px;
+	padding:4px 0 0 50px;
+}
+#Edit_info ul li span.Pass_mantis select{
+	width:172px;
+}
+#Edit_info li input {
+	height: 17px;font-size: 12px;line-height: 16px;
+}
+#Edit_info ul li span.sex{
+	margin-left:190px;
+
+}
+#Edit_info ul li span.motel{
+	margin-left:58px;
+
+}
+.y_but{
+	clear:both;padding-left:200px;
+}
+.ws_xx{
+	text-align:center;
+	height:30px;
+	line-height:30px;
+	clear:both;
+	font-size:12px;
+}
+#Edit_box .Agreement_box{
+	padding-bottom:5px;
+}
+#Edit_info .Agreement_btn {
+	margin-top:10px;
+}
+#Edit_info #Title {
+	text-align:center;
+	margin:20px 0;
+	font-size:12px;
+}
+#Edit_info ul li span.Email{
+	padding-left:24px;
+}
+#Edit_info ul li span.addrees input{
+	width:330px;
+}
+#Edit_info ul li span#span_phone{
+	padding-left:42px;
+}
+#Edit_info ul li span.pass{
+	padding-left:48px;
+}
+#Edit_info ul li span#span_Uname{
+	padding-left:18px;
+}
+#Edit_info ul li span#span_usertype{
+	padding-left:36px;
+}
+#Edit_info ul li span.territory select{
+	width:95px;
+}
+/*  ==================== 用户中心留言 ====================  */
+#Edit_info .massege p.msg{
+	font-weight:normal;text-indent:0;line-height:15px;
+}
+#Edit_info .massege{
+	padding:5px 0 60px 200px;
+}
+#Edit_info ul li span.msg_box textarea{
+	padding:2px;width:270px;height:60px;vertical-align:top
+}
+#user_msg p.msg_title{
+	margin:0 1px;padding:2px 0 2px 10px;position:relative;height:20px;overflow:hidden;line-height:20px;
+}
+#user_msg p.msg_title .title{
+}
+#user_msg p.msg_title .del_btn{
+	position:absolute;right:30px;top:2px;
+}
+#user_msg .msg_txt{
+	padding:10px 10px;line-height:normal;text-indent:1.5em;
+}
+#user_msg p span{
+	font-weight:normal;
+}
+#Edit_info p.note{
+	font-weight:normal;position:relative;height:32px;
+}
+#Edit_info p.note span.comment-left{
+	position:absolute;left:0;top:0;width:10px;height:32px;
+}
+#Edit_info p.note span.comment-right{
+	position:absolute;right:-1px;top:0;width:10px;height:32px;
+}
+/*  ==================== 用户中心我的评论 ====================  */
+#Edit_info .comment p{
+	text-align:center;text-indent:0;font-weight:normal;
+}
+#Edit_info .comment{
+	padding:30px 0;
+}
+#Edit_info .nexit_page{
+	margin:50px 0 10px 0;
+}
+/*  ==================== 用户中心文章详细 ====================  */
+#user_msg .article{
+	padding:10px 10px;line-height:normal;
+}
+#user_msg p.article_time{
+	padding:2px 10px;height:20px;line-height:20px;text-align:right;
+}
+#select_article{
+	margin-top:40px;
+}
+#select_article p{
+	line-height:18px;margin-left:22px;text-indent:0;font-weight:normal;padding-top:5px;
+}
+#Edit_info .article_title{
+	text-indent:10px;
+}
+#comments dl input{padding-top:1px;padding-bottom:1px;}
+#comments #user_comment{
+	float:left;width:360px;
+}
+#comments #comment_box{
+	float:left;
+}
+#Edit_info #comments{
+	height:100%;overflow:hidden;
+}
+#user_comment dl{height:100%;overflow:hidden;margin:10px 0 10px 27px;}
+#user_comment dd{width:25%;padding-top:2px;}
+#user_comment p.grade{
+	vertical-align:middle;
+}
+#comments #comment_box p{
+	text-indent:0px;font-weight:normal;line-height:normal;
+}
+#comment_box p.textarea_box textarea{
+	width:330px;height:130px;padding:2px;
+}
+#comment_box p.textarea_box{
+	margin-top:10px;padding-left:27px;
+}
+#comment_box p.btn_liss{
+	margin:10px 0;
+}
+.btn_liss .submit_comment{
+	width:99px;height:31px;line-height:25px;text-align:center;float:left;margin-right:3px;cursor:pointer;
+}
+.btn_liss .reset{
+	width:99px;height:31px;line-height:31px;text-align:center;display:block;float:left;
+}
+#user_comment p.email .enter_txt input{
+	padding:2px;vertical-align:middle;
+}
+#user_comment p.email{
+	vertical-align:middle;
+}
+.article_items{
+	margin:5px 0;height:auto;width:740px;min-height:225px;overflow:hidden;
+}
+#Correlation h1.title_nobg{
+	font-weight:bold;margin-top:20px;
+}
+.article_items h1 span{
+	margin-right:12px;
+}
+.commetn_btn{padding-left:168px;margin-top:10px;}
+/*  ==================== 用户中心文章列表 ====================  */
+#user_msg p.article_title{
+	padding:0px;height:27px;text-align:left;text-indent:0;
+}
+#user_msg p.article_title span{
+	float:left;height:25px;line-height:25px;
+}
+#user_msg p.article_title span.title{
+	width:68%;padding-left:24px;
+}
+#user_msg p.article_title span.user_name{
+	width:14%;text-align:center;
+}
+#user_msg p.article_title span.add_time{
+	width:14%;text-align:center;
+}
+#user_msg #article_box{
+	margin:10px 0 0;
+}
+#user_msg #article_box p{
+	line-height:normal;padding:3px 0;height:auto;text-indent:0;overflow:hidden;clear:both;
+}
+#user_msg #article_box p.list span{
+	float:left;
+}
+#article_box p.list .title{
+	width:68%;padding-left:24px;overflow-x:hidden;
+}
+#article_box p.list span.name{
+	width:14%;text-align:center;
+}
+#article_box p.list span.time{
+	width:14%;text-align:center;
+}

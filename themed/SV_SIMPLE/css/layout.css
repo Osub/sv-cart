@@ -1,0 +1,688 @@
+/*****************************************************************************
+ * SV-CART 式样表
+ *===========================================================================
+ * 版权所有上海实玮网络科技有限公司，并保留所有权利。
+ * 网站地址: http://www.seevia.cn
+ *---------------------------------------------------------------------------
+ *这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用；
+ *不允许对程序代码以任何形式任何目的的再发布。
+ *===========================================================================
+ * $开发: 上海实玮$
+ * $Id: layout.css 3124 2009-07-21 02:27:57Z huangbo $
+*****************************************************************************/
+body{
+	margin: 0 auto;font-size:.75em;
+}
+form{
+	padding:0;margin:0;display:inline;
+}
+ul,li{padding:0;margin:0;list-style-type: none;}
+dd,dt{float:left;margin:0;padding:0;}
+input,textarea,select{font-size:inherit;font-weight:inherit;margin:0;padding:0;}
+* html input,textarea,select{font-size:100%;}
+.radio{margin:-4px 5px 0 0;vertical-align:middle;position:relative;}
+.clear{
+	clear:both;height:0;line-height:0;overflow:hidden;
+}
+.cursor{cursor:pointer;}
+.vmiddle{vertical-align:middle;}
+.height_3{
+	clear:both;height:3px;line-height:3px;overflow:hidden;
+}
+.height_10{
+	clear:both;height:10px;line-height:10px;overflow:hidden;
+}
+.content{
+  width: 980px; margin: 0 auto;
+}
+.clearfix:after{
+content:".";display:block;clear:both;visibility:hidden;
+}
+* html .clearfix{
+	height:1%;
+}
+*+ html .clearfix{
+	height:1%;
+}
+#Left{
+	float:left;width:760px;
+}
+#Right{
+	float:right;width:200px;
+}
+
+.mainbox{
+	padding:10px 0;
+}
+.float_right{
+	float:right;
+}
+.float_left{
+	float:left;
+}
+.vmiddle{vertical-align:middle;}
+h2{
+	padding:0 0 2px;font-size:116.67%;
+}
+h3{
+	padding:0 0 0;font-size:116.67%;position:relative;margin:0;
+}
+h3 span{
+	line-height:25px;padding-left:12px;margin-left:8px;
+}
+h3 .more{
+	line-height:25px;padding:0 8px 0 0;font-weight:normal;font-size:85%;position:absolute;right:5px;top:2px;
+}
+h3 .descending{
+	padding:0;
+}
+h3 .descending select{font-weight:normal;font-size:85%;}
+* html h3 .more{
+	top:-2px;
+}
+*+ html h3 .more{
+	top:-2px;
+}
+h4{
+	padding:5px 10px;margin:0;font-size:114.67%;
+}
+h5 {
+	padding:0;margin: 0;font-size:100%;line-height:20px;
+}
+h6 {
+	padding:0; margin: 0;
+}
+p {padding:0; margin: 0;}
+ul.table_row{
+	height:100%;overflow:hidden;
+}
+ul.table_row li{
+	float:left;padding:5px 0;text-align:center;
+}
+ul.table_cell{
+	height:100%;overflow:hidden;
+}
+ul.table_cell li{
+	float:left;padding:5px 0 10005px;margin-bottom:-10000px;
+}
+
+.block{display:block;} 
+.none{display:none;} 
+
+/* Button */
+.button{
+	display:block;height:21px;
+}
+.button a{
+	display:block;line-height:19px;padding:0 10px;
+}
+.button input{
+	height:21px;cursor:pointer;
+}
+.submit{
+	height:25px;float:right;margin-left:10px;padding-right:4px;
+}
+.submit a{
+	display:block;line-height:25px;margin-left:10px;padding:0 6px 0 10px;
+}
+
+.addtocart{
+	height:36px;float:left;margin-left:10px;padding-right:4px;
+}
+.addtocart a{
+	display:block;padding:0 16px 0 43px;line-height:36px;font-weight:bold;font-size:116.67%
+}
+
+/*=========================Tips==========================*/
+.tips{
+	padding-bottom:28px;width:90%;margin:50px auto;
+}
+.tips p{
+	margin-top:28px;text-align:center;
+}
+.tips a{
+	text-decoration:underline;
+}
+/*=========================header==========================*/
+.header{
+	width:980px;margin:0 auto;margin-bottom:10px;min-height:74px;height:100%;
+}
+.header .logo{
+	padding:5px 0 0 4px;width: auto;float: left;
+}
+.header .tools{
+	float:right;
+}
+.header .member{
+	margin:14px 0 0 15px;white-space:nowrap;text-align:right;
+}
+.header .member a.name{
+	font-size:14px;text-decoration:underline;
+}
+.header .member a.name:hover{
+	text-decoration:underline;
+}
+.header .tools .cart{
+	margin-top:8px;
+}
+.header .tools .cart img{margin:-4px 4px 0 0;}
+.header .tools .cart a:hover{
+	text-decoration:underline;
+}
+.header .search {
+	padding:5px 0;text-align:center;height:100%;overflow:hidden;
+}
+.header .search .keys{padding:3px 5px 0 130px;}
+* html .header .search .keys{padding-top:2px;}
+.search .keywords{
+	width:176px;
+}
+.header .search .category_id{
+	width:88px;
+}
+.header .search .brand_id{
+	width:180px;
+}
+.header .search .price_id{
+	width:105px;
+}
+* html .search .button{
+	width:50px;
+}
+.header .navs{
+	padding-left:200px;height:30px;margin-top:8px;
+}
+.header .navs li,.header .navs .home{
+	float:left;margin-right:1px;
+}
+.header .navs li a,.header .navs .home a{
+	display:block;padding:0 15px;line-height:30px;white-space:nowrap;
+}
+.header .navs li a:hover,.header .navs .home a:hover{
+	font-weight:bold;
+}
+.header .sub_cat{
+	height:23px;line-height:23px;
+}
+ul#categories {
+	position:relative;z-index: 99;
+}
+ul#categories ul {
+	width:980px;position:absolute;text-align:center;left:0;display: none;padding-top:2px;
+}
+/*当鼠标在子菜单和父菜单上时，父菜单的样式*/
+ul#categories li.over a,ul#categories li:hover a{
+	font-weight:bold;
+}
+/*将子菜单的样式清除*/
+ul#categories li.over ul a,ul#categories li:hover ul a{
+	font-weight: normal;background:none;
+}
+/* Styles for Menu Items */
+/* End */
+ul#categories ul a {
+	padding:0;display:inline;
+}
+ul#categories ul a:hover{
+	text-decoration:underline;
+}
+ul#categories li:hover ul,ul#categories li.over ul {
+	display:block; /* The magic */
+}
+
+/*========================= Footer ==========================*/
+#footer{
+	width:980px;padding:15px 0 3px;margin:10px auto 0;clear:both;
+}
+#footer p{
+	text-align:center;
+}
+#footer .link{
+	line-height:30px;
+}
+#footer .link a{
+	margin:8px;
+}
+/* Left */
+.cont{
+	height:100%;position:relative;padding-top:4px;
+}
+.cont .left_up{
+	margin:0;padding:0;width:5px;height:26px;left:-1px;top:-1px;position:absolute;
+}
+.cont .right_up{
+	margin:0;padding:0;width:5px;height:26px;right:-1px;top:-1px;position:absolute;
+}
+.cont .left_down{
+	margin:0;padding:0;width:5px;height:5px;left:-1px;bottom:-1px;position:absolute;line-height:0;overflow:hidden;
+}
+.cont .right_down{
+	margin:0;padding:0;width:5px;height:5px;right:-1px;bottom:-1px;position:absolute;line-height:0;overflow:hidden;
+}
+.list{
+	padding:0 0 0 22px;
+}
+.list li{
+	margin:6px 0;padding-left:14px;
+}
+.list li a:hover{
+	text-decoration:underline;
+}
+.list .more{
+	text-align:right;padding:6px 5px 0 0;
+}
+
+/*================== ProductsGrid ====================*/
+.products{
+	
+}
+.products ul{
+	padding:5px 0 0;overflow:hidden;height:100%;
+}
+.products li{
+	float:left;width:18%;margin:0 7px 5px;
+}
+* html .products li{display:inline;}
+.products li p{
+	text-align:center;margin-top:5px;padding:0 5px;
+}
+.products li .picture{
+	padding:6px 0 0 0;
+}
+.products li .market_price{
+	text-decoration:line-through;
+}
+.products li .name{
+	margin:8px 0 0 0;
+}
+.products li .buy{
+	text-align:center;
+}
+.products li .buy a:hover{
+	text-decoration:underline;
+}
+/* CategoryProduct */
+.cat_picture{
+	width:23.2%;
+}
+.cat_product{
+	width:76.8%;
+}
+.grid{
+	float:left;width:50%;padding-bottom:8px;
+}
+.grid li{
+	float:left;
+}
+.grid li.picture{
+	width:37%;
+}
+.grid li.property{
+	width:52%;padding:10px 0 0 12px;margin:0;
+}
+.grid li.property .buy a:hover{
+	text-decoration:underline;
+}
+.grid .name,.grid .price{
+	margin-bottom:10px;
+}
+
+/*========================= History ==========================*/
+ul.history{
+	padding:10px 5px;overflow:hidden;
+}
+ul.history li{
+	float:left;width:80px;height:122px;
+}
+ul.history .picture{
+	text-align:center;
+}
+ul.history .name{
+	text-align:center;margin-top:5px;white-space:nowrap;overflow:hidden;width:80px;
+}
+ul.history .price{
+	text-align:center;margin:5px 0 10px 0;
+}
+/*========================= Notice ==========================*/
+.notice{
+	padding:10px;line-height:20px;
+}
+.not{
+	text-align:center;font-size:14px;padding:50px 0;
+}
+.not img{vertical-align:middle;margin:-5px 15px 0 0;}
+/*========================= ProductDetail ==========================*/
+.product_detail{
+	height:100%;overflow:hidden;padding:15px 0 0 25px;
+}
+.product_detail .picture{
+	float:left;width:38%;
+}
+.product_detail .picture img{
+	width:240px;height:240px;
+}
+.product_detail .detail{
+	float:right;width:59%;padding:10px;
+}
+.detail dl{
+	height:100%;overflow:hidden;margin:8px 0;
+}
+.detail dt,.detail dt{
+	float:left;
+}
+.detail dt{
+	width:20%;
+}
+.detail .buy_handle{
+	padding:15px 50px 5px 35px;height:100%;overflow:hidden;
+}
+.detail .buy_handle .addtocart{
+	float:right;margin-top:-8px;
+}
+.detail .number{
+	width:50px;font-size:108.33%;
+}
+.property{
+	padding:10px 5px;margin:30px 0 0 20px;
+}
+.property .table_cell{
+	margin-bottom:-1px;padding-top:0;
+}
+.property .table_cell li{text-align:left;padding-top:8px;}
+.property .title{
+	width:15%;padding-left:5px;padding-right:5px;
+}
+.property .description{
+	width:75%;padding-left:5px;padding-right:5px;
+}
+.property .description p{text-align:left;margin:0;padding:0;}
+.property .description li{
+	margin:0 0 0 10px;padding: 0 15px; list-style: disc inside;float:none;
+}
+/*========================= MyCart ==========================*/
+.my_cart .table_row{
+	margin-top:10px;
+}
+.my_cart .table_cell{
+	margin-top:0;
+}
+.my_cart .table_cell li{
+	padding-top:35px;
+}
+.my_cart .table_row li.name{
+	width:42%;text-align:left;
+}
+.my_cart .table_row li.name p{
+	padding:0 10px;
+}
+.my_cart .table_row li.thumb{
+	width:12%;padding-top:5px;
+}
+.my_cart .table_row li.thumb img{
+	width:80px;height:80px;
+}
+.my_cart .table_row li.price{
+	width:14%;
+}
+.my_cart .table_row li.number{
+	width:11%;
+}
+.my_cart .table_row li.subtotal{
+	width:13%;
+}
+.my_cart .table_row li.handle{
+	width:8%;
+}
+.my_cart li.handle a:hover{
+	text-decoration:underline;
+}
+.my_cart .order_total{
+	height:100%;overflow:hidden;padding:10px 0;
+}
+.my_cart .order_total .total{
+	padding:18px 0 0;
+}
+.order_total .continue{
+	text-align:right;
+}
+.order_total .continue p{
+	padding:7px 0 0;clear:both;
+}
+.order_total .continue .tobuy{
+	padding:0 0 0 12px;
+}
+
+.consignee{
+	width:90%;margin:15px auto;
+}
+.table_data .submit{
+	margin-right:48%;
+}
+/*========================= Checkout ==========================*/
+.checkout{
+	padding:10px 20px 10px;
+}
+* html .checkout{padding-right:19px;}
+.checkout h5{margin-bottom:-5px;}
+.checkout .box{
+	padding:0 15px;
+}
+.consignee dl{
+	height:100%;overflow:hidden;margin:5px 0;
+}
+.consignee dt{
+	width:18%;padding-top:4px;
+}
+.consignee dd{
+	width:80%;
+}
+.checkout .shipping{margin-top:-15px;}
+.shipping p{
+	margin:20px 0 0;
+}
+.checkout .payment{margin-bottom:-20px;}
+.payment p{
+	margin:15px 0 25px;overflow:hidden;
+}
+* html .payment p{height:100%;}
+.payment .shading{
+	padding:0 10px;line-height:20px;margin:0 10px 0 0;float:left;width:12%;
+}
+* html .payment .shading{padding:4px 10px 2px;}
+.payment .description{
+	float:left;width:80%;padding-top:4px;
+}
+.payment .online_pay{
+	padding-left:25px;
+}
+.checkout .order_table{padding:0 0 5px;border:1px soldi red}
+.checkout .business{
+	padding:12px 0 8px 15px;
+}
+.order_table p{margin:5px 0;}
+.order_table .table_row{
+	padding:1px 10px 0;margin:0;
+}
+.order_table .table_cell{
+	
+}
+.order_table .table_row .name{
+	width:40%;text-align:left;
+}
+.order_table .table_row .price{
+	width:20%;
+}
+.order_table .table_row .number{
+	width:10%;
+}
+.order_table .table_row .subtotal{
+	width:10%;
+}
+.checkout .total{
+	text-align:right;width:50%;float:right;padding:5px 0;
+}
+.checkout .order_total{
+	text-align:right;padding:8px 0;clear:both;margin-bottom:-10px;font-size:116.67%;font-weight:bold;
+}
+.submitform{height:22px;padding:20px 0 0 474px;}
+.submitform .button{float:left;}
+.submitform .button input{padding-left:5px;padding-right:5px;}
+
+/*========================= articles ==========================*/
+#all_article{
+	overflow:hidden;height:100%;
+}
+#all_article #left_article{
+	float:left;width:49.4%;
+}
+#all_article #right_article{
+	float:right;width:50%;
+}
+.information{margin-bottom:5px;}
+.information h1 img,.activity_column h1 img{
+	margin:6px 0 0 15px;
+}
+.information h1 .more,.activity_column h1 .more{
+	position:absolute;right:-22px;top:10px;width: 46px;font-size:14px;
+}
+.information .infos h2{
+	font-size:13px;font-weight:bold;display:block;margin:21px 0;text-align:center;padding:0 10px;
+}
+.information .infos{
+	padding-bottom:30px;margin-top:2px;
+}
+.information .infos .txt{
+	margin:18px 20px 0;text-indent:2em;line-height:22px;
+}
+.activity_column{margin-bottom:5px;}
+.activity_column h1{margin-left:10px;}
+.activity_column h1 span.l{
+	height:36px;width:10px;left:-10px;
+}
+.activity_column .main{
+	margin-top:2px;position:relative;padding-top:5px;
+}
+.activity_column .main .option_nav{
+	position:absolute;top:-46px !important;top:-45px;height:35px;left:-13px;z-index:10;
+}
+.main .option_nav li{
+	float:left;	height:35px;width:90px;text-align:center;cursor:pointer;
+}
+.activity_column .main .subject{
+	overflow:hidden;height:100%;
+}
+.main sub{
+	text-align:center;width:354px;padding:3px 8px;
+}
+.main .subject .pic{
+	float:left;margin:5px 10px 2px;display:inline;
+}
+.main .subject .pic img{
+	width:110px;height:89px;
+}
+.main .subject ul{
+	margin:0 5px 0 20px;
+}
+.main .subject ul li,.main ul.hot_attention li{
+	margin:5px 0 10px;
+}
+.main .subject ul li img,ul.hot_attention li img{
+	margin-right:4px;
+}
+.main ul.hot_attention,.infos ul.hot_attention{
+	float:none;
+	margin:20px 5px 0 10px;
+}
+.activity_column .main .comment_list{
+	margin:5px 15px 20px;
+}
+.infos dl.artic_head{
+	clear:both;float:none;height:100%;overflow:hidden;margin-bottom:10px;
+}
+.infos dl.artic_head dt{
+	width:225px;margin-right:20px;font-weight:bold;
+}
+.infos dl.artic_head dd{
+	padding-left:24px;font-weight:bold;
+}
+.main .comment_list p,.infos .comment_list p{
+	line-height:22px;overflow:hidden;_height:100%;
+}
+.main .comment_list p span,.infos .comment_list p span{
+	float:left;overflow:hidden;
+}
+.main .comment_list p span.title{
+	width:225px;margin-right:20px;
+}
+.infos .comment_list p span.title{
+	margin-right:10px;width:255px;
+}
+.infos .comment_list{
+	margin:10px 15px 0;
+}
+.infos ul.hot_attention li{
+	margin:5px 0 8px;
+}
+.infos ul.hot_attention{
+	margin-left:25px;
+}
+p.no_article{font-size:14px;}
+.tags{
+	padding:0 18px;
+}
+.tags a{text-decoration:underline;}
+
+
+
+.article_view{
+	padding:10px 20px;
+}
+.article_view .description{
+	line-height:18px;
+}
+.article_view .description li{
+	margin-left: 10px;padding: 0 15px; list-style: disc inside;
+}
+.article_view .select_article{
+	margin:20px 0 0;line-height:20px;
+}
+/*===================我要评论框======================*/
+#comment .box,#article_info{
+	padding-bottom:12px;
+}
+.key_list dl input{padding-top:1px;padding-bottom:1px;}
+.key_list .comment_box{
+	width:590px;float:none;
+}
+#comment .key_list{
+	height:100%;overflow:hidden;
+}
+.pingjiadj input{
+	margin-right:4px;vertical-align:middle;
+}
+.pingjiadj img{
+	margin-right:7px;vertical-align:middle;
+}
+.user_comment dd,.user_comment dt{float:left;}
+.user_comment dl{height:100%;overflow:hidden;margin:10px 0 10px 27px;}
+.user_comment dd{width:25%;padding-top:2px;}
+.user_comment p.grade{
+	vertical-align:middle;
+}
+.key_list .comment_box p{
+	text-indent:0px;font-weight:normal;line-height:normal;
+}
+.comment_box p.textarea_box textarea{
+	width:330px;height:130px;padding:2px;
+}
+.comment_box p.textarea_box{
+	margin-top:10px;padding-left:27px;
+}
+.comment_box p.btn_liss{
+	margin:10px 0;
+}
+.commetn_btn{padding-left:168px;margin-top:10px;}
+.commetn_btn .button{margin:0 1px;}
+.btn_liss .reset{
+	width:99px;height:31px;line-height:31px;text-align:center;display:block;float:left;
+}

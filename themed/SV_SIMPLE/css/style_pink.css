@@ -1,0 +1,206 @@
+﻿/*****************************************************************************
+ * SV-CART 式样表
+ *===========================================================================
+ * 版权所有上海实玮网络科技有限公司，并保留所有权利。
+ * 网站地址: http://www.seevia.cn
+ *---------------------------------------------------------------------------
+ *这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用；
+ *不允许对程序代码以任何形式任何目的的再发布。
+ *===========================================================================
+ * $开发: 上海实玮$
+ * $Id: style.css 2738 2009-07-09 10:51:58Z zhangshisong $
+*****************************************************************************/
+body{background:#fff;}
+h3 .descending{
+	background:none;
+}
+img{border:none;}
+.border{border:1px solid #8F9593}
+/* Colors */
+a{
+	text-decoration:none;color:#0167CC;
+}
+a:hover{
+	color:#F73301;
+}
+.font_color_1{
+	color:#0167CB;
+}
+.font_blue{
+	color;#0044CC;
+}
+.font_red{
+	color:#FF3200;
+}
+.font_white{
+	color:#ffffff;
+}
+.font_green{
+	color:#009700;
+}
+.navs li a{
+	color:#000;
+}
+.member{
+	color:#AAAAAA;
+}
+
+.addtocart{
+	background:url(../img/pink/addcart.gif) 100% -36px no-repeat;
+}
+.addtocart a{
+	background:url(../img/pink/addcart.gif) 0 0 no-repeat;color:#fff;
+}
+/* Borders */
+h2{
+	border-bottom:1px solid #C6CDD5;
+}
+h3{
+	border-bottom:1px solid #FECCFF;
+}
+h3 span{
+	background:url('../img/pink/title.gif') 0 0 no-repeat;
+}
+h3 .more{
+	background:url('../img/pink/title.gif') 100% -44px no-repeat;
+}
+h3 .descending{background:none;}
+
+
+h4{
+	border-bottom:1px dashed #A0C0FF;
+}
+h5 {
+	color:#0044CC;
+}
+
+#footer{
+	border-top:2px solid #FE71A5;
+}
+.cont{
+	border:1px solid #FECCFF;
+}
+.products li .picture img{
+	border:1px solid #F5F0EA;
+}
+.button{
+	border:1px solid #9EB0BC;
+}
+.button a,.button input{
+	border:1px solid #FFFFFF;background:#B6C8D4 url('../img/pink/search.gif') 0 0 repeat-x;color:#000;
+}
+
+.submit{
+	background:url(../img/pink/submit.gif) 100% -25px no-repeat;
+}
+.submit a{
+	color:#fff;background:url(../img/pink/submit.gif) 0 0 no-repeat;
+}
+
+.not{border:1px solid #FECCFF}
+
+.tips{
+	border:1px solid #A0C0FF;
+}
+.tips a{
+	color:#0000ff;
+}
+.cat_picture img{
+	border:1px solid #E0E0E2;
+}
+.grid li.picture img{
+	border:1px solid #F1E8DF;
+}
+.grid li.property .buy,.grid li.property .buy a{
+	color:#E46665;
+}
+.grid li.property{
+	border:none;
+}
+
+
+.order_table .table_row{
+	background:#FF71A5;color:#fff;
+}
+.order_table .table_cell{
+	border-bottom:1px solid #E9E9E9;background:none;color:#555555;
+}
+
+ul.history .picture img.normal{
+	border:1px solid #eee;
+}
+.history img.hover{
+	border:1px solid #FECCFF;
+}
+.checkout .total{border-bottom:1px solid #FFCCFF;}
+.product_detail .picture img{border:1px solid #C6CDD5;}
+.my_cart .table_row{border-bottom:1px dashed #DADDEC;}
+.checkout{border-bottom:1px dashed #CAC5B2;}
+.property{border-top:1px dashed #D0D0D0;}
+.property .table_cell{border:1px solid #E0E0F0;}
+
+.property .description{border-left:1px solid #E0E0F0;}
+
+
+
+/*Background*/
+.cont .left_up{
+	background:url('../img/pink/title.gif') 0 -14px no-repeat;
+}
+.cont .right_up{
+	background:url('../img/pink/title.gif') 100% -14px no-repeat;
+}
+.order_table .left_up{
+	background:url('../img/pink/title.gif') 0 -71px no-repeat;
+}
+.order_table .right_up{
+	background:url('../img/pink/title.gif') 100% -101px no-repeat;
+}
+
+.cont .left_down{
+	background:url('../img/pink/title.gif') 0 -40px no-repeat;
+}
+.cont .right_down{
+	background:url('../img/pink/title.gif') 100% -40px no-repeat;
+}
+.list li{
+	background:url('../img/pink/listicon.gif') 0 5px no-repeat;
+}
+.list li.squareico{
+	background:url('../img/pink/square.gif') 0 5px no-repeat;
+}
+.list .more{
+	background:none;
+}
+
+.header .search {background:#FF70A5;}
+.header .navs li a,.header .navs .home a{background:#FFDFF0;}
+.header .navs li a:hover,.header .navs .home a:hover{
+	background:#FF70A5;color:#fff;
+}
+.header .tools .cart a:hover{
+	color:#0167CB;
+}
+ul#categories ul {
+	background:#FF70A5;
+}
+/*当鼠标在子菜单和父菜单上时，父菜单的样式*/
+ul#categories li.over a,ul#categories li:hover a{
+	background:#FF70A5;color:#ffffff;font-weight:bold;
+}
+
+#footer{background:#fff;}
+.detail .buy_handle{
+	background:url('../img/pink/detail_01.gif') 0 0 repeat-x;
+}
+.my_cart .table_over{background:#FFF0E0;}
+.my_cart .table_bg{background:#F8FAFC;}
+.order_total .continue .tobuy{
+	background:url('../img/pink/listicon02.gif') 0 center no-repeat;
+}
+.payment .shading{background:#FFDFF0;}
+
+.table_data{
+	background:#FECCFF;
+}
+.table_data .rows{background:#ffffff;}
