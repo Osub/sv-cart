@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: svcart.php 837 2009-04-21 01:33:05Z shenyunfeng $
+ * $Id: svshow.php 2699 2009-07-08 11:07:31Z huangbo $
 *****************************************************************************/
 
 class SVshowHelper extends HTMLHelper {
@@ -29,6 +29,8 @@ class SVshowHelper extends HTMLHelper {
 	}
 	
 	function sku_product_link($id,$name,$code,$config){
+		$name = str_replace(" ","-",$name);
+		$name = str_replace("/","-",$name);
 		if($config == 1){
 			return "/products/sku/".$name."/".$code;
 		}else{

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: brands_controller.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: brands_controller.php 3184 2009-07-22 06:09:42Z huangbo $
 *****************************************************************************/
 class BrandsController extends AppController {
 
@@ -68,7 +68,14 @@ class BrandsController extends AppController {
    	    $this->pageTitle = "删除品牌-品牌管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'品牌管理','url'=>'/users/');
 		$this->navigations[] = array('name'=>'删除品牌','url'=>'');
+		$pn = $this->BrandI18n->find('list',array('fields' => array('BrandI18n.brand_id','BrandI18n.name'),'conditions'=> 
+                                        array('BrandI18n.brand_id'=>$id,'BrandI18n.locale'=>$this->locale)));
 		$this->Brand->deleteAll("Brand.id='".$id."'");
+	
+		//操作员日志
+        if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+        $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'删除品牌:'.$pn[$id] ,'operation');
+        }
 		$this->flash("删除成功",'/brands/',10);
    }
    function view($id){
@@ -78,7 +85,7 @@ class BrandsController extends AppController {
 		$this->pageTitle = "编辑品牌- 品牌管理" ." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'品牌管理','url'=>'/brands/');
 		$this->navigations[] = array('name'=>'编辑品牌','url'=>'');
-		$this->set('navigations',$this->navigations);
+		
 		if($this->RequestHandler->isPost()){
    	   	    $this->data['Brand']['flash_config'] = !empty($this->data['Brand']['flash_config'])?$this->data['Brand']['orderby']:"0";
 			//$this->BrandI18n->deleteall("brand_id = '".$this->data['Brand']['id']."'",false); //删除原有多语言
@@ -100,12 +107,20 @@ class BrandsController extends AppController {
 			$brand_info = $this->Brand->findById($id);
             
             $brand_name = $brand_info['BrandI18n']['name'];
+            //操作员日志
+            if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+            $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑品牌:'.$brand_name ,'operation');
+            }
 			$this->flash("品牌 ".$brand_name."  编辑成功。点击继续编辑该品牌。",'/brands/'.$id,10);
 			
 		}
 		$this->data=$this->Brand->localeformat($id);
 
-	$this->set('brands_info',$this->data);
+		$this->set('brands_info',$this->data);
+			//leo20090722导航显示
+		$this->navigations[] = array('name'=>$this->data["BrandI18n"][$this->locale]["name"],'url'=>'');
+	    $this->set('navigations',$this->navigations);
+
    }
    function add(){
 		/*判断权限*/
@@ -131,6 +146,10 @@ class BrandsController extends AppController {
 					$brand_name = $v['name'];
 				}
 			}
+			//操作员日志
+            if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+            $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'增加品牌:'.$brand_name ,'operation');
+            }
 			$this->flash("品牌 ".$brand_name."  编辑成功。点击继续编辑该品牌。",'/brands/'.$id,10);
 		}
             

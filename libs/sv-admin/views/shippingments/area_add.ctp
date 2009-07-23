@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart  配送方式添加设置区域
  * ===========================================================================
@@ -9,15 +9,15 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: area_add.ctp 1261 2009-05-08 07:18:58Z huangbo $
+ * $Id: area_add.ctp 2485 2009-06-30 11:33:00Z huangbo $
 *****************************************************************************/
 ?>
-<?=$javascript->link('shipping');?>
+<?php echo $javascript->link('shipping');?>
 
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
 <!--Main Start-->
-<p class="add_categories"><strong><?=$html->link($html->image('add.gif',array('align'=>'absmiddle'))."配送区域列表","/shippingments/area/{$ids}",'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."配送区域列表","/shippingments/area/{$ids}",'',false,false);?></strong></p>
 
 <?php echo $form->create('Shippingment',array('action'=>'area_add/'.$ids,'onsubmit'=>'return shippingments_check();'));?>
 <div class="home_main">
@@ -27,24 +27,24 @@
 <!--Communication Stat-->
 	<div class="order_stat athe_infos">
 	  <div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  编辑配送区域</h1></div>
 	  <div class="box">
-	  <br /><input type="hidden" name="data[ShippingArea][shipping_id]" value="<?=$ids?>">
+	  <br /><input type="hidden" name="data[ShippingArea][shipping_id]" value="<?php echo $ids?>">
 	
 	  <h2>配送区域名称：</h2>
-	    <?if(isset($languages) && sizeof($languages)>0){?>
-<? foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input type="text" style="width:195px;" id="name<?=$v['Language']['locale']?>" name="data[ShippingAreaI18n][<?=$k?>][name]" /> <font color="#ff0000">*</font></span></p>
+	    <?php if(isset($languages) && sizeof($languages)>0){?>
+<?php foreach ($languages as $k => $v){?>
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input type="text" style="width:195px;" id="name<?php echo $v['Language']['locale']?>" name="data[ShippingAreaI18n][<?php echo $k?>][name]" /> <font color="#ff0000">*</font></span></p>
 		
-<? } }?>
+<?php } }?>
 	<h2>配送区域描述：</h2>
-	    <?if(isset($languages) && sizeof($languages)>0){?>
-<? foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><textarea name="data[ShippingAreaI18n][<?=$k?>][description]"></textarea></span></p>
-		<input type="hidden" name="data[ShippingAreaI18n][<?=$k?>][locale]" value="<?=$v['Language']['locale']?>" />		
-<? }} ?>
+	    <?php if(isset($languages) && sizeof($languages)>0){?>
+<?php foreach ($languages as $k => $v){?>
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><textarea name="data[ShippingAreaI18n][<?php echo $k?>][description]"></textarea></span></p>
+		<input type="hidden" name="data[ShippingAreaI18n][<?php echo $k?>][locale]" value="<?php echo $v['Language']['locale']?>" />		
+<?php }} ?>
 	<dl><dt>是否有效：</dt>
 			<dd>&nbsp;&nbsp;<input type="radio" name="data[ShippingArea][status]" value="1" checked /> 是 <input type="radio" name="data[ShippingArea][status]" value="0" /> 否</dd></dl>
 		
@@ -88,8 +88,8 @@
 
 	<div class="order_stat athe_infos configvalues">
 	<div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  所辖地区</h1></div>
 	  <div class="box">
 <!--Mailtemplates_Config-->
@@ -99,10 +99,10 @@
 		</dd></dl>
 	  	<dl>一级地区：
 		<select multiple size="10" style="width: 85px;" id="country_id" onclick="region_country('country')">
-		<?if(isset($region_country) && sizeof($region_country)>0){?>
-		<?$i=0; foreach( $region_country as $kz=>$v ){?>
-		<option value="<?=$v['Region']['id']?>" if($kz==0){echo "selected";}><?=$v['RegionI18n']['name']?></option>
-		<? $i++;}}?>
+		<?php if(isset($region_country) && sizeof($region_country)>0){?>
+		<?php $i=0; foreach( $region_country as $kz=>$v ){?>
+		<option value="<?php echo $v['Region']['id']?>" if($kz==0){echo "selected";}><?php echo $v['RegionI18n']['name']?></option>
+		<?php $i++;}}?>
 		</select>
 		二级地区：
 		<select multiple size="10" style="width: 85px;" id="province_id" onclick="regions('province')">
@@ -131,10 +131,10 @@
 	  <p class="submit_btn"><input type="submit" value="确定" /><input type="reset" value="重置" /></p>
 
 </div>
-<? echo $form->end();?>
+<?php echo $form->end();?>
 </div>
 <!--Main Start End-->
-<?=$html->image('content_left.gif',array('class'=>'content_left'))?><?=$html->image('content_right.gif',array('class'=>'content_right'))?>
+<?php echo $html->image('content_left.gif',array('class'=>'content_left'))?><?php echo $html->image('content_right.gif',array('class'=>'content_right'))?>
 </div>
 	
 <script type="text/javascript">

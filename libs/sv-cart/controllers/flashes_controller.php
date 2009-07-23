@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: flashes_controller.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: flashes_controller.php 2626 2009-07-06 07:02:59Z tangyu $
 *****************************************************************************/
 App::import('Core', 'xml');
 
@@ -35,6 +35,8 @@ class FlashesController extends AppController {
  	  if($flash_info['FlashImage'])
  	  foreach($flash_info['FlashImage'] as $k => $v){
  	  	  $flash_info['FlashImage'][$k]['image'] = $this->url($v['image'],false);
+ 	  	  if(Configure::read('App.baseUrl'))
+ 	  	  	  $flash_info['FlashImage'][$k]['image'] = str_replace('index.php/','',$flash_info['FlashImage'][$k]['image']);
  	  	  if(isset($v['url']) && $v['url'] !=""){
  	  	  	$flash_info['FlashImage'][$k]['link'] = $this->url($v['url'],false);
  	  	  	unset($flash_info['FlashImage'][$k]['url']);

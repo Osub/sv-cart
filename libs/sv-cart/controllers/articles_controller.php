@@ -9,19 +9,19 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: articles_controller.php 1902 2009-05-31 13:56:19Z huangbo $
+ * $Id: articles_controller.php 3184 2009-07-22 06:09:42Z huangbo $
 *****************************************************************************/
 
 class   ArticlesController extends AppController {
 	var $name = 'Articles';
-	var $uses = array('Article','Comment','Category','ArticleCategory','Product','ProductArticle');
+	var $uses = array('Article','Comment','Category','ArticleCategory','Product','ProductArticle','Tag','ProductLocalePrice');
  	function index($cat_id=''){
  		
  		$cat_id=intval($cat_id);
 		//文章首页 分类
 		$this->Article->set_locale($this->locale);
 		$this->Category->set_locale($this->locale);
-		$all_subcat=$this->Category->tree('A',$cat_id);
+		$all_subcat=$this->Category->tree('A',$cat_id,$this->locale);
 		$article_index = $all_subcat['assoc'];
 		$this->set('categories_tree',$all_subcat['tree']);
 	//	pr($all_subcat['tree']);
@@ -63,8 +63,9 @@ class   ArticlesController extends AppController {
 		//	print($category_id); //14,15,16
 			$category_id=substr($category_id,0,-1);
 		//  文章列表
-			$article_list = $this->ArticleCategory->findAll(" ArticleCategory.category_id in (".$category_id.")");
-		//	pr($article_list); 14,15,16的ArticleCategory
+			
+			$article_list = $this->ArticleCategory->find_indx_all($category_id,$this->locale);
+			
 			$article_id='';
 			$article_list_temp=array();
 			foreach($article_list as $key=>$v){
@@ -95,9 +96,7 @@ class   ArticlesController extends AppController {
 						unset($article_list_temp[$key][$k]['ArticleCategory']);
 					}
 				}
-				$article_list_temp[14] = array();
-				$article_list_temp[15] = array();
-				$article_list_temp[16] = array();
+				$article_list_temp[] = array();
 				$news['Article_list'] = $article_list_temp[$news['Category']['id']];
 				if(isset($actives_news['Category']['id']) &&  isset($article_list_temp[$actives_news['Category']['id']])){
 					$actives_news['Article_list']=$article_list_temp[$actives_news['Category']['id']];
@@ -135,7 +134,6 @@ class   ArticlesController extends AppController {
 		$this->pageTitle = $this->languages['article'].$this->languages['home']." - ".$this->configs['shop_title'];
 		$ur_heres[]=array('name'=>$this->languages['home'],'url'=>"/");
 		$ur_heres[]=array('name'=>$this->languages['article'].$this->languages['home'],'url'=>"/articles/{$cat_id}");
-		$this->set('languages',$this->locale);
 		$this->page_init();
 		$this->set('locations',$ur_heres);
  	
@@ -168,7 +166,8 @@ class   ArticlesController extends AppController {
 			//pr($article_detail);
 			$this->set('article_detail',$article_detail);
 			//相关商品
-			$product_article = $this->ProductArticle->findAll(" ProductArticle.article_id=$id");
+		//	$product_article = $this->ProductArticle->findAll(" ProductArticle.article_id=$id");
+			$product_article = $this->ProductArticle->find_product_article($id,$this->locale);
 			//pr($product_article);
 			$product_id='';
 			foreach($product_article as $key=>$v){
@@ -178,27 +177,44 @@ class   ArticlesController extends AppController {
 				$product_id=substr($product_id,0,-1);
 				//商品详细
 				$this->Product->set_locale($this->locale);
-				$product_list = $this->Product->get_list($product_id);
+				$product_list = $this->Product->get_list($product_id,$this->locale);
+				if(is_array($product_list) && sizeof($product_list)>0){
 				foreach($product_list as $k=>$v){
-					$product_list[$k]['Product']['shop_price'] = $this->Product->locale_price($v['Product']['id'],$v['Product']['shop_price'],$this);
+					//$product_list[$k]['Product']['shop_price'] = $this->Product->locale_price($v['Product']['id'],$v['Product']['shop_price'],$this);
+					if(isset($this->configs['mlti_currency_module']) && $this->configs['mlti_currency_module'] == 1 && isset($v['ProductLocalePrice']['product_price'])){
+						$product_list[$k]['Product']['shop_price'] = $v['ProductLocalePrice']['product_price'];
+					}					
 				}
 				//pr($product_list);
 				$this->set('product_list',$product_list);
+				}
 			}
 			
 			//用户评论
 			$comment_list = $this->Comment->get_list('A',$id);
 			$reply_info=array();
 			//获取评论回复信息
-			foreach($comment_list as $key=>$v){
-				if($v['Comment']['parent_id']!=0){
-					$reply_info[$v['Comment']['parent_id']][]=$v;
-					unset($comment_list[$key]);
+			$my_comments_id =array();
+			if(isset($comment_list) && sizeof($comment_list)>0){
+				foreach($comment_list as $key=>$v){
+					$my_comments_id[] = $v['Comment']['id'];
 				}
 			}
-			foreach($comment_list as $key=>$v){
-				$comment_list[$key]['reply']=@$reply_info[$v['Comment']['id']];
+		  $my_comments_replies = $this->Comment->find('all',array('conditions'=>array('Comment.parent_id'=>$my_comments_id)));
+		  $replies_list =array();
+		  if(is_array($my_comments_replies) && sizeof($my_comments_replies)>0){
+		  		foreach($my_comments_replies as $kk=>$vv){
+		  			$replies_list[$vv['Comment']['parent_id']][] = $vv;
+		  		}
+		  }			
+			
+			if(isset($comment_list) && sizeof($comment_list)>0){
+				foreach($comment_list as $key=>$v){
+			//		$comment_list[$key]['reply']=@$reply_info[$v['Comment']['id']];
+					$comment_list[$key]['reply'] = @$replies_list[$v['Comment']['id']];
+				}
 			}
+
 			$this->set('comment_list',$comment_list);	
 			
 			//文章分类
@@ -208,7 +224,7 @@ class   ArticlesController extends AppController {
 			$ur_heres[]=array('name'=>$this->languages['home'],'url'=>"/");
 		//	$ur_heres[]=array('name'=>$this->languages['article_home_page'],'url'=>"/articles/index/1");
 			//pr($article_category_detail['ArticleCategory']['category_id']);
-			$cat_navigate = $this->Category->tree('A',$article_category_detail['ArticleCategory']['category_id']);
+			$cat_navigate = $this->Category->tree('A',$article_category_detail['ArticleCategory']['category_id'],$this->locale);
 		//	krsort($cat_navigate);
 		//	pr($cat_navigate);
 
@@ -218,14 +234,6 @@ class   ArticlesController extends AppController {
 			$this->Category->set_locale($this->locale);
 			$category_arr = $this->Category->findbyid($category_id);
 			
-			//$ur_heres[]	= array('name'=>$cat_navigate['tree']['0']['CategoryI18n']['name'],'url'=>"/category_articles/index/{$cat_navigate['tree']['0']['Category']['id']}");
-		/*	if($category_arr['Category']['parent_id'] == 0){
-				$ur_heres[]	= array('name'=>$category_arr['CategoryI18n']['name'],'url'=>"/category_articles/index/{$category_arr['Category']['id']}");
-			}
-			if($category_arr['Category']['parent_id'] == 1){
-				$this->navigations[] = array('name'=>$navigations['tree']['0']['CategoryI18n']['name'],'url'=>"/categories/".$navigations['tree']['0']['Category']['id']);
-				$this->navigations[] = array('name'=>$info['CategoryI18n']['name'],'url'=>"/categories/".$info['Category']['id']);
-			}*/
 		  	if($category_arr['Category']['parent_id'] == 0){
 		  		if(!empty($category_arr['Category']['link'])){
 		  			$ur_heres[]	= array('name'=>$category_arr['CategoryI18n']['name'],'url'=>"/{$category_arr['Category']['link']}");
@@ -246,6 +254,15 @@ class   ArticlesController extends AppController {
 					$ur_heres[] = array('name'=>$category_arr['CategoryI18n']['name'],'url'=>"/category_articles/".$category_arr['Category']['id']);
 				}
 			}
+			
+			if(isset($this->configs['use_tag']) && $this->configs['use_tag'] == 1){
+				$conditions = " Tag.status = '1' and Tag.type ='A' and Tag.type_id =".$id;
+				$this->Tag->set_locale($this->locale);
+				
+				$tags = $this->Tag->find("all",array('fields' =>array('Tag.id','Tag.type_id','TagI18n.name'),"conditions" => array($conditions)));
+				$this->set('tags',$tags);
+			}
+						
 	    	$ur_heres[]=array('name'=>$article_detail['ArticleI18n']['title'],'url'=>"");
 			$this->set('locations',$ur_heres);
 			$this->set('neighbours',$this->Article->findNeighbours('',array('id','ArticleI18n.title'),$id));
@@ -264,6 +281,10 @@ class   ArticlesController extends AppController {
 		//set js 语言
 	    $js_languages = array("waitting_for_check" => $this->languages['waitting_for_check'],
 							"comments_not_empty" => $this->languages['comments'].$this->languages['can_not_empty'],
+							"invalid_email" => $this->languages['email_letter'].$this->languages['format'].$this->languages['not_correct'],
+							"page_submit" => $this->languages['submit'],
+							"page_reset" => $this->languages['reset'],		
+							"tag_can_not_empty"=>$this->languages['tags'].$this->languages['apellation'].$this->languages['can_not_empty'],
 							"select_level_comments" => $this->languages['please_choose'].$this->languages['comment_rank'],
 	    					  "comment" => $this->languages['comments']);
 	    $this->set('js_languages',$js_languages);	

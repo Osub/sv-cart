@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_oracle.php 8004 2009-01-16 20:15:21Z gwoo $ */
+/* SVN FILE: $Id: dbo_oracle.php 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  * Oracle layer for DBO.
  *

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: view.php 7961 2008-12-25 23:21:36Z gwoo $ */
+/* SVN FILE: $Id: view.php 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  * Methods for displaying presentation data in the view.
  *

@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart  订单状态报表管理
  * ===========================================================================
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: orderstatus.ctp 1670 2009-05-25 00:47:18Z huangbo $
+ * $Id: orderstatus.ctp 2989 2009-07-17 02:03:04Z huangbo $
 *****************************************************************************/
 ?>
 
@@ -19,13 +19,22 @@
 <!--Search-->
 
 	
-<?  $num=count($payment)+2; ?>
+<?php  $num=count($payment)+2; ?>
 <div class="search_box">
-<?php echo $form->create('Report',array('action'=>'orderstatus'));?>
+<?php echo $form->create('Report',array('action'=>'orderstatus/','name'=>"OrderStatusForm"));?>
 	<dl>
-	<dt style="padding-top:0;"><?=$html->image('serach_icon.gif',array('align'=>'left'))?></dt>
-	<dd><p class="reg_time article">下单日期：<input type="text" class="time" name="start_time" value="<?php echo $start_time?>"id="date" readonly="readonly"/><button  id="show" type="button"><?=$html->image('calendar.gif')?></button>－<input type="text" class="time" name="end_time" id="date2" readonly="readonly"value="<?php echo $end_time?>"/><button id="show2" type="button"><?=$html->image('calendar.gif')?></button></p></dd>
-	<dt class="curement"><input type="submit" value="查询" /> </dt>
+	<dt style="padding-top:0;"><?php echo $html->image('serach_icon.gif',array('align'=>'left'))?></dt>
+	<dd><p class="reg_time article">下单日期：<input type="text" class="time" name="start_time" value="<?php echo $start_time?>"id="date" readonly="readonly"/><?php echo $html->image("calendar.gif",array('width'=>'18','height'=>'18','alt'=>'Calendar',"id"=>"show","class"=>"calendar"))?>－<input type="text" class="time" name="end_time" id="date2" readonly="readonly"value="<?php echo $end_time?>"/><?php echo $html->image("calendar.gif",array('width'=>'18','height'=>'18','alt'=>'Calendar',"id"=>"show2","class"=>"calendar"))?>
+		<?php if(isset($SVConfigs["mlti_currency_module"]) && $SVConfigs["mlti_currency_module"]==1){?>
+	语言:	<select name="order_locale">
+		<?php if(isset($languages) && sizeof($languages)>0){
+			foreach ($languages as $k => $v){?>
+			<option value="<?php echo $v['Language']['locale']?>" <?php if($v['Language']['locale']==$locale){echo "selected";}?>><?php echo $v['Language']['name']?></option>
+		<?php }}?>
+	</select>
+	<?php }?>
+	</p></dd>
+	<dt class="curement"><input type="submit" value="查询" onclick="sub_action()"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="导出"  onclick="export_action()"/></dt>
 	</dl>
 <?php $form->end()?>
 </div>
@@ -47,7 +56,7 @@
 	<tr>
 	  <th width="8%" height="28" bgcolor="#E1E1E1" style="border-right:1px solid #ABABAB">&nbsp;</th>
 <!--订单状态标题-->
-	  <th height="30" width="33%" colspan="5" rowspan="<?=$num?>" style="border-right:0;">
+	  <th height="30" width="33%" colspan="5" rowspan="<?php echo $num?>" style="border-right:0;">
 	  	<table cellpadding="0" cellspacing="0" border="0" width="100%" class="second_box">
 		<tr class="second_title">
 			<th style="height:28px;*height:27px;width:20%">未确认</th>
@@ -57,14 +66,14 @@
 			<th style="border-right:0;width:19%">退货</th>
 		</tr>
 	<!--	pr($order_status);pr($shipping_status);pr($payment_status);pr($payment);-->
-		<?if(isset($payment) && sizeof($payment)>0){?>
+		<?php if(isset($payment) && sizeof($payment)>0){?>
 		<?php foreach($payment as $k=>$v){?>
 		<tr>
-			<td height="30" style="vertical-align:middle;"><?php if(isset($order_status[0][$k])) echo $order_status[0][$k];else echo 0;?></td>
-			<td style="vertical-align:middle;"><?php if(isset($order_status[1][$k])) echo $order_status[1][$k];else echo 0;?></td>
-			<td style="vertical-align:middle;"><?php if(isset($order_status[2][$k])) echo $order_status[2][$k];else echo 0;?></td>
-			<td style="vertical-align:middle;"><?php if(isset($order_status[3][$k])) echo $order_status[3][$k];else echo 0;?></td>
-			<td style="vertical-align:middle;"><?php if(isset($order_status[4][$k])) echo $order_status[4][$k];else echo 0;?></td>
+			<td height="30" style="vertical-align:middle;"><?php echo $html->link(isset($order_status[0][$k])?$order_status[0][$k]:0,"/orders/?payment_id=".$k."&order_status=0",array("target"=>"_blank"),false,false);?></td>
+			<td style="vertical-align:middle;"><?php echo $html->link(isset($order_status[1][$k])?$order_status[1][$k]:0,"/orders/?payment_id=".$k."&order_status=1",array("target"=>"_blank"),false,false);?></td>
+			<td style="vertical-align:middle;"><?php echo $html->link(isset($order_status[2][$k])?$order_status[2][$k]:0,"/orders/?payment_id=".$k."&order_status=2",array("target"=>"_blank"),false,false);?></td>
+			<td style="vertical-align:middle;"><?php echo $html->link(isset($order_status[3][$k])?$order_status[3][$k]:0,"/orders/?payment_id=".$k."&order_status=3",array("target"=>"_blank"),false,false);?></td>
+			<td style="vertical-align:middle;"><?php echo $html->link(isset($order_status[4][$k])?$order_status[4][$k]:0,"/orders/?payment_id=".$k."&order_status=4",array("target"=>"_blank"),false,false);?></td>
 		</tr>
 		<?php }}?>
 		<tr class="orderfee_headers title_sum">
@@ -78,7 +87,7 @@
 		</th>
 <!--订单状态标题 End-->
 <!--配送状态标题-->
-      <th width="32%" colspan="4" rowspan="<?=$num?>" style="border-right:0;">
+      <th width="32%" colspan="4" rowspan="<?php echo $num?>" style="border-right:0;">
 	  <table cellpadding="0" cellspacing="0" border="0" width="100%" class="second_box">
 		
 		<tr class="second_title">
@@ -87,20 +96,20 @@
 		<th style="width:25%">已收货</th>
 		<th style="border-right:0;width:24%">备货中</th>
 		</tr>
-			<?if(isset($payment) && sizeof($payment)>0){?>
+			<?php if(isset($payment) && sizeof($payment)>0){?>
 		<?php foreach($payment as $k=>$v){?>
 		<tr>
-		<td style="vertical-align:middle;" height="30"><?php if(isset($shipping_status[0][$k])) echo $shipping_status[0][$k];else echo 0;?></td>
-		<td style="vertical-align:middle;"><?php if(isset($shipping_status[1][$k])) echo $shipping_status[1][$k];else echo 0;?></td>
-		<td style="vertical-align:middle;"><?php if(isset($shipping_status[2][$k])) echo $shipping_status[2][$k];else echo 0;?></td>
-		<td style="vertical-align:middle;"><?php if(isset($shipping_status[3][$k])) echo $shipping_status[3][$k];else echo 0;?></td>
+		<td style="vertical-align:middle;" height="30"><?php echo $html->link(isset($shipping_status[0][$k])?$shipping_status[0][$k]:0,"/orders/?payment_id=".$k."&shipping_status=0",array("target"=>"_blank"),false,false);?></td>
+		<td style="vertical-align:middle;"><?php echo $html->link(isset($shipping_status[1][$k])?$shipping_status[1][$k]:0,"/orders/?payment_id=".$k."&shipping_status=1",array("target"=>"_blank"),false,false);?></td>
+		<td style="vertical-align:middle;"><?php echo $html->link(isset($shipping_status[2][$k])?$shipping_status[2][$k]:0,"/orders/?payment_id=".$k."&shipping_status=2",array("target"=>"_blank"),false,false);?></td>
+		<td style="vertical-align:middle;"><?php echo $html->link(isset($shipping_status[3][$k])?$shipping_status[3][$k]:0,"/orders/?payment_id=".$k."&shipping_status=3",array("target"=>"_blank"),false,false);?></td>
 		</tr>
 		<?php }}?>
 		<tr class="orderfee_headers title_sum"><td height="31"><?php if(isset($shipping_status[0])) echo array_sum($shipping_status[0]);else echo 0;?></td><td><?php if(isset($shipping_status[1])) echo array_sum($shipping_status[1]);else echo 0;?></td><td><?php if(isset($shipping_status[2])) echo array_sum($shipping_status[2]);else echo 0;?></td><td><?php if(isset($shipping_status[3])) echo array_sum($shipping_status[3]);else echo 0;?></td></tr>
 		</table></th>
 <!--配送状态标题 End-->
 <!--支付状态标题-->
-	  <th width="26%" colspan="3" rowspan="<?=$num?>">
+	  <th width="26%" colspan="3" rowspan="<?php echo $num?>">
 	  <table cellpadding="0" cellspacing="0" border="0" width="100%" class="second_box">
 		
 		<tr class="second_title">
@@ -108,12 +117,12 @@
 		<th>付款中</th>
 		<th style="border-right:0;">已付款</th>
 		</tr>
-			<?if(isset($payment) && sizeof($payment)>0){?>
+			<?php if(isset($payment) && sizeof($payment)>0){?>
 		<?php foreach($payment as $k=>$v){?>
 		<tr>
-		<td height="30" style="vertical-align:middle;"><?php if(isset($payment_status[0][$k])) echo $payment_status[0][$k];else echo 0;?></td>
-		<td style="vertical-align:middle;"><?php if(isset($payment_status[1][$k])) echo $payment_status[1][$k];else echo 0;?></td>
-		<td style="vertical-align:middle;"><?php if(isset($payment_status[2][$k])) echo $payment_status[2][$k];else echo 0;?></td></tr>
+		<td height="30" style="vertical-align:middle;"><?php echo $html->link(isset($payment_status[0][$k])?$payment_status[0][$k]:0,"/orders/?payment_id=".$k."&payment_status=0",array("target"=>"_blank"),false,false);?></td>
+		<td style="vertical-align:middle;"><?php echo $html->link(isset($payment_status[1][$k])?$payment_status[1][$k]:0,"/orders/?payment_id=".$k."&payment_status=1",array("target"=>"_blank"),false,false);?></td>
+		<td style="vertical-align:middle;"><?php echo $html->link(isset($payment_status[2][$k])?$payment_status[2][$k]:0,"/orders/?payment_id=".$k."&payment_status=2",array("target"=>"_blank"),false,false);?></td></tr>
 		<?php }}?>
 		<tr class="orderfee_headers title_sum">
 		<td height="31"><?php if(isset($payment_status[0])) echo array_sum($payment_status[0]);else echo 0;?></td>
@@ -124,10 +133,10 @@
 		</th>
 <!--支付状态标题 End-->
 	</tr>
-		<?if(isset($payment) && sizeof($payment)>0){?>
+		<?php if(isset($payment) && sizeof($payment)>0){?>
 	<?php foreach($payment as $k=>$v){?>
 	<tr class="list">
-		<td height="30" style="vertical-align:middle;" align="center"><strong><?=$v?></strong></td>
+		<td height="30" style="vertical-align:middle;" align="center"><strong><?php echo $v?></strong></td>
 	</tr>
 	<?php }}?>
 	<tr class="orderfee_headers title_sum">
@@ -157,3 +166,17 @@
 		<div class="bd"><div id="cal4"></div><div style="clear:both;"></div></div>
 	</div>
 <!--end-->
+<script type="text/javascript">
+function sub_action() 
+{ 
+	document.OrderStatusForm.action=webroot_dir+"reports/orderstatus";
+	document.OrderStatusForm.onsubmit= "";
+	document.OrderStatusForm.submit(); 
+}
+function export_action() 
+{ 
+	document.OrderStatusForm.action=webroot_dir+"reports/orderstatus/export";
+	document.OrderStatusForm.onsubmit= "";
+	document.OrderStatusForm.submit(); 
+}
+</script>

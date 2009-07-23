@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: product_category.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: product_category.php 2989 2009-07-17 02:03:04Z huangbo $
 *****************************************************************************/
 class ProductCategory extends AppModel
 {
@@ -23,7 +23,6 @@ class ProductCategory extends AppModel
 			foreach($lists as $k => $v){
 				$lists_formated[$v['ProductCategory']['category_id']]=$v['0']['count'];
 			}
-		
 		return $lists_formated;
 	}
 

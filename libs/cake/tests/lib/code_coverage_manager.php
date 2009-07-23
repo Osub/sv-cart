@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: code_coverage_manager.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: code_coverage_manager.php 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  * A class to manage all aspects for Code Coverage Analysis
  *

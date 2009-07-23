@@ -9,14 +9,14 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: commnets_controller.php 899 2009-04-22 15:03:02Z huangbo $
+ * $Id: commnets_controller.php 3134 2009-07-21 06:45:45Z huangbo $
 *****************************************************************************/
 class CommnetsController extends AppController {
 
 	var $name = 'Commnets';
     var $components = array ('Pagination'); // Added 
     var $helpers = array('Pagination'); // Added 
-	var $uses = array('Comment','Product');
+	var $uses = array('Comment','Product','Article');
 
 
 	function index(){
@@ -42,20 +42,75 @@ class CommnetsController extends AppController {
 	   $parameters=Array($rownum,$page);
 	   $options=Array();
 	   $page= $this->Pagination->init($condition,"",$options,$total,$rownum,$sortClass);
-	   $my_comments=$this->Comment->findAll($condition,'',"","$rownum",$page);
+//	   $my_comments=$this->Comment->findAll($condition,'',"","$rownum",$page);
+	   $my_comments=$this->Comment->find('all',array(
+	   'fields' => array('Comment.id','Comment.type','Comment.type_id','Comment.title','Comment.parent_id','Comment.status','Comment.created','Comment.content'),
+	   'conditions'=>array($condition),'limit'=>$rownum,'page'=>$page));
+	
+	 //  pr($my_comments);
 	   if(empty($my_comments)){
 	   	   $my_comments=array();
 	   }
+	   
+	   $my_comments_id = array();
+	   $p_ids = array();
+	   $a_ids = array();
+	   $p_ids[] = 0;
+	   $a_ids[] = 0;
+	   $my_comments_id[] = 0;	   
 	   foreach($my_comments as $k=>$v){
-	   	   $this->Product->set_locale($this->locale);
-	   	   $products=$this->Product->find("Product.id = '".$v['Comment']['type_id']."'");
-	   	   $replies=$this->Comment->findAll("Comment.parent_id = '".$v['Comment']['id']."'");
-	   	   $my_comments[$k]['Product']=$products['Product'];
-	   	   $my_comments[$k]['ProductI18n']=$products['ProductI18n'];
-	   	   $my_comments[$k]['Reply']=$replies;
+	     	if($v['Comment']['type'] == "P"){
+	   			$p_ids[] = $v['Comment']['type_id'];
+	   		}else if($v['Comment']['type'] == "A"){
+	   			$a_ids[] = $v['Comment']['type_id'];
+	   		}
+	   		$my_comments_id[] = $v['Comment']['id'];
+	   }	   
+	   
+	   
+  	   $this->Product->set_locale($this->locale);
+  	   $this->Article->set_locale($this->locale);
+
+
+	   $product_infos = $this->Product->find("all",array("conditions"=>array("Product.id"=>$p_ids)));
+	   $products_list = array();
+	   if(is_array($product_infos) && sizeof($product_infos) > 0){
+	   		foreach($product_infos as $k=>$v){
+	   			$products_list[$v['Product']['id']] = $v;
+	   		}
 	   }
-		$js_languages = array("page_number_expand_max" => $this->languages['page_number'].$this->languages['not_exist']
-				       		);
+	   $article_infos = $this->Article->find("all",array("conditions"=>array("Article.id"=>$a_ids)));
+	   $articles_list = array();
+	   if(is_array($article_infos) && sizeof($article_infos) > 0){
+	   		foreach($article_infos as $k=>$v){
+	   			$articles_list[$v['Article']['id']] = $v;
+	   		}
+	  }
+		
+	  $my_comments_replies = $this->Comment->find('all',array('conditions'=>array('Comment.parent_id'=>$my_comments_id)));
+	  $replies_list =array();
+	  if(is_array($my_comments_replies) && sizeof($my_comments_replies)>0){
+	  		foreach($my_comments_replies as $kk=>$vv){
+	  			$replies_list[$vv['Comment']['parent_id']][] = $vv;
+	  		}
+	  }
+	  
+//	  pr($replies_list);
+	   foreach($my_comments as $k=>$v){
+	   	   //$products=$this->Product->find("Product.id = '".$v['Comment']['type_id']."'");
+	   	   if($v['Comment']['type'] == "P" && isset($products_list[$v['Comment']['type_id']])){
+	   	   		$my_comments[$k]['Product']		= $products_list[$v['Comment']['type_id']]['Product'];
+	   	   		$my_comments[$k]['ProductI18n'] =$products_list[$v['Comment']['type_id']]['ProductI18n'];
+	   	   }else if($v['Comment']['type'] == "A" && isset($articles_list[$v['Comment']['type_id']])){
+	   	   		$my_comments[$k]['Article']		=$articles_list[$v['Comment']['type_id']]['Article'];
+	   	   		$my_comments[$k]['ArticleI18n'] =$articles_list[$v['Comment']['type_id']]['ArticleI18n'];
+	   	   }
+	   	   //$replies=$this->Comment->findAll("Comment.parent_id = '".$v['Comment']['id']."'");
+	   	  if(isset($replies_list[$v['Comment']['id']])){
+	   	   $my_comments[$k]['Reply']=$replies_list[$v['Comment']['id']];
+	   	  }
+	   }
+		$js_languages = array("page_number_expand_max" => $this->languages['page_number'].$this->languages['not_exist']);
 		$this->set('js_languages',$js_languages);
 	   $this->pageTitle = $this->languages['my_comments']." - ".$this->configs['shop_title'];
 	   $this->set('total',$total);

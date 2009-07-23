@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: mailtemplates_controller.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: mailtemplates_controller.php 3184 2009-07-22 06:09:42Z huangbo $
 *****************************************************************************/
 class MailtemplatesController extends AppController {
 
@@ -71,6 +71,10 @@ class MailtemplatesController extends AppController {
 					$userinformation_name = $title;
 				}
 			}
+			//操作员日志
+    	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑邮件模板:'.$userinformation_name ,'operation');
+    	    }
 			$this->flash("邮件模板 ".$userinformation_name." 编辑成功。点击继续编辑该邮件模板",'/mailtemplates/edit/'.$id,10);
 			
 			
@@ -78,15 +82,24 @@ class MailtemplatesController extends AppController {
 			
 		}
 		$this->data = $this->MailTemplate->localeformat($id);
-		//pr($mailtemplate);
+		
 		$this->set('this->data',$this->data);
+		//leo20090722导航显示
+		$this->navigations[] = array('name'=>$this->data["MailTemplateI18n"][$this->locale]["title"],'url'=>'');
+	    $this->set('navigations',$this->navigations);
 
 	}
     function remove($id){
 		/*判断权限*/
 		$this->operator_privilege('mail_template_operation');
-		/*end*/		
+		/*end*/	
+		$pn = $this->MailTemplateI18n->find('list',array('fields' => array('MailTemplateI18n.mail_template_id','MailTemplateI18n.title'),'conditions'=> 
+                        array('MailTemplateI18n.mail_template_id'=>$id,'MailTemplateI18n.locale'=>$this->locale)));	
 		$this->MailTemplate->deleteAll("MailTemplate.id='".$id."'");
+		//操作员日志
+    	if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	$this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'删除邮件模板:'.$pn[$id] ,'operation');
+    	}
 		$this->flash("删除成功",'/mailtemplates/',10);
     }
 	function add(){
@@ -115,6 +128,10 @@ class MailtemplatesController extends AppController {
 						$userinformation_name = $title;
 					}
 			}
+			//操作员日志
+    	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加邮件模板:'.$userinformation_name ,'operation');
+    	    }
 			$this->flash("邮件模板 ".$userinformation_name." 添加成功。点击继续编辑该邮件模板",'/mailtemplates/edit/'.$id,10);
 
 		}

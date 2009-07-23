@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 忘记密码
  * ===========================================================================
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: forget_password.ctp 1670 2009-05-25 00:47:18Z huangbo $
+ * $Id: forget_password.ctp 2485 2009-06-30 11:33:00Z huangbo $
 *****************************************************************************/
 ob_start();?>
 <div id="loginout">
@@ -20,13 +20,13 @@ ob_start();?>
 		<dl><dt><b class="green_2">管理员姓名:</b></dt><dd>&nbsp;<input type="text"  id="name" class="text_input" /></dd></dl>
 		<dl><dt><b class="green_2">管理员Email:</b></dt><dd>&nbsp;<input type="text"  id="email" class="text_input" /><br /><br /></dd></dl>
 		<br />
-		<p class="buy_btn mar"><?=$html->link("取消","javascript:close_message();");?>
-		<?=$html->link("确定","javascript:find_password();",array('name'=>'confirm'));?></p>
+		<p class="buy_btn mar"><?php echo $html->link("取消","javascript:close_message();");?>
+		<?php echo $html->link("确定","javascript:find_password();",array('name'=>'confirm'));?></p>
 	</div>
-	<p><?=$html->image("loginout-bottom.png");?></p>
+	<p><?php echo $html->image("loginout-bottom.png");?></p>
 	</div>
 </div>
-<?
+<?php 
 $result['message'] = ob_get_contents();
 ob_end_clean();
 echo json_encode($result);

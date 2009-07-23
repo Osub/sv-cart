@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: links_controller.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: links_controller.php 3184 2009-07-22 06:09:42Z huangbo $
 *****************************************************************************/
 class LinksController extends AppController {
 	var $name = 'Links';
@@ -58,7 +58,7 @@ class LinksController extends AppController {
 		$this->pageTitle = "编辑友情链接 - 友情链接管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'友情链接管理','url'=>'/links/');
 		$this->navigations[] = array('name'=>'编辑友情链接','url'=>'');
-		$this->set('navigations',$this->navigations);
+		
 		if($this->RequestHandler->isPost()){
 			foreach($this->data['LinkI18n'] as $v){
               	     	    $linkI18n_info=array(
@@ -79,12 +79,19 @@ class LinksController extends AppController {
 					$userinformation_name = $v['name'];
 				}
 			}
+			//操作员日志
+    	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑友情链接:'.$userinformation_name ,'operation');
+    	    }
 			$this->flash("友情链接  ".$userinformation_name." 编辑成功。点击继续编辑该友情链接。",'/links/edit/'.$id,10);
 
 		}
 		$link = $this->Link->localeformat( $id );
 		$this->set("link",$link);
-		//pr( $link );
+		//leo20090722导航显示
+		$this->navigations[] = array('name'=>$link["LinkI18n"][$this->locale]["name"],'url'=>'');
+	    $this->set('navigations',$this->navigations);
+
 	}
 	
 	function add(){
@@ -113,17 +120,29 @@ class LinksController extends AppController {
 					$userinformation_name = $v['name'];
 				}
 			}
+			//操作员日志
+    	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加友情链接:'.$userinformation_name ,'operation');
+    	    }
 			$this->flash("友情链接 ".$userinformation_name."  添加成功。点击继续编辑该友情链接。",'/links/edit/'.$id,10);
 
 		}
 	
 	}
 	
-	function remove( $id ){
+	function remove( $id){
 		/*判断权限*/
 		$this->operator_privilege('friendly_link_operation');
 		/*end*/
+		
+		$pn = $this->LinkI18n->find('list',array('fields' => array('LinkI18n.link_id','LinkI18n.name'),'conditions'=> 
+                                        array('LinkI18n.link_id'=>$id,'LinkI18n.locale'=>$this->locale)));
+        
 		$this->Link->deleteall("Link.id = '".$id."'",false);
+		//操作员日志
+    	if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	$this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'删除友情链接:'.$pn[$id] ,'operation');
+    	}
 	//	$this->LinkI18n->deleteall("link_id = '".$id."'",false);
 		$this->flash("删除成功",'/links/',10);
 	}

@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 找回密码提示
  * ===========================================================================
@@ -9,25 +9,25 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: update_password.ctp 1670 2009-05-25 00:47:18Z huangbo $
+ * $Id: update_password.ctp 2485 2009-06-30 11:33:00Z huangbo $
 *****************************************************************************/
 ob_start();?>
 <div id="loginout">
 	<h1><b>系统提示</b></h1>
 	<div class="order_stat athe_infos tongxun" >
 	<div id="buyshop_box">
-			<p class="login-alettr"><?=$result['msg'];?></p>
+			<p class="login-alettr"><?php echo $result['msg'];?></p>
 		<p class="buy_btn mar">
-	<?=$html->link("返回","../login");?>
-	<?if($result['type'] == 0){?>
-	<?=$html->link("取消","../login");?>
-	<?}else{?>
-	<?=$html->link("取消","javascript:close_message();");?>
-	<?}?>
-	<p><?=$html->image("loginout-bottom.png");?></p>
+	<?php echo $html->link("返回","../login");?>
+	<?php if($result['type'] == 0){?>
+	<?php echo $html->link("取消","../login");?>
+	<?php }else{?>
+	<?php echo $html->link("取消","javascript:close_message();");?>
+	<?php }?>
+	<p><?php echo $html->image("loginout-bottom.png");?></p>
 	</div></div>
 </div>
-<?
+<?php 
 $result['message'] = ob_get_contents();
 ob_end_clean();
 echo json_encode($result);

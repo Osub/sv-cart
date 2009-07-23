@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: packages_controller.php 1841 2009-05-27 06:51:37Z huangbo $
+ * $Id: packages_controller.php 3184 2009-07-22 06:09:42Z huangbo $
 *****************************************************************************/
 class PackagesController extends AppController {
 
@@ -51,7 +51,7 @@ class PackagesController extends AppController {
 		$this->pageTitle = "编辑包装 - 包装管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'包装管理','url'=>'/packages/');
 		$this->navigations[] = array('name'=>'编辑包装','url'=>'');
-		$this->set('navigations',$this->navigations);
+		
 		if($this->RequestHandler->isPost()){
 			$this->data['Packaging']['orderby'] = !empty($this->data['Packaging']['orderby'])?$this->data['Packaging']['orderby']:50;
 			$this->data['Packaging']['fee'] = !empty($this->data['Packaging']['fee'])?$this->data['Packaging']['fee']:0;
@@ -75,7 +75,10 @@ class PackagesController extends AppController {
 				}
 			}
 			$id=$this->Packaging->id;
-
+            //操作员日志
+    	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑包装:'.$userinformation_name ,'operation');
+    	    }
 			$this->flash("包装  ".$userinformation_name." 编辑成功。点击继续编辑该包装。",'/packages/edit/'.$id,10);
 
 			
@@ -83,7 +86,11 @@ class PackagesController extends AppController {
 		}
 		$packaging = $this->Packaging->localeformat( $id );
 		$this->set("packaging",$packaging);
-		//pr( $packaging );
+		
+		//leo20090722导航显示
+		$this->navigations[] = array('name'=>$packaging["PackagingI18n"][$this->locale]["name"],'url'=>'');
+	    $this->set('navigations',$this->navigations);
+
 	}
 	
 	function add(){
@@ -113,17 +120,26 @@ class PackagesController extends AppController {
 				}
 			}
 			$id=$this->Packaging->id;
-
+            //操作员日志
+    	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加包装:'.$userinformation_name ,'operation');
+    	    }
 			$this->flash("包装  ".$userinformation_name." 添加成功。点击继续编辑该包装。",'/packages/edit/'.$id,10);
 		}
 	}
 	
-	function remove( $id ){
+	function remove( $id){
 		/*判断权限*/
 		$this->operator_privilege('package_operation');
 		/*end*/
+		$pn = $this->PackagingI18n->find('list',array('fields' => array('PackagingI18n.packaging_id','PackagingI18n.name'),'conditions'=> 
+                                 array('PackagingI18n.packaging_id'=>$id,'PackagingI18n.locale'=>$this->locale)));
 		$condition=array("Packaging.id"=>$id);
 		$this->Packaging->deleteAll( $condition );
+		//操作员日志
+    	if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	$this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'删除包装:'.$pn[$id] ,'operation');
+    	}
 		$this->flash("删除成功",'/packages/','');
 	}
 }

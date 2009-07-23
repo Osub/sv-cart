@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: commons_controller.php 1883 2009-05-31 11:20:54Z huangbo $
+ * $Id: commons_controller.php 2304 2009-06-26 07:00:53Z zhengli $
 *****************************************************************************/
 class CommonsController extends AppController {
 
@@ -206,7 +206,17 @@ function real_ip()
  /*********发送邮件   ***********/
  
  /****** $arr  邮件所需内容数组*/
- 
+ 	function header_cart(){
+		if(isset($_SESSION['svcart']['products']) && sizeof($_SESSION['svcart']['products'])>0){
+			$cart['quantity'] =0;
+			$cart['total']=0;
+			foreach($_SESSION['svcart']['products'] as $k=>$v){
+				$cart['quantity'] += $v['quantity'];
+				$cart['total'] += $v['subtotal'];
+			}
+			return $cart;
+		}	
+	}
  /*********发送邮件   ***********/
  
   function send_email($to_email,$template_str){

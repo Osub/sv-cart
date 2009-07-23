@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: friends_controller.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: friends_controller.php 2770 2009-07-10 10:43:12Z shenyunfeng $
 *****************************************************************************/
 uses('sanitize');		
 class FriendsController extends AppController {
@@ -32,7 +32,6 @@ class FriendsController extends AppController {
 		      $this->set('locations',$this->navigations);
 		      
 		   if($this->RequestHandler->isPost()){
-			       //pr($this->params);
 			       $this->page_init();
 			       //新增指定分组的好友
 				   $mrClean = new Sanitize();		
@@ -104,14 +103,38 @@ class FriendsController extends AppController {
 /*------------------------------------------------------ */
 //-- 修改分组名称
 /*------------------------------------------------------ */
-   function modifycat($cat_id,$new_name){
+   function modifycat($cat_id ='',$new_name =''){
+   	   if($new_name != ''){
+			$is_ajax = 1;
+   	   }else{
+			$is_ajax = 0;
+   	   }
+   	    $no_error = 1;
+   	    if(isset($_POST['cat_name'])){
+   	    	$new_name = $_POST['cat_name'];
+   	    }
+   	    if(isset($_POST['cat_id'])){
+   	    	$cat_id = $_POST['cat_id'];
+   	    }   	    
    	   	$new_name = UrlDecode($new_name);
 	    $cat_info=array(
 		 	  'id'=>	isset($cat_id)   ? intval($cat_id)  : 0 ,
 	     	  'cat_name'=>	isset($new_name)   ? trim($new_name)  : ''
 		);
-	   $this->UserFriendCat->save(array('UserFriendCat'=>$cat_info));
-
+		if(trim($new_name) == ""){
+			$no_error = 0;
+	   		$result['msg'] = $this->languages['group'].$this->languages['apellation'].$this->languages['can_not_empty'];
+		}
+	   if($no_error){
+	   	   $this->UserFriendCat->save(array('UserFriendCat'=>$cat_info));
+		   $result['msg'] = "".$this->languages['edit'].$this->languages['successfully']."";
+	   }
+	   if($is_ajax == 0){
+		    $this->page_init();
+			$this->pageTitle = $result['msg'];
+			$flash_url = $this->server_host.$this->user_webroot."friends";				
+		    $this->flash($result['msg'],$flash_url,10);	
+	   }
    	   $this->layout="ajax";
    }
 
@@ -125,8 +148,11 @@ class FriendsController extends AppController {
    }
 
    function add_cat(){
-	   		$result['type'] = 2;
-	   		$result['msg'] = $this->languages['add'].$this->languages['failed'];
+   	   	$host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
+		$flash_url = $this->server_host.$this->user_webroot."friends";			
+   	   	$no_error = 1;
+	   	$result['type'] = 2;
+	   	$result['msg'] = $this->languages['add'].$this->languages['failed'];
 		if(isset($_SESSION['User']['User'])){
 			$result['type'] = 0;
 			if($this->RequestHandler->isPost()){
@@ -136,10 +162,28 @@ class FriendsController extends AppController {
 			   				'user_id' => $_POST['user_id']
 			   				);
 			   $result['msg'] = $this->languages['add'].$this->languages['successfully'];
-			   $this->UserFriendCat->save($cat);
-
+			   if(trim($_POST['cat_name']) == ""){
+			   		$no_error = 0;
+	   				$result['msg'] = $this->languages['group'].$this->languages['apellation'].$this->languages['can_not_empty'];
+			   }
+			   
+			   if($no_error){
+			   		$this->UserFriendCat->save($cat);
+			   }
+   	   		}
+   	   	}else{
+   	   		$result['msg'] = $this->languages['time_out_relogin'];
+			if(!isset($_POST['is_ajax'])){
+		    $this->page_init();
+			$this->pageTitle = "".$result['msg']."";
+		    $this->flash($result['msg'],$flash_url."/../",10);	
    	   		}
    	   	}
+		if(!isset($_POST['is_ajax'])){
+		    $this->page_init();
+			$this->pageTitle = "".$result['msg']."";
+		    $this->flash($result['msg'],$flash_url,10);	
+		}   	   	
    	   $this->set('result',$result);
    	   $this->layout="ajax";
    }

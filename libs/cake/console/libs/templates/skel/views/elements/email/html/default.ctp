@@ -1,5 +1,5 @@
-<?php
-/* SVN FILE: $Id: default.ctp 7945 2008-12-19 02:16:01Z gwoo $ */
+<?php 
+/* SVN FILE: $Id: default.ctp 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  *
  * PHP versions 4 and 5
@@ -22,7 +22,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<?php
+<?php 
 $content = explode("\n", $content);
 
 foreach ($content as $line):

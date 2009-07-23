@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: core.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: core.php 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  * This is core configuration file.
  *

@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart  配送方式编辑设置区域
  * ===========================================================================
@@ -9,46 +9,46 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: area_edit.ctp 1261 2009-05-08 07:18:58Z huangbo $
+ * $Id: area_edit.ctp 3099 2009-07-20 08:27:54Z huangbo $
 *****************************************************************************/
 ?>
-<?=$javascript->link('shipping');?>
+<?php echo $javascript->link('shipping');?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
 <!--Main Start-->
-<p class="add_categories"><strong><?=$html->link($html->image('add.gif',array('align'=>'absmiddle'))."配送区域列表","/shippingments/area/{$area_id}",'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."配送区域列表","/shippingments/area/{$area_id}",'',false,false);?></strong></p>
 <?php echo $form->create('Shippingment',array('action'=>'area_edit/'.$shippingarea['ShippingArea']['id'],'onsubmit'=>'return shippingments_check();'));?>
 <div class="home_main">
 <table width="100%" cellpadding="0" cellspacing="0" class="">
-<tr><input type="hidden" name="data[ShippingArea][id]" value="<?=$shippingarea['ShippingArea']['id']?>">
-	<input type="hidden" name="data[ShippingArea][shipping_id]" value="<?=$shippingarea['ShippingArea']['shipping_id']?>">
+<tr><input type="hidden" name="data[ShippingArea][id]" value="<?php echo $shippingarea['ShippingArea']['id']?>">
+	<input type="hidden" name="data[ShippingArea][shipping_id]" value="<?php echo $shippingarea['ShippingArea']['shipping_id']?>">
 	
-	<input type="hidden" name="data[ShippingArea][store_id]" value="<?=$shippingarea['ShippingArea']['store_id']?>">
+	<input type="hidden" name="data[ShippingArea][store_id]" value="<?php echo $shippingarea['ShippingArea']['store_id']?>">
 		
-	<input type="hidden" name="re_id" value="<?=$area_id?>">	
+	<input type="hidden" name="re_id" value="<?php echo $area_id?>">	
 <td align="left" width="50%" valign="top" style="padding-right:5px">
 <!--Communication Stat-->
 	<div class="order_stat athe_infos">
 	  <div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  编辑配送区域</h1></div>
 	  <div class="box">
 	  <br />
 	  <h2>配送区域名称：</h2>
-	    <?if(isset($languages) && sizeof($languages)>0){?>
-<? foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input type="text" style="width:195px;" id="name<?=$v['Language']['locale']?>" name="data[ShippingAreaI18n][<?=$k?>][name]"value="<?=@$shippingarea['ShippingAreaI18n'][$v['Language']['locale']]['name']?>" /> <font color="#ff0000">*</font></span></p>
+	    <?php if(isset($languages) && sizeof($languages)>0){?>
+<?php foreach ($languages as $k => $v){?>
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input type="text" style="width:195px;" id="name<?php echo $v['Language']['locale']?>" name="data[ShippingAreaI18n][<?php echo $k?>][name]"value="<?php echo @$shippingarea['ShippingAreaI18n'][$v['Language']['locale']]['name']?>" /> <font color="#ff0000">*</font></span></p>
 		
-<? }} ?>
+<?php }} ?>
 	<h2>配送区域描述：</h2>
-	    <?if(isset($languages) && sizeof($languages)>0){?>
-<? foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><textarea name="data[ShippingAreaI18n][<?=$k?>][description]"><?=@$shippingarea['ShippingAreaI18n'][$v['Language']['locale']]['description']?></textarea></span></p>
-		<input type="hidden" name="data[ShippingAreaI18n][<?=$k?>][locale]" value="<?=$v['Language']['locale']?>" />		
-<? }} ?>
+	    <?php if(isset($languages) && sizeof($languages)>0){?>
+<?php foreach ($languages as $k => $v){?>
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><textarea name="data[ShippingAreaI18n][<?php echo $k?>][description]"><?php echo @$shippingarea['ShippingAreaI18n'][$v['Language']['locale']]['description']?></textarea></span></p>
+		<input type="hidden" name="data[ShippingAreaI18n][<?php echo $k?>][locale]" value="<?php echo $v['Language']['locale']?>" />		
+<?php }} ?>
 	<dl><dt>是否有效：</dt>
-			<dd>&nbsp;&nbsp;<input type="radio" name="data[ShippingArea][status]" value="1" <? if( $shippingarea['ShippingArea']['status'] = 1 ){ echo "checked";} ?> /> 是 <input type="radio" name="data[ShippingArea][status]" value="0" <? if( $shippingarea['ShippingArea']['status'] = 0 ){ echo "checked";} ?> /> 否</dd></dl>
+			<dd>&nbsp;&nbsp;<input type="radio" name="data[ShippingArea][status]" value="1" <?php if( $shippingarea['ShippingArea']['status'] = 1 ){ echo "checked";} ?> /> 是 <input type="radio" name="data[ShippingArea][status]" value="0" <?php if( $shippingarea['ShippingArea']['status'] = 0 ){ echo "checked";} ?> /> 否</dd></dl>
 		
 		<br />
 	  </div>
@@ -63,15 +63,15 @@
 		
 		<br />
 		<dl style="margin-bottom:5px;padding-top:8px;"><dt>排序：</dt>
-			<dd>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" class="text_inputs" style="width:95px;" name="data[ShippingArea][orderby]" value="<?=$shippingarea['ShippingArea']['orderby']?>" onkeyup="check_input_num(this)" /><br /> 如果您不输入排序号，系统将默认为50</dd></dl>
+			<dd>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" class="text_inputs" style="width:95px;" name="data[ShippingArea][orderby]" value="<?php echo $shippingarea['ShippingArea']['orderby']?>" onkeyup="check_input_num(this)" /><br /> 如果您不输入排序号，系统将默认为50</dd></dl>
 		<dl style="margin-bottom:5px;padding-top:8px;"><dt>1000克以内费用：</dt>
-			<dd>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" class="text_inputs" style="width:180px;"name="money[][value]" value="<?=$money[0]['value']?>" onkeyup="check_input_num(this)" /> </dd></dl>
+			<dd>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" class="text_inputs" style="width:180px;"name="money[][value]" value="<?php echo $money[0]['value'] ?>" onkeyup="check_input_num(this)" /> </dd></dl>
 		<dl style="margin-bottom:5px;padding-top:8px;"><dt>5000克以内续重每500克费用：</dt>
-			<dd>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" class="text_inputs" style="width:180px;"name="money[][value]" value="<?=$money[1]['value']?>" onkeyup="check_input_num(this)" /> </dd></dl>
-		<dl style="margin-bottom:5px;padding-top:8px;"><dt>5001克以上续重500克费用：</dt>
-			<dd>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" class="text_inputs" style="width:180px;"name="money[][value]" value="<?=$money[2]['value']?>" onkeyup="check_input_num(this)" /> </dd></dl>
+			<dd>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" class="text_inputs" style="width:180px;"name="money[][value]" value="<?php echo $money[1]['value']?>" onkeyup="check_input_num(this)" /> </dd></dl>
+		<dl style="margin-bottom:5px;padding-top:8px;"><dt>5001克以上续重500克费用：</dt>										<!-- 09.7.20 修改 原样: $money[1]['value']  by:Gin-->
+			<dd>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" class="text_inputs" style="width:180px;"name="money[][value]" value="<?php echo $money[2]['value']?>" onkeyup="check_input_num(this)" /> </dd></dl>
 		<dl style="margin-bottom:5px;padding-top:8px;"><dt>免费额度：</dt>
-			<dd>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" class="text_inputs" style="width:95px;"name="data[ShippingArea][free_subtotal]" value="<?=$shippingarea['ShippingArea']['free_subtotal']?>" onkeyup="check_input_num(this)" /> </dd></dl>
+			<dd>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" class="text_inputs" style="width:95px;"name="data[ShippingArea][free_subtotal]" value="<?php echo $shippingarea['ShippingArea']['free_subtotal']?>" onkeyup="check_input_num(this)" /> </dd></dl>
 		
 		
 		
@@ -90,28 +90,28 @@
 
 	<div class="order_stat athe_infos configvalues">
 	<div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  所辖地区</h1></div>
 	  <div class="box">
 <!--Mailtemplates_Config-->
 	  <div class="shop_config menus_configs">
 		<dl>
 		<dd><span id="item_id">
-		<? if(isset($region_edit) && sizeof($region_edit)>0)foreach( $region_edit as $k=>$v ){ 
+		<?php if(isset($region_edit) && sizeof($region_edit)>0)foreach( $region_edit as $k=>$v ){ 
 				foreach( $v as $kks=>$vvs  ){
 		
 		?>
-			<input type="checkbox" value="<?=$kks?>" name="items[]" checked ><?=$vvs['Region']['name']?>
-		<?} } ?>
+			<input type="checkbox" value="<?php echo $kks?>" name="items[]" checked ><?php echo $vvs['Region']['name']?>
+		<?php } } ?>
 		</span>	
 		</dd></dl>
 	  	<dl>一级地区：
 		<select multiple size="10" style="width: 85px;" id="country_id" onchange="region_country('country')">
-			<?if(isset($region_country) && sizeof($region_country)>0){?>
-		<? foreach( $region_country as $kz=>$v ){?>
-		<option value="<?=$v['Region']['id']?>" <?if($kz==0){echo "selected";}?>><?=$v['RegionI18n']['name']?></option>
-		<? }}?>
+			<?php if(isset($region_country) && sizeof($region_country)>0){?>
+		<?php foreach( $region_country as $kz=>$v ){?>
+		<option value="<?php echo $v['Region']['id']?>" <?php if($kz==0){echo "selected";}?>><?php echo $v['RegionI18n']['name']?></option>
+		<?php }}?>
 		</select>
 		二级地区：
 		<select multiple size="10" style="width: 85px;" id="province_id" onchange="regions('province')">
@@ -140,10 +140,10 @@
 	  <p class="submit_btn"><input type="submit" value="确定" /><input type="reset" value="重置" /></p>
 
 </div>
-<? echo $form->end();?>
+<?php echo $form->end();?>
 </div>
 <!--Main Start End-->
-<?=$html->image('content_left.gif',array('class'=>'content_left'))?><?=$html->image('content_right.gif',array('class'=>'content_right'))?>
+<?php echo $html->image('content_left.gif',array('class'=>'content_left'))?><?php echo $html->image('content_right.gif',array('class'=>'content_right'))?>
 </div>
 	
 <script type="text/javascript">

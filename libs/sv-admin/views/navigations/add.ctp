@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart  导航设置列表
  * ===========================================================================
@@ -9,14 +9,14 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 1883 2009-05-31 11:20:54Z huangbo $
+ * $Id: add.ctp 2485 2009-06-30 11:33:00Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here',array('cache'=>'+0 hour','navigations'=>$navigations)); //pr($this->data);?>
 <?php echo $form->create('Navigation',array('action'=>'add/','onsubmit'=>'return navigations_check();'));?>
 <div class="content">
 <!--Main Start-->
-<p class="add_categories"><strong><?=$html->link($html->image('add.gif',array('align'=>'absmiddle'))."导航列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."导航列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
 
 <div class="home_main">
 <table width="100%" cellpadding="0" cellspacing="0" class="">
@@ -25,36 +25,36 @@
 <!--Communication Stat-->
 	<div class="order_stat athe_infos">
 	  <div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  编辑导航</h1></div>
 	  <div class="box" style="padding-left:10px;padding-right:10px;">
 
 
   	    <h2 style="width:80px;margin-bottom:5px;">导航名称：</h2>
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name" style="padding-left:55px;margin-bottom:5px;"><?=$html->image($v['Language']['img01'])?><span><input type="text" style="width:270px;" id="name<?=$v['Language']['locale']?>" name="data[NavigationI18n][<?=$k;?>][name]"  /> <font color="#ff0000">*</font></span></p>
+		<p class="products_name" style="padding-left:55px;margin-bottom:5px;"><?php echo $html->image($v['Language']['img01'])?><span><input type="text" style="width:270px;" id="name<?php echo $v['Language']['locale']?>" name="data[NavigationI18n][<?php echo $k;?>][name]"  /> <font color="#ff0000">*</font></span></p>
 
-<?}
+<?php }
 	}?>
 	  	    
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<input id="NavigationI18n<?=$k;?>Locale" name="data[NavigationI18n][<?=$k;?>][locale]" type="hidden" value="<?= $v['Language']['locale'];?>">
-<?}
+		<input id="NavigationI18n<?php echo $k;?>Locale" name="data[NavigationI18n][<?php echo $k;?>][locale]" type="hidden" value="<?php echo  $v['Language']['locale'];?>">
+<?php }
 	}?>
 		<h2 style="width:80px;;margin-bottom:5px;">连接地址：</h2>
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name" style="padding-left:55px;margin-bottom:5px;"><?=$html->image($v['Language']['img01'])?><span><input type="text" style="width:270px;" name="data[NavigationI18n][<?=$k;?>][url]"  /></span></p>
-<?}
+		<p class="products_name" style="padding-left:55px;margin-bottom:5px;"><?php echo $html->image($v['Language']['img01'])?><span><input type="text" style="width:270px;" name="data[NavigationI18n][<?php echo $k;?>][url]"  /></span></p>
+<?php }
 	}?>	
 		<h2 style="width:80px;margin-bottom:5px;">描述：</h2>
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name" style="padding-left:55px;margin-bottom:5px;"><?=$html->image($v['Language']['img01'])?><span><textarea style="height:95px;width:340px;" name="data[NavigationI18n][<?=$k;?>][description]" ></textarea></span></p>
-<?}
+		<p class="products_name" style="padding-left:55px;margin-bottom:5px;"><?php echo $html->image($v['Language']['img01'])?><span><textarea style="height:95px;width:340px;" name="data[NavigationI18n][<?php echo $k;?>][description]" ></textarea></span></p>
+<?php }
 	}?>			
 	  </div>
 	</div>
@@ -95,9 +95,9 @@
 		<dd class="best_input"><label><input type="radio" name="data[Navigation][target]" value="_blank" checked />是</label><label><input type="radio" name="data[Navigation][target]" value="_self" />否</label></dd></dl>
 		<dl><dt style="font-family:arial;">ico图片：</dt><dd><input type="text" class="text_inputs" style="width:112px;" name="data[Navigation][icon]"  id="upload_img_text_0"  ><br /><br />
 			
-			<?=@$html->image("",array('id'=>'logo_thumb_img_0','height'=>'50','style'=>'display:none'))?>
+			<?php echo @$html->image("",array('id'=>'logo_thumb_img_0','height'=>'50','style'=>'display:none'))?>
 
-			</dd><dd><?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(0,'others')",'',false,false)?></dd></dl>
+			</dd><dd><?php echo $html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(0,'others')",'',false,false)?></dd></dl>
 		<br /><br /><br /><br />
 	  </div>
 	</div>

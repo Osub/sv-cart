@@ -1,13 +1,13 @@
 <!--Product Photos-->
 	<div class="order_stat properies"  >
 	  <div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  当前模板</h1></div>
 	  
 	  <div class="box themes_backup" >
 	  <p class="picture">
-		<?=@$html->image("/{$this->themeWeb}{$curr_template['screenshot']}",array('height'=>'190'))?>
+		<?php echo @$html->image("/{$this->themeWeb}{$curr_template['screenshot']}",array('height'=>'190'))?>
 	</p>
 		<ul class="bak_haddle">
 		<li><?php if(isset($curr_template['name']))echo $curr_template['name'];?> &nbsp;<?php if(isset($curr_template['version']))echo $curr_template['version'];?></li>		
@@ -20,11 +20,11 @@
 	
 	<div class="order_stat properies" >
 	  <div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  可用模板</h1></div>
 	  <div class="box themes_box">
-	    <?if(isset($available_templates) && sizeof($available_templates)>0){?>
+	    <?php if(isset($available_templates) && sizeof($available_templates)>0){?>
 	    <?php foreach($available_templates as $k=>$themed){?>
 	  <div class="themes_show">
 	  <p class="name"><?php if(isset($themed['name']))echo $html->link($themed['name'],$themed['uri'],'',false,false)."&nbsp;&nbsp;&nbsp;&nbsp;".$html->link("卸载","javascript:;",array("onclick"=>"deletethemed('{$themed['code']}')"),false,false)."&nbsp;&nbsp;&nbsp;&nbsp;"; if(isset($themed['flag'])&& $themed['flag']=="1")echo "是否可用： ".$html->link($html->image('yes.gif'),"javascript:;",array("onclick"=>"currencythemed('{$themed['code']}','no')"),false,false)."&nbsp;&nbsp;&nbsp;&nbsp;".$html->link("默认","javascript:;",array("onclick"=>"use_theme('{$themed['code']}')"),false,false); if(isset($themed['flag'])&& $themed['flag']=="" )echo "是否可用： ".$html->link($html->image('no.gif'),"javascript:;",array("onclick"=>"currencythemed('{$themed['code']}','yes')"),false,false);?> </p>
@@ -42,11 +42,11 @@
 <!--Product Photos End-->
 	<div class="order_stat properies">
 	  <div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  可选模板</h1></div>
 	  <div class="box themes_box">
-	    <?if(isset($install_templates) && sizeof($install_templates)>0){?>
+	    <?php if(isset($install_templates) && sizeof($install_templates)>0){?>
 	    <?php foreach($install_templates as $k=>$themed){?>
 	  <div class="themes_show">
 	  <p class="name"><?php if(isset($themed['name']))echo $html->link($themed['name'],$themed['uri'],'',false,false); echo "&nbsp;&nbsp;&nbsp;&nbsp;";echo $html->link("安装","javascript:;",array("onclick"=>"installthemed('{$themed['code']}')"),false,false);?> </p>

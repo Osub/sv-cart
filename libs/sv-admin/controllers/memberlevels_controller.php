@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: memberlevels_controller.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: memberlevels_controller.php 3184 2009-07-22 06:09:42Z huangbo $
 *****************************************************************************/
 class MemberlevelsController  extends AppController {
 
@@ -58,7 +58,7 @@ class MemberlevelsController  extends AppController {
 		$this->pageTitle = "编辑会员等级 - 会员等级管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'会员等级管理','url'=>'/memberlevels/');
 		$this->navigations[] = array('name'=>'编辑会员等级','url'=>'');
-		$this->set('navigations',$this->navigations);
+	
 		$this->UserRank->hasOne = array();
 		$this->UserRank->hasMany = array('UserRankI18n' =>   
                         array('className'    => 'UserRankI18n', 
@@ -79,7 +79,10 @@ class MemberlevelsController  extends AppController {
 				}
 			}
 			$id=$this->UserRank->id;
-
+            //操作员日志
+    	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑会员等级:'.$userinformation_name ,'operation');
+    	    }
 			$this->flash("会员等级  ".$userinformation_name." 添加成功。点击继续编辑该会员等级。",'/memberlevels/edit/'.$id,10);
 		}
 		
@@ -98,6 +101,10 @@ class MemberlevelsController  extends AppController {
                               'foreignKey'   => 'user_rank_id'  
                         )
                   );
+		//leo20090722导航显示
+		$this->navigations[] = array('name'=>$userrank_info["UserRankI18n"][$this->locale]["name"],'url'=>'');
+	    $this->set('navigations',$this->navigations);
+
 	}
 	
 	function add(){
@@ -124,7 +131,10 @@ class MemberlevelsController  extends AppController {
 					}
 				}
 				$id=$this->UserRank->id;
-
+                //操作员日志
+    	        if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	        $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加会员等级:'.$userinformation_name ,'operation');
+    	        }
 				$this->flash("会员等级  ".$userinformation_name." 添加成功。点击继续编辑该会员等级。",'/memberlevels/edit/'.$id,10);
 
 			
@@ -135,7 +145,13 @@ class MemberlevelsController  extends AppController {
 		/*判断权限*/
 		$this->operator_privilege('member_rank_edit');
 		/*end*/
+		$pn = $this->UserRankI18n->find('list',array('fields' => array('UserRankI18n.user_rank_id','UserRankI18n.name'),'conditions'=> 
+                                   array('UserRankI18n.user_rank_id'=>$id,'UserRankI18n.locale'=>$this->locale)));
 		$this->UserRank->deleteAll("UserRank.id='".$id."'");
+		//操作员日志
+    	if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	$this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'删除会员等级:'.$pn[$id] ,'operation');
+    	}
 		$this->flash("删除成功",'/memberlevels/',10);
 	}
    	

@@ -1,4 +1,4 @@
-<?php
+<?php 
 echo $rss->header();
 
 if (!isset($channel)) {

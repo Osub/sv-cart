@@ -1,4 +1,4 @@
-<?
+<?php 
 /*****************************************************************************
  * SV-Cart 选择区域
  *===========================================================================
@@ -9,23 +9,23 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: choice.ctp 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: choice.ctp 2485 2009-06-30 11:33:00Z huangbo $
 *****************************************************************************/
 ob_start();?>
-<?foreach($regions_selects as $k=>$r){?>
-		<?if(isset($r['select']) && sizeof($r['select']) == 2){?>
-			<?foreach($r['select'] as $kk=>$vv){?>
-				<?$r['default'] = $kk;?>
-			<?}?>
-	<?}?>	
+<?php foreach($regions_selects as $k=>$r){?>
+		<?php if(isset($r['select']) && sizeof($r['select']) == 2){?>
+			<?php foreach($r['select'] as $kk=>$vv){?>
+				<?php $r['default'] = $kk;?>
+			<?php }?>
+	<?php }?>	
 	
-<?if(isset($address_id)){?>
-    <?=$form->select('Address.Region.'.$k.$address_id,$r['select'],$r['default'],array("onchange"=>"reload_edit_regions($address_id)"),false); ?>
-<?}else{?>
-    <?=$form->select('Address.Region.'.$k,$r['select'],$r['default'],array("onchange"=>"reload_regions()"),false); ?>
-<?}?>
-<?}?>
-<?
+<?php if(isset($address_id)){?>
+    <?php echo $form->select('Address.Region.'.$k.$address_id,$r['select'],$r['default'],array("onchange"=>"reload_edit_regions($address_id)"),false); ?>
+<?php }else{?>
+    <?php echo $form->select('Address.Region.'.$k,$r['select'],$r['default'],array("onchange"=>"reload_regions()"),false); ?>
+<?php }?>
+<?php }?>
+<?php 
 $result['type']=0;
 $result['message'] = ob_get_contents();
 if(isset($address_id)){

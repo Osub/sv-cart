@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 更新订单
  * ===========================================================================
@@ -9,11 +9,11 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: batch_add_products.ctp 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: batch_add_products.ctp 2544 2009-07-03 05:55:59Z zhengli $
 *****************************************************************************/
 ?>
 <!--Main Start-->
-<?=$javascript->link('listtable');?>
+ 
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
 <div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' );">
@@ -28,10 +28,10 @@
 	<li class="date" style="width:10%">本店售价</li>
 	<li class="hadle" style="width:15%">商品类别</li>
 </ul>
-	<?if(isset($products_list) && sizeof($products_list)>0){?>
+	<?php if(isset($products_list) && sizeof($products_list)>0){?>
 <?php foreach($products_list as $k=>$v){ if($k==0)continue;?>
 <ul class="product_llist products users_title batchadd">
-	<li class="number" style="text-align:center;width:10%"><input type="checkbox" name="checkbox[]"  value="<?=$k?>" checked /><?php echo $k;?></li>
+	<li class="number" style="text-align:center;width:10%"><input type="checkbox" name="checkbox[]"  value="<?php echo $k?>" checked /><?php echo $k;?></li>
 	<li class="name" style="text-align:center;width:15%"><input class="text_input" type='text' name="data[<?php echo $k?>][name]" value="<?php echo $v['name']?>"/></li>
 	<li class="grade" style="width:15%"><input class="text_input" type='text' name="data[<?php echo $k?>][code]" value="<?php echo $v['code']?>"/></li>
 	<li class="email" style="width:15%"><input class="text_input" type='text' name="data[<?php echo $k?>][brand]" value="<?php echo $v['brand']?>"/></li>

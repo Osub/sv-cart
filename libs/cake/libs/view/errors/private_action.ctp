@@ -1,5 +1,5 @@
-<?php
-/* SVN FILE: $Id: private_action.ctp 7945 2008-12-19 02:16:01Z gwoo $ */
+<?php 
+/* SVN FILE: $Id: private_action.ctp 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  *
  * PHP versions 4 and 5

@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 默认模板
  * ===========================================================================
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: default.ctp 1883 2009-05-31 11:20:54Z huangbo $
+ * $Id: default.ctp 2715 2009-07-09 02:51:28Z zhengli $
 *****************************************************************************/
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -17,17 +17,22 @@
 <head>
 <?php echo $html->charset(); ?>
 <title><?php echo $title_for_layout; ?> - <?php __('Powered by Seevia'); ?></title>
-	<?php
+	<?php 
 		echo $html->meta('icon');
 	?>
 	
 <script type="text/javascript">
-	var webroot_dir = "<?=$this->webroot;?>";
-	var themePath = "<?=$this->themeWeb;?>";
-	var now_locale = "<?=$now_locale?>";//当前语言
+	var root_all = "<?php echo $root_all;?>";
+	var webroot_dir = "<?php echo $admin_webroot;?>";
+	var admin_webroot = "<?php echo $admin_webroot;?>";
+	var user_webroot = "<?php echo $user_webroot;?>";
+	var cart_webroot = "<?php echo $cart_webroot;?>";
+	var server_host = "<?php echo $server_host;?>";
+	var themePath = "<?php echo $this->themeWeb;?>";
+	var now_locale = "<?php echo $now_locale?>";//当前语言
 </script>
-<?=$minify->css(array('/css/layout','/css/admin','/css/calendar','/css/menu','/css/container','/css/treeview','/css/image','/css/swfupload','/css/tabview','css/style'));?>
-<?=$minify->js(array('/../js/yui/yahoo-dom-event.js','/../js/yui/container_core-min.js','/../js/yui/menu-min.js','/../js/yui/element-beta-min.js','/../js/yui/animation-min.js','/../js/yui/connection-min.js','/../js/yui/container-min.js','/../js/yui/tabview-min.js','/../js/yui/json-min.js','/../js/yui/calendar-min.js','/js/common.js','/js/calendar.js','/../js/swfobject.js'));?>
+<?php echo $minify->css(array('/css/layout','/css/admin','/css/calendar','/css/menu','/css/container','/css/treeview','/css/image','/css/swfupload','/css/tabview','/css/style'));?>
+<?php echo $minify->js(array('/../js/yui/yahoo-dom-event.js','/../js/yui/container_core-min.js','/../js/yui/menu-min.js','/../js/yui/element-beta-min.js','/../js/yui/animation-min.js','/../js/yui/connection-min.js','/../js/yui/get-min.js','/../js/yui/container-min.js','/../js/yui/tabview-min.js','/../js/yui/json-min.js','/../js/yui/calendar-min.js','/js/common.js','/js/calendar.js','/../js/swfobject.js'));?>
 <!--菜单-->
 <script type="text/javascript">
     YAHOO.util.Event.onContentReady("topmenu", function () {
@@ -45,7 +50,7 @@
 </head>
 <body class="yui-skin-sam svcart-skin-g00"  id="svcart-com" onload="layer_dialog();" >
 
-<?php
+<?php 
 	if(@!isset($this->params['url']['status'])){
 		echo $this->element('header', array('cache'=>'+0 hour'));
 	}
@@ -60,21 +65,21 @@
 <!--对话框-->
 <input type="hidden" value="" id="img_src_text_number" />
 <input type="hidden" value="" id="assign_dir" />
-<div id="layer_dialog" style="display:none;" >
-<div id="loginout" >
+<div id="layer_dialog" class="svcart-overlay">
+<div id="loginout">
 	<h1><b>系统提示</b></h1>
 	<div id="buyshop_box">
 		<p class="login-alettr">
-		<?=$html->image("msg.gif",array('class'=>'sub_icon vmiddle'));?>
+		<?php echo $html->image("msg.gif",array('class'=>'sub_icon vmiddle'));?>
 		<b>
-		<span id="dialog_content"></span>
+		<span id="admin_dialog_content"></span>
 		</b>
 		</p>
 		<br /><input type="hidden" id="confirm" />
-		<p class="buy_btn mar" ><span id="button_replace"><?=$html->link("取消","javascript:;",array("onclick"=>"layer_dialog_obj.hide()"));?>
-		<?=$html->link("确定","javascript:;",array("onclick"=>"confirm_record()"));?></span></p>
+		<p class="buy_btn mar" ><span id="admin_button_replace"><?php echo $html->link("取消","javascript:;",array("onclick"=>"layer_dialog_obj.hide()"));?>
+		<?php echo $html->link("确定","javascript:;",array("onclick"=>"confirm_record()"));?></span></p>
 	</div>
-	<p><?=$html->image("loginout-bottom.png");?></p>
+	<p><?php echo $html->image("loginout-bottom.png");?></p>
 </div>
 </div>
 <!--End 对话框-->

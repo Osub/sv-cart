@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: areas_controller.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: areas_controller.php 2229 2009-06-19 06:54:47Z tangyu $
 *****************************************************************************/
 class AreasController extends AppController {
 	var $name = 'Areas';
@@ -49,18 +49,23 @@ class AreasController extends AppController {
 			    $num_name="未知地区";
 			    break;
 		}
+		$languages=$this->Language->findall("","","id");
+		$this->set('area_languages'	,$languages);
 		$this->set('navigations',$this->navigations);
 		$this->set('num_name',$num_name);
 		$this->set('area_list',$area_list);
 		$this->set('pid',$pid);
 	}
 	function edit($region_id){
+		$Region_info = $this->Region->findById($region_id);
 		$edit_region = $this->RegionI18n->findAll(array("region_id"=>$region_id));
 		foreach($edit_region as $k=>$v){
 			$arr[$k]['locale'] = $v['RegionI18n']['locale'];
 			$arr[$k]['name'] = $v['RegionI18n']['name'];
 			$arr[$k]['id'] = $v['RegionI18n']['id'];
-		}	
+			$arr[$k]['orderby'] = $Region_info['Region']['orderby'];
+			$arr[$k]['region_id'] = $region_id;
+		}
 		Configure::write('debug',0);
 		die(json_encode($arr));
 	}
@@ -73,22 +78,24 @@ class AreasController extends AppController {
 		$this->navigations[] = array('name'=>'添加地区','url'=>'');
 		$Region_info = $this->Region->find("","","Region.id desc");
 		$region_info=array(
-				'id'=>$Region_info['Region']['id']+1,
+				'id'=>isset($this->params['form']['region_id'])?$this->params['form']['region_id']:"",
 				'parent_id'=>isset($this->params['form']['parent_id'])?$this->params['form']['parent_id']:0,
 				'level'=>isset($this->params['form']['level'])?$this->params['form']['parent_id']:'0',
 				'agency_id'=>isset($this->params['form']['agency_id'])?$this->params['form']['agency_id']:0,
 				'param01'=>isset($this->params['form']['param01'])?$this->params['form']['param01']:'',
 				'param02'=>isset($this->params['form']['param02'])?$this->params['form']['param02']:'',
 				'param03'=>isset($this->params['form']['param03'])?$this->params['form']['param03']:'',
-				'orderby'=>isset($this->params['form']['orderby'])?$this->params['form']['orderby']:50,
+				'orderby'=>!empty($this->params['form']['orderby'])?$this->params['form']['orderby']:50,
 		);
-    	$this->Region->saveall(array('Region'=>$region_info));
+		
+    	$this->Region->save(array('Region'=>$region_info));
     	$id=$this->Region->id;
+   		
     	if(is_array($this->data['RegionI18n'])){
 			foreach($this->data['RegionI18n'] as $k => $v){
 				$v['region_id']=$id;
 				$v['description'] = "";
-				$this->RegionI18n->saveall(array('RegionI18n'=>$v)); 
+				$this->RegionI18n->save(array('RegionI18n'=>$v)); 
 			}
 			foreach( $this->data['RegionI18n'] as $k=>$v ){
 				if($v['locale'] == $this->locale){

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: images_controller.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: images_controller.php 2659 2009-07-08 02:32:43Z shenyunfeng $
 *****************************************************************************/
 class ImagesController extends AppController {
 
@@ -24,17 +24,17 @@ class ImagesController extends AppController {
 		$this->pageTitle = '图片管理'." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'图片管理','url'=>'/images/');
 		$this->set('navigations',$this->navigations);
-	
+		
 		if (!isset($_FILES["Filedata"]) || !is_uploaded_file($_FILES["Filedata"]["tmp_name"]) || $_FILES["Filedata"]["error"] != 0) {
-			$session_config_str = serialize($_SESSION['Config']);
+			$session_config_str = serialize($this->Session->read('Config'));
 			
-			$session_operator_str = serialize($_SESSION['Operator_Info']);
+			$session_operator_str = serialize($this->Session->read('Operator_Info'));
 			
-			$session_admin_config_str = serialize($_SESSION['Admin_Config']);
+			$session_admin_config_str = serialize($this->Session->read('Admin_Config'));
 			
-			$session_action_list_str = serialize($_SESSION['Action_List']);
-			$session_admin_locale_str = serialize($_SESSION['Admin_Locale']);
-			$cart_back_url = serialize($_SESSION['cart_back_url']);
+			$session_action_list_str = serialize($this->Session->read('Action_List'));
+			$session_admin_locale_str = serialize($this->Session->read('Admin_Locale'));
+			$cart_back_url = serialize($this->Session->read('cart_back_url'));
 			$this->set('session_config_str',$session_config_str);
 			$this->set('session_operator_str',$session_operator_str);
 			$this->set('session_admin_config_str',$session_admin_config_str);
@@ -50,6 +50,7 @@ class ImagesController extends AppController {
 			$this->set('status',0);
 		
 		}
+		
 	}
 	//取目录名并分好文件。。。文件夹
 	function treeview(){
@@ -189,7 +190,7 @@ class ImagesController extends AppController {
 		if(count($results['list_img'])>0){
 			$show_img_str = "";
 			foreach( $results['list_img'] as $k=>$v ){
-				$show_img_str.='<li><a href="../..'.$v.'" rel="lightbox" name="img_hide_show[]"><div class="box"  ><img src="../..'.$v.'" onclick="img_src_return(this)" name="'.$v.'" /></div></a><div  style=" margin:-20px   0   0   100px"><input type="image"  src="../img/no.gif" onclick="remove_img(this)" value="'.$v.'"  /></div><span ><a href="javascript:" ondblclick="mkname(this)" name="'.$v.'" >'.$results['list_img_name'][$k].'</a></span></li>';
+				$show_img_str.='<li><a href="'.$this->server_host.substr($this->root_all,0,-1).$v.'" rel="lightbox" name="img_hide_show[]"><div class="box"  ><img src="'.$this->server_host.substr($this->root_all,0,-1).$v.'" onclick="img_src_return(this)" name="'.$v.'" /></div></a><div  style=" margin:-20px   0   0   100px"><input type="image"  src="'.$this->server_host.substr($this->root_all,0,-1).'/sv-admin/img/no.gif" onclick="remove_img(this)" value="'.$v.'"  /></div><span ><a href="javascript:" ondblclick="mkname(this)" name="'.$v.'" >'.$results['list_img_name'][$k].'</a></span></li>';
 			}
 			$results['show_img_str'] = $show_img_str;
 		}
@@ -320,9 +321,7 @@ class ImagesController extends AppController {
 				move_uploaded_file($_FILES["Filedata"]["tmp_name"], iconv("UTF-8","gb2312","../img".$_REQUEST['img_addr']."/".$_FILES["Filedata"]["name"]));
 				$upload_img_src =  "".$_REQUEST['img_addr']."/".$_FILES["Filedata"]["name"];
 			}	
-				
-				
-				
+			
 			if(substr($_REQUEST['img_addr'],0,9) == "/products"){
 				rename(iconv("UTF-8","gb2312","../img".$upload_img_src),"../img".$_REQUEST['img_addr']."/original/".$image_name);
 			}else{
@@ -347,7 +346,7 @@ class ImagesController extends AppController {
 				$this->imageWaterMark($thumb.$image_name,$watermark_location,$WaterMark_img_address,$watermark_transparency);
 			}
 			if( $retain_original_image_when_upload_products==1){
-				echo '<li><a href="../../img'.$_REQUEST['img_addr']."/".$image_name.'" rel="lightbox" name="img_hide_show[]"><div class="box"  ><img src="../../img'.$_REQUEST['img_addr']."/".$image_name.'" name="/img'.$_REQUEST['img_addr']."/".$image_name.'" onclick="img_src_return(this)" /></div></a><div  style=" margin:-20px   0   0   100px"><input type="image"  src="../img/no.gif" onclick="remove_img(this)" value="/img'.$upload_img_src.'""  /></div><span ><a href="javascript:" ondblclick="mkname(this)" name="/img'.$upload_img_src.'" >'.$image_name.'</a></span></li>';
+				echo '<li><a href="'.$this->server_host.$this->root_all.'img'.$_REQUEST['img_addr']."/".$image_name.'" rel="lightbox" name="img_hide_show[]"><div class="box"  ><img src="'.$this->server_host.$this->root_all.'img'.$_REQUEST['img_addr']."/".$image_name.'" name="/img'.$_REQUEST['img_addr']."/".$image_name.'" onclick="img_src_return(this)" /></div></a><div  style=" margin:-20px   0   0   100px"><input type="image"  src="'.$this->server_host.substr($this->root_all,0,-1).'/sv-admin/img/no.gif" onclick="remove_img(this)" value="/img'.$upload_img_src.'""  /></div><span ><a href="javascript:" ondblclick="mkname(this)" name="/img'.$upload_img_src.'" >'.$image_name.'</a></span></li>';
 			}elseif($retain_original_image_when_upload_products==0){
 				@unlink($img_address);
 			}

@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 发送邮件
  * ===========================================================================
@@ -9,24 +9,24 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: send_email.ctp 1670 2009-05-25 00:47:18Z huangbo $
+ * $Id: send_email.ctp 2485 2009-06-30 11:33:00Z huangbo $
 *****************************************************************************/
 ob_start();?>
 <div id="loginout">
 	<h1><b>系统提示</b></h1>
 	<div class="order_stat athe_infos tongxun">
 	<div id="buyshop_box">
-	<?if($result['type'] == 0){?>
+	<?php if($result['type'] == 0){?>
 		<p class="login-alettr">邮件发送成功!</p>
-	<?}?>
-	<?if($result['type'] == 1){?>
+	<?php }?>
+	<?php if($result['type'] == 1){?>
 		<p class="login-alettr">管理员姓名或Email地址错误!</p>
-	<?}?>
-	<p class="buy_btn mar"><?=$html->link("返回","../login");?><?=$html->link("关闭","javascript:close_message();");?></p>
-	<p><?=$html->image("loginout-bottom.png");?></p>
+	<?php }?>
+	<p class="buy_btn mar"><?php echo $html->link("返回","../login");?><?php echo $html->link("关闭","javascript:close_message();");?></p>
+	<p><?php echo $html->image("loginout-bottom.png");?></p>
 	</div></div>
 </div>
-<?
+<?php 
 $result['message'] = ob_get_contents();
 ob_end_clean();
 echo json_encode($result);

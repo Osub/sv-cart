@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: article_category.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: article_category.php 2876 2009-07-15 06:07:19Z zhengli $
 *****************************************************************************/
 class ArticleCategory extends AppModel
 {
@@ -50,6 +50,17 @@ class ArticleCategory extends AppModel
     	   }
        return true;
     }
+    
+    function find_indx_all($category_id,$locale){
+		$params = array('order' => array('ArticleCategory.modified DESC'),
+		    			'conditions' => array(" ArticleCategory.category_id in (".$category_id.")")
+			   			);
+		$article_categorys = $this->cache_find('all',$params,$this->name.$locale);	
+		return $article_categorys;	    	
+    	
+    	//"all",array( "conditions" =>array(" ArticleCategory.category_id in (".$category_id.")"))
+    }
+    
 
 }
 ?>

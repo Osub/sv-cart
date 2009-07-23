@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: order_action.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: order_action.php 2840 2009-07-14 09:58:08Z zhengli $
 *****************************************************************************/
 class OrderAction extends AppModel{
 	var $name = 'OrderAction';
@@ -132,7 +132,7 @@ class OrderAction extends AppModel{
     }
     //新增订单操作日志
     function update_order_action($arr){
-    	     $this->save(array('OrderAction'=>$arr));
+    	     $this->saveAll(array('OrderAction'=>$arr));
     }
 }
 ?>

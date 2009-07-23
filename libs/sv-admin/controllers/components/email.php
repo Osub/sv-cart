@@ -26,6 +26,7 @@ class EmailComponent
     var $attachments = null;
     var $controller;
 	var $is_ssl = 0;//ÊÇ·ñ¿ªÆôSSL
+	var $is_mail_smtp = 0;
 	var $smtp_port = 25;//email¶Ë¿Ú
     function startup( &$controller ) {
       $this->controller = &$controller;
@@ -70,16 +71,22 @@ class EmailComponent
     function send(){
     	//$this->Config->findall();
 		$mail = new PHPMailer();
-		$mail->IsSMTP();            // set mailer to use SMTP
+		if($this->is_mail_smtp==0){
+			$mail->IsMail();            // set mailer to use SMTP
+		}
+		else{
+			$mail->IsSMTP();            
+    	}
     	$mail->SMTPAuth = true;     // turn on SMTP authentication
     	if($this->is_ssl==1){
     		$mail->SMTPSecure = "ssl";
-    		
     	}
     	$mail->Port = $this->smtp_port;
     	$mail->Host   = $this->smtpHostNames;
-	    $mail->Username = $this->smtpUserName;
-	    $mail->Password = $this->smtpPassword;
+    	if($this->is_mail_smtp==1){
+	    	$mail->Username = $this->smtpUserName;
+	    	$mail->Password = $this->smtpPassword;
+	    }
 	   	//$mail->SMTPDebug = 10;
 
 	    $mail->From     = $this->from;

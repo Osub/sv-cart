@@ -1,5 +1,5 @@
 --
--- 数据库: 'svcart_free_demo'
+-- 数据库: 'svcart_data_demo'
 --
 
 --
@@ -43,9 +43,9 @@ INSERT INTO svcart_brands (id, orderby, img01, img02, flash_config, status, url,
 -- 导出表中的数据 'svcart_brand_i18ns'
 --
 
-INSERT INTO svcart_brand_i18ns (locale, brand_id, name, description, meta_keywords, meta_description, img01, img02, img03, created, modified) VALUES
-('chi', 1, '品牌01', '品牌01', '品牌01', '品牌01', NULL, '', NULL, '2009-04-09 05:45:26', '2009-04-09 05:45:26'),
-('eng', 1, 'brand01', 'brand01', 'brand01', 'brand01', NULL, '', NULL, '2009-04-09 05:45:26', '2009-04-09 05:45:26');
+INSERT INTO svcart_brand_i18ns (id, locale, brand_id, name, description, meta_keywords, meta_description, img01, img02, img03, created, modified) VALUES
+(1, 'chi', 1, '品牌01', '品牌01', '品牌01', '品牌01', NULL, '', NULL, '2009-04-09 05:45:26', '2009-04-09 05:45:26'),
+(2, 'eng', 1, 'brand01', 'brand01', 'brand01', 'brand01', NULL, '', NULL, '2009-04-09 05:45:26', '2009-04-09 05:45:26');
 
 --
 -- 导出表中的数据 'svcart_cards'
@@ -564,4 +564,7 @@ INSERT INTO svcart_shipping_area_regions (id, shipping_area_id, region_id, creat
 --
 -- 导出表中的数据 'svcart_virtual_cards'
 --
+
+
+
 

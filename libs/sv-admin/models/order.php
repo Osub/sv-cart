@@ -9,10 +9,11 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: order.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: order.php 2018 2009-06-04 11:53:53Z shenyunfeng $
 *****************************************************************************/
 class Order extends AppModel{
 	var $name = 'Order';
+	var $uses = array('UnionUser','UnionReffererOrder');
 	var $hasMany = array('OrderProduct' =>   
                         array('className'    => 'OrderProduct', 
                               'conditions'    =>  '',

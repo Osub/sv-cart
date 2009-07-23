@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: attribute.php 1225 2009-05-06 10:41:25Z shenyunfeng $
+ * $Id: product_type_attribute.php 2703 2009-07-08 11:54:52Z huangbo $
 *****************************************************************************/
 class ProductTypeAttribute extends AppModel{
 	var $name = 'ProductTypeAttribute';

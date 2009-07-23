@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: theme.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: theme.php 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  * A custom view class that is used for themeing
  *

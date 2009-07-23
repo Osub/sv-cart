@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: brand.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: brand.php 2304 2009-06-26 07:00:53Z zhengli $
 *****************************************************************************/
 class Brand extends AppModel
 {
@@ -52,17 +52,26 @@ function set_locale($locale){
 		return $Brands;
 	}
 	
-	function findassoc(){
-		$condition="Brand.status ='1'";
+	function findassoc($locale =''){
+		$condition=" Brand.status ='1' ";
+		$orderby = " orderby asc ";
+		$cache_key = md5($this->name.'_'.$locale);
 		
-		$lists=$this->findAll($condition);
+		$lists_formated = cache::read($cache_key);	
+		if($lists_formated){
+			return $lists_formated;
+		}else{
+		
+		$lists=$this->findall($condition,'',$orderby);
 		$lists_formated = array();
 		if(is_array($lists))
 			foreach($lists as $k => $v){
 				$lists_formated[$v['Brand']['id']]=$v;
 			}
-		
+			
+		cache::write($cache_key,$lists_formated);
 		return $lists_formated;
+		}
 	}
 	
 }

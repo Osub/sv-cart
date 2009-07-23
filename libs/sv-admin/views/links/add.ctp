@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart  添加友情链接
  * ===========================================================================
@@ -9,12 +9,12 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 1883 2009-05-31 11:20:54Z huangbo $
+ * $Id: add.ctp 2485 2009-06-30 11:33:00Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
-<p class="add_categories"><strong><?=$html->link($html->image('add.gif',array('align'=>'absmiddle'))."友情链接列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."友情链接列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
 
 <!--Main Start-->
 <?php echo $form->create('Link',array('action'=>'add','onsubmit'=>'return links_check();'));?>
@@ -27,57 +27,57 @@
 <!--Communication Stat-->
 	<div class="order_stat athe_infos">
 	  <div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  添加友情链接</h1></div>
 	  <div class="box">
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-	<input name="data[LinkI18n][<?=$k;?>][locale]" type="hidden" value="<?= $v['Language']['locale'];?>">
-<?
+	<input name="data[LinkI18n][<?php echo $k;?>][locale]" type="hidden" value="<?php echo  $v['Language']['locale'];?>">
+<?php 
 	}
 }?>
   	    
   	    <h2>连接名称：</h2>
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input type="text" style="width:280px;" id="name<?=$v['Language']['locale']?>" name="data[LinkI18n][<?=$k?>][name]" /> <font color="#ff0000">*</font></span></p>
-<? }
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input type="text" style="width:280px;" id="name<?php echo $v['Language']['locale']?>" name="data[LinkI18n][<?php echo $k?>][name]" /> <font color="#ff0000">*</font></span></p>
+<?php }
 } ?>
 	<h2>友情链接描述：</h2>
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input type="text" style="width:280px;" id="name<?=$v['Language']['locale']?>" name="data[LinkI18n][<?=$k?>][description]"  /> <font color="#ff0000">*</font></span></p>
-<? }
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input type="text" style="width:280px;" id="name<?php echo $v['Language']['locale']?>" name="data[LinkI18n][<?php echo $k?>][description]"  /> <font color="#ff0000">*</font></span></p>
+<?php }
 } ?>
 		
 		
 		<h2>连接地址：</h2>
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name cat_info"><?=$html->image($v['Language']['img01'])?><span><input type="text" style="width:280px;" id="url<?=$v['Language']['locale']?>" name="data[LinkI18n][<?=$k?>][url]"  /> <font color="#ff0000">*</font></span></p>
-<? }
+		<p class="products_name cat_info"><?php echo $html->image($v['Language']['img01'])?><span><input type="text" style="width:280px;" id="url<?php echo $v['Language']['locale']?>" name="data[LinkI18n][<?php echo $k?>][url]"  /> <font color="#ff0000">*</font></span></p>
+<?php }
 } ?>
 		<h2>连接LOGO：</h2>
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
 		<p class="products_name">
-		<?=$html->image($v['Language']['img01'])?><span><input type="text" id="upload_img_text_<?=$k?>" size="35" name="data[LinkI18n][<?=$k?>][img01]"  /></span><?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel($k,'links')",'',false,false)?>
+		<?php echo $html->image($v['Language']['img01'])?><span><input type="text" id="upload_img_text_<?php echo $k?>" size="35" name="data[LinkI18n][<?php echo $k?>][img01]"  /></span><?php echo $html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel($k,'links')",'',false,false)?>
 <br /><span style="margin-left:32px;color:#646464;">请上传图片，做为链接的LOGO！</span>
 
 <br />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-	<?=@$html->image('',array('id'=>'logo_thumb_img_'.$k,'height'=>'150','style'=>'display:none'))?>
+	<?php echo @$html->image('',array('id'=>'logo_thumb_img_'.$k,'height'=>'150','style'=>'display:none'))?>
 
 
 			</p>
-<? }
+<?php }
 } ?>
 
 
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-<input type="hidden" size="35" name="data[LinkI18n][<?=$k?>][img02]"  /> 
-<? }
+<input type="hidden" size="35" name="data[LinkI18n][<?php echo $k?>][img02]"  /> 
+<?php }
 } ?>
 	  </div>
 	</div>
@@ -106,6 +106,6 @@
 
 </table><p class="submit_btn"><input type="submit" value="确定" /><input type="reset" value="重置" /></p>
 </div>
-	<? echo $form->end();?>
+	<?php echo $form->end();?>
 <!--Main Start End-->
 </div>

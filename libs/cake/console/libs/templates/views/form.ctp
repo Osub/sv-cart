@@ -1,5 +1,5 @@
-<?php
-/* SVN FILE: $Id: form.ctp 7945 2008-12-19 02:16:01Z gwoo $ */
+<?php 
+/* SVN FILE: $Id: form.ctp 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  *
  * PHP versions 4 and 5
@@ -26,8 +26,8 @@
 <?php echo "<?php echo \$form->create('{$modelClass}');?>\n";?>
 	<fieldset>
  		<legend><?php echo "<?php __('".Inflector::humanize($action)." {$singularHumanName}');?>";?></legend>
-<?php
-		echo "\t<?php\n";
+<?php 
+		echo "\t<?php \n";
 		foreach ($fields as $field) {
 			if ($action == 'add' && $field == $primaryKey) {
 				continue;
@@ -43,7 +43,7 @@
 		echo "\t?>\n";
 ?>
 	</fieldset>
-<?php
+<?php 
 	echo "<?php echo \$form->end('Submit');?>\n";
 ?>
 </div>
@@ -53,7 +53,7 @@
 		<li><?php echo "<?php echo \$html->link(__('Delete', true), array('action'=>'delete', \$form->value('{$modelClass}.{$primaryKey}')), null, sprintf(__('Are you sure you want to delete # %s?', true), \$form->value('{$modelClass}.{$primaryKey}'))); ?>";?></li>
 <?php endif;?>
 		<li><?php echo "<?php echo \$html->link(__('List {$pluralHumanName}', true), array('action'=>'index'));?>";?></li>
-<?php
+<?php 
 		$done = array();
 		foreach ($associations as $type => $data) {
 			foreach ($data as $alias => $details) {

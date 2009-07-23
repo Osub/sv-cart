@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart  编辑友情链接
  * ===========================================================================
@@ -9,18 +9,18 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: edit.ctp 1883 2009-05-31 11:20:54Z huangbo $
+ * $Id: edit.ctp 2485 2009-06-30 11:33:00Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
 
 <!--Main Start-->
-<p class="add_categories"><strong><?=$html->link($html->image('add.gif',array('align'=>'absmiddle'))."友情链接列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."友情链接列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
 
 <?php echo $form->create('Link',array('action'=>'edit/'.$link['Link']['id'],'onsubmit'=>'return links_check();'));?>
 	
-	<input type="hidden" style="width:280px;" name="data[Link][id]" value="<?=$link['Link']['id']?>" />
+	<input type="hidden" style="width:280px;" name="data[Link][id]" value="<?php echo $link['Link']['id']?>" />
 	
 <div class="home_main">
 <table width="100%" cellpadding="0" cellspacing="0" class="">
@@ -29,72 +29,72 @@
 <!--Communication Stat-->
 	<div class="order_stat athe_infos">
 	  <div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  编辑友情链接</h1></div>
 	  <div class="box">
   	    <h2>连接名称：</h2>
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input type="text" style="width:280px;" id="name<?=$v['Language']['locale']?>" name="data[LinkI18n][<?=$k?>][name]" value="<?=@$link['LinkI18n'][$k]['name']?>" /> <font color="#ff0000">*</font></span></p>
-<? }
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input type="text" style="width:280px;" id="name<?php echo $v['Language']['locale']?>" name="data[LinkI18n][<?php echo $k?>][name]" value="<?php echo @$link['LinkI18n'][$k]['name']?>" /> <font color="#ff0000">*</font></span></p>
+<?php }
 } ?>  	    
 	<h2>友情链接描述：</h2>
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input type="text" style="width:280px;" id="name<?=$v['Language']['locale']?>" name="data[LinkI18n][<?=$k?>][description]" value="<?=@$link['LinkI18n'][$k]['description']?>" /> <font color="#ff0000">*</font></span></p>
-<? }
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input type="text" style="width:280px;" id="name<?php echo $v['Language']['locale']?>" name="data[LinkI18n][<?php echo $k?>][description]" value="<?php echo @$link['LinkI18n'][$k]['description']?>" /> <font color="#ff0000">*</font></span></p>
+<?php }
 } ?>
 		
 		
 		<h2>连接地址：</h2>
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name cat_info"><?=$html->image($v['Language']['img01'])?><span><input type="text" style="width:280px;" id="url<?=$v['Language']['locale']?>" name="data[LinkI18n][<?=$k?>][url]" value="<?=@$link['LinkI18n'][$k]['url']?>" /> <font color="#ff0000">*</font></span></p>
-<? }
+		<p class="products_name cat_info"><?php echo $html->image($v['Language']['img01'])?><span><input type="text" style="width:280px;" id="url<?php echo $v['Language']['locale']?>" name="data[LinkI18n][<?php echo $k?>][url]" value="<?php echo @$link['LinkI18n'][$k]['url']?>" /> <font color="#ff0000">*</font></span></p>
+<?php }
 } ?>
 		<h2>连接LOGO：</h2>
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
 		<p class="products_name">
-		<?=$html->image($v['Language']['img01'])?>
+		<?php echo $html->image($v['Language']['img01'])?>
 			<span>
-			<input type="text" size="35" name="data[LinkI18n][<?=$k?>][img01]" id="upload_img_text_<?=$k?>" value="<?=@$link['LinkI18n'][$k]['img01']?>" />
+			<input type="text" size="35" name="data[LinkI18n][<?php echo $k?>][img01]" id="upload_img_text_<?php echo $k?>" value="<?php echo @$link['LinkI18n'][$k]['img01']?>" />
 			</span>
-			<?=@$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel($k,'links')",'',false,false)?>
+			<?php echo @$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel($k,'links')",'',false,false)?>
 
 		
 			<br />
 			<span style="margin-left:32px;color:#646464;">请上传图片，做为链接的LOGO！</span>
 			<br />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-				<?=@$html->image("/..{$link['LinkI18n'][$k]['img01']}",array('id'=>'logo_thumb_img_'.$k,'height'=>'150','style'=>'display:none'))?>
+				<?php echo @$html->image("/..{$link['LinkI18n'][$k]['img01']}",array('id'=>'logo_thumb_img_'.$k,'height'=>'150','style'=>!empty($link['LinkI18n'][$k]['img01'])?"display:block":"display:none"))?>
 			</p>
-<? }
+<?php }
 } ?>
 
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-<input id="" name="data[LinkI18n][<?=$k;?>][locale]" type="hidden" style="width:260px;" value="<?=$v['Language']['locale']?>" /> </p>
-<?
+<input id="" name="data[LinkI18n][<?php echo $k;?>][locale]" type="hidden" style="width:260px;" value="<?php echo $v['Language']['locale']?>" /> </p>
+<?php 
 	}
 }?>	
 
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-	<input id="LinkI18n<?=$k;?>Locale" name="data[LinkI18n][<?=$k;?>][locale]" type="hidden" value="<?= $v['Language']['locale'];?>">
-	   <?if(isset($link['LinkI18n'][$v['Language']['locale']])){?>
-	<input id="LinkI18n<?=$k;?>Id" name="data[LinkI18n][<?=$k;?>][id]" type="hidden" value="<?= $link['LinkI18n'][$v['Language']['locale']]['id'];?>">
-	   <?}?>
-	   	<input id="LinkI18n<?=$k;?>LinkId" name="data[LinkI18n][<?=$k;?>][link_id]" type="hidden" value="<?= $link['Link']['id'];?>">
-<?
+	<input id="LinkI18n<?php echo $k;?>Locale" name="data[LinkI18n][<?php echo $k;?>][locale]" type="hidden" value="<?php echo  $v['Language']['locale'];?>">
+	   <?php if(isset($link['LinkI18n'][$v['Language']['locale']])){?>
+	<input id="LinkI18n<?php echo $k;?>Id" name="data[LinkI18n][<?php echo $k;?>][id]" type="hidden" value="<?php echo  $link['LinkI18n'][$v['Language']['locale']]['id'];?>">
+	   <?php }?>
+	   	<input id="LinkI18n<?php echo $k;?>LinkId" name="data[LinkI18n][<?php echo $k;?>][link_id]" type="hidden" value="<?php echo  $link['Link']['id'];?>">
+<?php 
 	}
 }?>
 
 
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-<input type="hidden" size="35" name="data[LinkI18n][<?=$k?>][img02]" value="<?=@$link['LinkI18n'][$k]['img02']?>" /> 
-<? }
+<input type="hidden" size="35" name="data[LinkI18n][<?php echo $k?>][img02]" value="<?php echo @$link['LinkI18n'][$k]['img02']?>" /> 
+<?php }
 } ?>
 	  </div>
 	</div>
@@ -107,12 +107,12 @@
 	  <div class="box">
 		
 		<dl><dt>联系人：</dt>
-			<dd><input type="text" name="data[Link][contact_name]" value="<?=$link['Link']['contact_name']?>" class="text_inputs" style="width:286px;"  /></dd></dl>
+			<dd><input type="text" name="data[Link][contact_name]" value="<?php echo $link['Link']['contact_name']?>" class="text_inputs" style="width:286px;"  /></dd></dl>
 		
-		<dl><dt>电话：</dt><dd class="time"><input type="text" name="data[Link][contact_tele]" value="<?=$link['Link']['contact_tele']?>" class="text" style="width:108px;" /></dd></dl>
-		<dl><dt>Email地址：</dt><dd class="time"><input type="text" name="data[Link][contact_email]" value="<?=$link['Link']['contact_email']?>" class="text" style="width:108px;" /></dd></dl>
-		<dl><dt>显示顺序：</dt><dd class="time"><input type="text" name="data[Link][orderby]" value="<?=$link['Link']['orderby']?>" class="text" style="width:108px;" /><br />如果您不输入排序号，系统将默认为50</dd></dl>
-		<dl style="padding:5px 0;*padding:6px 0;"><dt style="padding-top:1px;">是否显示：</dt><dd class="best_input"><input type="radio" name="data[Link][status]" value="1" <? if($link['Link']['status'] == 1){ echo "checked"; } ?> />是<input type="radio" name="data[Link][status]" value="0" <? if($link['Link']['status'] == 0){ echo "checked"; } ?> />否</dd></dl>
+		<dl><dt>电话：</dt><dd class="time"><input type="text" name="data[Link][contact_tele]" value="<?php echo $link['Link']['contact_tele']?>" class="text" style="width:108px;" /></dd></dl>
+		<dl><dt>Email地址：</dt><dd class="time"><input type="text" name="data[Link][contact_email]" value="<?php echo $link['Link']['contact_email']?>" class="text" style="width:108px;" /></dd></dl>
+		<dl><dt>显示顺序：</dt><dd class="time"><input type="text" name="data[Link][orderby]" value="<?php echo $link['Link']['orderby']?>" class="text" style="width:108px;" /><br />如果您不输入排序号，系统将默认为50</dd></dl>
+		<dl style="padding:5px 0;*padding:6px 0;"><dt style="padding-top:1px;">是否显示：</dt><dd class="best_input"><input type="radio" name="data[Link][status]" value="1" <?php if($link['Link']['status'] == 1){ echo "checked"; } ?> />是<input type="radio" name="data[Link][status]" value="0" <?php if($link['Link']['status'] == 0){ echo "checked"; } ?> />否</dd></dl>
 	<br /><Br /><br /><br /><br /><br /><br /><br />
 			
 	  </div>
@@ -123,6 +123,6 @@
 
 </table><p class="submit_btn"><input type="submit" value="确定" /><input type="reset" value="重置" /></p>
 </div>
-	<? echo $form->end();?>
+	<?php echo $form->end();?>
 <!--Main Start End-->
 </div>

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: points_controller.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: points_controller.php 3225 2009-07-22 10:59:01Z huangbo $
 *****************************************************************************/
 uses('sanitize');		
 class PointsController extends AppController {
@@ -17,7 +17,7 @@ class PointsController extends AppController {
 	var $name = 'Points';
     var $components = array ('Pagination'); // Added 
     var $helpers = array('Pagination'); // Added 
-	var $uses = array("UserPointLog","Order","User");
+	var $uses = array("SystemResource","UserPointLog","Order","User","Product","ProductI18n");
 
 
 	function index(){
@@ -25,9 +25,33 @@ class PointsController extends AppController {
 		if(!isset($_SESSION['User'])){//	echo "111111111111";exit;
 			 $this->redirect('/login/');
 		}
+		/*************************************/
+		/*		vancl	所需 变量			*/
+	//	$now = date('Y-m-d')." 23:59:59";
+		$conditions = array(
+						'Order.user_id' => $_SESSION['User']['User']['id'],
+						'Order.shipping_status' => 2,
+						'Order.user_id' => $_SESSION['User']['User']['id'],
+						'Order.user_id' => $_SESSION['User']['User']['id']
+						);
+		$all_order = $this->Order->find('all',array('conditions'=>$conditions,'fields'=>'Order.total','recursive' => -1));
+		$this->set('order_count',count($all_order));
+		$all_order_fee = 0;
+		if(is_array($all_order) && sizeof($all_order)>0){
+			foreach($all_order as $k=>$v){
+				$all_order_fee += $v['Order']['total'];
+			}
+		}
+		$this->set('all_order_fee',$all_order_fee);
+		/*************************************/
 		$this->page_init();
 		$mrClean = new Sanitize();		
-			
+		
+        //资源库信息
+        $this->SystemResource->set_locale($this->locale);
+        $systemresource_info = $this->SystemResource->resource_formated(true,$this->locale);
+        $this->set('systemresource_info',$systemresource_info);//资源库信息		
+		
 		//当前位置
 		$this->navigations[] = array('name'=>__($this->languages['points'],true),'url'=>"");
 		$this->set('locations',$this->navigations);
@@ -43,13 +67,15 @@ class PointsController extends AppController {
 	   	   $condition .=" and created  <= '".$this->params['url']['date2']."'";
 	   }
 	   if(isset($this->params['url']['min_points']) && $this->params['url']['min_points'] != ''){
-			$this->params['url']['min_points']= $mrClean->paranoid($this->params['url']['min_points'],array(' ','@','-','.',':','/',',','_'));
+			$this->params['url']['min_points']= $this->params['url']['min_points'];
 	   	   $condition .=" and point >= '".$this->params['url']['min_points']."'";
 	   }
 	   if(isset($this->params['url']['max_points']) && $this->params['url']['max_points'] != ''){
-			$this->params['url']['max_points']= $mrClean->paranoid($this->params['url']['max_points'],array(' ','@','-','.',':','/',',','_'));
+			$this->params['url']['max_points']= $this->params['url']['max_points'];
 	   	   $condition .=" and point <= '".$this->params['url']['max_points']."'";
 	   }
+	   $user_point = $this->User->findbyid($_SESSION['User']['User']['id']);
+	   $this->set('user_point',$user_point['User']['user_point']);
 	   $total = $this->UserPointLog->findCount($condition,0);
 	   $sortClass='UserPointLog';
 	   $page=1;
@@ -57,15 +83,39 @@ class PointsController extends AppController {
 	   $parameters=Array($rownum,$page);
 	   $options=Array();
 	   $page= $this->Pagination->init($condition,"",$options,$total,$rownum,$sortClass);
-	   $my_points=$this->UserPointLog->findAll($condition,'','','',$page);
+	   $my_points=$this->UserPointLog->findAll($condition,'',"UserPointLog.created DESC",'',$page);
 	   $b_point = 0;
 	   $r_point = 0;
 	   $o_point = 0;
 	   $c_point = 0;
+	   $point_type_ids = array();
 	   
 	   foreach($my_points as $k=>$v){
-	   	   $condition=" id = '".$v['UserPointLog']['type_id']."'";
-	   	   $my_points[$k]['Order']=$this->Order->find($condition);
+	   		$point_type_ids[] = $v['UserPointLog']['type_id'];
+	   }
+	   
+	   $order_infos = $this->Order->find('all',array(
+	   'fields' =>	array('Order.id','Order.order_code','Order.total'),
+	   'conditions'=>array('Order.id'=>$point_type_ids)));
+	   
+	   $order_lists = array();
+	   if(is_array($order_infos) && sizeof($order_infos) >0){
+	   	   foreach($order_infos as $k=>$v){
+	   	   		$order_lists[$v['Order']['id']] = $v;
+	   	   }
+	   }
+	   
+	   
+	   
+	   foreach($my_points as $k=>$v){
+	   	//   $condition=" id = '".$v['UserPointLog']['type_id']."'";
+	   	//   $my_points[$k]['Order']=$this->Order->find($condition);
+	   	
+	   		if(isset($order_lists[$v['UserPointLog']['type_id']])){
+	   		$my_points[$k]['Order'] = $order_lists[$v['UserPointLog']['type_id']];
+	   		
+	   		}
+	   	
 	   	   if($v['UserPointLog']['log_type'] == "B"){
 	   	   		$b_point += $v['UserPointLog']['point'];
 	   	   }
@@ -114,9 +164,75 @@ class PointsController extends AppController {
    	   $this->set('min_points',$min_points);
    	   $this->set('max_points',$max_points);
    	   $this->set('start_date',$start_date);
-   	   $this->set('end_date',$end_date);
-	  
+   	   $this->set('end_date',$end_date);	 
 	}
+	
+	function exchange(){
+		
+		if(!isset($_SESSION['User']['User'])){
+			$this->redirect('/login/');
+		}
+		$user_info = $this->User->findbyid($_SESSION['User']['User']['id']);
+		
+		if($user_info['User']['point'] > 0){
+			$orderby = "point_fee ASC";
+		}else{
+			$orderby = "market_price DESC";
+		}
+		
+		$sortClass='Product';
+		$rownum = 10;
+		$page=1;
+		$parameters=Array($orderby,$rownum,$page);
+		$options=Array();
+		
+		$condition = "Product.point_fee > '0' and Product.status = '1' and Product.forsale = '1' and Product.quantity > '0'";
+			$products=$this->Product->find('all',array(
+															'recursive' => -1,
+																'fields' =>	array('Product.id','Product.recommand_flag','Product.status','Product.img_thumb'
+																				,'Product.market_price'
+																				,'Product.shop_price'
+																				,'Product.code','Product.point','Product.point_fee'
+																				,'Product.product_rank_id'
+																				,'Product.quantity'
+																				),			
+			'conditions'=>array($condition),'order'=>array("Product.$orderby"),'limit'=>$rownum,'page'=>$page));		
+		
+			$products_ids_list = array();
+			  if(is_array($products) && sizeof($products)>0){
+			  		foreach($products as $k=>$v){
+			  			$products_ids_list[] = $v['Product']['id'];
+			  		}
+			  }	
+			  
+		// 商品多语言
+			$productI18ns_list =array();
+				$productI18ns = $this->ProductI18n->find('all',array( 
+				'fields' =>	array('ProductI18n.id','ProductI18n.name','ProductI18n.product_id'),
+				'conditions'=>array('ProductI18n.product_id'=>$products_ids_list,'ProductI18n.locale'=>$this->locale)));
+			if(isset($productI18ns) && sizeof($productI18ns)>0){
+				foreach($productI18ns as $k=>$v){
+					$productI18ns_list[$v['ProductI18n']['product_id']] = $v;
+				}
+			}
+			
+			$total = count($products);
+			$page = $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass); // Added 
+		
+			foreach($products as $k=>$v){
+				if(isset($productI18ns_list[$v['Product']['id']])){
+					$products[$k]['ProductI18n'] = $productI18ns_list[$v['Product']['id']]['ProductI18n'];
+				}else{
+					$products[$k]['ProductI18n']['name'] = "";
+				}	
+				
+				if(isset($this->configs['products_name_length']) && $this->configs['products_name_length'] >0){
+					$products[$k]['ProductI18n']['name'] = $this->Product->sub_str($products[$k]['ProductI18n']['name'], $this->configs['products_name_length']);
+				}				
+			}
+	}
+	
+	
 
 }
 

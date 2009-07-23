@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: navigations_controller.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: navigations_controller.php 3184 2009-07-22 06:09:42Z huangbo $
 *****************************************************************************/
 class NavigationsController extends AppController {
 	var $name = 'Navigations';
@@ -77,7 +77,7 @@ class NavigationsController extends AppController {
 		$this->navigations[] = array('name'=>'界面管理');
 		$this->navigations[] = array('name'=>'导航设置','url'=>'/navigations/');
 		$this->navigations[] = array('name'=>'编辑导航设置','url'=>'');
-		$this->set('navigations',$this->navigations);
+		
 
 		if($this->RequestHandler->isPost()){
 			$this->data['Navigation']['orderby'] = !empty($this->data['Navigation']['orderby'])?$this->data['Navigation']['orderby']:"50";
@@ -101,11 +101,18 @@ class NavigationsController extends AppController {
 					$userinformation_name = $v['name'];
 				}
 			}
+			//操作员日志
+    	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑导航设置:'.$userinformation_name ,'operation');
+    	    }
 			$this->flash("导航设置 ".$userinformation_name." 编辑成功。点击继续编辑该导航设置。",'/navigations/edit/'.$id,10);
 
 		}
 		$this->data = $this->Navigation->localeformat($id);
-		//pr($this->data);
+		//leo20090722导航显示
+		$this->navigations[] = array('name'=>$this->data["NavigationI18n"][$this->locale]["name"],'url'=>'');
+	    $this->set('navigations',$this->navigations);
+
 	}
 
 	function add(){
@@ -136,6 +143,10 @@ class NavigationsController extends AppController {
 					$userinformation_name = $v['name'];
 				}
 			}
+			//操作员日志
+    	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加导航设置:'.$userinformation_name ,'operation');
+    	    }
 			$this->flash("导航设置 ".$userinformation_name."  编辑成功。点击继续编辑该导航设置。",'/navigations/edit/'.$id,10);
 
 		}
@@ -144,7 +155,13 @@ class NavigationsController extends AppController {
 		/*判断权限*/
 		$this->operator_privilege('navigation_edit');
 		/*end*/
+		$pn = $this->NavigationI18n->find('list',array('fields' => array('NavigationI18n.navigation_id','NavigationI18n.name'),'conditions'=> 
+                           array('NavigationI18n.navigation_id'=>$id,'NavigationI18n.locale'=>$this->locale)));
 		$this->Navigation->deleteAll("Navigation.id='".$id."'");
+		//操作员日志
+    	if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	$this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'删除导航设置:'.$pn[$id] ,'operation');
+    	}
 		$this->flash('删除成功','/navigations',5);
 	}
 }

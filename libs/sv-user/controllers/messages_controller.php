@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: message_controller.php 718 2009-04-17 07:18:27Z shenyunfeng $
+ * $Id: messages_controller.php 3233 2009-07-22 11:41:02Z huangbo $
 *****************************************************************************/
 uses('sanitize');		
 class MessagesController extends AppController {
@@ -17,7 +17,7 @@ class MessagesController extends AppController {
 	var $name = 'Messages';
      var $components = array ('Pagination'); // Added 
     var $helpers = array('Pagination'); // Added
-	var $uses = array("UserMessage",'Order');
+	var $uses = array("UserMessage",'Order',"SystemResource","Product");
 
 
 	function view($order_id=0){
@@ -27,6 +27,10 @@ class MessagesController extends AppController {
 		}
 		$this->page_init();
 		
+        //资源库信息
+        $this->SystemResource->set_locale($this->locale);
+        $systemresource_info = $this->SystemResource->resource_formated(true,$this->locale);
+        $this->set('systemresource_info',$systemresource_info);//资源库信息				
 		//当前位置
 		$this->navigations[] = array('name'=>__($this->languages['my_message'],true),'url'=>"");
 		$this->set('locations',$this->navigations);
@@ -52,29 +56,91 @@ class MessagesController extends AppController {
 	   		$this->set('order_info',$order_info);
 	   }
 	   //pr($my_messages);
+	   $my_messages_parent_id = array();
+	   $my_messages_parent_id[] = 0;
+	   $p_ids = array();
+	   $o_ids = array();
 	   foreach($my_messages as $k=>$v){
-	   	   $replies=$this->UserMessage->findAll("UserMessage.parent_id = '".$v['UserMessage']['id']."'");
-	   	   $my_messages[$k]['Reply']=$replies;
+	   	  $my_messages_parent_id[] = $v['UserMessage']['id'];
+	//   	   $replies=$this->UserMessage->findAll("UserMessage.parent_id = '".$v['UserMessage']['id']."'");
+	   //	   $my_messages[$k]['Reply']=$replies;
 	   	   if($v['UserMessage']['msg_type'] == 0){
-	   	   	      $my_messages[$k]['UserMessage']['type'] = $this->languages['message'];
+	   	   	      $my_messages[$k]['UserMessage']['type_name'] = $systemresource_info['msg_type']['0'];
 	   	   }
 	   	   else if($v['UserMessage']['msg_type'] == 1){
-	   	   	      $my_messages[$k]['UserMessage']['type'] = $this->languages['complaint'];
+	   	   	      $my_messages[$k]['UserMessage']['type_name'] = $systemresource_info['msg_type']['1'];
 	   	   }
 	   	   else if($v['UserMessage']['msg_type'] == 2){
-	   	   	      $my_messages[$k]['UserMessage']['type'] = $this->languages['inquiry'];
+	   	   	      $my_messages[$k]['UserMessage']['type_name'] = $systemresource_info['msg_type']['2'];
 	   	   }
 	   	   else if($v['UserMessage']['msg_type'] == 3){
-	   	   	      $my_messages[$k]['UserMessage']['type'] = $this->languages['after_sale'];
+	   	   	      $my_messages[$k]['UserMessage']['type_name'] = $systemresource_info['msg_type']['3'];
 	   	   }
 	   	   else if($v['UserMessage']['msg_type'] == 4){
-	   	   	      //$my_messages[$k]['UserMessage']['type'] = $this->languages['inquire'];
+	   	   	      $my_messages[$k]['UserMessage']['type_name'] = $systemresource_info['msg_type']['4'];
 	   	   }
 	   	  else {
-	   	   	      //$my_messages[$k]['UserMessage']['type'] = $this->languages['untyped'];
+	   	   	      $my_messages[$k]['UserMessage']['type_name'] = $systemresource_info['msg_type']['5'];
 	   	   }
+	   	   
+	   	   if($v['UserMessage']['type'] == "P" && $v['UserMessage']['value_id'] > 0){
+	   	   		$p_ids[] = $v['UserMessage']['value_id'];
+	   	   }
+	   	   if($v['UserMessage']['type'] == "O" && $v['UserMessage']['value_id'] > 0){
+	   	   		$o_ids[] = $v['UserMessage']['value_id'];
+	   	   }	   	   
 	   }
 	   
+	   if(!empty($p_ids)){
+	   	  $this->Product->set_locale($this->locale);
+	   	  $products = $this->Product->find('all',array(
+			'fields' =>	array('Product.id','ProductI18n.name'),			   	  
+	   	  'conditions'=>array('Product.id'=>$p_ids)));
+	   }
+	   if(!empty($o_ids)){
+	   	  $orders = $this->Order->find('all',array(
+			'fields' =>	array('Order.id','Order.order_code'),			   	  
+	   	  'conditions'=>array('Order.id'=>$o_ids)));
+	   }	   
+	   $order_list = array();
+	   $product_list = array();
+	   
+	   if(isset($products) && sizeof($products)>0){
+	   		foreach($products as $k=>$v){
+	   			$product_list[$v['Product']['id']] = $v;
+	   		}
+	   }
+	   if(isset($orders) && sizeof($orders)>0){
+	   		foreach($orders as $k=>$v){
+	   			$order_list[$v['Order']['id']] = $v;
+	   		}
+	   }	   
+	   
+	   
+	   $replies_list = $this->UserMessage->find('all',array('conditions'=>array('UserMessage.parent_id'=>$my_messages_parent_id)));
+	   
+	   $replies_list_format = array();
+	   if(is_array($replies_list) && sizeof($replies_list)>0){
+	   		foreach($replies_list as $k=>$v){
+	   			$replies_list_format[$v['UserMessage']['parent_id']][] = $v;
+	   		}
+	   }
+	   foreach($my_messages as $k=>$v){
+	   	     if(isset($replies_list_format[$v['UserMessage']['id']])){
+	   			 $my_messages[$k]['Reply']= $replies_list_format[$v['UserMessage']['id']];
+	   		 }
+	   		 
+	   			 if($v['UserMessage']['type'] == 'O' && isset($order_list[$v['UserMessage']['value_id']])){
+	   			 	
+	   			 	$my_messages[$k]['Order']= $order_list[$v['UserMessage']['value_id']];
+	   			 }
+	   			 
+	   			 if($v['UserMessage']['type'] == 'P' && isset($product_list[$v['UserMessage']['value_id']])){
+	   			 	$my_messages[$k]['Product']= $product_list[$v['UserMessage']['value_id']];
+	   		 	 }	   		 
+	   }
+	  //	pr($order_list);
+ 		//pr($my_messages[12]);
 	   $js_languages = array("page_number_expand_max" => $this->languages['page_number'].$this->languages['not_exist'],
 	   "subject_is_blank" => $this->languages['subject'].$this->languages['can_not_empty'] ,
 	   "message_type_empty" => $this->languages['message'].$this->languages['type'].$this->languages['can_not_empty'],
@@ -101,10 +167,11 @@ function AddMessage(){
 		'msg_title'=>	isset($_POST['title'])   ? trim($_POST['title'])  : '',
 		'msg_content'=>	isset($_POST['content'])   ? trim($_POST['content'])  : 0,
 		'msg_type'=>	isset($message_type)   ? trim($message_type)  : '',
+		'type'=>	isset($_POST['order_type'])   ? trim($_POST['order_type'])  : '',
 		'user_id'=> $_SESSION['User']['User']['id'],
 		'user_email'=> $_SESSION['User']['User']['email'],
 		'user_name'=> $_SESSION['User']['User']['name'],
-		 'order_id' => 	$order_id,
+		'value_id' => $order_id,
 		'created'=>$created
 		);
 	$this->UserMessage->save(array('UserMessage'=>$messages));

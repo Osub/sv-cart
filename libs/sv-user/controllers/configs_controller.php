@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: configs_controller.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: configs_controller.php 2623 2009-07-06 06:30:49Z huangbo $
 *****************************************************************************/
 uses('sanitize');		
 class ConfigsController extends AppController {
@@ -118,7 +118,8 @@ class ConfigsController extends AppController {
 	}
 	}
 	$this->pageTitle = $this->languages['edit'].$this->languages['successfully']." - ".$this->configs['shop_title'];
-   	$this->flash($this->languages['edit'].$this->languages['successfully'],'/../configs/','');
+	$flash_url = $this->server_host.$this->user_webroot."configs";		
+   	$this->flash($this->languages['edit'].$this->languages['successfully'],$flash_url,'');
 	}
 	
 	

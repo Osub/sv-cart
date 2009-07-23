@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 添加文章
  * ===========================================================================
@@ -9,14 +9,14 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 1883 2009-05-31 11:20:54Z huangbo $
+ * $Id: add.ctp 2485 2009-06-30 11:33:00Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
 <?php  echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
-<p class="add_categories"><strong><?=$html->link($html->image('add.gif',array('align'=>'absmiddle'))."文章列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
-<?=$javascript->link('selectzone');?>
-<?=$javascript->link('product');?>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."文章列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
+<?php echo $javascript->link('selectzone');?>
+<?php echo $javascript->link('product');?>
 <!--Main Start-->
 <?php echo $form->create('Articles',array('action'=>'add/' ,'onsubmit'=>'return articles_check();'));?>
 <div class="home_main">
@@ -26,57 +26,57 @@
 <!--Communication Stat-->
 	<div class="order_stat athe_infos">
 	  <div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  通用信息</h1></div><input  name="data[Article][id]" type="hidden" />
 	  <div class="box">
-	  	<? if(isset($languages) && sizeof($languages)>0){
+	  	<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-	<input name="data[ArticleI18n][<?=$k;?>][locale]" type="hidden" value="<?=$v['Language']['locale'];?>">
-<?
+	<input name="data[ArticleI18n][<?php echo $k;?>][locale]" type="hidden" value="<?php echo $v['Language']['locale'];?>">
+<?php 
 	}
 }?>
   	    <h2>文章标题：</h2>
-	  	<? if(isset($languages) && sizeof($languages)>0){
+	  	<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input id="article_name_<?=$v['Language']['locale']?>"  name="data[ArticleI18n][<?=$k;?>][title]"  type="text" style="width:215px;" / > <font color="#ff0000">*</font></span></p>
-<?
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input id="article_name_<?php echo $v['Language']['locale']?>"  name="data[ArticleI18n][<?php echo $k;?>][title]"  type="text" style="width:215px;" / > <font color="#ff0000">*</font></span></p>
+<?php 
 	}
 }?>
 
 		<h2>文章作者：</h2> 
-	  	<? if(isset($languages) && sizeof($languages)>0){
+	  	<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input id="" name="data[ArticleI18n][<?=$k;?>][author]" type="text" style="width:260px;" /> </span></p>
-<?
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input id="" name="data[ArticleI18n][<?php echo $k;?>][author]" type="text" style="width:260px;" /> </span></p>
+<?php 
 	}
 }?>	
 
 		<h2>关键字：</h2>
-	  	<? if(isset($languages) && sizeof($languages)>0){
+	  	<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input id="" name="data[ArticleI18n][<?=$k;?>][meta_keywords]" type="text" style="width:260px;"  /> </p>
-<?
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input id="" name="data[ArticleI18n][<?php echo $k;?>][meta_keywords]" type="text" style="width:260px;"  /> </p>
+<?php 
 	}
 }?>		
 		<h2>描述：</h2>
-	  	<? if(isset($languages) && sizeof($languages)>0){
+	  	<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><textarea id="" name="data[ArticleI18n][<?=$k;?>][meta_description]" type="text" style="width:260px;"  /></textarea> </p>
-<?
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><textarea id="" name="data[ArticleI18n][<?php echo $k;?>][meta_description]" type="text" style="width:260px;"  /></textarea> </p>
+<?php 
 	}
 }?>	
 		
 <h2>上传文件：</h2>
-	  	<? if(isset($languages) && sizeof($languages)>0){
+	  	<?php if(isset($languages) && sizeof($languages)>0){
 		foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input type="text" id="upload_img_text_<?=$k?>" name="data[ArticleI18n][<?=$k;?>][img01]" style="width:260px;"  />
-			<?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel($k,'articles')",'',false,false)?>
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input type="text" id="upload_img_text_<?php echo $k?>" name="data[ArticleI18n][<?php echo $k;?>][img01]" style="width:260px;"  />
+			<?php echo $html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel($k,'articles')",'',false,false)?>
 			
 			</span><br />
-			<?=@$html->image("",array('id'=>'logo_thumb_img_'.$k,'height'=>'150','style'=>'display:none'))?>
+			<?php echo @$html->image("",array('id'=>'logo_thumb_img_'.$k,'height'=>'150','style'=>'display:none'))?>
 			</p>
-		<?}}?>
+		<?php }}?>
 	  </div>
 	</div>
 <!--Communication Stat End-->
@@ -85,34 +85,34 @@
 <!--Other Stat-->
 	<div class="order_stat athe_infos tongxun articles_configs">
 	  <div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  其他信息</h1></div>
 	  <div class="box">
 	  	<dl><dt>文章分类：</dt><dd>
 
 	  		<select class="all"  name="data[Article][category_id]">
 	<option value="0">所有分类</option>
-<?if(isset($categories_tree_A) && sizeof($categories_tree_A)>0){?><?foreach($categories_tree_A as $first_k=>$first_v){?>
-<option value="<?=$first_v['Category']['id'];?>" ><?=$first_v['CategoryI18n']['name'];?></option>
-<?if(isset($first_v['SubCategory']) && sizeof($first_v['SubCategory'])>0){?><?foreach($first_v['SubCategory'] as $second_k=>$second_v){?>
-<option value="<?=$second_v['Category']['id'];?>" >&nbsp;&nbsp;<?=$second_v['CategoryI18n']['name'];?></option>
-<?if(isset($second_v['SubCategory']) && sizeof($second_v['SubCategory'])>0){?><?foreach($second_v['SubCategory'] as $third_k=>$third_v){?>
-<option value="<?=$third_v['Category']['id'];?>" >&nbsp;&nbsp;&nbsp;&nbsp;<?=$third_v['CategoryI18n']['name'];?></option>
-<?}}}}}}?>
+<?php if(isset($categories_tree_A) && sizeof($categories_tree_A)>0){?><?php foreach($categories_tree_A as $first_k=>$first_v){?>
+<option value="<?php echo $first_v['Category']['id'];?>" ><?php echo $first_v['CategoryI18n']['name'];?></option>
+<?php if(isset($first_v['SubCategory']) && sizeof($first_v['SubCategory'])>0){?><?php foreach($first_v['SubCategory'] as $second_k=>$second_v){?>
+<option value="<?php echo $second_v['Category']['id'];?>" >&nbsp;&nbsp;<?php echo $second_v['CategoryI18n']['name'];?></option>
+<?php if(isset($second_v['SubCategory']) && sizeof($second_v['SubCategory'])>0){?><?php foreach($second_v['SubCategory'] as $third_k=>$third_v){?>
+<option value="<?php echo $third_v['Category']['id'];?>" >&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $third_v['CategoryI18n']['name'];?></option>
+<?php }}}}}}?>
 	</select>
 	</dd></dl>
 	  	<dl><dt>扩展分类：</dt><dd><input type="button" value="添加" onclick="addOtherCat()">
 
 	  			<select class="all"  name="article_categories_id[]" id="ArticlesCategory">
 	<option value="0">所有分类</option>
-<?if(isset($categories_tree_A) && sizeof($categories_tree_A)>0){?><?foreach($categories_tree_A as $first_k=>$first_v){?>
-<option value="<?=$first_v['Category']['id'];?>" ><?=$first_v['CategoryI18n']['name'];?></option>
-<?if(isset($first_v['SubCategory']) && sizeof($first_v['SubCategory'])>0){?><?foreach($first_v['SubCategory'] as $second_k=>$second_v){?>
-<option value="<?=$second_v['Category']['id'];?>"  >&nbsp;&nbsp;<?=$second_v['CategoryI18n']['name'];?></option>
-<?if(isset($second_v['SubCategory']) && sizeof($second_v['SubCategory'])>0){?><?foreach($second_v['SubCategory'] as $third_k=>$third_v){?>
-<option value="<?=$third_v['Category']['id'];?>"  >&nbsp;&nbsp;&nbsp;&nbsp;<?=$third_v['CategoryI18n']['name'];?></option>
-<?}}}}}}?>
+<?php if(isset($categories_tree_A) && sizeof($categories_tree_A)>0){?><?php foreach($categories_tree_A as $first_k=>$first_v){?>
+<option value="<?php echo $first_v['Category']['id'];?>" ><?php echo $first_v['CategoryI18n']['name'];?></option>
+<?php if(isset($first_v['SubCategory']) && sizeof($first_v['SubCategory'])>0){?><?php foreach($first_v['SubCategory'] as $second_k=>$second_v){?>
+<option value="<?php echo $second_v['Category']['id'];?>"  >&nbsp;&nbsp;<?php echo $second_v['CategoryI18n']['name'];?></option>
+<?php if(isset($second_v['SubCategory']) && sizeof($second_v['SubCategory'])>0){?><?php foreach($second_v['SubCategory'] as $third_k=>$third_v){?>
+<option value="<?php echo $third_v['Category']['id'];?>"  >&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $third_v['CategoryI18n']['name'];?></option>
+<?php }}}}}}?>
 	</select>	<div id="other_cats"></div>
 	</dd></dl>
 		<dl><dt>文章类型：</dt><dd><input type="text" class="text_inputs" name="data[Article][type]"  style="width:204px;" /></dd></dl>
@@ -139,38 +139,38 @@
 <!--profile-->
 	<div class="order_stat properies">
 	  <div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  文章内容</h1></div>
 	  <div class="box">
 	  
 
 	  <?php echo $javascript->link('fckeditor/fckeditor'); ?>
-	  	<? if(isset($languages) && sizeof($languages)>0){
+	  	<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-	  <?=$html->image($v['Language']['img01'])?><br />
+	  <?php echo $html->image($v['Language']['img01'])?><br />
 	  	 
 <p class="profiles">
-    <?  if(isset($article['ArticleI18n'][$k]['content'])){?>
+    <?php  if(isset($article['ArticleI18n'][$k]['content'])){?>
        <?php echo $form->textarea('ArticleI18n/content', array("cols" => "60","rows" => "20","value" => "{$article['ArticleI18n'][$k]['content']}","name"=>"data[ArticleI18n][{$k}][content]","id"=>"ArticleI18n{$k}Content"));?>
-        <? echo $fck->load("ArticleI18n{$k}/content"); ?>
+        <?php echo $fck->load("ArticleI18n{$k}/content"); ?>
         
-    <?}else{?>
+    <?php }else{?>
        <?php echo $form->textarea('ArticleI18n/content', array('cols' => '60', 'rows' => '20','value'=>"","name"=>"data[ArticleI18n][{$k}][content]","id"=>"ArticleI18n{$k}Content"));?> 
        <?php  echo $fck->load("ArticleI18n{$k}/content"); ?>
        
-    <?}?>
+    <?php }?>
 	    
 		</p>
 		<br /><br />
-<?
+<?php 
 	}
 }?>
 	  		
 		
 		<p class="submit_btn"><input type="submit" value="确定" /><input type="reset" value="重置" /></p>
 		
-<? echo $form->end();?>
+<?php echo $form->end();?>
 	  </div>
 	</div>
 <!--profile End-->

@@ -9,11 +9,14 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: brand.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: brand.php 2855 2009-07-15 03:25:34Z shenyunfeng $
 *****************************************************************************/
 class Brand extends AppModel
 {
 	var $name = 'Brand';
+	var $cacheQueries = true;
+	var $cacheAction = "1 day";
+	
 	var $hasOne = array('BrandI18n' =>   
                         array('className'    => 'BrandI18n',   
                               'order'        => '',   
@@ -30,17 +33,35 @@ class Brand extends AppModel
     }
 	
 	//hobby 20081117 取得id=>name的数组
-	function findassoc(){
+	function findassoc($locale =''){
 		$condition=" Brand.status ='1' ";
 		$orderby = " orderby asc ";
+		$cache_key = md5($this->name.'_'.$locale);
+		
+		$lists_formated = cache::read($cache_key);	
+		if($lists_formated){
+			return $lists_formated;
+		}else{
+		
+		
+		
 		$lists=$this->findall($condition,'',$orderby);
+		$lists=$this->find('all',array('order'=>array($orderby),
+			'fields' =>	array('Brand.id','Brand.flash_config','Brand.url','Brand.img01','BrandI18n.name'
+																	
+																					),			
+		
+		'conditions'=>array($condition)));
+		
 		$lists_formated = array();
 		if(is_array($lists))
 			foreach($lists as $k => $v){
 				$lists_formated[$v['Brand']['id']]=$v;
 			}
-		
+			
+		cache::write($cache_key,$lists_formated);
 		return $lists_formated;
+		}
 	}
 	
 }

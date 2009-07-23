@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 执行登录
  * ===========================================================================
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: act_login.ctp 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: act_login.ctp 2485 2009-06-30 11:33:00Z huangbo $
 *****************************************************************************/
 ob_start();?>
 <div id="loginout">
@@ -18,15 +18,15 @@ ob_start();?>
 	<div id="buyshop_box">
 		<p class="login-alettr"><?php if(isset($result['error_msg'])) echo $result['error_msg'];?></p>
 		<br />
-		<p class="buy_btn mar" style="padding-right:75px;"><?=$html->link("关闭","javascript:close_message();");?></p>
+		<p class="buy_btn mar" style="padding-right:75px;"><?php echo $html->link("关闭","javascript:close_message();");?></p>
 	
 	</div>
-	<p><?=$html->image("loginout-bottom.png");?></p>
+	<p><?php echo $html->image("loginout-bottom.png");?></p>
 	</div>
 </div>
 
 
-<?
+<?php 
 $result['message'] = ob_get_contents();
 ob_end_clean();
 echo json_encode($result);

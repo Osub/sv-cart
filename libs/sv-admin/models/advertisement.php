@@ -9,11 +9,18 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: advertisement.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: advertisement.php 2646 2009-07-07 08:55:19Z wuchao $
 *****************************************************************************/
 class Advertisement extends AppModel{
 	var $name = 'Advertisement';
-	var $hasOne = array('AdvertisementI18n'=>
+	var $hasOne = array('AdvertisementPosition'=>
+						array('className'  => 'AdvertisementPosition',
+							  'conditions' => 'Advertisement.advertisement_position_id=AdvertisementPosition.id',
+							  'order'      => '',
+							  'dependent'  => true,
+							  'foreignKey' => ''							
+						),
+		               'AdvertisementI18n'=>
 						array('className'  => 'AdvertisementI18n',
 							  'conditions' => '',
 							  'order'      => '',

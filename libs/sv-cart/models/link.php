@@ -9,11 +9,13 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: link.php 725 2009-04-17 08:00:21Z huangbo $
+ * $Id: link.php 2699 2009-07-08 11:07:31Z huangbo $
 *****************************************************************************/
 class Link extends AppModel{
 	var $name = 'Link';
-
+	var $cacheQueries = true;
+	var $cacheAction = "1 day";	
+	
 	var $hasOne = array('LinkI18n' =>   
                         array('className'    => 'LinkI18n', 
                               'conditions'    =>  '',
@@ -42,6 +44,18 @@ class Link extends AppModel{
 			}
 	//	pr($lists_formated);
 		return $lists_formated;
+	}
+	function find_link($locale){
+	    	$conditions = " Link.status = '1'";
+			$cache_key = md5($this->name.'_'.$locale);
+			$link = cache::read($cache_key);	
+			if($link){
+				return $link;
+			}else{
+	    		$link = $this->findAll($conditions);
+				cache::write($cache_key,$link);
+	    		return $link;
+	    	}
 	}
 
 }

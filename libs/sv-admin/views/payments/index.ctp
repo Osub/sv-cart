@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 支付方式管理
  * ===========================================================================
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: index.ctp 2485 2009-06-30 11:33:00Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -21,7 +21,7 @@
 	<li class="paymentname">支付方式名称</li><li class="bewrite">支付方式描述</li><li class="edition">插件版本</li><li class="expenditure">费用</li><li class="taixs">排序</li><li class="hadle">操作</li></ul>
 <!--Payments List-->
 	<table cellpadding="0" cellspacing="0" class="payments_list" width="100%">
-	<?if(isset($payments) && sizeof($payments)>0){?>
+	<?php if(isset($payments) && sizeof($payments)>0){?>
 	<?php foreach($payments as $payment){?>
     	<tr>
 		<td width="13%" valign="top"><strong><?php echo $payment['PaymentI18n']['name']?></strong></td>

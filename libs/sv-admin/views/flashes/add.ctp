@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 添加Flashes
  * ===========================================================================
@@ -9,21 +9,21 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 1883 2009-05-31 11:20:54Z huangbo $
+ * $Id: add.ctp 2485 2009-06-30 11:33:00Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 <!--Main Start-->
 <br />
-<p class="add_categories"><strong><?=$html->link($html->image('add.gif',array('align'=>'absmiddle'))."flash列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."flash列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
 
 <div class="home_main">
 <?php echo $form->create('Flashe',array('action'=>'add/'));?>
 <div class="order_stat athe_infos configvalues" style="align:center">
 	<div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  编辑flash轮播</h1></div>
 	  <div class="box">
 <!--Mailtemplates_Config-->
@@ -34,7 +34,7 @@
 		<dl><dt style="width:105px;">选择语言： </dt>
 		<dd>
 		<select style="width:80px;" name="data[FlashImage][locale]">
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 		 foreach($languages as $k => $v){?>
 			<option value="<?php echo $v['Language']['locale'];?>"  ><?php echo $v['Language']['name'];?></option>
 		<?php }}?>
@@ -43,7 +43,7 @@
 		<dl><dt style="width:105px;">类型： </dt>
 		<dd>
 		<select style="width:80px;" name="data[Flash][type]" id='flashType' onchange='typechange();'>
-<? if(@isset($languages) && sizeof($languages)>0){
+<?php if(@isset($languages) && sizeof($languages)>0){
 		 foreach(@$flashtypes as $k => $v){?>
 			<option value="<?php echo $k;?>" ><?php echo $v;?></option>
 		<?php }}?>		
@@ -51,7 +51,10 @@
 			
 				<span id="selects"></span>
 	
-		</dd></dl>		
+		</dd></dl>
+		<dl><dt style="width:105px;">标题： </dt>
+		<dd><input type="text" style="width:280px;*width:180px;border:1px solid #649776" name="data[FlashImage][title]"  /></dd></dl>
+
 			<dl><dt style="width:105px;">URL地址： </dt>
 			<dd><input type="text" style="width:280px;*width:180px;border:1px solid #649776" name="data[FlashImage][url]"   size= "35" />
 			</dd></dl>
@@ -59,9 +62,9 @@
 		<dl><dt style="width:105px;">图片显示： </dt>
 		<dd><input type="text" style="width:280px;*width:180px;border:1px solid #649776" name="data[FlashImage][image]" id="upload_img_text_1" size= "35" /><br /><br />
 			
-		<?=@$html->image('',array('id'=>'logo_thumb_img_1','height'=>'150','style'=>'display:none'))?>
+		<?php echo @$html->image('',array('id'=>'logo_thumb_img_1','height'=>'150','style'=>'display:none'))?>
 
-		</dd><dd><?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(1,'all')",'',false,false)?></dd></dl>
+		</dd><dd><?php echo $html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(1,'all')",'',false,false)?></dd></dl>
 
 
 
@@ -89,21 +92,21 @@
 <span style="display:none">
 	<span id="select1">
 <select style="width:80px;" name="data[Flash][type_id]" id='bTypeId'>
-<? if(isset($b) && sizeof($b)>0){
+<?php if(isset($b) && sizeof($b)>0){
 	 foreach($b as $k => $v){?>
 			<option value="<?php echo $k;?>" ><?php echo $v;?></option>
 		<?php }}?>
 		</select>
 </span>	<span id="select2">
 		<select style="width:80px;" name="data[Flash][type_id]" id='pcTypeId'>
-<? if(isset($pc) && sizeof($pc)>0){
+<?php if(isset($pc) && sizeof($pc)>0){
 	 foreach($pc as $k => $v){?>
 			<option value="<?php echo $k;?>" ><?php echo $v;?></option>
 		<?php }}?>
 		</select>
 	</span>			<span id="select3">
 		<select style="width:80px;" name="data[Flash][type_id]" id='acTypeId'>
-<? if(isset($ac) && sizeof($ac)>0){
+<?php if(isset($ac) && sizeof($ac)>0){
 	foreach($ac as $k => $v){?>
 			<option value="<?php echo $k;?>" ><?php echo $v;?></option>
 		<?php }}?>

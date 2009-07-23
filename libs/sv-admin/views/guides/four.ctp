@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 商店设置向导
  * ===========================================================================
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: four.ctp 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: four.ctp 2485 2009-06-30 11:33:00Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $form->create('guides',array('action'=>'/guides_end/'));?>
@@ -20,29 +20,29 @@
 <div class="home_main" id="guides_1">
 <div class="order_stat athe_infos configvalues">
 	<div class="title"><h1>
-	<?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	<?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	<?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	<?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	添加商品</h1></div>
 	<div class="box">
 	<div class="shop_config menus_configs">
 	<dl><dt style="width:240px;">商品分类： </dt><dd>
 <select class="all" name="category_id" id="category_id">
 	<option value="0">所有分类</option>
-<?if(isset($categories_tree) && sizeof($categories_tree)>0){?><?foreach($categories_tree as $first_k=>$first_v){?>
-<option value="<?=$first_v['Category']['id'];?>" ><?=$first_v['CategoryI18n']['name'];?></option>
-<?if(isset($first_v['SubCategory']) && sizeof($first_v['SubCategory'])>0){?><?foreach($first_v['SubCategory'] as $second_k=>$second_v){?>
-<option value="<?=$second_v['Category']['id'];?>">&nbsp;&nbsp;<?=$second_v['CategoryI18n']['name'];?></option>
-<?if(isset($second_v['SubCategory']) && sizeof($second_v['SubCategory'])>0){?><?foreach($second_v['SubCategory'] as $third_k=>$third_v){?>
-<option value="<?=$third_v['Category']['id'];?>" >&nbsp;&nbsp;&nbsp;&nbsp;<?=$third_v['CategoryI18n']['name'];?></option>
-<?}}}}}}?>
+<?php if(isset($categories_tree) && sizeof($categories_tree)>0){?><?php foreach($categories_tree as $first_k=>$first_v){?>
+<option value="<?php echo $first_v['Category']['id'];?>" ><?php echo $first_v['CategoryI18n']['name'];?></option>
+<?php if(isset($first_v['SubCategory']) && sizeof($first_v['SubCategory'])>0){?><?php foreach($first_v['SubCategory'] as $second_k=>$second_v){?>
+<option value="<?php echo $second_v['Category']['id'];?>">&nbsp;&nbsp;<?php echo $second_v['CategoryI18n']['name'];?></option>
+<?php if(isset($second_v['SubCategory']) && sizeof($second_v['SubCategory'])>0){?><?php foreach($second_v['SubCategory'] as $third_k=>$third_v){?>
+<option value="<?php echo $third_v['Category']['id'];?>" >&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $third_v['CategoryI18n']['name'];?></option>
+<?php }}}}}}?>
 	</select></dd></dl>
 	<dl><dt style="width:240px;">商品名称： </dt>
 	<dd></dd></dl>
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-	<dl><dt style="width:240px;"><?=$html->image($v['Language']['img01'])?></dt>
-	<dd><input type="text" style="width:250px;*width:180px;border:1px solid #649776" name="data[Product][ProductI18n][<?=$k?>][name]" />&nbsp<font color="#ff0000" >*</font></dd></dl>
-<?}}?>
+	<dl><dt style="width:240px;"><?php echo $html->image($v['Language']['img01'])?></dt>
+	<dd><input type="text" style="width:250px;*width:180px;border:1px solid #649776" name="data[Product][ProductI18n][<?php echo $k?>][name]" />&nbsp<font color="#ff0000" >*</font></dd></dl>
+<?php }}?>
 <!--
 	<dl><dt style="width:240px;">商品数量： </dt>
 	<dd><input type="text" style="width:75px;*width:180px;border:1px solid #649776" name="data[Product][Product][quantity]"/></dd></dl>
@@ -58,13 +58,13 @@
 	<dl><dt style="width:240px;">商品描述： </dt>
 	<dd></dd></dl>
 
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-	<input name="data[Product][ProductI18n][<?=$k?>][locale]" type="hidden" value="<?= $v['Language']['locale'];?>">
+	<input name="data[Product][ProductI18n][<?php echo $k?>][locale]" type="hidden" value="<?php echo  $v['Language']['locale'];?>">
 
-	<dl><dt style="width:240px;"><?=$html->image($v['Language']['img01'])?></dt>
-	<dd><textarea style="width:250px;border:1px solid #649776;height:110px;" name="data[Product][ProductI18n][<?=$k?>][meta_description]" /></textarea></dd></dl>
-<?}}?>
+	<dl><dt style="width:240px;"><?php echo $html->image($v['Language']['img01'])?></dt>
+	<dd><textarea style="width:250px;border:1px solid #649776;height:110px;" name="data[Product][ProductI18n][<?php echo $k?>][meta_description]" /></textarea></dd></dl>
+<?php }}?>
 	</div>
 	</div>
 		

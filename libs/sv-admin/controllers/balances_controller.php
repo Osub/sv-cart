@@ -9,14 +9,14 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: balances_controller.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: balances_controller.php 2806 2009-07-13 09:44:42Z zhengli $
 *****************************************************************************/
 class BalancesController extends AppController {
 
 	var $name = 'Balances';
 	var $helpers = array('Html','Pagination');
 	var $components = array ('Pagination','RequestHandler','Email'); 
-	var $uses = array("Order","UserBalanceLog","PaymentApiLog","Payment","PaymentI18n","User","UserAccount");
+	var $uses = array("SystemResource","Order","UserBalanceLog","PaymentApiLog","Payment","PaymentI18n","User","UserAccount");
 	
 	function index(){
 		/*判断权限*/
@@ -79,6 +79,11 @@ class BalancesController extends AppController {
    		$UserBalanceLog_list=$this->UserBalanceLog->findAll($condition,'',"UserBalanceLog.modified desc",$rownum,$page);
    		$PaymentApiLog_list=$this->PaymentApiLog->find('all');
    		$this->Payment->set_locale($this->locale);
+        //资源库信息
+        $this->SystemResource->set_locale($this->locale);
+        $systemresource_info = $this->SystemResource->resource_formated(false);
+       	//
+       	$this->set('balance_log_type',$systemresource_info["balance_log_type"]);//资源库信息
 
 		foreach( $UserBalanceLog_list as $k=>$v ){
 			/* 用户名 */
@@ -90,27 +95,22 @@ class BalancesController extends AppController {
 				$UserBalanceLog_list[$k]['UserBalanceLog']['name'] = $val['User']['name'];
 			}
 			
-			
+			$UserBalanceLog_list[$k]['UserBalanceLog']['log_type'] = $systemresource_info["balance_log_type"][$UserBalanceLog_list[$k]['UserBalanceLog']['log_type']];
 			/* 类型名 */
 			if($v['UserBalanceLog']['log_type'] == "O"){//消费 UserBalanceLog.type_id = Order.id
-				$UserBalanceLog_list[$k]['UserBalanceLog']['log_type'] = "消费";
 				$order_info = $this->Order->findById($v['UserBalanceLog']['type_id']);
 				$UserBalanceLog_list[$k]['UserBalanceLog']['description'] = "订单号：".$order_info['Order']['order_code'];
 			}	
 			else if($v['UserBalanceLog']['log_type'] == "B"){//充值 UserBalanceLog.type_id = UserAccount.id
-				//pr($v);
-				$UserBalanceLog_list[$k]['UserBalanceLog']['log_type'] = "充值";
 				$UserAccount = $this->UserAccount->findById($v['UserBalanceLog']['type_id']);
 				$Payment = $this->Payment->findById($UserAccount['UserAccount']['payment']);
 				$UserBalanceLog_list[$k]['UserBalanceLog']['description'] = "支付方式：".$Payment['PaymentI18n']['name'];
 			}
-			else if($v['UserBalanceLog']['log_type'] == "C"){//返还 UserBalanceLog.type_id = Order.id
-				$UserBalanceLog_list[$k]['UserBalanceLog']['log_type'] = "返还";
+			else if($v['UserBalanceLog']['log_type'] == "R"){//返还 UserBalanceLog.type_id = Order.id
 				$order_info = $this->Order->findById($v['UserBalanceLog']['type_id']);
 				$UserBalanceLog_list[$k]['UserBalanceLog']['description'] = "订单号：".$order_info['Order']['order_code'];
 			}
 			else if($v['UserBalanceLog']['log_type'] == "A"){//管理员操作 UserBalanceLog.type_id = Order.id
-				$UserBalanceLog_list[$k]['UserBalanceLog']['log_type'] = "管理员操作";
 				$order_info = $this->Order->findById($v['UserBalanceLog']['type_id']);
 				$UserBalanceLog_list[$k]['UserBalanceLog']['description'] = $v['UserBalanceLog']['system_note'];
 			}
@@ -126,8 +126,8 @@ class BalancesController extends AppController {
 		/*判断权限*/
 		$this->operator_privilege('voucher_undeal_view');
 		/*end*/
-		$this->pageTitle = "待处理冲值" ." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'待处理冲值','url'=>'/balances/');
+		$this->pageTitle = "待处理充值" ." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'待处理充值','url'=>'/balances/search/processing/');
 		$this->set('navigations',$this->navigations);
 		
 		$condition['status']='0';
@@ -151,8 +151,44 @@ class BalancesController extends AppController {
 			$UserAccount_list[$k]['UserAccount']['payment_name'] = $payment['PaymentI18n']['name'];
 		}
 		$this->set('UserAccount_list',$UserAccount_list);
+		if(isset($_REQUEST['page'])&& !empty($_REQUEST['page'])){
+			$this->set('ex_page',$this->params['url']['page']);
+		}
+		/*CSV导出*/
+		if(isset($_REQUEST['export'])&&$_REQUEST['export']==="export")
+		{
+			$filename = '待处理冲值导出'.date('Ymd').'.csv';
+			$ex_data = "待处理冲值统计报表,";
+			$ex_data.= "日期,";
+			$ex_data.= date('Y-m-d')."\n";
+			$ex_data.= "会员名称,";
+			$ex_data.= "操作日期,";
+			$ex_data.= "金额,";
+			$ex_data.= "支付方式,";
+			$ex_data.= "备注\n";
 
+			foreach( $UserAccount_list as $k=>$v ) {
+				$ex_data.= $v['UserAccount']['name'].",";
+				$ex_data.= $v['UserAccount']['created'].",";
+				$ex_data.= $v['UserAccount']['amount'].",";
+				$ex_data.= $v['UserAccount']['payment_name'].",";
+				if( $v['UserAccount']['status']==1 ){ 
+					$ex_data.= "已确认\n";
+				}else{
+					$ex_data.= "待处理\n";
+				}			
+			}
+		 	Configure::write('debug',0);
+			header("Content-type: text/csv; charset=gb2312");
+			header ("Content-Disposition: attachment; filename=".iconv('utf-8','gb2312',$filename));
+			header('Cache-Control:   must-revalidate,   post-check=0,   pre-check=0');
+			header('Expires:   0');
+			header('Pragma:   public');
+			echo iconv('utf-8','gb2312',$ex_data."\n");
+			exit;		
+		}
 	}
+
 	
 	//确认
 	function verify( $id ){
@@ -174,19 +210,19 @@ class BalancesController extends AppController {
 	function search_verify($id){
 		$account = $this->UserAccount->findById($id);
 		if(empty($account)){
-			$this->flash("操作失败，无效的id!",'/balances/search/processing',10);
+			$this->flash("操作失败，无效的id!",'/balances/search/processing',10,false);
 		}
 		else if($account['UserAccount']['status'] != 0){
-			$this->flash("操作失败，请不要重复操作!",'/balances/search/processing',10);
+			$this->flash("操作失败，请不要重复操作!",'/balances/search/processing',10,false);
 		}
 		else{
 			$this->User->updateAll(
-				              array('User.balance' => 'User.balance + '."'".$account['UserAccount']['amount']."'"),
-				              array('id' =>"'".$account['UserAccount']['user_id']."'")
+				              array('User.balance' => 'User.balance + '.$account['UserAccount']['amount']),
+				              array('id' =>$account['UserAccount']['user_id'])
 				           );
 			$this->UserAccount->updateAll(
 				              array('status' =>'1'),
-				              array('id' =>"'".$id."'")
+				              array('id' =>$id)
 				           );
    	    	$BalanceLog['UserBalanceLog']['user_id'] = $account['UserAccount']['user_id'];
    	    	$BalanceLog['UserBalanceLog']['amount'] = $account['UserAccount']['amount'];
@@ -197,26 +233,34 @@ class BalancesController extends AppController {
    	    	$BalanceLog['UserBalanceLog']['type_id'] = $id;
    	    	
    	    	$this->UserBalanceLog->save($BalanceLog);
-			$this->flash("确认成功",'/balances/search/processing',10);
+			$user_info = $this->User->findById($account['UserAccount']['user_id']);
+			//操作员日志
+    	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'会员:'.$user_info["User"]["name"].' 充值确认' ,'operation');
+    	    }
+			$this->flash("会员 ".$user_info["User"]["name"]." 充值确认成功。点击反回列表页",'/balances/search/processing',10);
 		}
 	}
 	
 	function search_cancel($id){
 		$account = $this->UserAccount->findById($id);
 		if(empty($account)){
-			$this->flash("操作失败，无效的id!",'/balances/search/processing',10);
+			$this->flash("操作失败，无效的id!",'/balances/search/processing',10,false);
 		}
-		else if($account['UserAccount']['status'] != "0"){
-			$this->flash("操作失败，请不要重复操作!",'/balances/search/processing',10);
+		else if($account['UserAccount']['status'] != 0){
+			$this->flash("操作失败，请不要重复操作!",'/balances/search/processing',10,false);
 		}
 		else{
 			$this->UserAccount->updateAll(
 				              array('status' =>'2'),
-				              array('id' =>"'".$id."'")
+				              array('id' =>$id)
 				           );
-			$this->flash("取消成功",'/balances/search/processing/',10);
+			//操作员日志
+    	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'取消编号:'.$id.' 充值' ,'operation');
+    	    }
+			$this->flash("取消成功",'/balances/search/processing',10);
 		}
-	
 	}
 }
 

@@ -9,14 +9,14 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: balances_controller.php 1841 2009-05-27 06:51:37Z huangbo $
+ * $Id: balances_controller.php 3184 2009-07-22 06:09:42Z huangbo $
 *****************************************************************************/
 class BalancesController extends AppController {
 
 	var $name = 'Balances';
     var $components = array ('Pagination','RequestHandler'); // Added 
     var $helpers = array('Pagination'); // Added 
-	var $uses = array("Order","User","Payment","UserBalanceLog","UserAccount",'PaymentApiLog');
+	var $uses = array("Order","User","Payment","UserBalanceLog","UserAccount",'PaymentApiLog',"SystemResource");
 
 
 	function index(){
@@ -29,6 +29,10 @@ class BalancesController extends AppController {
 		$user_account = $this->UserAccount->findall('UserAccount.user_id = '.$user_id);
 		$this->set('user_account',$user_account);
 		
+        $this->SystemResource->set_locale($this->locale);
+        $systemresource_info = $this->SystemResource->resource_formated(true,$this->locale);
+        $this->set('systemresource_info',$systemresource_info);//资源库信息		
+        			
 		//当前位置
 		$this->navigations[] = array('name'=>__($this->languages['my_balance'],true),'url'=>"");
 		$this->set('locations',$this->navigations);
@@ -46,32 +50,74 @@ class BalancesController extends AppController {
 	   $page = $this->Pagination->init($condition,"",$options,$total,$rownum,$sortClass);
 	   $my_balance_list=$this->UserBalanceLog->findAll($condition,'','',"$rownum",$page);
 	   
-	   $condition=" UserBalanceLog.user_id='".$user_id."' and log_type = 'B'";
-	   $my_balance_list_B=$this->UserBalanceLog->findAll($condition);
+	   $orders_id=array();
+	   $orders_id[] = 0;
+	   foreach($my_balance_list as $k=>$v){
+	   		$orders_id[] = $v['UserBalanceLog']['type_id'];
+	   }
+	   
+	   $api_log_order = $this->PaymentApiLog->find('all',array('conditions'=>array('PaymentApiLog.type_id'=>$orders_id,'PaymentApiLog.type'=>0)));
+	   $api_log_order_list = array();
+	   if(is_array($api_log_order) && sizeof($api_log_order)>0){
+	   		foreach($api_log_order as $k=>$v){
+	   			$api_log_order_list[$v['PaymentApiLog']['id']] = $v;
+	   		}
+	   }	   
+ 	   $this->Payment->set_locale($this->locale);
+	   $pays = $this->Payment->find('all',array('conditions'=>array('1=1')));
+	   $pay_list = array();
+	   foreach($pays as $k=>$v){
+	   		$pay_list[$v['Payment']['id']] = $v;
+	   }
+	   
+//	   $condition=" UserBalanceLog.user_id='".$user_id."' and log_type = 'B'";
+//	   $my_balance_list_B=$this->UserBalanceLog->findAll($condition);
 	   $user_account = $this->UserAccount->findall('UserAccount.user_id ='.$user_id);
+	   $account_ids = array();
+	   $account_ids[] = 0;
+	   foreach($user_account as $k=>$v){
+	   		$account_ids[] = $v['UserAccount']['id'];
+	   }
+	   $account_order = $this->PaymentApiLog->find('all',array('conditions'=>array('PaymentApiLog.type_id'=>$account_ids,'PaymentApiLog.type'=>1)));
+	   $account_order_list = array();
+
+	   if(is_array($account_order) && sizeof($account_order)>0){
+	   		foreach($account_order as $k=>$v){
+	   			$account_order_list[$v['PaymentApiLog']['type_id']] = $v;
+	   		}
+	   }	   
 	   if(is_array($user_account) && sizeof($user_account)>0){
-	   	   	$this->Payment->set_locale($this->locale);
 	   		foreach($user_account as $k=>$v){
-	   	   	   $api_log = $this->PaymentApiLog->find('PaymentApiLog.type_id = '.$v['UserAccount']['id'].' and PaymentApiLog.type = 1');
-	   	   	   $pay = $this->Payment->findbyid($v['UserAccount']['payment']);
-	   		   $user_account[$k]['UserAccount']['pay_name'] = $pay['PaymentI18n']['name'];
-	   		   $user_account[$k]['UserAccount']['pay_id'] = $api_log['PaymentApiLog']['id'];
+	   			if(isset($account_order_list[$v['UserAccount']['id']]) && isset($pay_list[$v['UserAccount']['payment']])){
+		   			$api_log = $account_order_list[$v['UserAccount']['id']];
+		   			$pay = $pay_list[$v['UserAccount']['payment']];
+		   	   	//   $api_log = $this->PaymentApiLog->find('PaymentApiLog.type_id = '.$v['UserAccount']['id'].' and PaymentApiLog.type = 1');
+		   	   	//   $pay = $this->Payment->findbyid($v['UserAccount']['payment']);
+		   		   $user_account[$k]['UserAccount']['pay_name'] = $pay['PaymentI18n']['name'];
+		   		   $user_account[$k]['UserAccount']['pay_id'] = $api_log['PaymentApiLog']['id'];
+	   			}
 	   		}
 	   }
 	   $this->set('user_account',$user_account);
 	   //pr($user_account);
 	   //订单类型的日志关联订单信息
-	   $orders_id=array();
+
+	   
 	   
 	   foreach($my_balance_list as $k=>$v){
 	   	   if($v['UserBalanceLog']['log_type'] == 'O'){
 	   	   	   $orders_id[$k]=$v['UserBalanceLog']['type_id'];
 	   	   }
 	   	   if($v['UserBalanceLog']['log_type'] == 'B'){
-	   	   	   $api_log = $this->PaymentApiLog->find('PaymentApiLog.id = '.$v['UserBalanceLog']['type_id'].' and PaymentApiLog.type = 1');
-	   	   	   $my_balance_list[$k]['UserBalanceLog']['is_paid'] = $api_log['PaymentApiLog']['is_paid'];
+	   	   	   //$api_log = $this->PaymentApiLog->find('PaymentApiLog.id = '.$v['UserBalanceLog']['type_id'].' and PaymentApiLog.type = 1');
+	   	   	   //$my_balance_list[$k]['UserBalanceLog']['is_paid'] = $api_log['PaymentApiLog']['is_paid'];
+	   	   		if(isset($api_log_order_list[$v['UserBalanceLog']['type_id']])){
+	   	   			$my_balance_list[$k]['UserBalanceLog']['is_paid'] = $api_log_order_list[$v['UserBalanceLog']['type_id']]['PaymentApiLog']['is_paid'];
+	   	   		}
+	   	   
 	   	   }
 	   }
+	/*   
 	   foreach($my_balance_list_B as $k=>$v){
 	   	   if($v['UserBalanceLog']['log_type'] == 'B'){
 	   	   	   $api_log = $this->PaymentApiLog->find('PaymentApiLog.id = '.$v['UserBalanceLog']['type_id'].' and PaymentApiLog.type = 1');
@@ -80,7 +126,7 @@ class BalancesController extends AppController {
 	   	   	   $my_balance_list_B[$k]['UserBalanceLog']['is_paid'] = $api_log['PaymentApiLog']['is_paid'];
 	   	   	   
 	   	   }
-	   }
+	   }*/
 	   $now_time = date("Y-m-d H:i:s");
 	   $spot  = time() - (24 * 60 * 60);
  	   $yesterday = date("Y-m-d H:i:s", $spot);
@@ -119,6 +165,7 @@ class BalancesController extends AppController {
 	   $this->pageTitle = $this->languages['my_balance']." - ".$this->configs['shop_title'];
 	   $js_languages = array("page_number_expand_max" => $this->languages['page_number'].$this->languages['not_exist'] ,
 	   						"recharge_amount_not_empty" => $this->languages['supply'].$this->languages['amount'].$this->languages['can_not_empty'],
+	   						"recharge_amount_larger_zero" => $this->languages['supply'].$this->languages['amount'].$this->languages['larger_zero'],
 	   						"no_choose_payment_method" => $this->languages['please_choose'].$this->languages['payment']);
 	   $this->set('js_languages',$js_languages);
 	   //$this->set('today_consumer',$today_consumer);
@@ -127,9 +174,26 @@ class BalancesController extends AppController {
 	   $this->set('my_balance_list',$my_balance_list);
 	   $this->set('my_balance',$user_info['User']['balance']);
 	   $this->set('payment_list',$payment_list);
+	   
 	}
 	
 function balance_deposit(){
+		$no_error = 1;
+	   if(!isset($_POST['is_ajax'])){
+	   	   if($_POST['amount_num'] == ""){
+	   	   		$no_error = 0;//larger_zero
+	   	   		$_REQUEST['msg'] = $this->languages['supply'].$this->languages['amount'].$this->languages['can_not_empty'];
+	   	   }elseif($_POST['amount_num'] == 0){
+	   	   		$no_error = 0;//larger_zero
+	   	   		$_REQUEST['msg'] = $this->languages['supply'].$this->languages['amount'].$this->languages['larger_zero'];
+	   	   }else if(!isset($_POST['payment_id']) || $_POST['payment_id'] == "" || $_POST['payment_id'] < 1){
+	   	   		$no_error = 0;
+	   	   		$_REQUEST['msg'] = $this->languages['please_choose'].$this->languages['payment'];
+	   	   }else{
+	   	   		$_REQUEST['money'] = $_POST['amount_num'];
+	   	   }
+	   	   $url_format = isset($_REQUEST['msg'])?$_REQUEST['msg']:'';
+		}
 	if(!(isset($_REQUEST['msg']))){
 	$modified=date('Y-m-d H:i:s');
 	$user_id=$_SESSION['User']['User']['id'];
@@ -147,10 +211,11 @@ function balance_deposit(){
 							"payment"=>$payment_id,
 							"status"=> 0
 							);
-	$this->UserAccount->save($account_info);
-	$account_id = $this->UserAccount->id;
+		$this->UserAccount->save($account_info);
+		$account_id = $this->UserAccount->id;
 
 		$pay_log = array();
+		$pay_log['id'] = '';
 		$pay_log['payment_code'] = $pay['Payment']['code'];
 		$pay_log['type'] = 1;
 		$pay_log['type_id'] = $account_id;
@@ -158,64 +223,46 @@ function balance_deposit(){
 		$pay_log['is_paid'] = 0;
 		$this->PaymentApiLog->save($pay_log);
 		$log_id = $this->PaymentApiLog->id;
-		
+		$pay_created = $this->PaymentApiLog->findbyid($log_id);
 		$order = array(
-					"total" => $amount_money,
-					'log_id' => $log_id
+					'total' => $amount_money,
+					'log_id' => $log_id,
+					'created' => $pay_created['PaymentApiLog']['created']
 					);	
 	    $message=array(
-	    'msg'=>$this->languages['supply_method_is'].":".$pay['PaymentI18n']['name'],
-	    'url'=>''
-	    );
-	 
-	if($pay['Payment']['code'] == "alipay"){  //支付宝
-		eval($pay_php);
-		$pay_class = new alipay();	
-		$url = $pay_class->get_code($order,$pay,$this);	
-		$this->set('pay_button',$url);
-	}
-			
-	if($pay['Payment']['code'] == "chinapay"){  //银联电子支付
-		eval($pay_php);
-		$pay_class = new chinapay();	
-		$form = $pay_class->get_code($order,$pay);
-		$this->set('pay_form',$form);
-	}
-
-	if($pay['Payment']['code'] == "bank"){  //银行转账
-		eval($pay_php);
-		$pay_message = $pay['PaymentI18n']['description'];
-		$this->set('pay_message',$pay_message);
-	//UserBalanceLog
-	}
-			
-	if($pay['Payment']['code'] == "post"){  //邮局汇款
-		eval($pay_php);
-		$pay_message = $pay['PaymentI18n']['description'];
-		$this->set('pay_message',$pay_message);
-	
-	
-	}
-	
-	if($pay['Payment']['code'] == "paypalcn"){  //贝宝
-		eval($pay_php);
-		$pay_message = $pay['PaymentI18n']['description'];
-		$pay_class = new paypal();	
-		$form = $pay_class->get_code($order,$pay,$this);
-		$this->set('pay_form',$form);
-	}
-   	if($pay['Payment']['code'] == 'paypal'){
-		eval($pay_php);
-		$pay_message = $pay['PaymentI18n']['description'];
-		$pay_class = new paypal();	
-		$form = $pay_class->get_code($order,$pay,$this);
-		$this->set('pay_form',$form);
-	}
+	    	'msg'=>$this->languages['supply_method_is'].":".$pay['PaymentI18n']['name'],
+	    	'url'=>''
+	    );			
+	    $_REQUEST['msg'] = $this->languages['supply_method_is'].":".$pay['PaymentI18n']['name'];
+			$str = "\$pay_class = new ".$pay['Payment']['code']."();";
+			if($pay['Payment']['code'] == "bank" || $pay['Payment']['code'] == "post" || $pay['Payment']['code'] == "COD" ||  $pay['Payment']['code'] == "account_pay"){
+				$pay_message = $pay['PaymentI18n']['description'];
+				$url_format = $pay_message;
+				$this->set('pay_message',$pay_message);
+			}else if($pay['Payment']['code'] == "alipay"){
+				eval($pay_php);
+				eval($str);
+				$url = $pay_class->get_code($order,$pay,$this);
+				$url_format = "<input type=\"button\" onclick=\"window.open('".$url."')\" value=\"".$this->languages['alipay_pay_immedia']."\" />";
+				$this->set('pay_button',$url);
+			}else{
+				eval($pay_php);
+				eval($str);
+				$url = $pay_class->get_code($order,$pay,$this);
+				$url_format = $url;
+				$this->set('pay_message',$url);
+			}
 	}else{
 	    $message=array(
 	    'msg'=>$_REQUEST['msg'],
 	    'url'=>''
 		);
+	}
+	if(!isset($_POST['is_ajax'])){
+		$this->page_init();
+		$this->pageTitle = $_REQUEST['msg'];
+		$flash_url = $this->server_host.$this->user_webroot."balances";		
+		$this->flash($url_format,$flash_url,10);	
 	}
 	$this->set('result',$message);
    	$this->layout="ajax";
@@ -223,70 +270,50 @@ function balance_deposit(){
 
 /* 支付*/
 	function pay_balance(){
+		$no_error = 1;
 		if($this->RequestHandler->isPost()){
 			$pay_log = $this->PaymentApiLog->findbyid($_POST['id']);
 			$this->Payment->set_locale($this->locale);
 			$pay = $this->Payment->findbycode($pay_log['PaymentApiLog']['payment_code']);
 			$order_pr = array(
-					"total" =>  $pay_log['PaymentApiLog']['amount'],
-					'log_id' => $pay_log['PaymentApiLog']['id']
+					"total" =>   $pay_log['PaymentApiLog']['amount'],
+					'log_id' =>  $pay_log['PaymentApiLog']['id'],
+					'created' => $pay_log['PaymentApiLog']['created']
 					);				
 			
 		//	$result['msg'] = $this->languages['supply'];
 	   		$result['msg'] = $this->languages['supply_method_is'].":".$pay['PaymentI18n']['name'];
 			$pay_php = $pay['Payment']['php_code'];
-			
-			if($pay['Payment']['code'] == "alipay"){  //支付宝
-				eval($pay_php);    // - -! 执行数据库取出的php代码
-				$pay_class = new alipay();	
+			$str = "\$pay_class = new ".$pay['Payment']['code']."();";
+			if($pay['Payment']['code'] == "bank" || $pay['Payment']['code'] == "post" || $pay['Payment']['code'] == "COD" ||  $pay['Payment']['code'] == "account_pay"){
+				$pay_message = $pay['PaymentI18n']['description'];
+				$url_format = $pay_message;
+				$this->set('pay_message',$pay_message);
+			}else if($pay['Payment']['code'] == "alipay"){
+				eval($pay_php);
+				eval($str);
 				$url = $pay_class->get_code($order_pr,$pay,$this);
-				
+				$url_format = "<input type=\"button\" onclick=\"window.open('".$url."')\" value=\"".$this->languages['alipay_pay_immedia']."\" />";
 				$this->set('pay_button',$url);
-			}
-			
-			if($pay['Payment']['code'] == "chinapay"){  //银联电子支付
+			}else{
 				eval($pay_php);
-				$pay_class = new chinapay();	
-				$form = $pay_class->get_code($order_pr,$pay);
-				$this->set('pay_form',$form);
-			}
-
-			if($pay['Payment']['code'] == "bank"){  //银行转账
-				eval($pay_php);
-				$pay_message = $pay['PaymentI18n']['description'];
-				$this->set('pay_message',$pay_message);
-			}
-			
-			if($pay['Payment']['code'] == "post"){  //邮局汇款
-				eval($pay_php);
-				$pay_message = $pay['PaymentI18n']['description'];
-				$this->set('pay_message',$pay_message);
-			}
-			if($pay['Payment']['code'] == "paypal"){  //贝宝
-				eval($pay_php);
-				$pay_message = $pay['PaymentI18n']['description'];
-				$pay_class = new paypal();	
-				$form = $pay_class->get_code($order_pr,$pay,$this);
-				$this->set('pay_form',$form);
-			}
-			if($pay['Payment']['code'] == "paypalcn"){  //贝宝
-				eval($pay_php);
-				$pay_message = $pay['PaymentI18n']['description'];
-				$pay_class = new paypal();	
-				$form = $pay_class->get_code($order_pr,$pay,$this);
-				$this->set('pay_form',$form);
+				eval($str);
+				$url = $pay_class->get_code($order_pr,$pay,$this);
+				$url_format = $url;
+				$this->set('pay_message',$url);
 			}		
 			$result['type'] = 0;
 
 		}
+	   if(!isset($_POST['is_ajax'])){
+			$this->page_init();
+			$this->pageTitle = $result['msg'];
+			$flash_url = $this->server_host.$this->user_webroot."balances";					
+			$this->flash($url_format,$flash_url,10);		
+		}
+		
 		$this->set('result',$result);
    		$this->layout="ajax";
 	}
-
-
-
-
-
-
 }
 ?>

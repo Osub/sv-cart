@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_mysql.php 8120 2009-03-19 20:25:10Z gwoo $ */
+/* SVN FILE: $Id: dbo_mysql.php 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  * MySQL layer for DBO
  *

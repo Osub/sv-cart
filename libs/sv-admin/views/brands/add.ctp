@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 新增品牌
  * ===========================================================================
@@ -9,72 +9,72 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 1883 2009-05-31 11:20:54Z huangbo $
+ * $Id: add.ctp 2485 2009-06-30 11:33:00Z huangbo $
 *****************************************************************************/
 ?> 
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
 <!--Main Start-->
-<p class="add_categories"><strong><?=$html->link($html->image('add.gif',array('align'=>'absmiddle'))."品牌列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."品牌列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
 
 <div class="home_main">
 <?php echo $form->create('Brand',array('action'=>'add','onsubmit'=>'return brands_check();'));
 	
-?><input id="BrandId" name="data[Brand][id]" type="hidden" value="<?= $this->data['Brand']['id'];?>">
+?><input id="BrandId" name="data[Brand][id]" type="hidden" value="<?php echo  $this->data['Brand']['id'];?>">
 <table width="100%" cellpadding="0" cellspacing="0" class="">
 <tr>
 <td align="left" width="50%" valign="top" style="padding-right:5px">
 <!--Communication Stat-->
 	<div class="order_stat athe_infos">
 	  <div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array("class"=>"left"))?>
-	  <?=$html->image('tab_right.gif',array("class"=>"right"))?>
+	  <?php echo $html->image('tab_left.gif',array("class"=>"left"))?>
+	  <?php echo $html->image('tab_right.gif',array("class"=>"right"))?>
 	  编辑品牌</h1></div>
 	  <div class="box">
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-	<input id="BrandI18n<?=$k;?>Locale" name="data[BrandI18n][<?=$k;?>][locale]" type="hidden" value="<?= $v['Language']['locale'];?>">
-<?
+	<input id="BrandI18n<?php echo $k;?>Locale" name="data[BrandI18n][<?php echo $k;?>][locale]" type="hidden" value="<?php echo  $v['Language']['locale'];?>">
+<?php 
 	}
 }?>
   	    <h2>品牌名称：</h2>
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input id="brand_name_<?=$v['Language']['locale']?>" name="data[BrandI18n][<?=$k;?>][name]" type="text" maxlength="100" value=""> <font color="#ff0000">*</font></span></p>
-<?
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input id="brand_name_<?php echo $v['Language']['locale']?>" name="data[BrandI18n][<?php echo $k;?>][name]" type="text" maxlength="100" value=""> <font color="#ff0000">*</font></span></p>
+<?php 
 	}
 }?>
    
 		<h2>品牌描述：</h2>
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><textarea id="BrandI18n<?=$k;?>Description" name="data[BrandI18n][<?=$k;?>][description]" ></textarea> <font color="#ff0000">*</font></span></p>
-<?
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><textarea id="BrandI18n<?php echo $k;?>Description" name="data[BrandI18n][<?php echo $k;?>][description]" ></textarea> <font color="#ff0000">*</font></span></p>
+<?php 
 	}
 }?>
   	   <h2>meta关键字：</h2>
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input id="BrandI18n<?=$k;?>MetaKeywords" name="data[BrandI18n][<?=$k;?>][meta_keywords]" type="text" style="width:215px;" value=""> <font color="#ff0000">*</font></span></p>
-<?
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input id="BrandI18n<?php echo $k;?>MetaKeywords" name="data[BrandI18n][<?php echo $k;?>][meta_keywords]" type="text" style="width:215px;" value=""> <font color="#ff0000">*</font></span></p>
+<?php 
 	}
 }?>
 	    <h2>meta品牌描述：</h2>
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><textarea id="BrandI18n<?=$k;?>MetaDescription" name="data[BrandI18n][<?=$k;?>][meta_description]" ></textarea> <font color="#ff0000">*</font></span></p>
-<?
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><textarea id="BrandI18n<?php echo $k;?>MetaDescription" name="data[BrandI18n][<?php echo $k;?>][meta_description]" ></textarea> <font color="#ff0000">*</font></span></p>
+<?php 
 	}
 }?>
 
 		<h2>品牌LOGO：</h2>
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input  name="data[BrandI18n][<?=$k;?>][img02]" id="upload_img_text_<?=$k?>" type="text" size="50"  /></span> <?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(".$k.",'brands')",'',false,false)?> 
-<br />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<?=@$html->image('',array('id'=>'logo_thumb_img_'.$k,'height'=>'150','style'=>'display:none'))?>
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input  name="data[BrandI18n][<?php echo $k;?>][img02]" id="upload_img_text_<?php echo $k?>" type="text" size="50"  /></span> <?php echo $html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(".$k.",'brands')",'',false,false)?> 
+<br />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<?php echo @$html->image('',array('id'=>'logo_thumb_img_'.$k,'height'=>'150','style'=>'display:none'))?>
 			
 			</p>
-<?
+<?php 
 	}
 }?>
 	  </div>
@@ -90,11 +90,15 @@
 		<dl><dt>品牌网址：</dt>
 			<dd><input type="text" id="BrandUrl" name="data[Brand][url]" class="text_inputs" style="width:286px;" /></dd></dl>
 		<dl><dt>品牌图片1：</dt>
-			<dd><input type="text" id="upload_img_text_1001" name="data[Brand][img01]" value=" " class="text_inputs" style="width:286px;" /></dd><dd><?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(1001,'brands')",'',false,false)?></dd></dl>
-		<dl><dt>品牌图片2：</dt>
-			<dd><input type="text" id="upload_img_text_1002" name="data[Brand][img02]" value=" " class="text_inputs" style="width:286px;" /></dd><dd><?=$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(1002,'brands')",'',false,false)?></dd></dl>
+			<dd><input type="text" id="upload_img_text_1001" name="data[Brand][img01]" value=" " class="text_inputs" style="width:286px;" /></dd><dd><?php echo $html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(1001,'brands')",'',false,false)?></dd></dl>
 		<dl><dt></dt>
-		<dd><?=@$html->image('',array('id'=>'logo_thumb_img_1001','height'=>'150','style'=>'display:none'))?>
+		<dd><?php echo @$html->image('',array('id'=>'logo_thumb_img_1001','height'=>'150','style'=>'display:none'))?>
+
+		</dd></dl>
+		<dl><dt>品牌图片2：</dt>
+			<dd><input type="text" id="upload_img_text_1002" name="data[Brand][img02]" value=" " class="text_inputs" style="width:286px;" /></dd><dd><?php echo $html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(1002,'brands')",'',false,false)?></dd></dl>
+		<dl><dt></dt>
+		<dd><?php echo @$html->image('',array('id'=>'logo_thumb_img_1002','height'=>'150','style'=>'display:none'))?>
 
 		</dd></dl>
 		<dl><dt>排序：</dt><dd class="time"><input id="BrandOrderby" name="data[Brand][orderby]" type="text" class="text" style="width:108px;" onkeyup="check_input_num(this)" /><br />如果您不输入排序号，系统将默认为50</dd></dl>
@@ -111,7 +115,7 @@
 <br />
 <p class="submit_values"><input type="submit" value="确 定" /><input type="submit" value="重 置" /></p>
 <br />
-<? echo $form->end();?>
+<?php echo $form->end();?>
 </div>
 <!--Main Start End-->
 </div>

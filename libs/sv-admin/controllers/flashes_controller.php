@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: flashes_controller.php 1670 2009-05-25 00:47:18Z huangbo $
+ * $Id: flashes_controller.php 3184 2009-07-22 06:09:42Z huangbo $
 *****************************************************************************/
 class FlashesController extends AppController {
 	var $name = 'Flashes';
@@ -32,7 +32,7 @@ class FlashesController extends AppController {
 			$this->Flashe->saveAll( $this->data );	
 			$this->flash("Flsah参数编辑成功","/".$_SESSION['cart_back_url'],10);
 		}else{
-			$_SESSION['cart_back_url'] = str_replace($this->webroot, "", $_SERVER['REQUEST_URI']); 
+			$_SESSION['cart_back_url'] = str_replace($this->admin_webroot, "", $_SERVER['REQUEST_URI']); 
 		}
 	
 		
@@ -141,14 +141,21 @@ class FlashesController extends AppController {
 				$condition1['FlashImage.flash_id'] = $flash_id;
 				$condition1['FlashImage.locale'] = $locale;
 				$value = $this->FlashImage->find($condition1);
-				
 				if(empty($value)){
 					$this->FlashImage->saveAll($this->data);
+					//操作员日志
+					if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	            $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑Flash','operation');
+    	            }
 					$this->flash("Flash编辑成功。点击继续编辑该flash",'/flashes/edit/'.$id,10);
 				}else{
 					$this->FlashImage->belongsTo = array();
 					$this->data['FlashImage']['flash_id'] = $values['Flashe']['id'];
 					$this->FlashImage->save(array('FlashImage'=>$this->data['FlashImage']));
+					//操作员日志
+					if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	            $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑Flash','operation');
+    	            }
 					$this->flash("Flash编辑成功。点击继续编辑该flash",'/flashes/edit/'.$id,10);
 
 				}
@@ -178,11 +185,16 @@ class FlashesController extends AppController {
 		$this->set('b',$b);
 		$this->set('ac',$ac);
 		$this->set('pc',$pc);
+		
 	}
 	
 	//删除FlashImage
 	function remove( $id ){
 		$this->FlashImage->deleteall("FlashImage.id = '".$id."'",false);
+		//操作员日志
+		if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	$this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'移除Flash','operation');
+    	}
 		$this->flash("删除成功",'/flashes/',10);
 	}
 	
@@ -193,7 +205,7 @@ class FlashesController extends AppController {
 		$this->set('navigations',$this->navigations);
 		if($this->RequestHandler->isPost()){
 			$this->data["FlashImage"]["orderby"] = !empty($this->data["FlashImage"]["orderby"])?$this->data["FlashImage"]["orderby"]:50;
-			$this->data["FlashImage"]["title"] = !empty($this->data["FlashImage"]["title"])?$this->data["FlashImage"]["title"]:50;
+			$this->data["FlashImage"]["title"] = !empty($this->data["FlashImage"]["title"])?$this->data["FlashImage"]["title"]:'';
 			$locale = $this->data['FlashImage']['locale'];
 			$condition['type'] = $this->data['Flash']['type'];
 			$condition['type_id'] = isset($this->data['Flash']['type_id'])?$this->data['Flash']['type_id']:"0";
@@ -218,11 +230,19 @@ class FlashesController extends AppController {
 					$data['FlashImage']['flash_id'] = $values['Flashe']['id'];
 					$this->data = $data;
 					$this->FlashImage->saveAll($this->data);
+					//操作员日志
+					if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	            $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加Flash','operation');
+    	             }
 					$this->flash("Flash添加成功。点击继续编辑该flash",'/flashes/edit/'.$this->FlashImage->getLastInsertId(),10);
 				}else{
 					$this->FlashImage->belongsTo = array();
 					$this->data['FlashImage']['flash_id'] = $flasheimg['FlashImage']['flash_id'];
 					$this->FlashImage->save(array('FlashImage'=>$this->data['FlashImage']));
+					//操作员日志
+					if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	            $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加Flash','operation');
+    	             }
 					$this->flash("Flash添加成功。点击继续编辑该flash",'/flashes/edit/'.$this->FlashImage->getLastInsertId(),10);
 				}
 			}
@@ -270,6 +290,11 @@ class FlashesController extends AppController {
 		$condition['type_id'] = $type_id;
 		$flashe = $this->Flashe->find( $condition );
 		//pr($flashe);
+		//操作员日志
+		if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	$this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'更改Flash设置','operation');
+    	}
+		
 		$this->set('flashe',$flashe);
 		Configure::write('debug',0);
 		$results['message'] = $flashe;

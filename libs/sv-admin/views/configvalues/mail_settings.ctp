@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 商店设置
  * ===========================================================================
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 725 2009-04-17 08:00:21Z huangbo $
+ * $Id: mail_settings.ctp 2703 2009-07-08 11:54:52Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -49,15 +49,15 @@ td select,td input{font-size:12px;font-family:arial;}
 <?php echo $form->create('Configvalue',array('action'=>'mail_settings_edit','enctype'=>"multipart/form-data"));?>
 <div class="order_stat athe_infos configvalues">
  <ul class="cat_tab">
-    <?if(isset($basics) && sizeof($basics)>0){?>
+    <?php if(isset($basics) && sizeof($basics)>0){?>
   <?php $i=0;$n=1;
    foreach($basics as $k=>$v){ ?>
- <?if($n==1){?>
+ <?php if($n==1){?>
  <li class="hdblock3_on" id="hdblock3_t<?php echo $sumbasic.$n;?>" onclick="show_intro('hdblock3_c<?php echo $sumbasic;?>','hdblock3_t<?php echo $sumbasic;?>',<?php echo $sumbasic;?>,<?php echo $n;?>,'hdblock3')">邮件服务器设置</li> 
- <?}else{?>
+ <?php }else{?>
  <li class="hdblock3_off" id="hdblock3_t<?php echo $sumbasic.$n;?>" onclick="show_intro('hdblock3_c<?php echo $sumbasic;?>','hdblock3_t<?php echo $sumbasic;?>',<?php echo $sumbasic;?>,<?php echo $n;?>,'hdblock3')">邮件服务器设置</li> 
  <?php }$n++;}?>
- 	 <?}?>
+ 	 <?php }?>
  </ul>
  <div class="box">
 <?php $n=1;foreach($basics as $infoes){?>
@@ -73,12 +73,12 @@ if($info['Config']['type']=="select"){?>
 <table>
  <?php foreach($languages as $k=>$v){if(isset($info['ConfigI18n'][$v['Language']['locale']]['id']) && !empty($info['ConfigI18n'][$v['Language']['locale']]['id'])){?>
  <tr>
- <td><?=$v['Language']['name'];?></td>
- <input name="data[<?=$i;?>][locale]" type="hidden" value="<?= $v['Language']['locale'];?>">
- <input name="data[<?=$i;?>][config_id]" type="hidden" value="<?= $info['Config']['id'];?>">
- <input name="data[<?=$i;?>][id]" type="hidden" value="<?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['id'])) echo $info['ConfigI18n'][$v['Language']['locale']]['id'];?>">
+ <td><?php echo $v['Language']['name'];?></td>
+ <input name="data[<?php echo $i;?>][locale]" type="hidden" value="<?php echo  $v['Language']['locale'];?>">
+ <input name="data[<?php echo $i;?>][config_id]" type="hidden" value="<?php echo  $info['Config']['id'];?>">
+ <input name="data[<?php echo $i;?>][id]" type="hidden" value="<?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['id'])) echo $info['ConfigI18n'][$v['Language']['locale']]['id'];?>">
  
- <td><select name="data[<?=$i;?>][value]"/>
+ <td><select name="data[<?php echo $i;?>][value]"/>
  <?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['options']) && !empty($info['ConfigI18n'][$v['Language']['locale']]['options'])){$options = explode(';',$info['ConfigI18n'][$v['Language']['locale']]['options']);foreach($options as $option){$text =explode(":",$option);?>
  <option value="<?php echo $text[0];?>" <?php if($text[0]==$info['ConfigI18n'][$v['Language']['locale']]['value']) echo 'selected';?>><?php if(@$text[1]){ echo $text[1];} ?></option>
 
@@ -97,12 +97,12 @@ if($info['Config']['type']=="select"){?>
  <table>
  <?php foreach($languages as $k=>$v){if(isset($info['ConfigI18n'][$v['Language']['locale']]['id'])&&!empty($info['ConfigI18n'][$v['Language']['locale']]['id'])){?>
  <tr>
- <td><?=$v['Language']['name'];?></td>
+ <td><?php echo $v['Language']['name'];?></td>
  <td class="textinput">
- <input name="data[<?=$i;?>][locale]" type="hidden" value="<?= $v['Language']['locale'];?>">
- <input name="data[<?=$i;?>][config_id]" type="hidden" value="<?= $info['Config']['id'];?>">
- <input name="data[<?=$i;?>][id]" type="hidden" value="<?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['id'])) echo $info['ConfigI18n'][$v['Language']['locale']]['id'];?>">
- <input type="text" size="50" name="data[<?=$i;?>][value]" id="<?=$info['Config']['code']?><?=$v['Language']['locale'];?>" value="<?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['value']))echo $info['ConfigI18n'][$v['Language']['locale']]['value']; ?>" /><?=$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:config_help({$info['ConfigI18n'][$v['Language']['locale']]['id']})",'',false,false)?><span id="config_help_<?=$info['ConfigI18n'][$v['Language']['locale']]['id']?>" style="visibility :hidden" ><?=$info['ConfigI18n'][$v['Language']['locale']]['description']?>
+ <input name="data[<?php echo $i;?>][locale]" type="hidden" value="<?php echo  $v['Language']['locale'];?>">
+ <input name="data[<?php echo $i;?>][config_id]" type="hidden" value="<?php echo  $info['Config']['id'];?>">
+ <input name="data[<?php echo $i;?>][id]" type="hidden" value="<?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['id'])) echo $info['ConfigI18n'][$v['Language']['locale']]['id'];?>">
+ <input type="text" size="50" name="data[<?php echo $i;?>][value]" id="<?php echo $info['Config']['code']?><?php echo $v['Language']['locale'];?>" value="<?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['value']))echo $info['ConfigI18n'][$v['Language']['locale']]['value']; ?>" /><?php echo $html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:config_help({$info['ConfigI18n'][$v['Language']['locale']]['id']})",'',false,false)?><span id="config_help_<?php echo $info['ConfigI18n'][$v['Language']['locale']]['id']?>" style="visibility :hidden" ><?php echo $info['ConfigI18n'][$v['Language']['locale']]['description']?>
  
  </td>
  </tr>
@@ -119,12 +119,12 @@ if($info['Config']['type']=="select"){?>
  <table>
  <?php foreach($languages as $k=>$v){if(isset($info['ConfigI18n'][$v['Language']['locale']]['id'])&&!empty($info['ConfigI18n'][$v['Language']['locale']]['id'])){?>
  <tr>
- <td><?=$v['Language']['name'];?></td>
+ <td><?php echo $v['Language']['name'];?></td>
  <td class="textinput">
- <input name="data[<?=$i;?>][locale]" type="hidden" value="<?= $v['Language']['locale'];?>">
- <input name="data[<?=$i;?>][config_id]" type="hidden" value="<?= $info['Config']['id'];?>">
- <input name="data[<?=$i;?>][id]" type="hidden" value="<?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['id'])) echo $info['ConfigI18n'][$v['Language']['locale']]['id'];?>">
- <textarea name="data[<?=$i;?>][value]"><?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['value']))echo $info['ConfigI18n'][$v['Language']['locale']]['value']; ?></textarea><?=$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:config_help({$info['ConfigI18n'][$v['Language']['locale']]['id']})",'',false,false)?><span id="config_help_<?=$info['ConfigI18n'][$v['Language']['locale']]['id']?>" style="visibility :hidden" ><?=$info['ConfigI18n'][$v['Language']['locale']]['description']?>
+ <input name="data[<?php echo $i;?>][locale]" type="hidden" value="<?php echo  $v['Language']['locale'];?>">
+ <input name="data[<?php echo $i;?>][config_id]" type="hidden" value="<?php echo  $info['Config']['id'];?>">
+ <input name="data[<?php echo $i;?>][id]" type="hidden" value="<?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['id'])) echo $info['ConfigI18n'][$v['Language']['locale']]['id'];?>">
+ <textarea name="data[<?php echo $i;?>][value]"><?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['value']))echo $info['ConfigI18n'][$v['Language']['locale']]['value']; ?></textarea><?php echo $html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:config_help({$info['ConfigI18n'][$v['Language']['locale']]['id']})",'',false,false)?><span id="config_help_<?php echo $info['ConfigI18n'][$v['Language']['locale']]['id']?>" style="visibility :hidden" ><?php echo $info['ConfigI18n'][$v['Language']['locale']]['description']?>
  </td>
  </tr>
  
@@ -140,16 +140,16 @@ if($info['Config']['type']=="select"){?>
  <table>
  <?php foreach($languages as $k=>$v){if(isset($info['ConfigI18n'][$v['Language']['locale']]['id'])&&!empty($info['ConfigI18n'][$v['Language']['locale']]['id'])){?>
  <tr>
- <td><?=$v['Language']['name'];?></td>
- <input name="data[<?=$i;?>][locale]" type="hidden" value="<?= $v['Language']['locale'];?>">
- <input name="data[<?=$i;?>][config_id]" type="hidden" value="<?= $info['Config']['id'];?>">
- <input name="data[<?=$i;?>][id]" type="hidden" value="<?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['id'])) echo $info['ConfigI18n'][$v['Language']['locale']]['id'];?>">
+ <td><?php echo $v['Language']['name'];?></td>
+ <input name="data[<?php echo $i;?>][locale]" type="hidden" value="<?php echo  $v['Language']['locale'];?>">
+ <input name="data[<?php echo $i;?>][config_id]" type="hidden" value="<?php echo  $info['Config']['id'];?>">
+ <input name="data[<?php echo $i;?>][id]" type="hidden" value="<?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['id'])) echo $info['ConfigI18n'][$v['Language']['locale']]['id'];?>">
  <td>
  <?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['options'])){$options = $info['ConfigI18n'][$v['Language']['locale']]['options'];foreach($options as $option){$text =explode(":",$option); if(@$text[1]!=""){?>
- <label><input type="radio" id="<?=$info['Config']['code'].$v['Language']['locale']?>" name="data[<?=$i;?>][value]" value="<?php echo $text[0];?>" <?php if(@$text[0]==$info['ConfigI18n'][$v['Language']['locale']]['value']) echo 'checked';?>/><?php if(@$text[1]){ echo $text[1];}?></label>
- <?php }}?><?=$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:config_help({$info['ConfigI18n'][$v['Language']['locale']]['id']})",'',false,false)?><span id="config_help_<?=$info['ConfigI18n'][$v['Language']['locale']]['id']?>" style="visibility :hidden" ><?=$info['ConfigI18n'][$v['Language']['locale']]['description']?>
+ <label><input type="radio" id="<?php echo $info['Config']['code'].$v['Language']['locale']?>" name="data[<?php echo $i;?>][value]" value="<?php echo $text[0];?>" <?php if(@$text[0]==$info['ConfigI18n'][$v['Language']['locale']]['value']) echo 'checked';?>/><?php if(@$text[1]){ echo $text[1];}?></label>
+ <?php }}?><?php echo $html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:config_help({$info['ConfigI18n'][$v['Language']['locale']]['id']})",'',false,false)?><span id="config_help_<?php echo $info['ConfigI18n'][$v['Language']['locale']]['id']?>" style="visibility :hidden" ><?php echo $info['ConfigI18n'][$v['Language']['locale']]['description']?>
  </td>
- <?} ?>
+ <?php } ?>
  </tr>
  <?php $i++;}}?>
  </table></td>
@@ -162,20 +162,20 @@ if($info['Config']['type']=="select"){?>
  <table class="water">
  <?php foreach($languages as $k=>$v){if(isset($info['ConfigI18n'][$v['Language']['locale']]['id'])&&!empty($info['ConfigI18n'][$v['Language']['locale']]['id'])){?>
  <tr>
- <td><?=$v['Language']['name'];?></td>
+ <td><?php echo $v['Language']['name'];?></td>
  <td class="textinput select_img">
- <input name="data[<?=$i;?>][locale]" type="hidden" value="<?= $v['Language']['locale'];?>">
- <input name="data[<?=$i;?>][config_id]" type="hidden" value="<?= $info['Config']['id'];?>">
- <input name="data[<?=$i;?>][id]" type="hidden" value="<?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['id'])) echo $info['ConfigI18n'][$v['Language']['locale']]['id'];?>">
- <input type="text" size="50" name="data[<?=$i;?>][value]" id="upload_img_text_<?=$i;?>" value="<?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['value']))echo $info['ConfigI18n'][$v['Language']['locale']]['value']; ?>" />
- <?=$html->link($html->image('select_img.gif',$title_arr['select_img'],array("align"=>"absmiddle")),"javascript:img_sel(".$i.",'others')",'',false,false)?>
+ <input name="data[<?php echo $i;?>][locale]" type="hidden" value="<?php echo  $v['Language']['locale'];?>">
+ <input name="data[<?php echo $i;?>][config_id]" type="hidden" value="<?php echo  $info['Config']['id'];?>">
+ <input name="data[<?php echo $i;?>][id]" type="hidden" value="<?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['id'])) echo $info['ConfigI18n'][$v['Language']['locale']]['id'];?>">
+ <input type="text" size="50" name="data[<?php echo $i;?>][value]" id="upload_img_text_<?php echo $i;?>" value="<?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['value']))echo $info['ConfigI18n'][$v['Language']['locale']]['value']; ?>" />
+ <?php echo $html->link($html->image('select_img.gif',$title_arr['select_img'],array("align"=>"absmiddle")),"javascript:img_sel(".$i.",'others')",'',false,false)?>
  </td>
  <td>
- <?=@$html->image("{$info['ConfigI18n'][$v['Language']['locale']]['value']}",array('id'=>'logo_thumb_img_'.$i,'height'=>'150','style'=>'display:none'))?>
+ <?php echo @$html->image("{$info['ConfigI18n'][$v['Language']['locale']]['value']}",array('id'=>'logo_thumb_img_'.$i,'height'=>'150','style'=>!empty($info['ConfigI18n'][$v['Language']['locale']]['value'])?"display:block":"display:none"))?>
 </td>
  <td valign="middle">
- <?=@$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:config_help({$info['ConfigI18n'][$v['Language']['locale']]['id']})",'',false,false)?>
- <span id="config_help_<?=$info['ConfigI18n'][$v['Language']['locale']]['id']?>" style="visibility :hidden" ><?=$info['ConfigI18n'][$v['Language']['locale']]['description']?></span>
+ <?php echo @$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:config_help({$info['ConfigI18n'][$v['Language']['locale']]['id']})",'',false,false)?>
+ <span id="config_help_<?php echo $info['ConfigI18n'][$v['Language']['locale']]['id']?>" style="visibility :hidden" ><?php echo $info['ConfigI18n'][$v['Language']['locale']]['description']?></span>
  </td>
  </tr>
  <?php $i++;}}?>
@@ -190,14 +190,14 @@ if($info['Config']['type']=="select"){?>
  <table>
  <?php foreach($languages as $k=>$v){if(isset($info['ConfigI18n'][$v['Language']['locale']]['id'])&&!empty($info['ConfigI18n'][$v['Language']['locale']]['id'])){?>
  <tr>
- <td><?=$v['Language']['name'];?></td>
+ <td><?php echo $v['Language']['name'];?></td>
  <td>
- <input name="data[<?=$i;?>][locale]" type="hidden" value="<?= $v['Language']['locale'];?>">
- <input name="data[<?=$i;?>][config_id]" type="hidden" value="<?= $info['Config']['id'];?>">
- <input name="data[<?=$i;?>][id]" type="hidden" value="<?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['id'])) echo $info['ConfigI18n'][$v['Language']['locale']]['id'];?>">
+ <input name="data[<?php echo $i;?>][locale]" type="hidden" value="<?php echo  $v['Language']['locale'];?>">
+ <input name="data[<?php echo $i;?>][config_id]" type="hidden" value="<?php echo  $info['Config']['id'];?>">
+ <input name="data[<?php echo $i;?>][id]" type="hidden" value="<?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['id'])) echo $info['ConfigI18n'][$v['Language']['locale']]['id'];?>">
  <?php if(isset($info['ConfigI18n'][$v['Language']['locale']]['options'])&&!empty($info['ConfigI18n'][$v['Language']['locale']]['options'])){$checkoptions = explode(';',$info['ConfigI18n'][$v['Language']['locale']]['value']);$options = $info['ConfigI18n'][$v['Language']['locale']]['options'];foreach($options as $option){$text =explode(":",$option);if(@$text[1]!=""){?>
- <label><input type="checkbox" name="data[<?=$i;?>][value][]" value="<?php echo $text[0];?>" <?php if( in_array($text[0],$checkoptions)) echo 'checked';?>/><?php if(@$text[1]){ echo $text[1];}?></label>
- <?php } ?><?}?><?=$html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:config_help({$info['ConfigI18n'][$v['Language']['locale']]['id']})",'',false,false)?><span id="config_help_<?=$info['ConfigI18n'][$v['Language']['locale']]['id']?>" style="visibility :hidden" ><?=$info['ConfigI18n'][$v['Language']['locale']]['description']?>
+ <label><input type="checkbox" name="data[<?php echo $i;?>][value][]" value="<?php echo $text[0];?>" <?php if( in_array($text[0],$checkoptions)) echo 'checked';?>/><?php if(@$text[1]){ echo $text[1];}?></label>
+ <?php } ?><?php }?><?php echo $html->link($html->image('help_icon.gif',$title_arr['help']),"javascript:config_help({$info['ConfigI18n'][$v['Language']['locale']]['id']})",'',false,false)?><span id="config_help_<?php echo $info['ConfigI18n'][$v['Language']['locale']]['id']?>" style="visibility :hidden" ><?php echo $info['ConfigI18n'][$v['Language']['locale']]['description']?>
  </td>
  </tr>
  <?php $i++;}}}?>

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: category.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: category.php 2304 2009-06-26 07:00:53Z zhengli $
 *****************************************************************************/
 class Category extends AppModel
 {
@@ -32,28 +32,36 @@ class Category extends AppModel
     	$this->hasOne['CategoryI18n']['conditions'] = $conditions;
     }
 
-	function tree($type='P',$category_id = 0){
-		$this->categories_parent_format=array();
-		$this->cat_navigate_format=array();
-		$this->all_subcat = array();
-		$this->allinfo =array();
-		$lists=$this->findall("status ='1' AND type='".$type."' ",'','orderby asc');
-		$lists_formated = array();
-	//	pr($lists);  全部的分类
-		if(is_array($lists)){
-			foreach($lists as $k => $v){
-				$lists_formated[$v['Category']['id']]=$v;
-			}
-		//	pr($lists_formated); 格式化为ID为序
-			$this->allinfo['assoc']=$lists_formated;
-			
-			foreach($lists as $k=>$v){
-				$this->categories_parent_format[$v['Category']['parent_id']][]=$v;
-			}
-		//	pr($this->categories_parent_format); //格式化为以parent_id为序
-			$this->allinfo['tree']=$this->subcat_get(0);
-			$this->allinfo['subids']=$this->all_subcat;
+	function tree($type='P',$category_id = 0,$locale=''){
+		$cache_key = md5($this->name.'_'.$type.'_'.$category_id.'_'.$locale);
+		$this->allinfo = cache::read($cache_key);	
+		if($this->allinfo){
 			return $this->allinfo;
+		}else{
+			$this->categories_parent_format=array();
+			$this->cat_navigate_format=array();
+			$this->all_subcat = array();
+			$this->allinfo =array();
+			$lists=$this->findall("status ='1' AND type='".$type."' ",'','orderby asc');
+			$lists_formated = array();
+		//	pr($lists);  全部的分类
+			if(is_array($lists)){
+				foreach($lists as $k => $v){
+					$lists_formated[$v['Category']['id']]=$v;
+				}
+			//	pr($lists_formated); 格式化为ID为序
+				$this->allinfo['assoc']=$lists_formated;
+				
+				foreach($lists as $k=>$v){
+					$this->categories_parent_format[$v['Category']['parent_id']][]=$v;
+				}
+			//	pr($this->categories_parent_format); //格式化为以parent_id为序
+				$this->allinfo['tree']=$this->subcat_get(0);
+				$this->allinfo['subids']=$this->all_subcat;
+				
+				cache::write($cache_key,$this->allinfo);
+				return $this->allinfo;
+			}
 		}
 	}
 	
@@ -102,17 +110,24 @@ class Category extends AppModel
 	
 //class_end
 	//hobby 20081117 取得id=>name的数组
-	function findassoc(){
+	function findassoc($locale =''){
 		$condition=" Category.status ='1' ";
 		$orderby = " orderby asc ";
+		$cache_key = md5($this->name.'_'.$locale);
+		
+		$lists_formated = cache::read($cache_key);	
+		if($lists_formated){
+			return $lists_formated;
+		}else{
 		$lists=$this->findall($condition,'',$orderby);
 		$lists_formated = array();
 		if(is_array($lists))
 			foreach($lists as $k => $v){
 				$lists_formated[$v['Category']['id']]=$v;
 			}
-		
+		cache::write($cache_key,$lists_formated);
 		return $lists_formated;
+		}
 	}
 	
 	//分类详细页递归获取下级分类信息以及id集合开始
@@ -189,7 +204,20 @@ function cat_navigate($type='P',$category_id){
     	}
 	}
 	
-
-
+	function find_all($locale){
+		$params = array('order' => array('Category.modified DESC'),
+		    			'conditions' => array("Category.status" => 1)
+			   			);
+		$article_categorys = $this->cache_find('all',$params,$this->name.$locale);
+		$article_categorys_list = array();			
+		if(sizeof($article_categorys)>0){
+			foreach($article_categorys as $k=>$v){
+				$article_categorys_list[$v['Category']['id']] = $v;
+			}
+		}
+		
+		return $article_categorys_list;		
+		
+	}
 }
 ?>

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: config.php 1732 2009-05-25 12:03:32Z huangbo $
+ * $Id: config.php 2952 2009-07-16 09:56:25Z huangbo $
 *****************************************************************************/
 class Config extends AppModel
 {
@@ -43,8 +43,8 @@ class Config extends AppModel
 			return $configs_formatcode;
 		}else{
 			$condition = " store_id = '".$store_id."'";
-			$configs=$this->findAll($condition,'','orderby asc');
-			
+	//		$configs=$this->findAll($condition,'','orderby asc');
+			$configs=$this->find('all',array('order'=>'orderby asc','fields'=>array('Config.code','ConfigI18n.value'),'conditions'=>array($condition)));
 			$configs_formatcode =array();
 			if(is_array($configs))
 			foreach($configs as $v){

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: shippingments_controller.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: shippingments_controller.php 3184 2009-07-22 06:09:42Z huangbo $
 *****************************************************************************/
 class ShippingmentsController extends AppController {
 	var $name = 'Shippingments';
@@ -56,34 +56,60 @@ class ShippingmentsController extends AppController {
 		$this->pageTitle = "编辑配送方式- 配送方式"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'配送方式','url'=>'/shippingments/');
 		$this->navigations[] = array('name'=>'编辑配送方式','url'=>'');
-		$this->set('navigations',$this->navigations);
-		
+	
+		$this->Shipping->hasOne = array();
+        $this->Shipping->hasMany = array('ShippingI18n'     =>array
+												( 
+												  'className'    => 'ShippingI18n',   
+					                              'order'        => '',   
+					                              'dependent'    =>  true,   
+					                              'foreignKey'   => 'shipping_id'
+					                        	 ) 
+                 	   );
 		if($this->RequestHandler->isPost()){
-			$this->Shipping->updateAll(
-				array('Shipping.insure_fee' =>$this->data['Shipping']['insure_fee']),
-				array('Shipping.id' =>$id)
-			);
-			$this->Shipping->updateAll(
-				array('Shipping.support_cod' =>$this->data['Shipping']['support_cod']),
-				array('Shipping.id' =>$id)
-			);
-			
-			$this->ShippingI18n->updateAll(
-				array('name' =>"'".$this->data['ShippingI18n']['name']."'"),
-				array('id' =>$this->data['ShippingI18n']['id'])
-			);
-			$this->ShippingI18n->updateAll(
-				array('description' =>"'".$this->data['ShippingI18n']['description']."'"),
-				array('id' =>$this->data['ShippingI18n']['id'])
-			);
-
-			$this->flash("配送方式 ".$this->data['ShippingI18n']['name']." 编辑成功。点击继续编辑该配送方式。",'/shippingments/edit/'.$id,10);
+			$php_code = serialize(@$this->data['php_code']);
+			$shipping['insure_fee'] = $this->data['Shipping']['insure_fee'];
+			$shipping['support_cod'] = $this->data['Shipping']['support_cod'];
+			$shipping['php_code'] = $php_code;
+	  	    $shipping['id'] = $id;
+			$this->Shipping->save($shipping);			
+			foreach( $this->data["ShippingI18n"] as $k=>$v ){
+				$ShippingI18n = array(
+					"id"=>!empty($v["id"])?$v["id"]:"",
+					"shipping_id"=>$id,
+					"locale"=>$v["locale"],
+					"name"=>$v["name"],
+					"description"=>$v["description"]
+				);
+				if($v["locale"]==$this->locale){
+					$name = $v["name"];
+				}
+				$this->ShippingI18n->save(array("ShippingI18n"=>$ShippingI18n));
+			}
+			//操作员日志
+    	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑配送方式:'.$name ,'operation');
+    	    }
+			$this->flash("配送方式 ".$name." 编辑成功。点击继续编辑该配送方式。",'/shippingments/edit/'.$id,10);
 
 		}
-		$this->Shipping->set_locale($this->locale);
 		$Shipping_info = $this->Shipping->findById($id);
-		$this->set('Shipping_info',$Shipping_info);
+		if($Shipping_info['Shipping']['code'] == "usps"){
+			$php_code = unserialize(StripSlashes($Shipping_info['Shipping']['php_code']));
+			$this->set('php_code',$php_code);
+		//	pr($php_code);
+		}
 		
+		
+		foreach( $Shipping_info["ShippingI18n"] as $k=>$v ){
+			$Shipping_info["ShippingI18n"][$v["locale"]] = $v;
+		}
+		//pr($Shipping_info);
+		$this->set('Shipping_info',$Shipping_info);
+		//leo20090722导航显示
+		$this->navigations[] = array('name'=>$Shipping_info["ShippingI18n"][$this->locale]["name"],'url'=>'');
+	    $this->set('navigations',$this->navigations);
+
 	}
 	function area_edit($id,$ids=""){
 		$this->pageTitle = "编辑配送方式- 配送方式"." - ".$this->configs['shop_name'];
@@ -91,7 +117,6 @@ class ShippingmentsController extends AppController {
 		$this->Shipping->set_locale($this->locale);
 		$Shipping_info = $this->Shipping->findById($ids);
 		$this->navigations[] = array('name'=>$Shipping_info['ShippingI18n']['name'],'url'=>'/shippingments/area/'.$ids);
-		$this->set('navigations',$this->navigations);
 		if($this->RequestHandler->isPost()){
 			$this->data['ShippingArea']['orderby'] = !empty($this->data['ShippingArea']['orderby'])?$this->data['ShippingArea']['orderby']:50;
 			if( isset( $_REQUEST['items'] ) ){
@@ -104,6 +129,14 @@ class ShippingmentsController extends AppController {
 				$this->ShippingAreaRegion->deleteall("shipping_area_id = '".$id."'",false);
 				$this->ShippingAreaRegion->saveAll( $datas );
 			}
+			if(isset($_REQUEST['money']) && sizeof($_REQUEST['money'])>0){
+				foreach($_REQUEST['money'] as $k=>$v){
+					if($v['value'] == ""){
+						$_REQUEST['money'][$k]['value'] = 0;
+					}
+				}
+			}
+		//	pr($_REQUEST['money']);exit;
         	$money = serialize( $_REQUEST['money'] );
         	$this->data['ShippingArea']['fee_configures'] = $money;
         	$this->ShippingAreaI18n->deleteall("shipping_area_id = '".$this->data['ShippingArea']['id']."'",false);
@@ -115,6 +148,10 @@ class ShippingmentsController extends AppController {
 					$userinformation_name = $v['name'];
 				}
 			}
+			//操作员日志
+    	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑配送区域:'.$userinformation_name ,'operation');
+    	    }
 			$this->flash("配送区域 ".$userinformation_name." 编辑成功。点击继续编辑该配送区域。",'/shippingments/area/'.$_REQUEST['re_id'],10);
 
 
@@ -142,9 +179,19 @@ class ShippingmentsController extends AppController {
 		//pr($shippingarea);
 		$this->set('region',$region);
 		$this->set('region_country',$region_country);
+		//leo20090722导航显示
+		$this->navigations[] = array('name'=>$shippingarea["ShippingAreaI18n"][$this->locale]["name"],'url'=>'');
+	    $this->set('navigations',$this->navigations);
+
 	}
 	function remove($id){
+		$pn = $this->ShippingAreaI18n->find('list',array('fields' => array('ShippingAreaI18n.shipping_area_id','ShippingAreaI18n.name'),'conditions'=> 
+                       array('ShippingAreaI18n.shipping_area_id'=>$id,'ShippingAreaI18n.locale'=>$this->locale)));
 		$this->ShippingArea->deleteAll("ShippingArea.id='$id'");
+		//操作员日志
+    	if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	$this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'删除配送区域:'.$pn[$id] ,'operation');
+    	}
 		$this->flash("删除成功",'/shippingments/area/'.$_REQUEST['re_id'],10);
 	
 	}
@@ -220,6 +267,14 @@ class ShippingmentsController extends AppController {
 	
 		if($this->RequestHandler->isPost()){
 			$this->data['ShippingArea']['orderby'] = !empty($this->data['ShippingArea']['orderby'])?$this->data['ShippingArea']['orderby']:50;
+			if(isset($_REQUEST['money']) && sizeof($_REQUEST['money'])>0){
+				foreach($_REQUEST['money'] as $k=>$v){
+					if($v['value'] == ""){
+						$_REQUEST['money'][$k]['value'] = 0;
+					}
+				}
+			}
+		
 			$money = serialize( $_REQUEST['money'] );
         	$this->data['ShippingArea']['fee_configures'] = !empty($money)?$money:0;
 			$this->data['ShippingArea']['free_subtotal'] = !empty($this->data['ShippingArea']['free_subtotal'])?$this->data['ShippingArea']['free_subtotal']:0;
@@ -239,6 +294,10 @@ class ShippingmentsController extends AppController {
 					$userinformation_name = $v['name'];
 				}
 			}
+			//操作员日志
+    	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加配送区域:'.$userinformation_name ,'operation');
+    	    }
 			$this->flash("配送区域 ".$userinformation_name." 编辑成功。点击继续编辑该配送区域。",'/shippingments/area_edit/'.$this->ShippingArea->getLastInsertID().'/'.$id,10);
 
         	//pr($this->data);
@@ -261,7 +320,13 @@ class ShippingmentsController extends AppController {
 			              array('Shipping.status' => 1),
 			              array('Shipping.id' => $id)
 			           );
-         $this->flash("安装成功",'/shippingments/',10);
+		$this->Shipping->set_locale($this->locale);
+		$ship_info = $this->Shipping->findById($id);
+		//操作员日志
+    	if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	$this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'安装配送方式:'.$ship_info['ShippingI18n']['name'] ,'operation');
+    	}
+        $this->flash("安装成功",'/shippingments/',10);
 	
 	}
 	function uninstall( $id ){
@@ -269,6 +334,12 @@ class ShippingmentsController extends AppController {
 			              array('Shipping.status' => 0),
 			              array('Shipping.id' => $id)
 			           );
+		$this->Shipping->set_locale($this->locale);
+		$ship_info = $this->Shipping->findById($id);
+		//操作员日志
+    	if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	$this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'卸载配送方式:'.$ship_info['ShippingI18n']['name'] ,'operation');
+    	}
          $this->flash("卸载成功",'/shippingments/',10);
 	
 	}

@@ -9,11 +9,14 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: navigation.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: navigation.php 2304 2009-06-26 07:00:53Z zhengli $
 *****************************************************************************/
 class Navigation extends AppModel
 {
 	var $name = 'Navigation';
+	var $cacheQueries = true;
+	var $cacheAction = "1 day";
+	
 	var $hasOne = array('NavigationI18n' =>   
                         array('className'    => 'NavigationI18n',   
                               'order'        => '',   
@@ -38,15 +41,23 @@ class Navigation extends AppModel
 		return $navigations;
 	}
 	
-	function get_types(){
-		$navigations_array=array();
-		$condition = "status ='1'";
-		$navigations=$this->findAll($condition,'','orderby asc');
-		if(is_array($navigations))
-			foreach($navigations as $k=>$v){
-				$navigations_array[$v['Navigation']['type']][]=$v;
-			}
-		return $navigations_array;
+	function get_types($locale){
+		$cache_key = md5($this->name.'_'.$locale);
+		
+		$navigations_array = cache::read($cache_key);	
+		if($navigations_array){
+			return $navigations_array;
+		}else{
+			$navigations_array=array();
+			$condition = "status ='1'";
+			$navigations=$this->find('all',array("order"=>'orderby asc',"conditions"=>array($condition)));
+			if(is_array($navigations))
+				foreach($navigations as $k=>$v){
+					$navigations_array[$v['Navigation']['type']][]=$v;
+				}
+			cache::write($cache_key,$navigations_array);
+			return $navigations_array;
+		}
 	}
 }
 ?>

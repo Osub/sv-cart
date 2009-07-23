@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: operator_action.php 1261 2009-05-08 07:18:58Z huangbo $
+ * $Id: operator_action.php 2418 2009-06-30 02:03:55Z zhengli $
 *****************************************************************************/
 class Operator_action extends AppModel
 {
@@ -85,7 +85,11 @@ class Operator_action extends AppModel
 		return $subcat;
 	}
     
-    
+    function find_action($condition,$locale){
+   	    $all_action = $this->cache_find('all',array('conditions'=>array($condition)),$this->name.$locale);
+    	
+    	return $all_action;
+    }
 
 }
 ?>

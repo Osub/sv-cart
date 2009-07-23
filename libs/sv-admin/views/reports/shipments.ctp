@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart  待发货单管理
  * ===========================================================================
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: shipments.ctp 1670 2009-05-25 00:47:18Z huangbo $
+ * $Id: shipments.ctp 2989 2009-07-17 02:03:04Z huangbo $
 *****************************************************************************/
 ?>
 
@@ -21,11 +21,23 @@
 	
 	
 <div class="search_box">
-<?php echo $form->create('Report',array('action'=>'shipments'));?>
+<?php echo $form->create('Report',array('action'=>'shipments/','name'=>"ShipmentsForm"));?>
 	<dl>
-	<dt style="padding-top:0;"><?=$html->image('serach_icon.gif',array('align'=>'left'))?></dt>
-	<dd><p class="reg_time article">选择日期：<input type="text" class="time" name="start_time" value="<?php echo $start_time?>" id="date" readonly="readonly" /><button type="button" id="show"><?=$html->image('calendar.gif')?></button>－<input type="text" class="time" name="end_time" value="<?php echo $end_time?>" id="date2" readonly="readonly"  /><button type="button" id="show2" ><?=$html->image('calendar.gif')?></button></p></dd>
-	<dt style="" class="curement"><input type="submit" value="查询" /></dt>
+	<dt style="padding-top:0;"><?php echo $html->image('serach_icon.gif',array('align'=>'left'))?></dt>
+	<dd><p class="reg_time article">选择日期：<input type="text" class="time" name="start_time" value="<?php echo $start_time?>" id="date" readonly="readonly" /><?php echo $html->image('calendar.gif',array("id"=>"show","class"=>"calendar"))?>
+	<input type="text" class="time" name="end_time" value="<?php echo $end_time?>" id="date2" readonly="readonly"  /><?php echo $html->image('calendar.gif',array("id"=>"show2","class"=>"calendar"))?>
+		<?php if(isset($SVConfigs["mlti_currency_module"]) && $SVConfigs["mlti_currency_module"]==1){?>
+
+	语言:	<select name="order_locale">
+		<?php if(isset($languages) && sizeof($languages)>0){?>
+			<option value="all">all</option>
+			<?php foreach ($languages as $k => $v){?>
+			<option value="<?php echo $v['Language']['locale']?>" <?php if($v['Language']['locale']==$locale){echo "selected";}?>><?php echo $v['Language']['name']?></option>
+		<?php }}?>
+	</select>
+		<?php }?>
+	</p></dd>
+	<dt style="" class="curement"><input type="button" value="查询" onclick="sub_action()"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="导出"  onclick="export_action()"/> </dt>
 	</dl>
 <?php $form->end()?>
 </div>
@@ -33,53 +45,53 @@
 <!--Search End-->
 <!--Main Start-->
 <div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
+<table cellpadding="0" cellspacing="0" width="100%" class="list_data">
+<tr class="thead">
+	<th width="150">订单号</th>
+	<th>姓名</th>
+	<th>地址</th>
+	<th>电话</th>
+	<th>付款方式</th>
+	<th>付款日期</th>
+	<th>金额总计</th>
+</tr>
+<?php if(isset($orders) && sizeof($orders)>0){?>
+<?php foreach($orders as $order){?>
+<tr bgcolor="#f7f7f7">
+	<td class="order_num no_wrap"><?php echo $html->image('menu_plus.gif')?> <?php echo $html->link($order['Order']['order_code'],'/orders/'.$order['Order']['id'],array("target"=>"_blank"),false,false);?></td>
+	<td><?php echo $order['Order']['consignee']?></td>
+	<td><?php echo $order['Order']['address']?></td>
+	<td><?php echo $order['Order']['telephone']?></td>
+	<td align="center"><?php echo $order['Order']['payment_name']?></td>
+	<td align="center"><?php echo $order['Order']['payment_time']?></td>
+	<td align="right"><?php echo $order['Order']['total']?></td>
+</tr>
+<tr>
+	<td></td>
+	<td colspan="6" style="padding:0;">
+	<table cellpadding="0" cellspacing="0" width="100%" class="list_data">
+	<tr class="thead" align="center">
+		<td width="20%">货号</td>
+		<td width="38%">商品名称</td>
+		<td width="8%">数量</td>
+		<td width="22%">属性</td>
+		<td width="12%">价格</td>
+	</tr>
+	<?php if(isset($order['OrderProduct']) && sizeof($order['OrderProduct'])>0)foreach($order['OrderProduct'] as $op){?>
+	<tr>
+		<td><?php echo $op['product_code']?></td>
+		<td><?php echo $op['product_name']?></td>
+		<td align="center"><?php echo $op['product_quntity']?></td>
+		<td><?php echo $op['product_attrbute']?></td>
+		<td align="center"><?php echo $op['product_price']?></td>
+	</tr>
+	<?php }?>
+	</table>
+	</td>
+</tr>
+<?php }}?>
 
-	<ul class="product_llist procurements">
-	<li class="item_number">订单号</li>
-	<li class="name ship_name">姓名</li>
-	<li class="profiles addresse">地址</li>
-	<li class="number">电话</li>
-	<li class="units">付款方式</li>
-	<li class="supplier">付款日期</li>
-	<li class="remark">金额总计</li></ul>
-	<?if(isset($orders) && sizeof($orders)>0){?>
-	<?php foreach($orders as $order){?>
-	<ul class="product_llist procurements procurements_list">
-	<li class="item_number ordernumber"><span><?=$html->image('menu_plus.gif')?><?php echo $order['Order']['order_code']?></span></li>
-	<li class="name ship_name"><?php echo $order['Order']['consignee']?></li>
-	<li class="profiles addresse"><span><?php echo $order['Order']['address']?></span></li>
-	<li class="number"><span><?php echo $order['Order']['telephone']?></span></li>
-	<li class="units"><?php echo $order['Order']['payment_name']?></li>
-	<li class="supplier phone"><?php echo $order['Order']['payment_time']?></li>
-	<li class="remark"><?php echo $order['Order']['total']?></li></ul>
-	
-<!--显示所有订单商品-->
-<div class="show_all">
-	<div class="show_all_order">
-		<ul class="product_llist procurements item_order">
-		<li class="item_number">货号</li>
-		<li class="name ship_name"><p>商品名称</p></li>
-		<li class="number">数量</li>
-		<li class="supplier">属性</li>
-		<li class="remark" style="text-align:left;"><p>价格</p></li></ul>
-		<?php if(isset($order['OrderProduct']) && sizeof($order['OrderProduct'])>0)foreach($order['OrderProduct'] as $op){?>
-		<ul class="product_llist procurements procurements_list item_order">
-		<li class="item_number ordernumber"><span><?php echo $op['product_code']?></span></li>
-		<li class="name ship_name"><p><?php echo $op['product_name']?></p></li>
-		<li class="number"><?php echo $op['product_quntity']?></li>
-		<li class="supplier"><?php echo $op['product_attrbute']?></li>
-		<li class="remark" style="text-align:left;"><p><?php echo $op['product_price']?></p></li></ul>
-		<?php }?>
-	</div>
-	<p style="clear:both">
-<!--	订单状态:
-	付款时间:
-	配送方法:
-	支付方法:
--->
-	</p>
-</div>
-	<?php }}?>
+</table>
 <!--显示所有订单商品 End-->	
 	
 </div>
@@ -102,3 +114,17 @@
 		<div class="bd"><div id="cal4"></div><div style="clear:both;"></div></div>
 	</div>
 <!--end-->
+<script type="text/javascript">
+function sub_action() 
+{ 
+	document.ShipmentsForm.action=webroot_dir+"reports/shipments";
+	document.ShipmentsForm.onsubmit= "";
+	document.ShipmentsForm.submit(); 
+}
+function export_action() 
+{ 
+	document.ShipmentsForm.action=webroot_dir+"reports/shipments/export";
+	document.ShipmentsForm.onsubmit= "";
+	document.ShipmentsForm.submit(); 
+}
+</script>

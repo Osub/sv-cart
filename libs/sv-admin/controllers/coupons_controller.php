@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: coupons_controller.php 1883 2009-05-31 11:20:54Z huangbo $
+ * $Id: coupons_controller.php 3184 2009-07-22 06:09:42Z huangbo $
 *****************************************************************************/
 class CouponsController extends AppController {
 	var $name = 'Coupons';
@@ -70,23 +70,39 @@ class CouponsController extends AppController {
 												'fields' => array('Coupon.coupon_type_id'), 
 												'group' => array('Coupon.coupon_type_id')
 											));
-		$count_coupon = count($this->Coupon->find("all",array("conditions"=>$condition,"fields"=>"DISTINCT Coupon.id")));
-
+		
+		$count_coupon = $this->Coupon->find("all",array("conditions"=>$condition,"fields"=>array("Coupon.id","Coupon.coupon_type_id")));
+		$count_coupon_list = array();
+		if(isset($count_coupon) && sizeof($count_coupon)>0){
+			foreach($count_coupon as $k=>$v){
+				$count_coupon_list[$v['Coupon']['coupon_type_id']][] = $v;
+			}
+		}
+		
+		
 		$sent_coupons = array();
 		foreach($data2 as $v){
-			if(!empty($v['Coupon']))$sent_coupons[$v['Coupon']['coupon_type_id']]['count_coupon'] = $count_coupon;
+			if(!empty($v['Coupon'])){
+				$sent_coupons[$v['Coupon']['coupon_type_id']]['count_coupon'] = isset($count_coupon_list[$v['Coupon']['coupon_type_id']])?count($count_coupon_list[$v['Coupon']['coupon_type_id']]):0;
+			}
 		}
 		//查找已使用的优惠券数量
 		$condition2 = $condition." and Coupon.used_time > '2008-02-02'";
-		$count_coupon = count($this->Coupon->find("all",array("conditions"=>$condition,"fields"=>"DISTINCT Coupon.id")));
-
+		$count_coupon = $this->Coupon->find("all",array("conditions"=>$condition,"fields"=>array("Coupon.id","Coupon.coupon_type_id")));
+		$count_coupon_list = array();
+		if(isset($count_coupon) && sizeof($count_coupon)>0){
+			foreach($count_coupon as $k=>$v){
+				$count_coupon_list[$v['Coupon']['coupon_type_id']][] = $v;
+			}
+		}
+		
 		$data3 = $this->Coupon->find('all',array(
 												'conditions' => $condition2, 
 												'fields' => array('Coupon.coupon_type_id'), 
 												'group' => array('Coupon.coupon_type_id')
 											));
 		foreach($data3 as $v){
-			if(!empty($v['Coupon']))$sent_coupons[$v['Coupon']['coupon_type_id']]['count_coupon_used'] = $count_coupon;
+			if(!empty($v['Coupon']))$sent_coupons[$v['Coupon']['coupon_type_id']]['count_coupon_used'] = isset($count_coupon_list[$v['Coupon']['coupon_type_id']])?count($count_coupon_list[$v['Coupon']['coupon_type_id']]):0;
 		}
 		$this->set('coupons',$data);
 		$this->set('sent_coupons',$sent_coupons);		
@@ -125,7 +141,13 @@ class CouponsController extends AppController {
 	
 	function remove($id){
 		
+		$pn = $this->CouponTypeI18n->find('list',array('fields' => array('CouponTypeI18n.coupon_type_id','CouponTypeI18n.name'),'conditions'=> 
+                                        array('CouponTypeI18n.coupon_type_id'=>$id,'CouponTypeI18n.locale'=>$this->locale)));
+        
 		$this->CouponType->deleteAll("CouponType.id='$id'");
+		if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	$this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'移除电子优惠券:'.$pn[$id] ,'operation');
+    	}
 		$this->flash("删除成功",'/coupons/',10);
 	
 	}
@@ -139,7 +161,7 @@ class CouponsController extends AppController {
 		$this->pageTitle = "电子优惠券管理 - 电子优惠券管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'电子优惠券管理','url'=>'/coupons/');
 		$this->navigations[] = array('name'=>'编辑电子优惠券','url'=>'');
-		$this->set('navigations',$this->navigations);
+	
 		
 		if($this->RequestHandler->isPost()){
 			$this->data['CouponType']['max_amount'] = !empty($this->data['CouponType']['max_amount'])?$this->data['CouponType']['max_amount']:0;
@@ -172,13 +194,18 @@ class CouponsController extends AppController {
 					$userinformation_name = $v['name'];
 				}
 			}
+			if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑电子优惠券:'.$userinformation_name ,'operation');
+    	    }
 			$this->flash("电子优惠券  ".$userinformation_name." 编辑成功。点击继续编辑该电子优惠券。",'/coupons/edit/'.$id,10);
 		}
 		
 		$coupontype = $this->CouponType->localeformat( $id );
 		$this->set('coupontype',$coupontype);
-		
-		//pr( $coupontype );
+		//leo20090722导航显示
+		$this->navigations[] = array('name'=>$coupontype["CouponTypeI18n"][$this->locale]["name"],'url'=>'');
+	    $this->set('navigations',$this->navigations);
+
 	}
 	
 	function add(){
@@ -220,6 +247,9 @@ class CouponsController extends AppController {
 					$userinformation_name = $v['name'];
 				}
 			}
+			if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加电子优惠券:'.$userinformation_name ,'operation');
+    	    }
 			$this->flash("电子优惠券  ".$userinformation_name." 添加成功。点击继续编辑该电子优惠券。",'/coupons/edit/'.$id,10);
 		}
 	}
@@ -245,7 +275,8 @@ class CouponsController extends AppController {
 	   		$this->Brand->set_locale($this->locale);
 	        $brands_tree=$this->Brand->getbrandformat();
 			$this->Product->set_locale($this->locale);
-	        $product_arr = $this->Product->findall("'Product.coupon_type_id ='".$id."'");
+	     // $product_arr = $this->Product->findall("'Product.coupon_type_id ='".$id."'");
+	       	$product_arr = $this->Product->find('all',array('conditions'=>array('Product.coupon_type_id'=>$id)));
 	       // pr($product_arr);
 			$this->set('product_relations',$product_arr);
 			$this->set('categories_tree',$categories_tree);
@@ -313,7 +344,7 @@ class CouponsController extends AppController {
 		$user_info = $this->User->findbyid($link_id);
 		$this->Coupon->save($coupon);
 		$coupon_id  = $this->Coupon->id;
-		$this->send_coupon_email($coupon_id);
+	//	$this->send_coupon_email($coupon_id);
 
 	
 		//页面显示
@@ -419,7 +450,9 @@ class CouponsController extends AppController {
 						        'user_id' => 0,
 						        );
 			$this->Coupon->save($coupon);
-			
+			if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'发放电子优惠券' ,'operation');
+    	    }
 		$this->flash("发放成功",'/coupons/'.$_POST['coupon_type_id'],10);		
 	}
 	
@@ -442,6 +475,8 @@ class CouponsController extends AppController {
 			$subject=$template['MailTemplateI18n']['title'];
 			$this->Email->sendAs = 'html';
 			$this->Email->is_ssl = $this->configs['smtp_ssl'];
+			$this->Email->is_mail_smtp=$this->configs['mail_service'];
+
 			$this->Email->smtp_port = $this->configs['smtp_port'];
 			$this->Email->smtpHostNames = "".$this->configs['smtp_host']."";
 			$this->Email->smtpUserName = "".$this->configs['smtp_user']."";
@@ -451,9 +486,7 @@ class CouponsController extends AppController {
 			$this->Email->subject = "=?utf-8?B?" . base64_encode($subject) . "?=";
 			$this->Email->from = "".$this->configs['smtp_user']."";
 			/* 商店网址 */
-			$host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
-			$webroot = str_replace("/".WEBROOT_DIR."/","",$this->webroot);
-			$shop_url = "http://".$host.$webroot;
+			$shop_url = $this->server_host.$this->cart_webroot;
 			$template_str = $template['MailTemplateI18n']['html_body'];
 			eval("\$template_str = \"$template_str\";");
 			$this->Email->html_body = $template_str;
@@ -485,6 +518,7 @@ class CouponsController extends AppController {
 	
 	function send_by_user_rank(){
 		$users = $this->User->findall('User.rank ='.$_POST['user_rank']);
+	//	pr($users);
 		$this->CouponType->set_locale($this->locale);
 		$coupon_info = $this->CouponType->findbyid($_POST['coupon_type_id']);
 		$coupon_arr = $this->Coupon->findall("",'DISTINCT Coupon.sn_code');

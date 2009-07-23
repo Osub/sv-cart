@@ -9,10 +9,12 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: coupon_type.php 725 2009-04-17 08:00:21Z huangbo $
+ * $Id: coupon_type.php 2703 2009-07-08 11:54:52Z huangbo $
 *****************************************************************************/
 class CouponType extends AppModel{
 	var $name = 'CouponType';
+//	var $cacheQueries = true;
+//	var $cacheAction = "1 day";
 	var $hasOne = array('CouponTypeI18n' =>   
                         array('className'    => 'CouponTypeI18n', 
                               'conditions'    =>  '',
@@ -42,6 +44,10 @@ class CouponType extends AppModel{
 	//	pr($lists_formated);
 		return $lists_formated;
 	}
+	
+//	function coupon_types($locale){
+		
+//	}
 
 }
 ?>

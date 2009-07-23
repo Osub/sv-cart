@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: authnums_controller.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: authnums_controller.php 1726 2009-05-25 10:25:03Z zhengli $
 *****************************************************************************/
 class AuthnumsController extends AppController {
 	var $name = 'Authnums';

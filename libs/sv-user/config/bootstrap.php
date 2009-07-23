@@ -9,9 +9,9 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: bootstrap.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: bootstrap.php 2659 2009-07-08 02:32:43Z shenyunfeng $
 *****************************************************************************/
 
-	$viewPaths=array(WWW_ROOT,WWW_ROOT.'/themed/SV_G00/');
+	$viewPaths=array(WWW_ROOT,WWW_ROOT.'/themed/SV_DEFAULT/');
 
 ?>

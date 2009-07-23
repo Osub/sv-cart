@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: users_controller.php 1883 2009-05-31 11:20:54Z huangbo $
+ * $Id: users_controller.php 3184 2009-07-22 06:09:42Z huangbo $
 *****************************************************************************/
 class UsersController extends AppController {
 
@@ -17,10 +17,10 @@ class UsersController extends AppController {
     var $components = array ('Pagination','RequestHandler'); // Added 
     var $helpers = array('Pagination'); // Added 
     
-	var $uses = array("User","UserRank","UserInfo","UserInfoValue","UserAddress","Region","Order","UserBalanceLog","UserPointLog","Order");
+	var $uses = array("SystemResource","User","UserRank","UserInfo","UserInfoValue","UserAddress","Region","Order","UserBalanceLog","UserPointLog","Order");
 
  
-	function index($orderby='id',$ordertype='ASC'){
+	function index($export=0,$orderby='id',$ordertype='ASC'){
 		/*判断权限*/
 		$this->operator_privilege('member_view');
 		/*end*/
@@ -71,7 +71,11 @@ class UsersController extends AppController {
 	   $parameters=Array($rownum,$page);
 	   $options=Array();
 	   $page = $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass);
-   	   $users_list=$this->User->findAll($condition,'',"User.$orderby $ordertype",$rownum,$page);
+	   if(isset($export) && $export==="export"){
+	   		$users_list=$this->User->findAll($condition,'',"User.$orderby $ordertype");
+	   }else{
+   	   		$users_list=$this->User->findAll($condition,'',"User.$orderby $ordertype",$rownum,$page);
+   	   }
    	   //用户等级
    	   $this->UserRank->set_locale($this->locale);
    	   $rank_list=$this->UserRank->findrank();
@@ -97,8 +101,7 @@ class UsersController extends AppController {
    	  $max_points=isset($this->params['url']['max_points'])?$this->params['url']['max_points']:'';
    	  $start_date=isset($this->params['url']['start_date'])?$this->params['url']['start_date']:'';
    	  $end_date=isset($this->params['url']['end_date'])?$this->params['url']['end_date']:'';
-   	  
-   	  
+
    	  $this->set('orderby',$orderby);
    	  $this->set('ordertype',$ordertype);
    	  $this->set('users_list',$users_list);
@@ -113,8 +116,49 @@ class UsersController extends AppController {
    	  $this->set('start_date',$start_date);
    	  $this->set('end_date',$end_date);
 	  $this->set('navigations',$this->navigations);
+
+	/*	if(isset($_REQUEST['page'])&& !empty($_REQUEST['page'])){
+			$this->set('ex_page',$this->params['url']['page']);
+		}
+		if(isset($_REQUEST['user_name'])){
+			$ex_url="date=".$this->params['url']['date']."&date2=".$this->params['url']['date2']."&user_name=".$this->params['url']['user_name']."&user_email=".$this->params['url']['user_email'].
+			"&user_rank=".$this->params['url']['user_rank']."&min_balance=".$this->params['url']['min_balance']."&max_balance=".$this->params['url']['max_balance']."&min_points=".$this->params['url']['min_points']."&max_points=".$this->params['url']['max_points'];
+		}else{
+			$ex_url="date=&date2=&user_name=&user_email=&user_rank=0&min_balance=&max_balance=&min_points=&max_points=";
+		}
+		$this->set('ex_url',$ex_url);			
+		/*CSV导出*/
+
+//	if(isset($_REQUEST['export'])&&$_REQUEST['export']==="export")
+	if(isset($export) && $export==="export"){
+			$filename = '会员导出'.date('Ymd').'.csv';
+			$ex_data= "会员统计报表,";
+			$ex_data.= "日期,";
+			$ex_data.= date('Y-m-d')."\n";
+			$ex_data.= "编号,";
+			$ex_data.= "会员名称,";
+			$ex_data.= "会员等级,";
+			$ex_data.= "邮件地址,";
+			$ex_data.= "注册日期\n";
+			foreach($users_list as $k=>$v) {
+				$ex_data.= $v['User']['id'].",";
+				$ex_data.= $v['User']['name'].",";
+				$ex_data.= $v['User']['UserRankname'].",";
+				$ex_data.= $v['User']['email'].",";
+				$ex_data.= $v['User']['created']."\n";
+			}
+		 	Configure::write('debug',0);
+			header("Content-type: text/csv; charset=gb2312");
+			header ("Content-Disposition: attachment; filename=".iconv('utf-8','gb2312',$filename));
+			header('Cache-Control:   must-revalidate,   post-check=0,   pre-check=0');
+			header('Expires:   0');
+			header('Pragma:   public');
+			echo iconv('utf-8','gb2312',$ex_data."\n");
+			exit;		
+		}
 	}
-	function search($act='unvalidate',$id=''){
+	
+	function search($act='unvalidate',$id='' ){
 		/*判断权限*/
 		$this->operator_privilege('member_undeal_view');
 		/*end*/
@@ -155,7 +199,41 @@ class UsersController extends AppController {
 		
    	    $users=$this->User->findAll($condition);
 		$this->set("users",$users);
+		if(isset($_REQUEST['page'])&& !empty($_REQUEST['page'])){
+			$this->set('ex_page',$this->params['url']['page']);
+		}	
+		/*CSV导出*/
+		if(isset($_REQUEST['export'])&&$_REQUEST['export']==="export")
+		{
+			$filename = '待处理会员导出'.date('Ymd').'.csv';
+			$ex_data= "待处理会员统计报表,";
+			$ex_data.= "日期,";
+			$ex_data.= date('Y-m-d')."\n";
+			$ex_data.= "编号,";
+			$ex_data.= "会员名称,";
+			$ex_data.= "邮件地址,";
+			$ex_data.= "注册日期,";
+			$ex_data.= "余额\n";
+
+			foreach( $users as $k=>$v ) {
+				$ex_data.= $v['User']['id'].",";
+				$ex_data.= $v['User']['name'].",";
+				$ex_data.= $v['User']['email'].",";
+				$ex_data.= $v['User']['created'].",";
+				$ex_data.= $v['User']['balance']."\n";			
+			}
+		 	Configure::write('debug',0);
+			header("Content-type: text/csv; charset=gb2312");
+			header ("Content-Disposition: attachment; filename=".iconv('utf-8','gb2312',$filename));
+			header('Cache-Control:   must-revalidate,   post-check=0,   pre-check=0');
+			header('Expires:   0');
+			header('Pragma:   public');
+			echo iconv('utf-8','gb2312',$ex_data."\n");
+			exit;		
+		}		
 	}
+	
+	
 /*------------------------------------------------------ */
 //-- 编辑会员页
 /*------------------------------------------------------ */
@@ -183,7 +261,10 @@ class UsersController extends AppController {
 		       	        //echo $user_info['User']['password'];
 		       	        $this->data['User']['password']=$user_info['User']['password'];
 		       } 
-
+               //操作员日志
+    	       if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	       $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑会员:'.$this->data['User']['name'] ,'operation');
+    	       }
 		       $this->User->save($this->data); 
 		       /* 资金 */
                if(!empty($_POST['balance']) && is_numeric($_POST['balance'])){
@@ -200,6 +281,10 @@ class UsersController extends AppController {
 	               		$this->User->updateAll( array('User.balance' => 'User.balance + '.$_POST['balance']),
 											    array('User.id =' => "$id")
 											);
+						//操作员日志
+    	                if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	                $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'会员:'.$this->data['User']['name'].' 的可用资金增加'.$_POST['balance'] ,'operation');
+    	                }
 					}
 					else {
                	    	$BalanceLog['UserBalanceLog']['user_id'] = $id;
@@ -214,18 +299,32 @@ class UsersController extends AppController {
 	               		$this->User->updateAll( array('User.balance' => 'User.balance - '.$_POST['balance']),
 											    array('User.id =' => "$id")
 											);
+						//操作员日志
+    	                if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	                $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'会员:'.$this->data['User']['name'].' 的可用资金减少'.$_POST['balance'] ,'operation');
+    	                }
                		}
                }
                /* 冻结资金 */
                if(!empty($_POST['frozen']) && is_numeric($_POST['frozen'])){
-               	    if($_POST['frozen_type'])
+               	    if($_POST['frozen_type']){
 	               		$this->User->updateAll( array('User.frozen' => 'User.frozen + '.$_POST['frozen']),
 											    array('User.id =' => "$id")
 											);
-					else 
+					//操作员日志
+    	            if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	            $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'会员:'.$this->data['User']['name'].' 的冻结资金增加'.$_POST['frozen'] ,'operation');
+    	            }
+    	            }
+					else{
 	               		$this->User->updateAll( array('User.frozen' => 'User.frozen - '.$_POST['frozen']),
 											    array('User.id =' => "$id")
 											);
+					//操作员日志
+    	            if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	            $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'会员:'.$this->data['User']['name'].' 的冻结资金减少'.$_POST['frozen'] ,'operation');
+    	            }
+    	       }
                }
                /* 积分 */
                if(!empty($_POST['point']) && is_numeric($_POST['point'])){
@@ -243,6 +342,11 @@ class UsersController extends AppController {
 	               		$this->User->updateAll( array('User.point' => 'User.point + '.$_POST['point']),
 											    array('User.id =' => "$id")
 											);
+						//操作员日志
+    	                if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	                $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'会员:'.$this->data['User']['name'].' 的消费积分增加'.$_POST['point'] ,'operation');
+    	                }
+						
 					}
 					else {
                	    	$PointLog['UserPointLog']['user_id'] = $id;
@@ -257,6 +361,10 @@ class UsersController extends AppController {
 	               		$this->User->updateAll( array('User.point' => 'User.point - '.$_POST['point']),
 											    array('User.id =' => "$id")
 											);
+						//操作员日志
+    	                if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	                $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'会员:'.$this->data['User']['name'].' 的消费积分减少'.$_POST['point'] ,'operation');
+    	                }
                		}
                }
 		       //更新会员项目
@@ -280,7 +388,10 @@ class UsersController extends AppController {
 	                          $this->UserInfoValue->save(array('UserInfoValue'=>$info_value));
  		       	       }
 		       }
-			
+			//操作员日志
+    	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑会员:'.$this->data['User']['name'] ,'operation');
+    	    }
 			$this->flash("会员  ".$this->data['User']['name']." 编辑成功。点击继续编辑该会员。",'/users/'.$id,10);
 		       
 
@@ -326,7 +437,7 @@ class UsersController extends AppController {
 		    	foreach($v['UserInfoI18n'] as $kk=>$vv){
 		    		if($vv['locale'] == $this->locale){
 		    			$user_infoarr[$k]['UserInfo']['name'] = $vv['name'];
-		    			$user_infoarr[$k]['UserInfo']['values'] = $vv['values'];
+		    			$user_infoarr[$k]['UserInfo']['user_info_values'] = $vv['user_info_values'];
 		    			
 		    		}
 		    	}
@@ -371,7 +482,11 @@ class UsersController extends AppController {
 		   }
 		   //pr($points_list);
 		   
-		   
+	       //资源库信息
+	       $this->SystemResource->set_locale($this->locale);
+	        $systemresource_info = $this->SystemResource->resource_formated();//find("first",array("conditions"=>array("code"=>"order_status")));
+	       	//
+   	  		$this->set('systemresource_info',$systemresource_info);
 		   $this->set('rank_list',$rank_list);
 		   $this->set('user_address',$user_address);
 		   $this->set('orders_list',$orders_list);
@@ -379,7 +494,10 @@ class UsersController extends AppController {
 		   $this->set('balances_list',$balances_list);
 		   $this->set('points_list',$points_list);
 		   $this->set('user_info',$this->data);
-		
+				//leo20090722导航显示
+		$this->navigations[] = array('name'=>$this->data["User"]["name"],'url'=>'');
+	    $this->set('navigations',$this->navigations);
+
 	}
 	function add(){
 		$this->pageTitle = "编辑会员-会员管理"." - ".$this->configs['shop_name'];
@@ -412,6 +530,10 @@ class UsersController extends AppController {
 	                          $this->UserInfoValue->save(array('UserInfoValue'=>$info_value));
  		       	       }
 		       }
+		       //操作员日志
+    	       if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	       $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'新增会员:'.$this->data['User']['name'] ,'operation');
+    	       }
 			$this->flash("会员  ".$this->data['User']['name']." 编辑成功。点击继续编辑该会员。",'/users/'.$this->User->getLastInsertId(),10);
 		}
 		//用户项目信息
@@ -419,7 +541,7 @@ class UsersController extends AppController {
 		$user_infoarr=$this->UserInfo->findAll();
 		foreach( $user_infoarr as $k=>$v ){
 		    $user_infoarr[$k]['UserInfo']['name'] = $v['UserInfoI18n']['name'];
-		    $user_infoarr[$k]['UserInfo']['values'] = $v['UserInfoI18n']['values'];
+		    $user_infoarr[$k]['UserInfo']['user_info_values'] = $v['UserInfoI18n']['user_info_values'];
 		    			
 		}
 		
@@ -435,7 +557,12 @@ class UsersController extends AppController {
 		$this->pageTitle = "删除会员-会员管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'会员管理','url'=>'/users/');
 		$this->navigations[] = array('name'=>'删除会员','url'=>'');
+		$user_info = $this->User->findById($id);
 		$this->User->del($id);
+		//操作员日志
+    	if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	$this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'删除会员:'.$user_info['User']['name'] ,'operation');
+    	}
 		$this->flash("删除成功",'/users/',10);
    }
 /*------------------------------------------------------ */
@@ -449,6 +576,10 @@ class UsersController extends AppController {
                {
                      $condition=array("User.id"=>$users_id);
                      $this->User->deleteAll($condition);
+                     //操作员日志
+    	             if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	             $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'批量删除会员' ,'operation');
+    	             }
                      $this->flash("删除成功",'/users/','');
                 }
 	   }

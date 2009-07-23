@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 后台首页
  * ===========================================================================
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: home.ctp 1271 2009-05-08 16:43:05Z huangbo $
+ * $Id: home.ctp 2703 2009-07-08 11:54:52Z huangbo $
 *****************************************************************************/
 ?>
 
@@ -20,7 +20,7 @@
 <?php echo $form->create('tools_upgrade',array('action'=>'/check/','id'=>"js_check",'method'=>'post'));?>
 	<div class="informations">
 	<br />
-<h3 align="center" class="green"><?=$html->image("/tools/img/logo_1.gif")?></h3>
+<h3 align="center" class="green"><?php echo $html->image("/tools/img/logo_1.gif")?></h3>
 <div class="box">
 <ul>
 <li><h4 class="green">升级方法 </h4></li>

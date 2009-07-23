@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart  配送方式设置区域
  * ===========================================================================
@@ -9,42 +9,36 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: area.ctp 1201 2009-05-05 13:30:17Z huangbo $
+ * $Id: area.ctp 2659 2009-07-08 02:32:43Z shenyunfeng $
 *****************************************************************************/
 ?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
 <br />
 <!--Main Start-->
-<p class="add_categories"><strong><?=$html->link($html->image('add.gif',array('align'=>'absmiddle'))."新增配送区域","area_add/{$ids}",'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."新增配送区域","area_add/{$ids}",'',false,false);?></strong></p>
 
 <div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
-
-	<ul class="product_llist advertisement">
-	<li class="ad_name">编号<?=$html->image('sort_desc.gif')?></li>
-	<li class="ad_position">配送区域名称</li>
-	<li class="type"></li>
-	<li class="start_time">描述</li>
-	<li class="end_time">所辖地区</li>
-	<li class="click"></li>
-	<li class="order"></li>
-	<li class="hadle">操作</li></ul>
+<table cellpadding="0" cellspacing="0" width="100%" class="list_data">
+<tr class="thead">
+	<th>编号</th>
+	<th>配送区域名称</th>
+	<th>描述</th>
+	<th>所辖地区</th>
+	<th>操作</th>
+</tr>
 <!--Advertisement List-->
-<?if(isset($shippingarea) && sizeof($shippingarea)>0){?>
-<?foreach( $shippingarea as $k=>$v ){?>
-	<ul class="product_llist advertisement advertisement_list">
-	<li class="ad_name"><span><strong><?=$v['ShippingArea']['id']?></strong></span></li>
-	<li class="ad_position"><span><?=$v['ShippingArea']['name']?></span></li>
-	<li class="type"><span></span></li>
-	<li class="start_time"><?=$v['ShippingArea']['description']?></li>
-	<li class="end_time"><?=$v['ShippingArea']['areaname']?></li>
-	<li class="click"></li>
-	<li class="order"></li>
-	<li class="hadle">
-<?php echo $html->link("编辑","/shippingments/area_edit/{$v['ShippingArea']['id']}/{$ids}");?>|<?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$this->webroot}shippingments/remove/{$v['ShippingArea']['id']}')"));?>
- 
-		</li></ul>
-<?}}?>
+<?php if(isset($shippingarea) && sizeof($shippingarea)>0){?>
+<?php foreach( $shippingarea as $k=>$v ){?>
+<tr>
+	<td align="center"><?php echo $v['ShippingArea']['id']?></td>
+	<td align="center"><?php echo $v['ShippingArea']['name']?></td>
+	<td align="center"><?php echo $v['ShippingArea']['description']?></td>
+	<td align="center"><?php echo $v['ShippingArea']['areaname']?></td>
+	<td align="center"><?php echo $html->link("编辑","/shippingments/area_edit/{$v['ShippingArea']['id']}/{$ids}");?> | <?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$this->webroot}shippingments/remove/{$v['ShippingArea']['id']}/{$v['ShippingArea']['name']}')"));?></td>
+</tr>
+<?php }}?>
+	</table>
 <div class="pagers" style="position:relative">
 <?php // echo $this->element('pagers',array('cache'=>'+0 hour'));?>
 </div>

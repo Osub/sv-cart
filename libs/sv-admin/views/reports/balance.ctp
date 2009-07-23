@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart  用户资金报表管理
  * ===========================================================================
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: balance.ctp 1670 2009-05-25 00:47:18Z huangbo $
+ * $Id: balance.ctp 2989 2009-07-17 02:03:04Z huangbo $
 *****************************************************************************/
 ?>
 
@@ -21,11 +21,22 @@
 
 	
 <div class="search_box">
-<?php echo $form->create('Report',array('action'=>'balance'));?>
+<?php echo $form->create('Report',array('action'=>'balance/','name'=>"BalanceForm"));?>
 	<dl>
-	<dt style="padding-top:0;"><?=$html->image('serach_icon.gif',array('align'=>'left'))?></dt>
-	<dd><p class="reg_time article">选择日期：<input type="text" name="start_time" value="<?=@$start_time?>" class="time" id="date"  readonly="readonly" /><button type="button" id="show"><?=$html->image('calendar.gif')?></button>－<input type="text" name="end_time" value="<?=@$end_time?>" class="time" id="date2" readonly="readonly" /><button type="button" id="show2"><?=$html->image('calendar.gif')?></button></p></dd>
-	<dt class="curement"><input type="submit" value="查询" /> </dt>
+	<dt style="padding-top:0;"><?php echo $html->image('serach_icon.gif',array('align'=>'left'))?></dt>
+	<dd><p class="reg_time article">选择日期：<input type="text" name="start_time" value="<?php echo @$start_time?>" class="time" id="date"  readonly="readonly" /><?php echo $html->image('calendar.gif',array("id"=>"show","class"=>"calendar"))?>
+	<input type="text" name="end_time" value="<?php echo @$end_time?>" class="time" id="date2" readonly="readonly" /><?php echo $html->image('calendar.gif',array("id"=>"show2","class"=>"calendar"))?>
+		<?php if(isset($SVConfigs["mlti_currency_module"]) && $SVConfigs["mlti_currency_module"]==1){?>
+	语言:	<select name="order_locale">
+		<?php if(isset($languages) && sizeof($languages)>0){
+			foreach ($languages as $k => $v){?>
+			<option value="<?php echo $v['Language']['locale']?>" <?php if($v['Language']['locale']==$locale){echo "selected";}?>><?php echo $v['Language']['name']?></option>
+		<?php }}?>
+	</select>
+<?php }?>
+	<input type="text" name="username" value="<?php echo $username;?>">
+	</p></dd>
+	<dt class="curement"><input type="button" value="查询" onclick="sub_action()"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="导出"  onclick="export_action()"/> </dt>
 	</dl>
 <?php $form->end()?>
 </div>
@@ -33,34 +44,34 @@
 <!--Search End-->
 <!--Main Start-->
 <div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
-
-	<ul class="product_llist balance_headers">
-	<li class="member_name">用户名</li>
-	<li class="start_bankroll">始起资金</li>
-	<li class="payout">支出</li>
-	<li class="earning">收入</li>
-	<li class="balance">结余</li></ul>
+<table cellpadding="0" cellspacing="0" width="100%" class="list_data">
+<tr class="thead">
+	<th>用户名</th>
+	<th>始起资金</th>
+	<th>支出</th>
+	<th>收入</th>
+	<th>结余</th></tr>
 	
 <!--ConsumeList-->
 	
 	
-	<?if(isset($User) && sizeof($User)>0){?>
-<?foreach( $User as $k=>$v ){?>
-	<ul class="product_llist balance_headers balance_lists">
-	<li class="member_name"><strong><?=$v['User']['name']?></strong></li>
-	<li class="start_bankroll"><?=$v['User']['start_amount']?></li>
-	<li class="payout"><?=$v['User']['zc_amount']?></li>
-	<li class="earning"><?=$v['User']['sl_amount']?></li>
-	<li class="balance"><?=$v['User']['amountsum']?></li></ul>
-	<? }} ?>	
+	<?php if(isset($User) && sizeof($User)>0){?>
+<?php foreach( $User as $k=>$v ){?>
+	<tr>
+	<td><strong><?php echo $v['User']['name']?></strong></td>
+	<td align="center"><?php echo $v['User']['start_amount']?></td>
+	<td align="center"><?php echo $v['User']['zc_amount']?></td>
+	<td align="center"><?php echo $v['User']['sl_amount']?></td>
+	<td align="center"><?php echo $v['User']['amountsum']?></td></tr>
+	<?php }} ?>	
 <!--ConsumeList End-->
-	<ul class="product_llist balance_headers">
-	<li class="member_name">总计</li>
-	<li class="start_bankroll"><?=$amount_start_sum?></li>
-	<li class="payout"><?=$amount_zc_sum?></li>
-	<li class="earning"><?=$amount_sl_sum?></li>
-	<li class="balance"><?=$amountsums?></li></ul>
-	
+<tr class="thead">
+	<td align="center">总计</td>
+	<td align="center"><?php echo $amount_start_sum?></td>
+	<td align="center"><?php echo $amount_zc_sum?></td>
+	<td align="center"><?php echo $amount_sl_sum?></td>
+	<td align="center"><?php echo $amountsums?></td></tr>
+	</table>
 
 </div>
 <!--Main Start End-->
@@ -83,3 +94,17 @@
 		<div class="bd"><div id="cal4"></div><div style="clear:both;"></div></div>
 	</div>
 <!--end-->
+<script type="text/javascript">
+function sub_action() 
+{ 
+	document.BalanceForm.action=webroot_dir+"reports/balance";
+	document.BalanceForm.onsubmit= "";
+	document.BalanceForm.submit(); 
+}
+function export_action() 
+{ 
+	document.BalanceForm.action=webroot_dir+"reports/balance/export";
+	document.BalanceForm.onsubmit= "";
+	document.BalanceForm.submit(); 
+}
+</script>

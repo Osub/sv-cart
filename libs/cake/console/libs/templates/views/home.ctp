@@ -1,13 +1,13 @@
-<?php
+<?php 
 $output = "<h2>Sweet, \"".Inflector::humanize($app)."\" got Baked by CakePHP!</h2>\n";
 $output .="
-<?php
+<?php 
 if (Configure::read() > 0):
 	Debugger::checkSessionKey();
 endif;
 ?>
 <p>
-<?php
+<?php 
 	if (is_writable(TMP)):
 		echo '<span class=\"notice success\">';
 			__('Your tmp directory is writable.');
@@ -20,7 +20,7 @@ endif;
 ?>
 </p>
 <p>
-<?php
+<?php 
 	\$settings = Cache::settings();
 	if (!empty(\$settings)):
 		echo '<span class=\"notice success\">';
@@ -34,7 +34,7 @@ endif;
 ?>
 </p>
 <p>
-<?php
+<?php 
 	\$filePresent = null;
 	if (file_exists(CONFIGS . 'database.php')):
 		echo '<span class=\"notice success\">';
@@ -50,14 +50,14 @@ endif;
 	endif;
 ?>
 </p>
-<?php
+<?php 
 if (!empty(\$filePresent)):
  	uses('model' . DS . 'connection_manager');
 	\$db = ConnectionManager::getInstance();
  	\$connected = \$db->getDataSource('default');
 ?>
 <p>
-<?php
+<?php 
 	if (\$connected->isConnected()):
 		echo '<span class=\"notice success\">';
  			__('Cake is able to connect to the database.');
@@ -72,7 +72,7 @@ if (!empty(\$filePresent)):
 $output .= "<?php endif;?>\n";
 $output .= "<h3><?php __('Editing this Page') ?></h3>\n";
 $output .= "<p>\n";
-$output .= "<?php\n";
+$output .= "<?php \n";
 $output .= "\techo sprintf(__('To change the content of this page, edit: %s\n";
 $output .= "\t\tTo change its layout, edit: %s\n";
 $output .= "\t\tYou can also add some CSS styles for your pages at: %s', true),\n";

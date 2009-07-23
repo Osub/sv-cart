@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: config.php 1732 2009-05-25 12:03:32Z huangbo $
+ * $Id: config.php 2855 2009-07-15 03:25:34Z shenyunfeng $
 *****************************************************************************/
 class Config extends AppModel
 {
@@ -35,16 +35,16 @@ class Config extends AppModel
 		return $configs;
 	}
 	
-	function getformatcode($store_id = 0){
-		
-		$cache_key = md5($this->name."_".$store_id."_");
+	function getformatcode($locale,$store_id = 0){		
+		$cache_key = md5($this->name."_".$store_id."_".$locale);
 		
 		$configs_formatcode = cache::read($cache_key);
 		if ($configs_formatcode){
 			return $configs_formatcode;
 		}else{
 			$condition = " store_id = '".$store_id."'";
-			$configs=$this->findAll($condition,'','orderby asc');
+	//		$configs=$this->findAll($condition,'','orderby asc');
+			$configs=$this->find('all',array('order'=>'orderby asc','fields'=>array('Config.code','ConfigI18n.value'),'conditions'=>array($condition)));
 			
 			$configs_formatcode =array();
 			if(is_array($configs))

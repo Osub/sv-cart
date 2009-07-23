@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: operator_menu.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: operator_menu.php 2659 2009-07-08 02:32:43Z shenyunfeng $
 *****************************************************************************/
 class Operator_menu extends AppModel
 {
@@ -29,13 +29,15 @@ class Operator_menu extends AppModel
     	$this->hasOne['Operator_menuI18n']['conditions'] = $conditions;
     }
 
-   	function tree($actions="all"){//
+   	function tree($actions="all",$locale){//
    	    $conditions=" status ='1' ";
    	   	//$this->set_locale($this->locale);
    	    if($actions!="all"){
    	    $conditions.="AND Operator_menu.operator_action_code in(".$actions.")";
    	    }
-		$actions_arr=$this->findAll($conditions,'','orderby asc');
+   	    $actions_arr = $this->cache_find('all',array('conditions'=>array($conditions),'order' => array('orderby asc')),$this->name.$locale);
+		//$actions_arr=$this->findAll($conditions,'','orderby asc');
+		
 		$this->acionts_parent_format = array();//先致空
 		if(is_array($actions_arr))
 			foreach($actions_arr as $k=>$v)

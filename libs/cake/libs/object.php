@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: object.php 8120 2009-03-19 20:25:10Z gwoo $ */
+/* SVN FILE: $Id: object.php 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  * Object class, allowing __construct and __destruct in PHP4.
  *

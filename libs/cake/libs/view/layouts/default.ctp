@@ -1,5 +1,5 @@
-<?php
-/* SVN FILE: $Id: default.ctp 7945 2008-12-19 02:16:01Z gwoo $ */
+<?php 
+/* SVN FILE: $Id: default.ctp 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  *
  * PHP versions 4 and 5
@@ -30,7 +30,7 @@
 		<?php __('CakePHP: the rapid development php framework:'); ?>
 		<?php echo $title_for_layout; ?>
 	</title>
-	<?php
+	<?php 
 		echo $html->meta('icon');
 
 		echo $html->css('cake.generic');

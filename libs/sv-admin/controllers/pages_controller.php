@@ -9,12 +9,12 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: pages_controller.php 1732 2009-05-25 12:03:32Z huangbo $
+ * $Id: pages_controller.php 3175 2009-07-22 03:12:51Z huangbo $
 *****************************************************************************/
 class PagesController extends AppController {
 	var $name = 'Pages';
 	var $helpers = array('Html','Javascript');
-	var $uses = array('ConfigI18n','Article','Operator','Operator_action','Operator_menu','Order','BookingProduct','Product','MailTemplate','Operator_log','Config');
+	var $uses = array('ConfigI18n','Article','Operator','Operator_action','Operator_menu','Order','BookingProduct','Product','MailTemplate','Operator_log','Config','Language');
 	var $components = array('Captcha','Email','RequestHandler','Cookie');
 		
 	function display(){
@@ -142,29 +142,28 @@ class PagesController extends AppController {
 			           );
 			$this->redirect("/guides/");
     	}
-    
-		$this->set("article",$article );//文章列表
+    	$this->set("article",$article );//文章列表
 		//$this->set("rss_str",$this->rss_str() );
+	//	$g_languages = $this->Language->findall();//google快捷窗口需要的语言
+    //	$this->set('g_languages',$g_languages);
 	    $this->layout = 'default';
 	}
 	
 	function login(){
-		$locales = $this->Language->findall("backend = '1'");
+		$locales = $this->languages;
         if(isset($_SESSION['login_is_msg']) && $_SESSION['login_is_msg'] == "1"){
         }else{
         	unset($_SESSION['login_msg']);       	
 		}
-		$this->Config->set_locale($this->locale);
-		$shop_name = $this->Config->findbycode("shop_name");
-		//pr($shop_name);
-		//print($this->configs['shop_name']."111");
+		$this->set('SVConfigs',$this->configs);
 		unset($_SESSION['login_is_msg']);
 		$this->set('locales',$locales);
-		$this->pageTitle = '操作员登陆'." - ".$shop_name['ConfigI18n']['value'];
+		$this->pageTitle = '操作员登陆'." - ".$this->configs["shop_name"];
 		$this->layout = 'page';
 	}
 	//执行登陆
 	function act_login(){
+		
 		Configure::write('debug', 0);
 		$result['type'] = 1;
 		$error_msg = "";
@@ -177,7 +176,7 @@ class PagesController extends AppController {
 			$operator_pwd=trim($_REQUEST['operator_pwd']);
 	        $authnum=trim($_REQUEST['authnum']);
 	        
-	        if(isset($_REQUEST['authnum']) && $this->captcha->check($_REQUEST['authnum']) == false){
+	        if($this->configs['admin_captcha'] == 1 &&isset($_REQUEST['authnum']) && $this->captcha->check($_REQUEST['authnum']) == false){
 		    	$error_msg="验证码错误";
 		    }else{
 		    $operator_info = $this->Operator->findbyname($operator);
@@ -212,6 +211,7 @@ class PagesController extends AppController {
 		    			//管理员管理权限
 		    			$_SESSION['Action_List']=$operator_info['Operator']['actions'];
 		    			$_SESSION['Admin_Locale'] = $_REQUEST['locale'];
+		    			$result['type'] = 0;
 		    			//pr($_POST['cookie']);
 		    				if(isset($_POST['cookie']) && $_POST['cookie'] != ""){
 		    					//	pr("sdsds");
@@ -219,13 +219,18 @@ class PagesController extends AppController {
 		    					$this->Cookie->write('SV-Cart.admin_id',$operator_info['Operator']['id'],false,time()+3600 * 24 * 365); 
 		    					$this->Cookie->write('SV-Cart.admin_pass',md5($operator_info['Operator']['password']),false,time()+3600 * 24 * 365); 
 		    					$this->Cookie->write('SV-Cart.locale',$_REQUEST['locale'],false,time()+3600 * 24 * 365); 
-						
 							}
-							$result['type'] = 0;
+							if(isset($_SESSION['login_back'])){
+								$result['type'] = 5;
+								$result['url'] = $this->server_host.$_SESSION['login_back'];
+								unset($_SESSION['login_back']);
+								//	header("Location:"."http://".$host."/".$_SESSION['cart_back_url']);
+							}
+							
 			    		}
 			    	}
 			    }
-			
+			   
 	        }
         //$_SESSION['login_msg'] = $msg;
         //$_SESSION['login_is_msg'] = 1;
@@ -286,20 +291,19 @@ class PagesController extends AppController {
 	              $this->MailTemplate->set_locale($this->locale);
 	  	          $template=$this->MailTemplate->find("code = 'send_password' and status = '1'");
 	  	          $template_str=$template['MailTemplateI18n']['html_body'];
-	  	          $host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
 	  	          //生成连接code  id+原密码 md5 加密
 	  	          $code = md5($operator['Operator']['id'] . $operator['Operator']['password']);
-	  	          $reset_email = "http://".$host.$this->webroot."pages/change_password/".$operator['Operator']['id']."/".$code."/";
+	  	          $reset_email = $this->server_host.$this->admin_webroot."pages/change_password/".$operator['Operator']['id']."/".$code."/";
 				  /* 商店网址 */
-				  $host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
-				  $webroot = str_replace("/".WEBROOT_DIR."/","",$this->webroot);
-				  $shop_url = "http://".$host.$webroot;
+				  $shop_url = $this->server_host.$this->cart_webroot;
 	              eval("\$template_str = \"$template_str\";");
 	              //$template_str=str_replace(" ","",$template_str);
 				  $to_email = $operator['Operator']['email'];
 				  $this->set_email_config($configs);
 				  $this->Email->sendAs = 'html';
 				  $this->Email->is_ssl = $this->configs['smtp_ssl'];
+				  $this->Email->is_mail_smtp=$this->configs['mail_service'];
+
 				  $this->Email->smtp_port = $this->configs['smtp_port'];
 
 				  $this->Email->fromName = "".$shop_name.""; 
@@ -368,6 +372,10 @@ class PagesController extends AppController {
 			$operator = $this->Operator->findbyid($_REQUEST['id']);
 			$operator['Operator']['password'] = md5($_REQUEST['pwd']);
 			$this->Operator->save($operator);
+			//操作员日志
+    	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'修改操作员密码' ,'operation');
+    	    }
 			$result['type'] = 0;
 			$result['msg'] = "修改成功";
 		}
@@ -431,12 +439,124 @@ class PagesController extends AppController {
     	$this->Cookie->write('pagers_num_cookies',$number);
     	Configure::write('debug', 0);
 		die();
-    }	
-    
-    function test(){
-    	pr($_SESSION);
-    	echo  session_id();
-    	exit();
     }
+    /* 清除缓存 */
+    function clear_cache(){
+    	Configure::write('debug',0);
+    	//$result['count'] = $this->clear_cache_files();
+    	$dir_names = explode(',', $_POST['dir_name']);
+    	echo $this->clear_cache_files($dir_names);
+    	die();
+    }
+
+	/* 清除缓存文件 */
+	function clear_cache_files($dirs)
+	{
+
+		$cache_dirs = $this->get_cache_dirs($dirs);
+	    $count   = 0;
+	    foreach ($cache_dirs AS $dir)
+	    {
+	        $folder = @opendir($dir);
+	        if ($folder === false)
+	        {
+	            continue;
+	        }
+	        while ($file = readdir($folder))
+	        {
+	            if ($file == '.' || $file == '..' || $file == '.svn' || $file == 'empty')
+	            {
+	                continue;
+	            }
+	            if (is_file($dir . $file))
+	            {
+	            	//echo $dir . $file.'<br>';
+                    if (@unlink($dir . $file))
+                    {
+                        $count++;
+                    }
+	            }
+	        }
+	        closedir($folder);
+	    }
+
+	    return $count;
+	}
+	/* 获取缓存文件夹 */
+	function get_cache_dirs($dirs){
+		if(is_array($dirs)){
+			$cache_dirs = array();
+			foreach($dirs as $dir){
+				if(is_dir(ROOT . $dir) && is_dir(ROOT . $dir .'/tmp/cache')){
+					$cache_dirs[] = ROOT . $dir .'/tmp/cache/';
+					$cache_dirs[] = ROOT . $dir .'/tmp/cache/models/';
+					$cache_dirs[] = ROOT . $dir .'/tmp/cache/persistent/';
+					$cache_dirs[] = ROOT . $dir .'/tmp/cache/views/';
+				}
+			}
+			return $cache_dirs;
+		}
+	}
+	/* 获取所有缓存文件夹 */
+	function get_all_cache_dirs(){
+		$cache_dirs = array();
+		$folder = opendir(ROOT);
+		while($file = readdir($folder)){
+			if($file == '.' || $file == '..' || $file == 'cake' || $file == '.svn')
+				continue;
+			if(is_dir(ROOT . $file) && is_dir(ROOT . $file .'/tmp/cache')){
+				$cache_dirs[] = ROOT . $dir .'/tmp/cache/';
+				$cache_dirs[] = ROOT . $file .'/tmp/cache/models/';
+				$cache_dirs[] = ROOT . $file .'/tmp/cache/persistent/';
+				$cache_dirs[] = ROOT . $file .'/tmp/cache/views/';
+			}
+		}
+		closedir($folder);
+		return $cache_dirs;
+	}
+    
+    
+    
+    //google翻译快捷窗口
+   	function g_translate($lang_value,$original_text,$i){
+   		Configure::write('debug',0);
+		$sl = "zh-CN";
+	//	$original_text = urlencode($original_text);
+		$url = "http://translate.google.cn/translate_a/t?client=t&ie=utf8"."&sl=".$sl."&tl=".$lang_value."&text=".$original_text;
+		$req_value = $this->translates($url);
+		$result = array();
+		if($req_value[0] !="\""){
+			$result['value'] = $req_value;
+		}else{
+			$n = strlen($req_value);
+			$result['value'] = substr($req_value,1,$n-2);
+		}
+		$result['type'] = $i;
+		echo $result['value']."|".$i;
+		die();
+	//	$this->set('result',$result['value']);
+	//	$this->layout = 'ajax';
+	
+	}
+	
+	function translates($url){
+
+		$handle = file_get_contents($url);
+
+		$handle = mb_convert_encoding($handle, 'UTF-8', 'GBK');
+		if(preg_match("/.*(\[).*/",$handle))
+		{
+			$r= json_decode($handle);
+			$value=$r[0];
+		}else
+		{
+			$value = $handle;
+			$desc = "";
+		}
+		$result[0] = $value;
+
+		return $value;
+	}
+   
 }
 ?>

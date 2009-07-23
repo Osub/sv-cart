@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: apc.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: apc.php 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  * APC storage engine for cache.
  *

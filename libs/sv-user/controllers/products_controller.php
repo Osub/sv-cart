@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: products_controller.php 1841 2009-05-27 06:51:37Z huangbo $
+ * $Id: products_controller.php 3053 2009-07-17 11:59:14Z huangbo $
 *****************************************************************************/
 class ProductsController extends AppController {
 
@@ -34,10 +34,12 @@ class ProductsController extends AppController {
 		$this->set('locations',$this->navigations);
 		
 		$user_id=$_SESSION['User']['User']['id'];
+		if(empty($rownum)){
 		 	$rownum=isset($this->configs['products_list_num']) ? $this->configs['products_list_num']:((!empty($rownum)) ?$rownum:20);
-
+		}
+		if(empty($showtype)){
 		 	$showtype=isset($this->configs['products_list_showtype']) ? $this->configs['products_list_showtype']:((!empty($showtype)) ?$showtype:'L');
-
+		}
 			if(empty($orderby)){
 		 		$orderby=isset($this->configs['products_category_page_orderby_type'])? $this->configs['products_category_page_orderby_type']." ". $this->configs['products_category_page_orderby_method'] :((!empty($orderby)) ?$orderby:'created '.$this->configs['products_category_page_orderby_method']);
 			}
@@ -60,19 +62,72 @@ class ProductsController extends AppController {
 	    $parameters=Array($rownum,$page);
 	    $options=Array();
 	    $page = $this->Pagination->init($condition,"",$options,$total,$rownum,$sortClass);
-	    $my_orders_products=$this->OrderProduct->findAll($condition,'',"","$rownum",$page);
+	   // $my_orders_products=$this->OrderProduct->findAll($condition,'',"","$rownum",$page);
+	    $my_orders_products=$this->OrderProduct->find('all',array('conditions'=>array($condition),
+																'fields' =>	array('OrderProduct.id','OrderProduct.order_id','OrderProduct.product_id','Product.img_thumb'
+																				,'Product.market_price'
+																				,'Product.shop_price'
+																				,'Product.code','Product.id'
+																				,'Product.brand_id'
+																				,'ProductI18n.name'
+																				),		  	  
+	  	  'order'=>array("Product.$orderby"),'limit'=>$rownum,'page'=>$page));
+	    
+	    
+	    
+	    
+	  //  pr($my_orders_products);
+	    
 	    if(empty($my_orders_products)){
 	   	    $my_orders_products=array();
 	    }
 	   // pr($my_orders_products);
 	    //商品品牌分类
-	   $res_c=$this->Category->findassoc();
-	   $res_b=$this->Brand->findassoc();
+	   $res_c=$this->Category->findassoc($this->locale);
+	   $res_b=$this->Brand->findassoc($this->locale);
+	   
+	   $products_ids_list = array();
+	   $orders_ids_list = array();
+	   $orders_ids_list[] = 0;
+	   $products_ids_list[] = 0;	   
+	   if(is_array($my_orders_products) && sizeof($my_orders_products)>0){
+		    foreach($my_orders_products as $k=>$v){
+		  	    $products_ids_list[] = $v['OrderProduct']['product_id'];
+		    	$orders_ids_list[] = $v['OrderProduct']['order_id'];
+		    }
+		}
+ 	    $p_order_infos = $this->Order->find('all',array("conditions"=>array('Order.id'=>$orders_ids_list)));
+		$order_lists = array();
+		if(is_array($p_order_infos) && sizeof($p_order_infos) >0){
+			foreach($p_order_infos as $k=>$v){
+				$order_lists[$v['Order']['id']] = $v;
+			}
+		}
+		
+		
+ 	    $product_category_infos = $this->ProductsCategory->find('all',array("conditions"=>array('ProductsCategory.product_id'=>$products_ids_list)));
+	    $product_category_lists = array();
+	    
+	    if(is_array($product_category_infos) && sizeof($product_category_infos)>0){
+	  	  	  foreach($product_category_infos as $k=>$v){
+	  			  $product_category_lists[$v['ProductsCategory']['product_id']] = $v;
+	  		  }
+	    }
+	   
 	   foreach($my_orders_products as $k=>$v){
-	   	   	$order_info = $this->Order->findbyid($v['OrderProduct']['order_id']);
-	   	   	$my_orders_products[$k]['OrderProduct']['order_code'] = $order_info['Order']['order_code'];
-	   	  	$product_category = $this->ProductsCategory->findbyproduct_id($v['Product']['id']);
-	  	   if(isset($res_c[$product_category['ProductsCategory']['id']]['Category']['id'])){
+	   	   	//$order_info = $this->Order->findbyid($v['OrderProduct']['order_id']);
+	   	   	if(isset($order_lists[$v['OrderProduct']['order_id']])){
+	   	   		$order_info = $order_lists[$v['OrderProduct']['order_id']];
+	   	   	}
+	   	   	
+	   	   	$my_orders_products[$k]['OrderProduct']['order_code'] = isset($order_info['Order']['id'])?$order_info['Order']['id']:'';
+	   	  	
+	   	  	if(isset($product_category_lists[$v['Product']['id']])){
+	   	  		$product_category = $product_category_lists[$v['Product']['id']];
+	   	  	}
+	   	  	
+	   	  	//$product_category = $this->ProductsCategory->findbyproduct_id($v['Product']['id']);
+	  	   if(isset($product_category) && isset($res_c[$product_category['ProductsCategory']['id']]['Category']['id'])){
 	  	  //	  $my_orders_products[$k]['Category']=$res_c[$v['ProductsCategory']['id']]['Category'];
 	  	  //	  $my_orders_products[$k]['CategoryI18n']=$res_c[$v['ProductsCategory']['id']]['CategoryI18n'];
 	  	  	  $my_orders_products[$k]['Category']=$res_c[$res_c[$product_category['ProductsCategory']['id']]['Category']['id']]['Category'];
@@ -81,6 +136,9 @@ class ProductsController extends AppController {
 	  	  if(isset($res_b[$v['Product']['brand_id']]['Brand']['id'])){
 	  	  	  $my_orders_products[$k]['Brand']=$res_b[$v['Product']['brand_id']]['Brand'];
 	  	  	  $my_orders_products[$k]['BrandI18n']=$res_b[$v['Product']['brand_id']]['BrandI18n'];
+	  	  }
+	  	  if($v['Product']['id'] == ''){
+	  	  	unset($my_orders_products[$k]);
 	  	  }
 	   }
 	  
@@ -93,7 +151,7 @@ class ProductsController extends AppController {
 					$js_languages = array("enable_one_step_buy" => "0","page_number_expand_max" => $this->languages['page_number'].$this->languages['not_exist']);
 					$this->set('js_languages',$js_languages);
 	  }
-	  
+//	  pr($my_orders_products);
 	  $this->set('my_orders_products',$my_orders_products);
 	  $this->set('total',$total);
 	  $this->set('user_id',$user_id);

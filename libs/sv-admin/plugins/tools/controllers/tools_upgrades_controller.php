@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: pages_controller.php 1209 2009-05-06 02:12:51Z tangyu $
+ * $Id: tools_upgrades_controller.php 2703 2009-07-08 11:54:52Z huangbo $
 *****************************************************************************/
 class ToolsUpgradesController extends ToolsAppController{
 	var $helpers = array('Html','Form');
@@ -53,7 +53,7 @@ class ToolsUpgradesController extends ToolsAppController{
 			}
 			else {
 				$this->install_err = "libs/database.php"."文件不存在";
-				$this->this_flash($this->install_err,array('url'=>$this->host,'name'=>'前往 SV-Cart 首页'),array('url'=>$this->host.'/sv-admin','name'=>'前往 SV-Cart 后台管理中心'),'_blank');
+				$this->this_flash($this->install_err,array('url'=>$this->server_host.$this->cart_webroot,'name'=>'前往 SV-Cart 首页'),array('url'=>$this->server_host.$this->admin_webroot,'name'=>'前往 SV-Cart 后台管理中心'),'_blank');
 			}
 		}
 	}
@@ -77,16 +77,16 @@ class ToolsUpgradesController extends ToolsAppController{
 				$file_path[] = ROOT . WEBROOT_DIR . "/plugins/tools/data/upgrade/"."v1.1"."/primary.sql";//sql文件路径
 				$this->upgrade_tables($db_host,$db_user,$db_pw,$db_name,$file_path);
 				if(!empty($this->install_err)){
-					$this->this_flash("升级失败！".$this->install_err,array('url'=>$this->host.'/sv-admin/tools/tools_upgrades/check','name'=>'查看系统环境'),array('url'=>$this->host.'/sv-admin/tools/tools_upgrades/rollback','name'=>'恢复数据库数据'),'_self');
+					$this->this_flash("升级失败！".$this->install_err,array('url'=>$this->server_host.$this->admin_webroot.'tools/tools_upgrades/check','name'=>'查看系统环境'),array('url'=>$this->server_host.$this->admin_webroot.'tools/tools_upgrades/rollback','name'=>'恢复数据库数据'),'_self');
 				}
 				else {
 					$this->Config->updateAll(array('ConfigI18n.value'=>"'".'v1.1'."'"),array('Config.code ='=>'version'));
-					$this->this_flash("恭喜您，SV-Cart已经成功地升级完成。",array('url'=>$this->host,'name'=>'前往 SV-Cart 首页'),array('url'=>$this->host.'/sv-admin','name'=>'前往 SV-Cart 后台管理中心'),'_blank',$this->host);
+					$this->this_flash("恭喜您，SV-Cart已经成功地升级完成。",array('url'=>$this->server_host.$this->cart_webroot,'name'=>'前往 SV-Cart 首页'),array('url'=>$this->server_host.$this->admin_webroot,'name'=>'前往 SV-Cart 后台管理中心'),'_blank',$this->server_host.$this->cart_webroot.);
 				}
 			}
 			else {
 				$this->install_err = "libs/database.php"."文件不存在";
-				$this->this_flash($this->install_err,array('url'=>$this->host,'name'=>'前往 SV-Cart 首页'),array('url'=>$this->host.'/sv-admin','name'=>'前往 SV-Cart 后台管理中心'),'_blank');
+				$this->this_flash($this->install_err,array('url'=>$this->server_host.$this->cart_webroot,'name'=>'前往 SV-Cart 首页'),array('url'=>$this->server_host.$this->admin_webroot,'name'=>'前往 SV-Cart 后台管理中心'),'_blank');
 			}
 		}
 	}
@@ -104,14 +104,14 @@ class ToolsUpgradesController extends ToolsAppController{
 				$path = ROOT . WEBROOT_DIR . "/plugins/tools/data/upgrade/"."v1.1"."/dump.sql";
 				$this->rollback_tables($db_host,$db_user,$db_pw,$db_name,array(ROOT . WEBROOT_DIR . "/plugins/tools/data/upgrade/"."v1.1"."/dump.sql"));
 				if(!empty($this->install_err)){
-					$this->this_flash("恢复数据库数据失败！".$this->install_err,array('url'=>$this->host.'/sv-admin/tools/tools_installs/check','name'=>'查看系统环境'),array('url'=>$this->host.'/sv-admin/tools/tools_installs/setting_ui','name'=>'再次恢复数据库'),'_self');
+					$this->this_flash("恢复数据库数据失败！".$this->install_err,array('url'=>$this->server_host.$this->admin_webroot.'tools/tools_installs/check','name'=>'查看系统环境'),array('url'=>$this->server_host.$this->admin_webroot.'tools/tools_installs/setting_ui','name'=>'再次恢复数据库'),'_self');
 				}
 				else {
-					$this->this_flash("数据库数据已成功恢复。",array('url'=>$this->host,'name'=>'前往 SV-Cart 首页'),array('url'=>$this->host.'/sv-admin','name'=>'前往 SV-Cart 后台管理中心'),'_blank',$this->host);
+					$this->this_flash("数据库数据已成功恢复。",array('url'=>$this->server_host.$this->cart_webroot,'name'=>'前往 SV-Cart 首页'),array('url'=>$this->server_host.$this->admin_webroot,'name'=>'前往 SV-Cart 后台管理中心'),'_blank',$this->server_host.$this->cart_webroot.);
 				}
 			}
 			else {
-				$this->this_flash("您的数据库数据不需要恢复。",array('url'=>$this->host,'name'=>'前往 SV-Cart 首页'),array('url'=>$this->host.'/sv-admin','name'=>'前往 SV-Cart 后台管理中心'),'_blank',$this->host);
+				$this->this_flash("您的数据库数据不需要恢复。",array('url'=>$this->server_host.$this->cart_webroot,'name'=>'前往 SV-Cart 首页'),array('url'=>$this->server_host.$this->admin_webroot,'name'=>'前往 SV-Cart 后台管理中心'),'_blank',$this->server_host.$this->cart_webroot);
 			}
 		}
 	}
@@ -121,7 +121,7 @@ class ToolsUpgradesController extends ToolsAppController{
     	$new_version = $this->get_new_version();
     	if($current_version>=$new_version){
 	        $this->install_err .= "您的 SV-Cart 已是最新版本，无需升级";
-	        $this->this_flash($this->install_err,array('url'=>$this->host,'name'=>'前往 SV-Cart 首页'),array('url'=>$this->host.'/sv-admin','name'=>'前往 SV-Cart 后台管理中心'),'_blank');
+	        $this->this_flash($this->install_err,array('url'=>$this->server_host.$this->cart_webroot,'name'=>'前往 SV-Cart 首页'),array('url'=>$this->server_host.$this->admin_webroot,'name'=>'前往 SV-Cart 后台管理中心'),'_blank');
 	        return false;
 	    }
 	    return true;

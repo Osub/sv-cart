@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: schema.php 7961 2008-12-25 23:21:36Z gwoo $ */
+/* SVN FILE: $Id: schema.php 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  * Command-line database management utility to automate programmer chores.
  *

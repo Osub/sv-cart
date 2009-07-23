@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: regions_controller.php 1883 2009-05-31 11:20:54Z huangbo $
+ * $Id: regions_controller.php 1860 2009-05-31 09:31:22Z shenyunfeng $
 *****************************************************************************/
 class RegionsController extends AppController {
 	var $name = 'Regions';

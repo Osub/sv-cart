@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 积分管理
  * ===========================================================================
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1670 2009-05-25 00:47:18Z huangbo $
+ * $Id: index.ctp 3243 2009-07-23 02:30:48Z huangbo $
 *****************************************************************************/
 ?>
 
@@ -20,43 +20,44 @@
 <div class="search_box">
 <?php echo $form->create('',array('action'=>'/','name'=>'PointForm','type'=>'get'));?>
 	<dl>
-	<dt style="padding-top:2px;"><?=$html->image('serach_icon.gif',array('align'=>'left'))?></dt>
-	<dd><p class="reg_time article">选择日期：<input type="text" name="start_time" class="time" id="date" value="<?=@$start_time?>" readonly="readonly"/><button id="show" type="button"><?=$html->image('calendar.gif')?></button>－<input type="text" name="end_time" value="<?=@$end_time?>" class="time" id="date2" readonly="readonly" /><button id="show2" type="button"><?=$html->image('calendar.gif')?></button>
+	<dt style="padding-top:2px;"><?php echo $html->image('serach_icon.gif',array('align'=>'left'))?></dt>
+	<dd><p class="reg_time article">选择日期：<input type="text" name="start_time" class="time" id="date" value="<?php echo @$start_time?>" readonly="readonly"/><?php echo $html->image("calendar.gif",array('width'=>'18','height'=>'18','alt'=>'Calendar',"id"=>"show","class"=>"calendar"))?>－<input type="text" name="end_time" value="<?php echo @$end_time?>" class="time" id="date2" readonly="readonly" /><?php echo $html->image("calendar.gif",array('width'=>'18','height'=>'18','alt'=>'Calendar',"id"=>"show2","class"=>"calendar"))?>
 	类型：
 	<select name="log_type">
 	<option value="" >全部</option>
-	<option value="R"<?if(@$log_type=="R"){ echo "selected";}?>>注册赠送</option>
-	<option value="B"<?if(@$log_type=="B"){ echo "selected";}?>>购买赠送</option>
-	<option value="O"<?if(@$log_type=="O"){ echo "selected";}?>>购买消费</option>
-	<option value="A"<?if(@$log_type=="A"){ echo "selected";}?>>管理员操作</option>
+	<?php foreach( $point_log_type as $k=>$v ){?>
+	<option value="<?php echo $k;?>" <?php if(@$log_type==$k){ echo "selected";}?> ><?php echo $v;?></option>
+	<?php }?>
 	</select>
-	&nbsp;&nbsp;会员名称：<input type="text" class="time" name="name" value="<?=@$names?>" style="width:120px;" /></p></dd>
+	&nbsp;&nbsp;会员名称：<input type="text" class="time" name="name" value="<?php echo @$names?>" style="width:120px;" /></p></dd>
 	<dt style="" class="curement"><input type="button" onclick="search_point()" value="查询" /> </dt>
 	</dl>
-<? echo $form->end();?>
+<?php echo $form->end();?>
 </div>
 <!--Search End-->
 <!--Main Start-->
 <br />
 <div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
-
-	<ul class="product_llist memberlevels">
-	<li class="member_name"><span>会员名称</span></li>
-	<li class="type">类型</li>
-	<li class="integral">积分</li>
-	<li class="order_number"><p>备注</p></li>
-	<li class="handle_date" style="border-right:0;">操作日期</li></ul>
+<table cellpadding="0" cellspacing="0" width="100%" class="list_data">
+<tr class="thead">
+	<th width="150px">操作日期</th>
+	<th width="150px">会员名称</th>
+	<th width="120px">类型</th>
+	<th width="90px">积分</th>
+	<th>备注</th>
+</tr>
 <!--Menberleves List-->
-<?if(isset($UserPointLog_list) && sizeof($UserPointLog_list)>0){?>
-<? foreach( $UserPointLog_list as $k=>$v ){ ?>
-	<ul class="product_llist memberlevels memberlevels_list">
-	<li class="member_name"><span><?=$v['UserPointLog']['name']?></span></li>
-	<li class="type"><?=$v['UserPointLog']['log_type']?></li>
-	<li class="integral"><?=$v['UserPointLog']['point']?></li>
-	<li class="order_number"><p><?=$v['UserPointLog']['description']?></p></li>
-	<li class="handle_date"><?=$v['UserPointLog']['modified']?></li></ul>
-<? }} ?>	
-
+<?php if(isset($UserPointLog_list) && sizeof($UserPointLog_list)>0){?>
+<?php foreach( $UserPointLog_list as $k=>$v ){ ?>
+<tr>
+	<td align="center"><?php echo $v['UserPointLog']['modified']?></td>
+	<td><?php echo $v['UserPointLog']['name']?></td>
+	<td align="center"><?php echo $v['UserPointLog']['log_type']?></td>
+	<td align="center"><p><?php echo $v['UserPointLog']['point']?></td>
+	<td><?php echo $v['UserPointLog']['description']?></td>
+</tr>
+<?php }} ?>	
+</table>
 <!--Menberleves List End-->	
 
 	<div class="pagers" style="position:relative;">

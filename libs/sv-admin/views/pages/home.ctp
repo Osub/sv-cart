@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 后台首页
  * ===========================================================================
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: home.ctp 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: home.ctp 2485 2009-06-30 11:33:00Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -22,16 +22,16 @@
 	<div class="order_stat" style="width:97.5%">
 	  <div class="title">
 	  <h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  订单统计信息</h1></div>
 	  <div class="box" id="l">
   	    <ul class="list">
-			<li><span class="number"><font color="red"><?=$wait_shipments_order_count?></font></span><?=$html->link("待发货订单:","/orders/?shipping_status=3",'',false,false);?>&nbsp;</li>
-			<li><span class="number"><font color="#192E32"><?=$wait_pay_order_count?></font></span><?=$html->link("待支付订单:","/orders/?payment_status=0",'',false,false);?>&nbsp;</li>
-			<li><span class="number"><font color="red"><?=$order_oos_count?></font></span><?=$html->link("订单缺货登记:","/products/search/wanted",'',false,false);?>&nbsp;</li>
-			<li><span class="number"><font color="#192E32"><?=$not_confirm_order_count?></font></span><?=$html->link("未确认订单:","/orders/?order_status=0",'',false,false);?>&nbsp;</li>
-			<li><span class="number"><font color="#192E32"><?=$order_complete_count?></font></span><?=$html->link("已成交订单数:","/orders/?shipping_status=2",'',false,false);?>&nbsp;</li>
+			<li><span class="number"><font color="red"><?php echo $wait_shipments_order_count?></font></span><?php echo $html->link("待发货订单:","/orders/?shipping_status=3",'',false,false);?>&nbsp;</li>
+			<li><span class="number"><font color="#192E32"><?php echo $wait_pay_order_count?></font></span><?php echo $html->link("待支付订单:","/orders/?payment_status=0",'',false,false);?>&nbsp;</li>
+			<li><span class="number"><font color="red"><?php echo $order_oos_count?></font></span><?php echo $html->link("订单缺货登记:","/products/search/wanted",'',false,false);?>&nbsp;</li>
+			<li><span class="number"><font color="#192E32"><?php echo $not_confirm_order_count?></font></span><?php echo $html->link("未确认订单:","/orders/?order_status=0",'',false,false);?>&nbsp;</li>
+			<li><span class="number"><font color="#192E32"><?php echo $order_complete_count?></font></span><?php echo $html->link("已成交订单数:","/orders/?shipping_status=2",'',false,false);?>&nbsp;</li>
 		<!--	<li><span class="number"><font color="red">没做</font></span><a class="" href="#" title="" target="_blank">退款申请:</a>&nbsp;</li>
 		-->
 		</ul>
@@ -43,18 +43,18 @@
 <!--product Stat-->
 	<div class="order_stat">
 	  <div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  实体商品统计信息
 	  </h1></div>
 	  <div class="box" id="m">
   	    <ul class="list">
-			<li><span class="number"><font color="#192E32"><?=$product_count?></font></span><?=$html->link("商品总数:","/products",'',false,false);?>&nbsp;</li>
-			<li><span class="number"><font color="#192E32"><?=$product_recommend_count?></font></span><?=$html->link("商品推荐数:","/products/?is_recommond=1",'',false,false);?>&nbsp;</li>
+			<li><span class="number"><font color="#192E32"><?php echo $product_count?></font></span><?php echo $html->link("商品总数:","/products",'',false,false);?>&nbsp;</li>
+			<li><span class="number"><font color="#192E32"><?php echo $product_recommend_count?></font></span><?php echo $html->link("商品推荐数:","/products/?is_recommond=1",'',false,false);?>&nbsp;</li>
 		<!--	<li><span class="number"><font color="#192E32">没做</font></span><a class="" href="#" title="" target="_blank">热销商品数:</a>&nbsp;</li>-->
-			<li><span class="number"><font color="#192E32"><?=$product_quantity_count?></font></span><?=$html->link("库存警告商品数:","/products/?quantity=3",'',false,false);?>&nbsp;</li>
+			<li><span class="number"><font color="#192E32"><?php echo $product_quantity_count?></font></span><?php echo $html->link("库存警告商品数:","/products/?quantity=3",'',false,false);?>&nbsp;</li>
 		<!--	<li><span class="number"><font color="#192E32">没做</font></span><a class="" href="#" title="" target="_blank">精品推荐数:</a>&nbsp;</li>
-		--> <li><span class="number"><font color="#192E32"><?=$product_promotion_count?></font></span><?=$html->link("促销商品数:","/products/?promotion_status=1",'',false,false);?>&nbsp;</li>
+		--> <li><span class="number"><font color="#192E32"><?php echo $product_promotion_count?></font></span><?php echo $html->link("促销商品数:","/products/?promotion_status=1",'',false,false);?>&nbsp;</li>
 		</ul>
 	  </div>
 	</div>
@@ -66,8 +66,8 @@
 <!--Order Stat-->
 	<!--<div class="order_stat">
 	  <div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  虚拟卡商品统计</h1></div>
 	  <div class="box">
   	    <ul class="list">
@@ -86,8 +86,8 @@
 <!--product Stat-->
 	<!--<div class="order_stat">
 	  <div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  访问统计</h1></div>
 	  <div class="box">
   	    <ul class="list">
@@ -209,7 +209,9 @@ rss_load();
     }
 window.onload = function() {
 autoHeight("r","m","l");//alert(document.getElementById("l").offsetHeight);
+
 }
+
 </script>
 
 

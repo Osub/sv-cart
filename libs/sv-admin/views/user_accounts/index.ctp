@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 待处理冲值
  * ===========================================================================
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: search.ctp 725 2009-04-17 08:00:21Z huangbo $
+ * $Id: index.ctp 2989 2009-07-17 02:03:04Z huangbo $
 *****************************************************************************/
 ?> 
 
@@ -20,54 +20,55 @@
 <div class="search_box">
 <?php echo $form->create('',array('action'=>'/','name'=>'UserAccountForm','type'=>'get'));?>
 	<dl>
-	<dt style="padding-top:2px;"><?=$html->image('serach_icon.gif',array('align'=>'left'))?></dt>
-	<dd><p class="reg_time article">选择日期：<input type="text" name="start_time" class="time" id="date" value="<?=@$start_time?>" readonly="readonly"/><button id="show" type="button"><?=$html->image('calendar.gif')?></button>－<input type="text" name="end_time" value="<?=@$end_time?>" class="time" id="date2" readonly="readonly" /><button id="show2" type="button"><?=$html->image('calendar.gif')?></button>
+	<dt style="padding-top:2px;"><?php echo $html->image('serach_icon.gif',array('align'=>'left'))?></dt>
+	<dd><p class="reg_time article">选择日期：<input type="text" name="start_time" class="time" id="date" value="<?php echo @$start_time?>" readonly="readonly"/><?php echo $html->image("calendar.gif",array('width'=>'18','height'=>'18','alt'=>'Calendar',"id"=>"show","class"=>"calendar"))?>－<input type="text" name="end_time" value="<?php echo @$end_time?>" class="time" id="date2" readonly="readonly" /><?php echo $html->image("calendar.gif",array('width'=>'18','height'=>'18','alt'=>'Calendar',"id"=>"show2","class"=>"calendar"))?>
 	状态：
 	<select name="account_status">
 	<option value="" >全部</option>
-	<option value="0"<?if(@$status=="0"){ echo "selected";}?>>待处理</option>
-	<option value="1"<?if(@$status=="1"){ echo "selected";}?>>已确认</option>
-	<option value="2"<?if(@$status=="2"){ echo "selected";}?>>已取消</option>
+	<option value="0"<?php if(@$status=="0"){ echo "selected";}?>>待处理</option>
+	<option value="1"<?php if(@$status=="1"){ echo "selected";}?>>已确认</option>
+	<option value="2"<?php if(@$status=="2"){ echo "selected";}?>>已取消</option>
 	</select>
 	&nbsp;&nbsp;
 	支付方式：
 	<select name="payment">
 	<option value="" >全部</option>
 	<?php foreach($payments as $v){?>
-	<option value="<?=$v['Payment']['id'];?>"<?if(@$v['Payment']['id']==@$payment){ echo "selected";}?>><?=$v['PaymentI18n']['name'];?></option>
+	<option value="<?php echo $v['Payment']['id'];?>"<?php if(@$v['Payment']['id']==@$payment){ echo "selected";}?>><?php echo $v['PaymentI18n']['name'];?></option>
 	<?php }?>
 	</select>
-	&nbsp;&nbsp;会员名称：<input type="text" class="time" name="name" value="<?=@$names?>" style="width:120px;" /></p></dd>
+	&nbsp;&nbsp;会员名称：<input type="text" class="time" name="name" value="<?php echo @$names?>" style="width:120px;" /></p></dd>
 	<dt style="" class="curement"><input type="button" onclick="search_user_accounts()" value="查询" /></dt>
 	</dl>
-<? echo $form->end();?>
+<?php echo $form->end();?>
 </div>
 <!--Search End-->
 
 <!--Main Start-->
 <br />
 <div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
-
-	<ul class="product_llist products_processing">
-	<li class="membername">会员名称</li>
-	<li class="handel_time">操作日期</li>
-	<li class="money">金额</li>
-	<li class="payment">支付方式</li>
-	<li class="remark">状态</li>
-	<li class="hadle">操作</li></ul>
+<table cellpadding="0" cellspacing="0" width="100%" class="list_data">
+<tr class="thead">
+	<th width="150px">操作日期</th>
+	<th>会员名称</th>
+	<th>金额</th>
+	<th>支付方式</th>
+	<th>状态</th>
+	<th>操作</th>
+	</tr>
 <!--Products Processing List-->
-<?if(isset($UserAccount_list) && sizeof($UserAccount_list)>0){?>
-<? foreach( $UserAccount_list as $k=>$v ){?>
-	<ul class="product_llist products_processing products_processing_list">
-	<li class="membername"><span><?=$v['UserAccount']['name']?></span></li>
-	<li class="handel_time"><?=$v['UserAccount']['created']?></li>
-	<li class="money"><span><?=$v['UserAccount']['amount']?></span></li>
-	<li class="payment"><?=$v['UserAccount']['payment_name']?></li>
-	<li class="remark"><span><?if( $v['UserAccount']['status']==1 ){ echo "已确认"; }else if($v['UserAccount']['status']==2){ echo "已取消";} else{ echo "待处理";}?></span></li>
-	<li class="hadle"><?php if($v['UserAccount']['status']==0){ ?><?=$html->link("确认","/user_accounts/verify/{$v['UserAccount']['id']}",'',false,false);?>|<?=$html->link("取消","/user_accounts/cancel/{$v['UserAccount']['id']}",'',false,false);?><?php }else{ echo "无操作";}?></li></ul>
+<?php if(isset($UserAccount_list) && sizeof($UserAccount_list)>0){?>
+<?php foreach( $UserAccount_list as $k=>$v ){?>
+	<tr>
+	<td align="center" width="150px"><span><?php echo $v['UserAccount']['created']?></span></td>
+	<td align="center"><?php echo $v['UserAccount']['name']?></td>
+	<td align="center"><span><?php echo $v['UserAccount']['amount']?></span></td>
+	<td align="center"><?php echo $v['UserAccount']['payment_name']?></td>
+	<td align="center"><span><?php if( $v['UserAccount']['status']==1 ){ echo "已确认"; }else if($v['UserAccount']['status']==2){ echo "已取消";} else{ echo "待处理";}?></span></td>
+	<td align="center"><?php if($v['UserAccount']['status']==0){ ?><?php echo $html->link("确认","/user_accounts/verify/{$v['UserAccount']['id']}",'',false,false);?>|<?php echo $html->link("取消","/user_accounts/cancel/{$v['UserAccount']['id']}",'',false,false);?><?php }else{ echo "无操作";}?></td></tr>
 
-<?}?><?}?>
-
+<?php }?><?php }?>
+</table>
 <!--Products Processing List End-->
 <div class="pagers" style="position:relative">
     <?php echo $this->element('pagers', array('cache'=>'+0 hour'));?>

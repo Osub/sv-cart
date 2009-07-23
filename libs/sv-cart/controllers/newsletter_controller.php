@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: newsletter_controller.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: newsletter_controller.php 2817 2009-07-13 11:20:32Z zhengli $
 *****************************************************************************/
 class NewsletterController extends AppController {
 	var $name = 'Newsletter';
@@ -19,11 +19,11 @@ class NewsletterController extends AppController {
  
  	function add(){
  		$result['type'] = 2;
- 		$result['msg'] = "订阅失败!";
+ 		$result['msg'] = $this->languages['subscribe'].$this->languages['failed'];
  		if($this->RequestHandler->isPost()){	
  			if($this->NewsletterList->check_unique_email($_POST['email'])){
  				$result['type'] = 1;
- 				$result['msg'] = "请不要重复订阅!";
+ 				$result['msg'] = $this->languages['not_repeat_subscribe'];
  			}else{
 		 		$email = array(	
 		 						"id" => "",
@@ -38,27 +38,25 @@ class NewsletterController extends AppController {
 		 			$id = $this->NewsletterList->id;
 		 		}
 		 		$result['email'] = $_POST['email'];
-		 		$result['msg'] = "订阅成功!";
+		 		$result['msg'] = $this->languages['subscribe'].$this->languages['successfully'];
 		 		/* 发送激活邮件 */
 		 		$shop_name=$this->configs['shop_name'];
 		 		$send_date=date('Y-m-d');
-	  	        $host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
 		 		//生成 md5加密 code  == id + email
 		 		$code = md5($id . $_POST['email']);
-		 		$url = "http://".$host."/newsletter/verify/".$id."/".$code."/";
+		 		$url = $this->server_host.$this->cart_webroot."newsletter/verify/".$id."/".$code."/";
 		 		//$url = "/$id/$code";
 		 		$this->MailTemplate->set_locale($this->locale);
   	            $template=$this->MailTemplate->find("code = 'news_letter_lists' and status = 1");
   	            $template_str=$template['MailTemplateI18n']['html_body'];
 				/* 商店网址 */
-				$host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
-				$webroot = str_replace("/".WEBROOT_DIR."/","",$this->webroot);
-				$shop_url = "http://".$host.$webroot;
+				$shop_url = $this->server_host.$this->cart_webroot;
   	            eval("\$template_str = \"$template_str\";");
 		 	  	$this->Email->smtpHostNames = "".$this->configs['smtp_host']."";
 			    $this->Email->smtpUserName = "".$this->configs['smtp_user']."";
 			    $this->Email->smtpPassword = "".$this->configs['smtp_pass']."";
 				$this->Email->is_ssl = $this->configs['smtp_ssl'];
+		$this->Email->is_mail_smtp = $this->configs['mail_service'];
 				$this->Email->smtp_port = $this->configs['smtp_port'];
 			    $this->Email->from = "".$this->configs['smtp_user']."";
 			    $this->Email->to = "".$_POST['email']."";
@@ -82,12 +80,12 @@ class NewsletterController extends AppController {
 	 }
  	
  	function verify($id,$code){
- 		$this->pageTitle = "激活订阅"." - ".$this->configs['shop_title'];
+ 		$this->pageTitle = $this->languages['activation'].$this->languages['subscribe']." - ".$this->configs['shop_title'];
  		$email = $this->NewsletterList->findbyid($id);
 	 	if($code <> md5($id . $email['NewsletterList']['email'])){
-	 		$this->flash("无效路径",'/','');
+	 		$this->flash($this->languages['invalid_url'],'/','');
 	 	}else if($email['NewsletterList']['status'] == 1){
- 			$this->flash("已经激活",'/','');
+ 			$this->flash($this->languages['activation'].$this->languages['successfully'],'/','');
  		}else{
 	 		$email['NewsletterList']['status'] = 1;
 	 		$this->NewsletterList->save($email);
@@ -101,11 +99,10 @@ class NewsletterController extends AppController {
 				$template=$this->MailTemplate->find("code = 'email_notification' and status = '1'");
 				$template_str=$template['MailTemplateI18n']['html_body'];
 				/* 商店网址 */
-				$host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
-				$webroot = str_replace("/".WEBROOT_DIR."/","",$this->webroot);
-				$shop_url = "http://".$host.$webroot;
+				$shop_url = $this->server_host.$this->cart_webroot;
 				eval("\$template_str = \"$template_str\";");
 				$this->Email->is_ssl = $this->configs['smtp_ssl'];
+		$this->Email->is_mail_smtp = $this->configs['mail_service'];
 				$this->Email->smtp_port = $this->configs['smtp_port'];
 				$this->Email->smtpHostNames = "".$this->configs['smtp_host']."";
 				$this->Email->smtpUserName = "".$this->configs['smtp_user']."";
@@ -123,23 +120,23 @@ class NewsletterController extends AppController {
 				$this->Email->send();		  
 			}
 	 		
-	 		$this->flash("激活成功",'/','');
+	 		$this->flash($this->languages['activation'].$this->languages['successfully'],'/','');
  		}
  	}
  	
  	function cancel($id,$code){
- 		$this->pageTitle = "订阅取消"." - ".$this->configs['shop_title'];
+ 		$this->pageTitle = $this->languages['unsubscribe']." - ".$this->configs['shop_title'];
 
  		$email = $this->NewsletterList->findbyid($id);
  		if($code <> md5($id . $email['NewsletterList']['email'])){
-	 		$this->flash("无效路径",'/','');
+	 		$this->flash($this->languages['invalid_url'],'/','');
 	 	}
  		if($email['NewsletterList']['status'] == 1){
- 			$this->flash("已经退订",'/','');
+ 			$this->flash($this->languages['unsubscribe'].$this->languages['successfully'],'/','');
  		}
  		$email['NewsletterList']['status'] = 2;
  		$this->NewsletterList->save($email);
- 		$this->flash("退订成功",'/','');
+ 		$this->flash($this->languages['unsubscribe'].$this->languages['successfully'],'/','');
  	}
 }
 

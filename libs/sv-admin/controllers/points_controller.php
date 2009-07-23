@@ -9,14 +9,14 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: points_controller.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: points_controller.php 2412 2009-06-30 01:53:18Z zhengli $
 *****************************************************************************/
 class PointsController extends AppController {
 
 	var $name = 'Points';
 	var $helpers = array('Html','Pagination');
 	var $components = array ('Pagination','RequestHandler','Email'); 
-	var $uses = array("UserPointLog","PaymentApiLog","User","Order");
+	var $uses = array("UserPointLog","PaymentApiLog","User","Order","SystemResource");
 
 	function index(){
 		/*判断权限*/
@@ -25,6 +25,11 @@ class PointsController extends AppController {
 		$this->pageTitle = "积分日志"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'积分日志','url'=>'/points/');
 		$this->set('navigations',$this->navigations);
+		
+		        //资源库信息
+        $this->SystemResource->set_locale($this->locale);
+        $systemresource_info = $this->SystemResource->resource_formated(false);
+       	//
 		$condition='';
 		/* 类型 */
 		if(isset($this->params['url']['log_type']) && $this->params['url']['log_type'] != ''){
@@ -101,26 +106,22 @@ class PointsController extends AppController {
 			$user_id = $UserPointLog_list[$k]['UserPointLog']['user_id'];
 			$User = $this->User->findById($user_id);	
 			$UserPointLog_list[$k]['UserPointLog']['name'] = $User['User']['name'];
-
+			$UserPointLog_list[$k]['UserPointLog']['log_type'] = $systemresource_info["point_log_type"][$UserPointLog_list[$k]['UserPointLog']['log_type']];
 			/* 类型名 */
 			if($v['UserPointLog']['log_type'] == "R"){
-				$UserPointLog_list[$k]['UserPointLog']['log_type'] = "注册赠送";
 				$UserPointLog_list[$k]['UserPointLog']['description'] = $v['UserPointLog']['system_note'];
 			}
 			else if($v['UserPointLog']['log_type'] == "B"){
-				$UserPointLog_list[$k]['UserPointLog']['log_type'] = "购买赠送";
 				/* 订单号 */
 				$Order = $this->Order->findById($v['UserPointLog']['type_id']);
 				$UserPointLog_list[$k]['UserPointLog']['description'] = "订单号：".$Order['Order']['order_code'];
 			}
 			else if($v['UserPointLog']['log_type'] == "O"){
-				$UserPointLog_list[$k]['UserPointLog']['log_type'] = "购买消费";
 				/* 订单号 */
 				$Order = $this->Order->findById($v['UserPointLog']['type_id']);
 				$UserPointLog_list[$k]['UserPointLog']['description'] = "订单号：".$Order['Order']['order_code'];
 			}
 			else if($v['UserPointLog']['log_type'] == "A"){
-				$UserPointLog_list[$k]['UserPointLog']['log_type'] = "管理员操作";
 				$UserPointLog_list[$k]['UserPointLog']['description'] = $v['UserPointLog']['system_note'];
 				
 			}
@@ -130,6 +131,7 @@ class PointsController extends AppController {
 			}		
 		}
 	   	$this->set('UserPointLog_list',$UserPointLog_list);
+	   	$this->set('point_log_type',$systemresource_info["point_log_type"]);
 	}
 }
 

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: comments_controller.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: comments_controller.php 3184 2009-07-22 06:09:42Z huangbo $
 *****************************************************************************/
 class CommentsController extends AppController {
 
@@ -76,8 +76,8 @@ class CommentsController extends AppController {
  		/*判断权限*/
 		$this->operator_privilege('comment_undea_view');
 		/*end*/
-		$this->pageTitle = "评论管理"." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'待处理评论','url'=>'/comments/search');
+		$this->pageTitle = "待处理评论"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'待处理评论','url'=>'/comments/search/uncheck');
 		$this->set('navigations',$this->navigations);
 		$condition["Comment.status"]="0";
 		$condition["Comment.parent_id"]=0;
@@ -115,16 +115,57 @@ class CommentsController extends AppController {
 				$this->data[$k]['Comment']['object']= $vv['ProductI18n']['name'];
 				
 			}
-		}
-		
+		}		
 		$this->set('comments_info',$this->data);
+		if(isset($_REQUEST['page'])&& !empty($_REQUEST['page'])){
+			$this->set('ex_page',$this->params['url']['page']);
+		}		
+		/*CSV导出*/
+		if(isset($_REQUEST['export'])&&$_REQUEST['export']==="export")
+		{
+			$filename = '待处理评论导出'.date('Ymd').'.csv';
+			$ex_data= "待处理评论统计报表,";
+			$ex_data.= "日期,";
+			$ex_data.= date('Y-m-d')."\n";
+			$ex_data.= "编号,";
+			$ex_data.= "用户名,";
+			$ex_data.= "会员等级,";
+			$ex_data.= "类型,";
+			$ex_data.= "评论对象,";
+			$ex_data.= "IP地址,";
+			$ex_data.= "评论时间\n";
+
+			foreach($this->data as $k=>$v) {
+				$ex_data.= $v['Comment']['id'].",";
+				$ex_data.= $v['Comment']['name'].",";
+				$ex_data.= $v['Comment']['user_rank'].",";
+				$ex_data.= $v['Comment']['type'].",";
+				$ex_data.= $v['Comment']['object'].",";
+				$ex_data.= $v['Comment']['ipaddr'].",";
+				$ex_data.= $v['Comment']['created']."\n";				
+			}
+		 	Configure::write('debug',0);
+			header("Content-type: text/csv; charset=gb2312");
+			header ("Content-Disposition: attachment; filename=".iconv('utf-8','gb2312',$filename));
+			header('Cache-Control:   must-revalidate,   post-check=0,   pre-check=0');
+			header('Expires:   0');
+			header('Pragma:   public');
+			echo iconv('utf-8','gb2312',$ex_data."\n");
+			exit;		
+		}			
 	}
 		
-   	function remove( $id ){
+   	function remove( $id){
  		/*判断权限*/
 		$this->operator_privilege('comment_view_cancel');
 		/*end*/
+		$pn = $this->Comment->find('list',array('fields' => array('Comment.id','Comment.name'),'conditions'=> 
+                                        array('Comment.id'=>$id)));
 		$this->Comment->deleteAll("Comment.id='".$id."'");
+		//操作员日志
+        if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+        $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'删除:'.$pn[$id].'的评论' ,'operation');
+        }
    	}
    	function searchremove( $id ){
    		$this->Comment->deleteAll("Comment.id='".$id."'");
@@ -137,7 +178,6 @@ class CommentsController extends AppController {
 		$this->pageTitle = "回复评论 - 评论管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'评论管理','url'=>'/comments/');
 		$this->navigations[] = array('name'=>'回复评论','url'=>'');
-		$this->set('navigations',$this->navigations);
 		
 		if($this->RequestHandler->isPost()){
 			if($this->data['Comment']['content'] != "" ){
@@ -147,6 +187,10 @@ class CommentsController extends AppController {
 			              array('Comment.status' => "1"),
 			              array('Comment.id' => $id)
 			           );
+			    //操作员日志
+        		if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+        	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'回复评论' ,'operation');
+        		}
 				$this->flash("评论回复成功",'/comments/edit/'.$id,10);
 			}else{
 				$this->flash("- 回复的评论内容不能为空!",'/comments/edit/'.$id,10 ,false);
@@ -170,6 +214,9 @@ class CommentsController extends AppController {
 		if( !empty( $restore ) ){
 			$this->set('restore',$restore);
 		}
+		//leo20090722导航显示
+		$this->navigations[] = array('name'=>$comment["Comment"]["name"],'url'=>'');
+	    $this->set('navigations',$this->navigations);
 
  	}
 	
@@ -177,7 +224,6 @@ class CommentsController extends AppController {
 		$this->pageTitle = "回复评论 - 评论管理"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'评论管理','url'=>'/comments/');
 		$this->navigations[] = array('name'=>'回复评论','url'=>'');
-		$this->set('navigations',$this->navigations);
 		
 		if($this->RequestHandler->isPost()){
 
@@ -188,6 +234,10 @@ class CommentsController extends AppController {
 			              array('Comment.status' => "1"),
 			              array('Comment.id' => $id)
 			           );
+			    //操作员日志
+        		if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+        	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'回复评论' ,'operation');
+        		}
 				$this->flash("评论回复成功",'/comments/search/',10);
 			}else{
 				$this->flash("- 回复的评论内容不能为空!",'/comments/',10,false);
@@ -211,7 +261,10 @@ class CommentsController extends AppController {
 		if( !empty( $restore ) ){
 			$this->set('restore',$restore);
 		}
-		//pr($restore);
+		//leo20090722导航显示
+		$this->navigations[] = array('name'=>$comment["Comment"]["name"],'url'=>'');
+	    $this->set('navigations',$this->navigations);
+
  	}
  	
  	//批量处理
@@ -223,6 +276,10 @@ class CommentsController extends AppController {
            		if ( $this->params['url']['act_type'] == 'delete' ){
            			$condition['id'] = $id_arr[$i];
                     $this->Comment->deleteAll( $condition );
+                    //操作员日志
+        		    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+        	        $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'删除评论' ,'operation');
+        		}
                     
            		}
            	}	
@@ -245,6 +302,10 @@ class CommentsController extends AppController {
 			              array('Comment.status' => $status),
 			              array('Comment.id' => $id)
 			           );
+		//操作员日志
+        if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+        $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'更改评论显示状态' ,'operation');
+        }
 		echo $status;
 		Configure::write('debug',0);
     	die();

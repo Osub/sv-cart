@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 订单管理列表
  * ===========================================================================
@@ -9,54 +9,54 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1883 2009-05-31 11:20:54Z huangbo $
+ * $Id: index.ctp 2952 2009-07-16 09:56:25Z huangbo $
 *****************************************************************************/
 ?>
-
+<?php echo $javascript->link('order');?>
 
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
 <!--Search-->
 
 <div class="search_box">
-  <?php echo $form->create('',array('action'=>'/','type'=>'get'));?>
+  <?php echo $form->create('',array('action'=>'/','type'=>'get','name'=>"SearchForm"));?>
 
 	<dl>
-	<dt style="padding-top:0;"><?=$html->image('serach_icon.gif')?></dt>
-	<dd><p class="reg_time">下单时间：<input type="text" id="date" name="date" value="<?=@$start_time?>" readonly /><button type="button" id="show" title="Show Calendar">
-
-	<?=$html->image("calendar.gif",array('width'=>'18','height'=>'18','alt'=>'Calendar'))?>
-	</button>--<input type="text" id="date2" name="date2" value="<?=@$end_time?>"  readonly/><button type="button" id="show2" title="Show Calendar">	<?=$html->image("calendar.gif",array('width'=>'18','height'=>'18','alt'=>'Calendar'))?>
-</button>
-	&nbsp;&nbsp;收货人：<input type="text" class="name" name="consignee" id="consignee" value="<?echo $consignee?>"/>&nbsp;&nbsp;订单号：<input type="text" class="name" name="order_id" id="order_id" value="<?echo $order_id?>"/></p>
+	<dt style="padding-top:0;"><?php echo $html->image('serach_icon.gif')?></dt>
+	<dd><p class="reg_time">下单时间：<input type="text" id="date" name="date" value="<?php echo @$start_time?>" readonly />
+	<?php echo $html->image("calendar.gif",array('width'=>'18','height'=>'18','alt'=>'Calendar',"id"=>"show","class"=>"calendar"))?>
+	<input type="text" id="date2" name="date2" value="<?php echo @$end_time?>"  readonly/><?php echo $html->image("calendar.gif",array('width'=>'18','height'=>'18','alt'=>'Calendar',"id"=>"show2","class"=>"calendar"))?>
+	&nbsp;&nbsp;收货人：<input type="text" class="name" name="consignee" id="consignee" value="<?php echo $consignee?>"/>&nbsp;&nbsp;订单号：<input type="text" class="name" name="order_id" id="order_id" value="<?php echo $order_id?>"/></p>
 	<p class="confine">
 		<select style="width:110px;" name="order_status">
-		<option value="-1">订单状态</option>
-		<option value="0" <?if ($order_status == 0){?>selected<?}?>>未确认</option>
-		<option value="1" <?if ($order_status == 1){?>selected<?}?>>已确认</option>
-		<option value="2" <?if ($order_status == 2){?>selected<?}?>>已取消</option>
-		<option value="3" <?if ($order_status == 3){?>selected<?}?>>无效</option>
-		<option value="4" <?if ($order_status == 4){?>selected<?}?>>退货</option>
+		<?php foreach( $systemresource_info["order_status"] as $k=>$v ){ ?>
+		<option value="<?php echo $k;?>" <?php if ($order_status == $k){?>selected<?php }?> ><?php echo $v;?></option>
+		<?php }?>
 		</select>
 		<select style="width:110px;" name="shipping_status">
-		<option value="-1">配送状态</option>
-		
-		<option value="0" <?if ($shipping_status == 0){?>selected<?}?>>未发货</option>
-		<option value="1" <?if ($shipping_status == 1){?>selected<?}?>>已发货</option>
-		<option value="2" <?if ($shipping_status == 2){?>selected<?}?>>已收货</option>
-		<option value="3" <?if ($shipping_status == 3){?>selected<?}?>>备货中</option>
-
+		<?php foreach( $systemresource_info["shipping_status"] as $k=>$v ){ ?>
+		<option value="<?php echo $k;?>" <?php if ($shipping_status == $k){?>selected<?php }?> ><?php echo $v;?></option>
+		<?php }?>
 		</select>
 		<select style="width:110px;" name="payment_status">
-		<option value="-1">付款状态</option>
-		<option value="0" <?if ($payment_status == 0){?>selected<?}?>>未付款</option>
-		<option value="1" <?if ($payment_status == 1){?>selected<?}?>>付款中</option>
-		<option value="2" <?if ($payment_status == 2){?>selected<?}?>>已付款</option>
-		
-		</select></p></dd>
-	<dt class="big_search"><input type="submit" class="big" value="搜索" /></dt>
+		<?php foreach( $systemresource_info["payment_status"] as $k=>$v ){ ?>
+		<option value="<?php echo $k;?>" <?php if ($payment_status == $k){?>selected<?php }?> ><?php echo $v;?></option>
+		<?php }?>
+		</select>
+		<?php if(isset($SVConfigs["mlti_currency_module"]) && $SVConfigs["mlti_currency_module"]==1){?>
+	语言:	<select name="order_locale">
+			<option value="all">all</option>
+		<?php if(isset($languages) && sizeof($languages)>0){
+			foreach ($languages as $k => $v){?>
+			<option value="<?php echo $v['Language']['locale']?>" <?php if($v['Language']['locale']==$locale){echo "selected";}?>><?php echo $v['Language']['name']?></option>
+		<?php }}?>
+	</select>
+		<?php }?>
+			</p></dd>
+	<dt class="big_search"><input type="button" class="big" value="搜索" onclick="search_act()" /> <input type="button" value="导出"   class="big"  onclick="export_act()" />	
+</dt>
 	</dl>
-<? echo $form->end();?>
+<?php echo $form->end();?>
 </div>
 
 
@@ -64,40 +64,53 @@
 <!--Search End-->
 
 <div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
-	<ul class="orders_title">
-	<li class="number">订单号</li>
-	<li class="time">下单时间</li>
-	<li class="take_over">收货人</li>
-	<li class="expenses">费用</li>
-	<li class="payment">支付方式</li>
-	<li class="deliver">配送方式</li>
-	<li class="state">订单状态</li>
-	<li class="hadle">操作</li></ul>
+<?php echo $form->create('',array('action'=>'/batch_shipping_print/',"name"=>"OrdForm",'onsubmit'=>"return true"));?>
+<table cellpadding="0" cellspacing="0" width="100%" class="list_data">
+<tr class="thead">
+	<th align="left" width="120px"><input type="checkbox" class="checkbox" name="checkbox" value="checkbox" onclick='javascript:selectAll(this, "checkboxes")'/>订单号</th>
+	<th width="140px" >下单时间</th>
+	<th>收货人</th>
+	<th width="150px">费用</th>
+	<th width="110px">支付方式</th>
+	<th width="80px">配送方式</th>
+	<th width="140px">订单状态</th>
+	<th width="70px" >操作</th>
+</tr>
 <!--List Start-->
-<?if(isset($orders_list) && sizeof($orders_list)>0){?>
-<?foreach($orders_list as $k=>$v){?>
-	<ul class="orders_title orders-list">
-	<li class="number"><?=$html->link("{$v['Order']['order_code']}","/orders/{$v['Order']['id']}",'',false,false);?></li>
-	<li class="time">
-		<span><?echo $v['Order']['created']?></span></li>
-	<li class="take_over">
-		<span><?echo $v['Order']['consignee']?><?if(isset($v['Order']['telephone']) && !empty($v['Order']['telephone'])){?>[TEL:<?echo $v['Order']['telephone']?>]<?}?></span>
-		<span><?echo $v['Order']['address']?></span></li>
-	<li class="expenses">
-		<span>总金额: <code style="margin-left:12px"><?echo $v['Order']['total']?></code></span>
-		<span>应付金额: <?echo $v['Order']['should_pay']?></span></li>
-		<li class="payment"><?echo $v['Order']['payment_name']?></li>
-		<li class="deliver"><?echo $v['Order']['shipping_name']?></li>
-		<li class="state"><?if($v['Order']['status'] == 0){?>未确认&nbsp;<?}elseif($v['Order']['status'] == 1){?>已确认&nbsp;<?}elseif($v['Order']['status'] == 2){?>已取消&nbsp;<?}elseif($v['Order']['status'] == 3){?>无效&nbsp;<?}elseif($v['Order']['status'] == 4){?>退货&nbsp;<?}?>
-		<?if($v['Order']['payment_status'] == 0){?>未付款&nbsp;<?}elseif($v['Order']['payment_status'] == 1){?>付款中&nbsp;<?}elseif($v['Order']['payment_status'] == 2){?>已付款&nbsp;<?}?>
-		<?if($v['Order']['shipping_status'] == 0){?>未发货&nbsp;<?}elseif($v['Order']['shipping_status'] == 1){?>已发货&nbsp;<?}elseif($v['Order']['shipping_status'] == 2){?>已收货&nbsp;<?}elseif($v['Order']['shipping_status'] == 3){?>备货中&nbsp;<?}?></li>
-		<li class="hadle"><?php echo $html->link("查看","/orders/{$v['Order']['id']}");?></li></ul>
-<?}}?>
-
+<?php if(isset($orders_list) && sizeof($orders_list)>0){?>
+<?php foreach($orders_list as $k=>$v){?>
+	<tr>
+	<td width="140px" class="order_num no_wrap"><input type="checkbox" class="checkbox" name="checkboxes[]" value="<?php echo $v['Order']['id']?>" /><?php echo $html->link("{$v['Order']['order_code']}","/orders/{$v['Order']['id']}",'',false,false);?></td>
+	<td align="center" width="120px"><?php echo $v['Order']['created']?></td>
+	<td><p><?php echo $v['Order']['consignee']?><?php if(isset($v['Order']['telephone']) && !empty($v['Order']['telephone'])){?> [TEL:<?php echo $v['Order']['telephone']?>]<?php }?></p>
+		<p><?php echo $v['Order']['address']?></p>
+	</td>
+	<td width="150px">
+		<p>总金额:&nbsp&nbsp&nbsp&nbsp  <?php echo $v['Order']['total']?></p>
+		<p>应付金额: <?php echo $v['Order']['should_pay']?></p>
+	</td>
+	<td align="center" width="110px"><?php echo $v['Order']['payment_name']?></td>
+	<td align="center" width="80px"><?php echo $v['Order']['shipping_name']?></td>
+	<td align="center" width="140px" ><?php echo $systemresource_info["order_status"][$v['Order']['status']];?>,<?php echo $systemresource_info["payment_status"][$v['Order']['payment_status']];?>,<?php echo $systemresource_info["shipping_status"][$v['Order']['shipping_status']];?></td>
+	<td align="center" width="70px" ><?php echo $html->link("查看","/orders/{$v['Order']['id']}");?> | <?php echo $html->link("编辑","/orders/edit/{$v['Order']['id']}");?><?php if(($v['Order']['allvirtual']==0)&&((($v['Order']['is_cod']==1)&&($v['Order']['status']==1)&&($v['Order']['shipping_status']==0))||(($v['Order']['is_cod']==0)&&($v['Order']['payment_status']==2)&&($v['Order']['shipping_status']==0)))){?><br/><?php echo $html->link("打印配送单",
+"/orders/batch_shipping_print/{$v['Order']['id']}");?><?php } ?></td></tr>
+<?php }}?>
+</table>
 <!--List End-->
 <div class="pagers" style="position:relative">
+<?php if(isset($orders_list) && sizeof($orders_list)>0){?>	
+<p class='batch'>
+	<input type="button" value="确认" onclick="batch_change_status('confirm_status')" />
+	<input type="button" value="付款" onclick="batch_change_status('payment_status')" />
+	<input type="button" value="取消" onclick="batch_change_status('cancel_status')" />
+	<input type="button" value="无效" onclick="batch_change_status('invalid_status')" />
+	<input name="act" type="hidden" value="batch"/>
+	<input type="button" value="打印配送单" onclick="target='_blank';batch_shipping_print()" id="change_button" />
+</p>
+<?php }?>
 <?php echo $this->element('pagers', array('cache'=>'+0 hour'));?>
 </div>
+<?php echo $form->end();?>
 </div>
 </div>
 	  <!--时间控件层start-->
@@ -118,3 +131,53 @@
 		<div class="bd"><div id="cal4"></div><div style="clear:both;"></div></div>
 	</div>
 <!--end-->
+<script>
+function batch_change_status(status){
+    var id=document.getElementsByName('checkboxes[]');
+	var i;
+	var j=0;
+	for( i=0;i<=parseInt(id.length)-1;i++ ){
+		if(id[i].checked){
+			j++;
+		}
+	}
+	if( j<1 ){
+		return false;
+	}else{
+		document.OrdForm.action=webroot_dir+"orders/order_status/"+status+"/";
+	    document.OrdForm.onsubmit= "";
+	    document.OrdForm.submit();
+	}
+}
+function batch_shipping_print(){
+    var id=document.getElementsByName('checkboxes[]');
+	var i;
+	var j=0;
+	for( i=0;i<=parseInt(id.length)-1;i++ ){
+		if(id[i].checked){
+			j++;
+		}
+	}
+	if( j<1 ){
+		return false;
+	}else{
+		document.OrdForm.action=webroot_dir+"orders/batch_shipping_print";
+	    document.OrdForm.onsubmit= "";
+	    document.OrdForm.submit();
+	}
+}
+
+function search_act(){ 
+	document.SearchForm.action=webroot_dir+"orders/index";
+	document.SearchForm.onsubmit= "";
+	document.SearchForm.submit(); 
+}
+
+function export_act(){ 
+//	var url=document.getElementById("url").value;
+//	window.location.href=webroot_dir+url;
+	document.SearchForm.action=webroot_dir+"orders/index/export";
+	document.SearchForm.onsubmit= "";
+	document.SearchForm.submit(); 
+}
+</script>

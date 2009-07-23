@@ -1,5 +1,5 @@
-<?php
-/* SVN FILE: $Id: index.ctp 7945 2008-12-19 02:16:01Z gwoo $ */
+<?php 
+/* SVN FILE: $Id: index.ctp 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  *
  * PHP versions 4 and 5
@@ -24,7 +24,7 @@
 ?>
 <div class="<?php echo $pluralVar;?> index">
 <h2><?php echo $pluralHumanName;?></h2>
-<p><?php
+<p><?php 
 echo $paginator->counter(array(
 	'format' => 'Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%'
 ));
@@ -36,7 +36,7 @@ echo $paginator->counter(array(
 <?php endforeach;?>
 	<th><?php __('Actions');?></th>
 </tr>
-<?php
+<?php 
 $i = 0;
 foreach (${$pluralVar} as ${$singularVar}):
 	$class = null;
@@ -81,7 +81,7 @@ echo "\n";
 <div class="actions">
 	<ul>
 		<li><?php echo $html->link('New '.$singularHumanName, array('action'=>'add')); ?></li>
-<?php
+<?php 
 		$done = array();
 		foreach ($associations as $_type => $_data) {
 			foreach ($_data as $_alias => $_details) {

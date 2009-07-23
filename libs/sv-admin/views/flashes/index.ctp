@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart Flashes管理列表
  * ===========================================================================
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: index.ctp 2504 2009-07-01 08:24:22Z huangbo $
 *****************************************************************************/
 ?>
 <style type='text/css'>
@@ -21,7 +21,7 @@ table.table td.paddings{
 }
 </style>
 
-<?=$javascript->link('flashes');?>
+<?php echo $javascript->link('flashes');?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
 <!--Search-->
@@ -49,11 +49,11 @@ function typechange(){
 <?php echo $form->create('',array('action'=>'./','name'=>'FlashForm','onload'=>'typechange()','type'=>'get'));?>
 
 	<dl>
-	<dt style="padding-top:0;"><?=$html->image('serach_icon.gif',array('align'=>'left'))?></dt>
+	<dt style="padding-top:0;"><?php echo $html->image('serach_icon.gif',array('align'=>'left'))?></dt>
 	<dd><p class="reg_time article">
 		类型:
 		<select name="flashtype" id='flashType' onchange='typechange();'>
-<? if(isset($flashtypes) && sizeof($flashtypes)>0){
+<?php if(isset($flashtypes) && sizeof($flashtypes)>0){
 		 foreach($flashtypes as $k => $v){?>
 			<option value="<?php echo $k;?>" <?php if($k==$type)echo "selected";?>><?php echo $v;?></option>
 		<?php }}?>		
@@ -63,29 +63,35 @@ function typechange(){
 
 		<select style="width:80px;" name="language">
 			<option value=''>全部语言</option>
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 		foreach($languages as $k => $v){?>
 			<option value="<?php echo $v['Language']['locale'];?>" <?php if($v['Language']['locale']==$language)echo "selected";?>><?php echo $v['Language']['name'];?></option>
 		<?php }}?>
 		</select>
 		</p></dd>
-	<dt class="small_search"><input type="submit" value="搜索"  class="search_article" />  &nbsp &nbsp&nbsp &nbsp&nbsp&nbsp &nbsp&nbsp &nbsp&nbsp注：flash设置留空为默认值</dt></dl>
-<? echo $form->end();?>
+	<dt class="small_search"><input type="submit" value="搜索"  class="search_article" /></dt>
+		</dl>
+<?php echo $form->end();?>
+</div>
+<div class="height_5">&nbsp;</div>
+<div class="search_box">
 <?php echo $form->create('Flashe',array('action'=>'./'));?>
 		<table id="is_none" style="display:none;" cellpadding='0' cellspacing='0' border='0' width='100%' class='table'>
+			<tr>
+			<td colspan="8" class='paddings' height="25">注：flash设置留空为默认值</td>
+			</tr>
 			<tr valign="middle">
 					<td class='paddings'>width：</td>
 					<td><input type="text" id="width" name="data[Flashe][width]"  style="width:125px;border:1px solid #649776"  /></td>
 					<td class='paddings'>height ：</td>
 					<td><input type="text" id="height" name="data[Flashe][height]"  style="width:125px;border:1px solid #649776"  /></td>
-					
-			
+			</tr>
 			<tr valign="middle">
 				<td class='paddings'>
-					<input type="hidden" name="data[Flashe][id]" id="id">
-					<input type="hidden" name="data[Flashe][type]"  id="type">
-					<input type="hidden" name="data[Flashe][type_id]"  id="type_id">
-					roundcorner：</td>
+				<input type="hidden" name="data[Flashe][id]" id="id">
+				<input type="hidden" name="data[Flashe][type]"  id="type">
+				<input type="hidden" name="data[Flashe][type_id]"  id="type_id">
+				roundcorner：</td>
 				<td><input type="text" id="roundcorner" name="data[Flashe][roundcorner]"  style="width:125px;border:1px solid #649776"  /></td>
 				<td class='paddings'>autoplaytime：</td>
 				<td><input type="text" id="autoplaytime" name="data[Flashe][autoplaytime]"  style="width:125px;border:1px solid #649776"  /></td>
@@ -149,33 +155,40 @@ function typechange(){
 					<td colspan='8' valign='bottom' align='center' height='35'><input class="search_article" type="submit" value="提交" /></td
 				></tr>
 </table>
-<? echo $form->end();?>
+<?php echo $form->end();?>
 </div>
 <br />
 <!--Search End-->
 <!--Main Start-->
-<p class="add_categories"><strong><?=$html->link($html->image('add.gif',array('align'=>'absmiddle'))."添加图片","add/",'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."添加图片","add/",'',false,false);?></strong></p>
 
 <div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
-	<ul class="product_llist flashes">
-	<li class="type">类型</li>
-	<li class="lang">语言</li>
-	<li class="url" style='text-align:left'><span style='margin-left:5px;'>轮播图片链接</span></li>
-	<li class="taixs">排序</li>
-	<li class="in_effect">是否有效</li>
-	<li class="hadle">操作</li></ul>
+					
+	<table cellpadding="0" cellspacing="0" width="100%" class="list_data">
+	<tr class="thead">
+		<th>类型</th>
+		<th>语言</th>
+		<th>轮播图片链接</th>
+		<th>排序</th>
+		<th>是否有效</th>
+		<th class="no_border">操作</th>
+	</tr>
 <!--User List-->
 <?php if(isset($flashes) && sizeof($flashes)>0){foreach($flashes as $flash){?>
-	<ul class="product_llist flashes flashes_list">
-	<li class="type"><?=$flash['Flash']['typename'];?></li>
-	<li class="lang"><?=$flash['FlashImage']['locale'];?></li>
-	<li class="url"><p><?=$html->link("{$flash['FlashImage']['image']}","{$flash['FlashImage']['image']}",'',false,false);?></p></li>
-	<li class="taixs"><?=$flash['FlashImage']['orderby']?></li>
-	<li class="in_effect"><?php if($flash['FlashImage']['status']) echo $html->image('yes.gif');else echo $html->image('no.gif');?></li>
-	<li class="hadle">
-	<?php echo $html->link("编辑","/flashes/edit/{$flash['FlashImage']['id']}");?>|<?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$this->webroot}flashes/remove/{$flash['FlashImage']['id']}')"));?>
-		</li></ul>
+	<tr>
+		<td align="center"><?php echo $flash['Flash']['typename'];?></td>
+		<td align="center"><?php echo $flash['FlashImage']['locale'];?></td>
+		<td><?php echo $html->link("{$flash['FlashImage']['image']}","{$flash['FlashImage']['image']}",'',false,false);?></td>
+		<td align="center"><?php echo $flash['FlashImage']['orderby']?></td>
+		<td align="center"><?php if($flash['FlashImage']['status']) echo $html->image('yes.gif');else echo $html->image('no.gif');?></td>
+		<td align="center">
+		<?php echo $html->link("编辑","/flashes/edit/{$flash['FlashImage']['id']}");?> |
+		<?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$this->webroot}flashes/remove/{$flash['FlashImage']['id']}')"));?>
+		</td>
+	</tr>
 <?php }?>
+	</table>
+
 <!--User List End-->	
 
 <div class="pagers" style="position:relative">
@@ -190,7 +203,7 @@ function typechange(){
 	<span id="select1">
 	<select  name="btypeid" id='bTypeId' onchange='flash_change(this.options[this.options.selectedIndex].value);'   >
 			<option value='0'>全部页面</option>
-<? if(isset($b) && sizeof($b)>0){
+<?php if(isset($b) && sizeof($b)>0){
 		 foreach($b as $k => $v){?>
 			<option value="<?php echo $k;?>" <?php if($k==$typeid)echo "selected";?>><?php echo $v;?></option>
 		<?php }}?>
@@ -198,7 +211,7 @@ function typechange(){
 </span>	<span id="select2">
 					<select  name="pctypeid" id='pcTypeId' onchange='flash_change(this.options[this.options.selectedIndex].value);' >
 			<option value='0'>全部页面</option>
-<? if(isset($pc) && sizeof($pc)>0){
+<?php if(isset($pc) && sizeof($pc)>0){
 		 foreach($pc as $k => $v){?>
 			<option value="<?php echo $k;?>" <?php if($k==$typeid)echo "selected";?>><?php echo $v;?></option>
 		<?php }}?>
@@ -206,7 +219,7 @@ function typechange(){
 	</span>			<span id="select3">			
 		<select  name="actypeid" id='acTypeId' onchange='flash_change(this.options[this.options.selectedIndex].value);' >
 			<option value='0'>全部页面</option>
-<? if(isset($ac) && sizeof($ac)>0){
+<?php if(isset($ac) && sizeof($ac)>0){
 		 foreach($ac as $k => $v){?>
 			<option value="<?php echo $k;?>" <?php if($k==$typeid)echo "selected";?>><?php echo $v;?></option>
 		<?php }}?>

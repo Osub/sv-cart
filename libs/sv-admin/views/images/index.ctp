@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 图片管理
  * ===========================================================================
@@ -9,21 +9,21 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1670 2009-05-25 00:47:18Z huangbo $
+ * $Id: index.ctp 2761 2009-07-10 09:06:59Z shenyunfeng $
 *****************************************************************************/
 ?>
-<?=$javascript->link('/../js/yui/treeview-min.js');?>
-<?=$javascript->link('treeview/treeview1.js');?>
-<?=$javascript->link('treeview/prototype.js');?>
-<?if($status!=1){?><?=$javascript->link('treeview/scriptaculous.js?load=effects,builder');?><?}?>
-<?if($status!=1){?><?=$javascript->link('treeview/lightbox.js');?><?}?>
-<?=$javascript->link('/../js/yui/treeview-min.js');?>
+<?php echo $javascript->link('/../js/yui/treeview-min.js');?>
+<?php echo $javascript->link('treeview/treeview1.js');?>
+<?php echo $javascript->link('treeview/prototype.js');?>
+<?php if($status!=1){?><?php echo $javascript->link('treeview/scriptaculous.js?load=effects,builder');?><?php }?>
+<?php if($status!=1){?><?php echo $javascript->link('treeview/lightbox.js');?><?php }?>
+
 <input type="hidden" value="/others" id="img_address">
 <div id="msg"></div>
 <div class="content">
-<?if(@!isset($this->params['url']['status'])){?>
+<?php if(@!isset($this->params['url']['status'])){?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
-<?}else{echo "<br /><br />";}?>
+<?php }else{echo "<br /><br />";}?>
 <!--Main Start-->
 <style>
 
@@ -43,11 +43,14 @@ width:120px;height:100px;
 </style>
 
 
-<p class="add_categories"><?=$html->link("显示图片","javascript:img_is_show(this);",array("style"=>"display:none","id"=>"img_show"),false,false);?><?=$html->link("隐藏图片","javascript:img_is_show(this);",array("id"=>"img_hide"),false,false);?></p>
+<p class="add_categories"><?php echo $html->link("显示图片","javascript:img_is_show(this);",array("style"=>"display:none","id"=>"img_show"),false,false);?><?php echo $html->link("隐藏图片","javascript:img_is_show(this);",array("id"=>"img_hide"),false,false);?></p>
 <div class="home_main" style="width:96%;background-color: #FFFFFF;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
 
 
-	<ul class="product_llist departments_headers" style="background-color: #FFFFFF;"><li class="name"><span>菜单</span></li><li class="hadle">图片</li></ul>
+	<ul class="product_llist departments_headers" style="background-color: #FFFFFF;">
+		<li class="name"><p>菜单</p></li>
+		<li class="hadle">图片</li>
+	</ul>
 	<ul class="product_llist departments_headers departments_list" style='height:100%;'>
 		<li class="name" style="overflow:auto;line-height:14pt;letter-spacing:0.2em; HEIGHT:400px;TEXT-ALIGN:left"><strong ><div id="treeDiv1" style="overflow:auto;width:140px;line-height:14pt;letter-spacing:0.2em; " ></div></strong></li>
 		<li class="hadle" style="width:85.5%;"><ul class="hotGroup">
@@ -93,36 +96,39 @@ width:120px;height:100px;
 </div>
 </div>
 <!--upload--->
-<?=$javascript->link('swfupload/swfupload.js'); ?>
-<?=$javascript->link('swfupload/swfupload.swfobject.js'); ?>
-<?=$javascript->link('swfupload/swfupload.queue.js'); ?>
-<?=$javascript->link('swfupload/fileprogress.js'); ?>
-<?=$javascript->link('swfupload/handlers.js'); ?>
-<?=$html->css('swfupload',"",array("rel"=>"stylesheet"));?>
+<?php echo $javascript->link('swfupload/swfupload.js'); ?>
+<?php echo $javascript->link('swfupload/swfupload.swfobject.js'); ?>
+<?php echo $javascript->link('swfupload/swfupload.queue.js'); ?>
+<?php echo $javascript->link('swfupload/fileprogress.js'); ?>
+<?php echo $javascript->link('swfupload/handlers.js'); ?>
+<?php echo $html->css('swfupload',"",array("rel"=>"stylesheet"));?>
 <span>
 <script type="text/javascript">
 var swfu;
 var img_addr = "";
 
 function swfuploadimg() {
-	//alert(img_addr);
+	
 	if(img_addr==""){
 		img_addr = "/others";
 	}
 	var settings = {
-		flash_url : webroot_dir+"js/swfupload/swfupload.swf",
-		upload_url: webroot_dir+"images/upload/",	// Relative to the SWF file
+		flash_url : root_all+"sv-admin/js/swfupload/swfupload.swf",
+		upload_url: admin_webroot+"images/upload/",	// Relative to the SWF file
 		post_params: {
-			"PHPSESSID" : "<?=session_id(); ?>",
-			"session_config_str" : '<?=$session_config_str; ?>',
-			"session_operator_str" : '<?=$session_operator_str; ?>',
-			"session_admin_config_str" : '<?=$session_admin_config_str; ?>',
-			"session_action_list_str" : '<?=$session_action_list_str; ?>',
-			"session_admin_locale_str" : '<?=$session_admin_locale_str; ?>',
-			"cart_back_url":'<?=$cart_back_url;?>',
+			"PHPSESSID" : "<?php echo session_id(); ?>",
+			"session_config_str" : '<?php echo $session_config_str; ?>',
+			"session_operator_str" : '<?php echo $session_operator_str; ?>',
+			"session_admin_config_str" : '<?php echo $session_admin_config_str; ?>',
+			"session_action_list_str" : '<?php echo $session_action_list_str; ?>',
+			"session_admin_locale_str" : '<?php echo $session_admin_locale_str; ?>',
+			"cart_back_url":'<?php echo $cart_back_url;?>',
 			"img_addr":img_addr,
 			".what" : "OKAY"
 		},
+				
+				
+		
 		file_size_limit : "100 MB",
 		file_types : "*.*",
 		file_types_description : "All Files",
@@ -135,11 +141,10 @@ function swfuploadimg() {
 		debug: false,
 
 		// Button Settings
-		button_image_url : webroot_dir+"img/upload.png",	// Relative to the SWF file
+		button_image_url : root_all+"sv-admin/img/upload.png",	// Relative to the SWF file
 		button_placeholder_id : "spanButtonPlaceholder",
 		button_width: 61,
 		button_height: 22,
-
 		// The event handler functions are defined in handlers.js
 		swfupload_loaded_handler : swfUploadLoaded,
 		file_queued_handler : fileQueued,
@@ -168,13 +173,13 @@ window.onload = function(){
 }
 function swf_upload_addr(){
 	swfu.setPostParams({
-			"PHPSESSID" : "<?=session_id(); ?>",
-			"session_config_str" : '<?=$session_config_str; ?>',
-			"session_operator_str" : '<?=$session_operator_str; ?>',
-			"session_admin_config_str" : '<?=$session_admin_config_str; ?>',
-			"session_action_list_str" : '<?=$session_action_list_str; ?>',
-			"session_admin_locale_str" : '<?=$session_admin_locale_str; ?>',
-			"cart_back_url":'<?=$cart_back_url;?>',
+			"PHPSESSID" : "<?php echo session_id(); ?>",
+			"session_config_str" : '<?php echo $session_config_str; ?>',
+			"session_operator_str" : '<?php echo $session_operator_str; ?>',
+			"session_admin_config_str" : '<?php echo $session_admin_config_str; ?>',
+			"session_action_list_str" : '<?php echo $session_action_list_str; ?>',
+			"session_admin_locale_str" : '<?php echo $session_admin_locale_str; ?>',
+			"cart_back_url":'<?php echo $cart_back_url;?>',
 			"img_addr":img_addr,
 			".what" : "OKAY"
 		});
@@ -191,7 +196,7 @@ function dir_name(obj){
 
 </script>
 <script type="text/javascript">
-var window_option_status = <?=$status?>;
+var window_option_status = <?php echo $status?>;
  
 var assign_dir = "";
 if(window_option_status != ""){
@@ -224,10 +229,10 @@ function initPage2(){
 			<p class="login-alettr">
 			目录名：<b><input type="text" id="img_dir_name" style="ime-mode:disabled;" ></b></p>
 			<br />
-			<p class="buy_btn mar"><?=$html->link("取消","javascript:big_panel.hide();");?>
-			<?=$html->link("确定","javascript:;",array("id"=>"img_dir_comfirm"));?></p>
+			<p class="buy_btn mar"><?php echo $html->link("取消","javascript:big_panel.hide();");?>
+			<?php echo $html->link("确定","javascript:;",array("id"=>"img_dir_comfirm"));?></p>
 		</div>
-		<p><?=$html->image("loginout-bottom.png");?></p>
+		<p><?php echo $html->image("loginout-bottom.png");?></p>
 	</div>
 </div>
 <!--upload--->

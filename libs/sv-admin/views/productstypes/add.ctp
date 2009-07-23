@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart  添加商品类型
  * ===========================================================================
@@ -9,12 +9,12 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: add.ctp 2498 2009-07-01 07:17:42Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));//pr($this->data)?>
-<p class="add_categories"><strong><?=$html->link($html->image('add.gif',array('align'=>'absmiddle'))."商品类型列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."商品类型列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
 
 <div class="home_main">
 <!--ConfigValues-->
@@ -24,8 +24,8 @@
 <input id="ProductTypeId" name="data[ProductType][id]" type="hidden" value=""/>
 <div class="order_stat athe_infos configvalues">
 	<div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  &nbsp;&nbsp;编辑商品类型&nbsp;&nbsp;</h1></div>
 	  <div class="box">
 	  
@@ -33,16 +33,16 @@
 	  <div class="shop_config menus_configs">
 	  	<dl><dt>商品类型名称: </dt><dd>
 	<?php if(isset($languages) && sizeof($languages))foreach($languages as $k => $v){?>
-		<p><input id="ProductTypeI18n<?=$k;?>Locale" name="data[ProductTypeI18n][<?=$k;?>][locale]" type="hidden" value="<?= $v['Language']['locale'];?>">
-		<input id="ProductTypeI18n<?=$k;?>ProductTypeId" name="data[ProductTypeI18n][<?=$k;?>][type_id]" type="hidden" value="">
-		<?=$html->image($v['Language']['img01'],array('align'=>'absmiddle'))?><input type="text" style="width:291px;border:1px solid #649776" id="name<?=$v['Language']['locale']?>" name="data[ProductTypeI18n][<?=$k;?>][name]" value="" /> <font color="#F90071">*</font>
+		<p><input id="ProductTypeI18n<?php echo $k;?>Locale" name="data[ProductTypeI18n][<?php echo $k;?>][locale]" type="hidden" value="<?php echo  $v['Language']['locale'];?>">
+		<input id="ProductTypeI18n<?php echo $k;?>ProductTypeId" name="data[ProductTypeI18n][<?php echo $k;?>][type_id]" type="hidden" value="">
+		<?php echo $html->image($v['Language']['img01'],array('align'=>'absmiddle'))?><input type="text" style="width:291px;border:1px solid #649776" id="name<?php echo $v['Language']['locale']?>" name="data[ProductTypeI18n][<?php echo $k;?>][name]" value="" /> <font color="#F90071">*</font>
 	</p><?php }?>
 		</dd></dl>
 		
 
 		
-		<dl><dt style="padding-top:10px;"><?=$html->image('help_icon.gif',array('align'=>'absmiddle'))?>属性分组: </dt>
-		<dd><textarea style="border:1px solid #629373;width:300px;height:80px;overflow-y:scroll" name="data[ProductType][group_code]" ></textarea><br /><font color="#646464">每行一个商品属性组。排序也将按照顺序排序。</font></dd></dl>
+		<dl><dt style="padding-top:10px;"><?php echo $html->image('help_icon.gif',array('align'=>'absmiddle',"onclick"=>"help_show_or_hide('help_text')"))?>属性分组: </dt>
+		<dd><textarea style="border:1px solid #629373;width:300px;height:80px;overflow-y:scroll" name="data[ProductType][group_code]" ></textarea><br /><span style="display:none" id="help_text"><font color="#646464">每行一个商品属性组。排序也将按照顺序排序。</font></span></dd></dl>
 		
 		
 		<br /><br /><br /><br /><br /><br /><br />

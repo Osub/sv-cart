@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: overloadable_php4.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: overloadable_php4.php 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  * Overload abstraction interface.  Merges differences between PHP4 and 5.
  *

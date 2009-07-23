@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: product.php 1902 2009-05-31 13:56:19Z huangbo $
+ * $Id: product.php 3134 2009-07-21 06:45:45Z huangbo $
 *****************************************************************************/
 class Product extends AppModel
 {
@@ -28,6 +28,13 @@ class Product extends AppModel
 					                              'dependent'    =>  true,   
 					                              'foreignKey'   => 'Product_id'
 					                        	)*/
+					   		'ProductLocalePrice' =>array
+												(
+										          'className'     => 'ProductLocalePrice',   
+					                              'order'        => '',   
+					                              'dependent'    =>  true,   
+					                              'foreignKey'   => 'product_id'
+					                        	)						                        		
                  	   );
 
 
@@ -108,10 +115,6 @@ class Product extends AppModel
 	   $result=$this->findall($condition);
 	   return $result;
 	  }		
-function pr(){
-	//	pr($this->tablePrefix);
-		
-	}
 	
 	
 		function findassoc($locale){
@@ -140,7 +143,88 @@ function pr(){
 				return $shop_price;
 			}
 	}	
+		function user_price($k,$v,$db){
+			  $product_rank = $db->ProductRank->findall('ProductRank.product_id ='.$v['Product']['id']);
+			  $user_rank_list=$db->UserRank->findrank();
+			       	if(isset($product_rank) && sizeof($product_rank)>0){
+				    	  $is_rank = array();
+						  foreach($product_rank as $a=>$b){
+						  		$is_rank[$b['ProductRank']['rank_id']]['is_default_rank'] = $b['ProductRank']['is_default_rank'];
+						  		$is_rank[$b['ProductRank']['rank_id']]['price'] = $b['ProductRank']['product_price'];
+						  }
+					}
+					foreach($user_rank_list as $a=>$b){
+							if(isset($is_rank[$b['UserRank']['id']]) && $is_rank[$b['UserRank']['id']]['is_default_rank'] == 0){
+							  $user_rank_list[$a]['UserRank']['user_price']= $is_rank[$b['UserRank']['id']]['price'];			  
+							}else{
+							  $user_rank_list[$a]['UserRank']['user_price']=($user_rank_list[$a]['UserRank']['discount']/100)*($v['Product']['shop_price']);			  
+							}
+						  if(isset($_SESSION['User']['User']['rank']) && $b['UserRank']['id'] == $_SESSION['User']['User']['rank']){
+						  	  	$products[$k]['Product']['user_price'] = $user_rank_list[$a]['UserRank']['user_price'];
+						  		//$this->set('my_product_rank',$user_rank_list[$kk]['UserRank']['user_price']);
+						  }
+					}
+					if(isset($products[$k]['Product']['user_price'])){
+						return $products[$k]['Product']['user_price'];
+					}else{
+						return null;
+					}
+	}
 	
+	function top_products($locale,$size){
+		 if($this->cacheFind($this->name,'findalllang'.$locale,array('locale'=>$locale,'size'=>$size))){
+		 	$top_products = $this->cacheFind($this->name,'findalllang'.$locale,array('locale'=>$locale,'size'=>$size));
+		 }else{
+		 	$top_products = $this->find('all',array('order' => array('Product.sale_stat desc'),
+	    												'conditions' => array('Product.status'=>'1',
+	    																	  'Product.forsale' => '1'
+	    																		),
+	    												'limit' => $size
+	    			
+	    												));	
+		 	
+			$this->cacheSave($this->name,'findalllang'.$locale,array('locale'=>$locale,'size'=>$size),$top_products);
+		}
+		 return $top_products;
+	}	
+	
+		function sub_str($str, $length = 0, $append = true)
+	{
+	    $str = trim($str);
+	    $strlength = strlen($str);
 
+	    if ($length == 0 || $length >= $strlength)
+	    {
+	        return $str;
+	    }
+	    elseif ($length < 0)
+	    {
+	        $length = $strlength + $length;
+	        if ($length < 0)
+	        {
+	            $length = $strlength;
+	        }
+	    }
+
+	    if (function_exists('mb_substr'))
+	    {
+	        $newstr = mb_substr($str, 0, $length, 'utf-8');
+	    }
+	    elseif (function_exists('iconv_substr'))
+	    {
+	        $newstr = iconv_substr($str, 0, $length, 'utf-8');
+	    }
+	    else
+	    {
+	        //$newstr = trim_right(substr($str, 0, $length));
+	        $newstr = substr($str, 0, $length);
+	    }
+
+	    if ($append && $str != $newstr)
+	    {
+	        $newstr .= '...';
+	    }
+	    return $newstr;
+	}
 }
 ?>

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: cards_controller.php 1841 2009-05-27 06:51:37Z huangbo $
+ * $Id: cards_controller.php 3184 2009-07-22 06:09:42Z huangbo $
 *****************************************************************************/
 class CardsController extends AppController {
 	var $name = 'Cards';
@@ -44,7 +44,6 @@ class CardsController extends AppController {
 		$this->pageTitle = "贺卡管理 - 贺卡管理" ." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'贺卡管理','url'=>'/cards/');
 		$this->navigations[] = array('name'=>'编辑贺卡','url'=>'');
-		$this->set('navigations',$this->navigations);
 		
 		if($this->RequestHandler->isPost()){
 			$this->data['Card']['orderby'] = !empty($this->data['Card']['orderby'])?$this->data['Card']['orderby']:50;
@@ -69,14 +68,21 @@ class CardsController extends AppController {
 				}
 			}
 			$id=$this->Card->id;
-
+            //操作员日志
+        	if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+        	$this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑贺卡:'.$userinformation_name ,'operation');
+            }
 			$this->flash("贺卡  ".$userinformation_name." 编辑成功。点击继续编辑该贺卡。",'/cards/edit/'.$id,10);
 
 		}
 		
 		$card = $this->Card->localeformat( $id );
-		//pr( $card );
+	
 		$this->set( "card",$card );
+		//leo20090722导航显示
+		$this->navigations[] = array('name'=>$card["CardI18n"][$this->locale]["name"],'url'=>'');
+	    $this->set('navigations',$this->navigations);
+
 	}
 	
 	
@@ -108,7 +114,10 @@ class CardsController extends AppController {
 				}
 			}
 			$id=$this->Card->id;
-
+            //操作员日志
+        	if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+        	$this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'增加贺卡:'.$userinformation_name ,'operation');
+            }
 			$this->flash("贺卡  ".$userinformation_name." 添加成功。点击继续编辑该贺卡。",'/cards/edit/'.$id,10);
 		}
 
@@ -118,7 +127,13 @@ class CardsController extends AppController {
 		/*判断权限*/
 		$this->operator_privilege('card_operation');
 		/*end*/
+		$pn = $this->CardI18n->find('list',array('fields' => array('CardI18n.card_id','CardI18n.name'),'conditions'=> 
+                                        array('CardI18n.card_id'=>$id,'CardI18n.locale'=>$this->locale)));
 		$this->Card->deleteAll("Card.id='$id'");
+		//操作员日志
+        if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+        $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'删除贺卡:'.$pn[$id],'operation');
+        }
 		$this->flash("删除成功",'/cards/',10);
     }
 }

@@ -140,7 +140,7 @@ class GuidesController extends AppController {
 		if(!empty($shippingarea_info['ShippingArea']['shipping_id'])){
 			
 			$money = serialize( $_REQUEST['money'] );
-			$shippingarea_info['ShippingArea']['free_subtotal'] = $this->data['ShippingArea']['ShippingArea']['free_subtotal'];
+			$shippingarea_info['ShippingArea']['free_subtotal'] = !empty($this->data['ShippingArea']['free_subtotal'])?$this->data['ShippingArea']['free_subtotal']:0;
 			$shippingarea_info['ShippingArea']['fee_configures'] = !empty($money)?$money:0;
 			$this->ShippingArea->save(array("ShippingArea"=>$shippingarea_info['ShippingArea']));
 			$arr = $shippingarea_info;
@@ -308,7 +308,7 @@ class GuidesController extends AppController {
 			$this->redirect("/guides/four");
 		}
 		
-		$this->flash("您的商店初始设置成功，进入管理员首页",'../../sv-admin/',10);
+		$this->flash("您的商店初始设置成功，进入管理员首页",'/',10);
 	
 	}
 	
@@ -413,7 +413,7 @@ class GuidesController extends AppController {
 					         	
 				         );
 		}
-		$this->flash("设置成功",'../../sv-admin/',10);
+		$this->flash("设置成功",'/',10);
 	}
 	
 	

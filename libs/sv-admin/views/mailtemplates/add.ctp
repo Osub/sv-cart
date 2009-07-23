@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 添加邮件模板
  * ===========================================================================
@@ -9,26 +9,26 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: add.ctp 2485 2009-06-30 11:33:00Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
-<p class="add_categories"><strong><?=$html->link($html->image('add.gif',array('align'=>'absmiddle'))."邮件模板列表","/mailtemplates/",'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."邮件模板列表","/mailtemplates/",'',false,false);?></strong></p>
 <!--Main Start-->
 
 <div class="home_main">
 <?php echo $form->create('Mailtemplate',array('action'=>'/add/','onsubmit'=>'return mailtemplates_check();'));?>
 <div class="order_stat athe_infos configvalues">
 	<div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  编辑邮件模板</h1></div>
 	  <div class="box">
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-	<input name="data[MailTemplateI18n][<?=$k;?>][locale]" type="hidden" value="<?= $v['Language']['locale'];?>">
-<?
+	<input name="data[MailTemplateI18n][<?php echo $k;?>][locale]" type="hidden" value="<?php echo  $v['Language']['locale'];?>">
+<?php 
 }	}
 ?>
 <!--Mailtemplates_Config-->
@@ -37,23 +37,23 @@
 		<dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" id="data_mailtemplate_code" name="data[MailTemplate][code]"  /></dd></dl>
 	
 		<h2>邮件主题：</h2>
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><input type="text" style="width:360px;" id="title<?=$v['Language']['locale']?>" name="data[MailTemplateI18n][<?=$k;?>][title]" value="" /> <font color="#ff0000">*</font></span></p>
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input type="text" style="width:360px;" id="title<?php echo $v['Language']['locale']?>" name="data[MailTemplateI18n][<?php echo $k;?>][title]" value="" /> <font color="#ff0000">*</font></span></p>
 		
-<?	}
+<?php 	}
    } ?>		
 		<h2>纯文本邮件内容：</h2>
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><textarea style="width:590px;height:165px;" name="data[MailTemplateI18n][<?=$k;?>][text_body]" ></textarea></span></p>
-<?	}
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><textarea style="width:590px;height:165px;" name="data[MailTemplateI18n][<?php echo $k;?>][text_body]" ></textarea></span></p>
+<?php 	}
    } ?>		
 		<h2>HTML邮件内容：</h2>
-<? if(isset($languages) && sizeof($languages)>0){
+<?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?=$html->image($v['Language']['img01'])?><span><textarea style="width:590px;height:165px;" name="data[MailTemplateI18n][<?=$k;?>][html_body]"></textarea></span></p>
-<?	}
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><textarea style="width:590px;height:165px;" name="data[MailTemplateI18n][<?php echo $k;?>][html_body]"></textarea></span></p>
+<?php 	}
    } ?>		
 		
 		
@@ -70,7 +70,7 @@
 	  </div>
 	  <p class="submit_btn"><input type="submit" value="确定" /><input type="reset" value="重置" /></p>
 	</div>
-<? echo $form->end();?>
+<?php echo $form->end();?>
 
 
 </div>

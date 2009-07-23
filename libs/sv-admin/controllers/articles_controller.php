@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: articles_controller.php 1841 2009-05-27 06:51:37Z huangbo $
+ * $Id: articles_controller.php 3184 2009-07-22 06:09:42Z huangbo $
  *****************************************************************************/
 class ArticlesController extends AppController
 {
@@ -62,7 +62,7 @@ class ArticlesController extends AppController
         $parameters = Array($rownum,$page);
         $options = Array();
         list($page) = $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass);
-        $article = $this->Article->findAll($condition,'',"",$rownum,$page);
+        $article = $this->Article->findAll($condition,'',"Article.id desc",$rownum,$page);
         if (@isset($article))
         {
             foreach($article as $k => $v)
@@ -83,12 +83,21 @@ class ArticlesController extends AppController
         $this->pageTitle = "编辑文章 - 文章管理"." - ".$this->configs['shop_name'];
         $this->navigations[] = array('name' => '文章管理','url' => '/articles/');
         $this->navigations[] = array('name' => '编辑文章','url' => '');
-        $this->set('navigations',$this->navigations);
         if ($this->RequestHandler->isPost())
         {
             foreach($this->data['ArticleI18n']as $v)
             {
-                $articleI18n_info = array('id' => isset($v['id']) ? $v['id']: '','locale' => $v['locale'],'article_id' => isset($v['article_id']) ? $v['article_id']: $id,'title' => isset($v['title']) ? $v['title']: '','meta_keywords' => $v['meta_keywords'],'meta_description' => $v['meta_description'],'img01' => $v['img01'],'content' => $v['content']);
+                $articleI18n_info = array(
+                	'id' => isset($v['id']) ? $v['id']: '',
+                	'locale' => $v['locale'],
+                	'article_id' => isset($v['article_id']) ? $v['article_id']: $id,
+                	'title' => isset($v['title']) ? $v['title']: '',
+                	'meta_keywords' => $v['meta_keywords'],
+                	'meta_description' => $v['meta_description'],
+                	'img01' => $v['img01'],
+                	'author' => $v['author'],
+                	'content' => $v['content']
+                );
                 $this->ArticleI18n->saveall(array('ArticleI18n' => $articleI18n_info));
             }
             $this->ArticleCategorie->deleteall("article_id = '".$id."'",false);
@@ -98,6 +107,7 @@ class ArticlesController extends AppController
                 $ArticleCategorie = array('article_id' => $id,'category_id' => $v);
                 $this->ArticleCategorie->saveall(array('ArticleCategorie' => $ArticleCategorie));
             }
+            
             $this->Article->save($this->data); //保存
             foreach($this->data['ArticleI18n']as $k => $v)
             {
@@ -108,11 +118,16 @@ class ArticlesController extends AppController
             }
             $id = $this->Article->id;
             $this->flash("文章  ".$userinformation_name." 编辑成功。点击继续编辑该商品类型。",'/articles/edit/'.$id,10);
+            //操作员日志
+        	if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+        	$this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑文章:'.$userinformation_name ,'operation');
+            }
         }
         $categories_tree_A = $this->Category->tree('A',$this->locale);
         $categories_tree_P = $this->Category->tree('P',$this->locale);
         $article = $this->Article->localeformat($id);
         $articles_products = $this->requestAction("/commons/get_articles_products/".$id);
+        
         $category_arr = $this->ArticleCategorie->findall(array("article_id" => $id));
         $this->set('categories_tree_A',$categories_tree_A);
         $this->set('categories_tree_P',$categories_tree_P);
@@ -120,6 +135,15 @@ class ArticlesController extends AppController
         $this->set('category_arr',$category_arr);
         $this->set('category_id',@$this->data['Article']['category_id']);
         $this->set('article',$article);
+        //leo20090722导航显示
+        foreach( $article["ArticleI18n"] as $k=>$v ){
+        	if( $v["locale"] == $this->locale ){
+        		$title = $v["title"];
+        	}
+        }
+        $this->navigations[] = array('name' => $v["title"],'url' => '');
+        $this->set('navigations',$this->navigations);
+
     }
     function add()
     {
@@ -156,6 +180,10 @@ class ArticlesController extends AppController
             }
             $id = $this->Article->id;
             $this->flash("文章  ".$userinformation_name." 添加成功。点击继续编辑该商品类型。",'/articles/edit/'.$id,10);
+            //操作员日志
+        	if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+        	$this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'增加文章:'.$userinformation_name ,'operation');
+            }
         }
         $categories_tree_A = $this->Category->tree('A',$this->locale);
         $this->set('categories_tree_A',$categories_tree_A);
@@ -165,9 +193,16 @@ class ArticlesController extends AppController
         /*判断权限*/
         $this->operator_privilege('article_edit');
         /*end*/
+        $pn = $this->ArticleI18n->find('list',array('fields' => array('ArticleI18n.article_id','ArticleI18n.title'),'conditions'=> 
+                                        array('ArticleI18n.article_id'=>$id,'ArticleI18n.locale'=>$this->locale)));
         $this->Article->deleteall("Article.id = '".$id."'",false);
         $this->ArticleI18n->deleteall("ArticleI18n.article_id = '".$id."'",false);
         $this->ArticleCategorie->deleteall("ArticleCategorie.article_id = '".$id."'",false);
+        
+        //操作员日志
+        if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+        $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'删除文章:'.$pn[$id] ,'operation');
+        }
         $this->flash("删除成功",'/articles/',10);
     }
     //批量处理
@@ -183,6 +218,10 @@ class ArticlesController extends AppController
                     $article_id = $id_arr[$i];
                     $condition['Article.id'] = $article_id;
                     $this->Article->deleteAll($condition);
+                }
+                //操作员日志
+                if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+                $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'批量删除文章' ,'operation');
                 }
                 $this->flash("删除成功",'/articles/','');
             }

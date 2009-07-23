@@ -9,11 +9,13 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: user_rank.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: user_rank.php 2261 2009-06-22 11:06:14Z zhengli $
 *****************************************************************************/
 class UserRank extends AppModel
 {
 	var $name = 'UserRank';
+	var $cacheQueries = true;
+	var $cacheAction = "1 day";		
 	var $hasOne = array('UserRankI18n' =>   
                         array('className'    => 'UserRankI18n',   
                               'order'        => '',   
@@ -32,23 +34,30 @@ function set_locale($locale){
 //用户等级整合数组
 	function findrank(){
 		$condition="";
+		$cache_key = md5($this->name."_findrank");
 		
-		$lists=$this->findAll($condition);
-		
-		$lists_formated = array();
-		if(is_array($lists))
-			foreach($lists as $k => $v){
-				    $lists_formated[$v['UserRank']['id']]['UserRank']=$v['UserRank'];
-				if(is_array($v['UserRankI18n'])){
-				    $lists_formated[$v['UserRank']['id']]['UserRankI18n'][]=$v['UserRankI18n'];
+		$lists_formated = cache::read($cache_key);
+		if($lists_formated){
+			return $lists_formated;
+		}else{
+			$lists=$this->findAll($condition);
+			
+			$lists_formated = array();
+			if(is_array($lists))
+				foreach($lists as $k => $v){
+					    $lists_formated[$v['UserRank']['id']]['UserRank']=$v['UserRank'];
+					if(is_array($v['UserRankI18n'])){
+					    $lists_formated[$v['UserRank']['id']]['UserRankI18n'][]=$v['UserRankI18n'];
+					}
+					$lists_formated[$v['UserRank']['id']]['UserRank']['name']='';
+					foreach($lists_formated[$v['UserRank']['id']]['UserRankI18n'] as $key => $val){
+							         $lists_formated[$v['UserRank']['id']]['UserRank']['name'] .=$val['name'] . " | ";
+						        }
 				}
-				$lists_formated[$v['UserRank']['id']]['UserRank']['name']='';
-				foreach($lists_formated[$v['UserRank']['id']]['UserRankI18n'] as $key => $val){
-						         $lists_formated[$v['UserRank']['id']]['UserRank']['name'] .=$val['name'] . " | ";
-					        }
-			}
-	//	pr($lists_formated);
-		return $lists_formated;
+			cache::write($cache_key,$lists_formated);
+			return $lists_formated;
+		}
+		
 	}
 	
 }

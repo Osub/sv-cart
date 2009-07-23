@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: article.php 1841 2009-05-27 06:51:37Z huangbo $
+ * $Id: article.php 2989 2009-07-17 02:03:04Z huangbo $
  *****************************************************************************/
 class Article extends AppModel
 {
@@ -42,5 +42,20 @@ class Article extends AppModel
         }
         return $lists_formated;
     }
+	function article_counts(){
+		$this->hasOne = array();
+    	$this->hasMany = array();
+		$lists=$this->find("all",array('fields' => array('category_id', 'count(category_id) as count'),"group"=>"category_id"));
+		
+		$lists_formated = array();
+		if(is_array($lists))
+			foreach($lists as $k => $v){
+				$lists_formated[$v['Article']['category_id']]=$v['0']['count'];
+			}
+		//	pr($lists_formated);
+		return $lists_formated;
+
+	}
+
 }
 ?>

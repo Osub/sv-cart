@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: orders_controller.php 1841 2009-05-27 06:51:37Z huangbo $
+ * $Id: orders_controller.php 3184 2009-07-22 06:09:42Z huangbo $
 *****************************************************************************/
 uses('sanitize');		
 class OrdersController extends AppController {
@@ -17,7 +17,7 @@ class OrdersController extends AppController {
 	var $name = 'Orders';
     var $components = array ('Pagination','RequestHandler'); // Added 
     var $helpers = array('Pagination'); // Added 
-	var $uses = array('Order','OrderProduct','Payment','Shipping','PaymentApiLog','UserPointLog','VirtualCard','UserBalanceLog','UserMessage','Coupon','CouponType','Region','OrderCard','OrderPackaging','Packaging','Card');
+	var $uses = array('SystemResource','Order','OrderProduct','Payment','Shipping','PaymentApiLog','UserPointLog','VirtualCard','ProductDownload','ProductDownloadLog','ProductService','ProductServiceLog','UserBalanceLog','UserMessage','Coupon','CouponType','Region','OrderCard','OrderPackaging','Packaging','Card');
 
 /************   我的订单首页    ***************/
 	function index($order_status=0,$start_date='',$end_date='',$order_id=''){
@@ -26,9 +26,13 @@ class OrdersController extends AppController {
 				$this->redirect('/login/');
 		}
 		$this->page_init();
-			$mrClean = new Sanitize();		
+		$mrClean = new Sanitize();		
 			
-			$order_id = $mrClean->html($order_id, true);
+		$order_id = $mrClean->html($order_id, true);
+        //资源库信息
+        $this->SystemResource->set_locale($this->locale);
+        $systemresource_info = $this->SystemResource->resource_formated(true,$this->locale);
+        $this->set('systemresource_info',$systemresource_info);//资源库信息		
 		
 		//当前位置
 		$this->navigations[] = array('name'=>__($this->languages['order_list'],true),'url'=>"");
@@ -70,17 +74,65 @@ class OrdersController extends AppController {
 	   if(empty($my_orders)){	   		
 	   	   $my_orders=array();
 	   }else{
+	   	    $order_coupons = array();
 	   		foreach($my_orders as $k=>$v){
-		        if($v['Order']['coupon_id'] >0){
+	   	   		$order_coupons[] = $v['Order']['coupon_id'];
+	   	   	}
+	       	$this->CouponType->set_locale($this->locale);
+			$cache_key = md5('find_coupon_types'.'_'.$this->locale);
+			$coupon_types = cache::read($cache_key);	
+			if(!$coupon_types){	
+				$coupon_type_arr = $this->CouponType->findall();
+				$coupon_types = array();
+				if(is_array($coupon_type_arr) && sizeof($coupon_type_arr)>0){
+					foreach($coupon_type_arr as $k=>$v){
+						$coupon_types[$v['CouponType']['id']] = $v;
+					}
+				}
+				cache::write($cache_key,$coupon_types);	
+			}
+	   	    
+	   	    $use_coupons = $this->Coupon->find('all',array('conditions'=>array('Coupon.id'=>$order_coupons)));
+	   	    $use_coupon_fee = array();
+	   	    if(is_array($use_coupons) && sizeof($use_coupons)>0){
+	   	    	foreach($use_coupons as $k=>$v){
+	   	    		if(isset($coupon_types[$v['Coupon']['coupon_type_id']])){
+	   	    			$use_coupon_fee[$v['Coupon']['order_id']] = $coupon_types[$v['Coupon']['coupon_type_id']]['CouponType']['money'];
+	   	    		}
+	   	    	}
+	   	    }
+			$my_order_ids = array();
+	   		foreach($my_orders as $k=>$v){
+	   			$my_order_ids[] = $v['Order']['id'];
+		       /* if($v['Order']['coupon_id'] >0){
 		        	$coupon = $this->Coupon->findbyid($v['Order']['coupon_id']);
 		        	$this->CouponType->set_locale($this->locale);
 		        	$coupon_type = $this->CouponType->findbyid($coupon['Coupon']['coupon_type_id']);
 		        	$my_orders[$k]['Order']['coupon_fee'] = $coupon_type['CouponType']['money'];
 		        }else{
 		        	$my_orders[$k]['Order']['coupon_fee'] = 0;
+		        }*/
+		        if(isset($use_coupon_fee[$v['Order']['id']])){
+		        	$my_orders[$k]['Order']['coupon_fee'] = $use_coupon_fee[$v['Order']['id']];
+		        }else{
+		         	$my_orders[$k]['Order']['coupon_fee'] = 0;
 		        }
+		        
 		        $my_orders[$k]['Order']['need_paid'] = number_format($v['Order']['total']-$v['Order']['money_paid']-$v['Order']['point_fee']-$my_orders[$k]['Order']['coupon_fee']-$v['Order']['discount'],2 ,'.','')+0;
 	   		}
+	   		//pr($my_order_ids);
+	   		$order_product = $this->OrderProduct->find('all',array('conditions'=>array('OrderProduct.order_id'=>$my_order_ids)));
+	   		$product_weights = array();
+	   		if(isset($order_product) && sizeof($order_product)>0){
+	   			foreach($order_product as $k=>$v){
+	   				if(isset($product_weights[$v['OrderProduct']['order_id']])){
+	   					$product_weights[$v['OrderProduct']['order_id']] += $v['OrderProduct']['product_weight']*$v['OrderProduct']['product_quntity'];
+	   				}else{
+	   					$product_weights[$v['OrderProduct']['order_id']] = $v['OrderProduct']['product_weight']*$v['OrderProduct']['product_quntity'];
+	   				}
+	   			}
+	   		}
+	   		$this->set('product_weights',$product_weights);
 	   }
 	   $condition=" Order.user_id='".$user_id."' and  Order.payment_status ='0' ";
 	   $no_paid=$this->Order->findCount($condition);
@@ -93,7 +145,7 @@ class OrdersController extends AppController {
 	   "order_delivered_not_cancel" => $this->languages['order_delivered_not_cancel']);
 	   $this->set('js_languages',$js_languages);
 	   $this->pageTitle = $this->languages['order_list']." - ".$this->configs['shop_title'];
-//	   pr($my_orders);
+	 //  pr($my_orders);exit;
 	   $this->set('total',$total);
 	   $this->set('order_status',$order_status);
 	   $this->set('my_orders',$my_orders);
@@ -104,13 +156,20 @@ class OrdersController extends AppController {
 /****************  订单详细   *****************/
 	function view($id){
 		$this->page_init();
+		
+        //资源库信息
+        $this->SystemResource->set_locale($this->locale);
+        $systemresource_info = $this->SystemResource->resource_formated(true,$this->locale);
+        $this->set('systemresource_info',$systemresource_info);//资源库信息				
+		
+		$flash_url = $this->server_host.$this->user_webroot."orders";
 		//当前位置
 		$this->navigations[] = array('name'=>__($this->languages['order_list'],true),'url'=>"/orders");
 	    $user_id=$_SESSION['User']['User']['id'];
 	    //Configure::write('debug', 2);
 	    if(!is_numeric($id) || $id<1){
 		$this->pageTitle = $this->languages['invalid_id']." - ".$this->configs['shop_title'];
-		    $this->flash($this->languages['invalid_id'],"/user/orders",5);
+		    $this->flash($this->languages['invalid_id'],$flash_url,5);
 	    }
 	    //订单详细 /*****订单部分的处理********/
 		$condition=" Order.id='".$id."' ";
@@ -121,7 +180,7 @@ class OrdersController extends AppController {
 		if ($user_id > 0 && $user_id != $order_info['Order']['user_id'])
          {
 			$this->pageTitle = $this->languages['not_your_order']." - ".$this->configs['shop_title'];
-            $this->flash($this->languages['not_your_order'],"/user/orders",5);
+            $this->flash($this->languages['not_your_order'],$flash_url,5);
          }
          /* 只有未确认才允许用户修改订单地址 */
         if ($order_info['Order']['status'] == 0)
@@ -215,41 +274,83 @@ class OrdersController extends AppController {
         $order_packaging = $this->OrderPackaging->findallbyorder_id($order_info['Order']['id']);
 		if(is_array($order_packaging) && sizeof($order_packaging)>0){
 			$this->Packaging->set_locale($this->locale);
+			$packagings_id = array();
+			foreach($order_packaging as $k=>$v){
+				$packagings_id[] = $v['OrderPackaging']['packaging_id'];
+			}
+			$packagings_info = $this->Packaging->find('all',array(
+			'fields' =>array('Packaging.id','Packaging.img01','Packaging.fee','Packaging.free_money','PackagingI18n.name','PackagingI18n.description'),
+			'conditions'=>array('Packaging.id'=>$packagings_id)));
+			$packagings_list = array();
+			if(is_array($packagings_info) && sizeof($packagings_info)>0){
+				foreach($packagings_info as $k=>$v){
+					$packagings_list[$v['Packaging']['id']] = $v;
+				}
+			}			
+
 			$packaging = array();
 			foreach($order_packaging as $k=>$v){
-				$packaging_info = $this->Packaging->findbyid($v['OrderPackaging']['packaging_id']);
-				$packaging[$k] = $packaging_info;
-				$packaging[$k]['Packaging']['fee'] = $v['OrderPackaging']['packaging_fee'];
-				$packaging[$k]['Packaging']['note'] = $v['OrderPackaging']['note'];
-				$packaging[$k]['Packaging']['quntity'] = $v['OrderPackaging']['packaging_quntity'];		
-				if($v['OrderPackaging']['note'] != ""){
-	        		$show_note = 1;
-				}	
-	        	$this->set('packaging',$packaging);
+			//	$packaging_info = $this->Packaging->findbyid($v['OrderPackaging']['packaging_id']);
+				if(isset($packagings_list[$v['OrderPackaging']['packaging_id']])){
+					$packaging_info = $packagings_list[$v['OrderPackaging']['packaging_id']];
+					$packaging[$k] = $packaging_info;
+					if( $order_info['Order']['subtotal'] >= $packaging_info['Packaging']['free_money'] &&  $packaging_info['Packaging']['free_money'] > 0){
+					$packaging[$k]['Packaging']['fee'] = 0;
+					}else{
+					$packaging[$k]['Packaging']['fee'] = $v['OrderPackaging']['packaging_fee'];
+					}
+					$packaging[$k]['Packaging']['note'] = $v['OrderPackaging']['note'];
+					$packaging[$k]['Packaging']['quntity'] = $v['OrderPackaging']['packaging_quntity'];		
+					if($v['OrderPackaging']['note'] != ""){
+	        			$show_note = 1;
+					}	
+				}
         	}
+	        	$this->set('packaging',$packaging);
 		}
-        
+		$this->Card->set_locale($this->locale);
         //是否有贺卡
         $order_card = $this->OrderCard->findallbyorder_id($order_info['Order']['id']);
 		if(is_array($order_card) && sizeof($order_card)>0){
-			$this->Card->set_locale($this->locale);
+			$cards_id = array();
+			foreach($order_card as $k=>$v){
+				$cards_id[] = $v['OrderCard']['card_id'];
+			}
+			$cards_info = $this->Card->find('all',array(
+			'fields' =>array('Card.id','Card.img01','Card.fee','Card.free_money','CardI18n.name','CardI18n.description'),
+			'conditions'=>array('Card.id'=>$cards_id)));
+			$cards_list = array();
+			if(is_array($cards_info) && sizeof($cards_info)>0){
+				foreach($cards_info as $k=>$v){
+					$cards_list[$v['Card']['id']] = $v;
+				}
+			}
 			$card = array();
 			foreach($order_card as $k=>$v){
-				$card_info = $this->Card->findbyid($v['OrderCard']['card_id']);
+				//$card_info = $this->Card->findbyid($v['OrderCard']['card_id']);
+				if(isset($cards_list[$v['OrderCard']['card_id']])){
+				$card_info = $cards_list[$v['OrderCard']['card_id']];
+		//		pr($card_info);
 				$card[$k] = $card_info;
-				$card[$k]['Card']['fee'] = $v['OrderCard']['card_fee'];
+				if( $order_info['Order']['subtotal'] >= $card_info['Card']['free_money'] &&  $card_info['Card']['free_money'] > 0){
+					$card[$k]['Card']['fee'] = 0;
+				}else{
+					$card[$k]['Card']['fee'] = $v['OrderCard']['card_fee'];
+				}
 				$card[$k]['Card']['note'] = $v['OrderCard']['note'];
 				if($v['OrderCard']['note'] != ""){
 	        		$show_note = 1;
 				}	
-				$card[$k]['Card']['quntity'] = $v['OrderCard']['card_quntity'];			
-	        	$this->set('card',$card);
+				$card[$k]['Card']['quntity'] = $v['OrderCard']['card_quntity'];	
+				}		
         	}
+	        	$this->set('card',$card);
 		}  
+	//	pr($card);
 		$this->set('show_note',$show_note);
 		
 		
-		//pr($order_info);
+	//	pr($order_info);
 		//订单商品详细  /*****订单商品部分的处理********/
 		$condition=" OrderProduct.order_id='".$order_info['Order']['id']."' and  ProductI18n.locale='".$this->locale."' ";
 		$order_products=$this->OrderProduct->findAll($condition);
@@ -257,7 +358,6 @@ class OrdersController extends AppController {
 		static $market_subtotal=0;
 		static $shop_subtotal=0;
 		$size = count($order_products);
-		
 		foreach($order_products as $k=>$v){
 			$shop_subtotal += $v['OrderProduct']['product_price']*$v['OrderProduct']['product_quntity'];
 			$market_subtotal+=$v['Product']['market_price']*$v['OrderProduct']['product_quntity'];
@@ -287,14 +387,24 @@ class OrdersController extends AppController {
 		$region_array = explode(" ",trim($order_info['Order']['regions']));
 		$order_info['Order']['regions'] = "";
 		$this->Region->set_locale($this->locale);
-		foreach($region_array as $k=>$region_id){
+	
+		$region_name_arr = $this->Region->find('all',array('conditions'=>array('Region.id'=>$region_array)));
+			if(is_array($region_name_arr) && sizeof($region_name_arr)>0){
+				foreach($region_name_arr as $k=>$v){
+					$order_info['Order']['regions'].= isset($v['RegionI18n']['name'])?$v['RegionI18n']['name']." ":"";
+			}
+		}	
+	
+	
+	
+	/*	foreach($region_array as $k=>$region_id){
 			$region_info = $this->Region->findbyid($region_id);
 			if($k < sizeof($region_array)-1){
 				$order_info['Order']['regions'] .= $region_info['RegionI18n']['name']." ";
 			}else{
 				$order_info['Order']['regions'] .= $region_info['RegionI18n']['name'];
 			}
-		}		
+		}	*/	
 		
 		//支付方式列表
 		//配送方式
@@ -302,7 +412,7 @@ class OrdersController extends AppController {
 		$shipping_info = $this->Shipping->findbyid($order_info['Order']['shipping_id']);
 		
 		
-		$condition =" UserMessage.user_id='".$order_info['Order']['user_id']."' and UserMessage.parent_id = 0 and UserMessage.order_id = ".$id."";
+		$condition =" UserMessage.user_id='".$order_info['Order']['user_id']."' and UserMessage.parent_id = 0 and UserMessage.value_id = ".$id."";
 	    $my_messages=$this->UserMessage->findAll($condition);
 	   //pr($my_messages);
 	   if(isset($my_messages) && is_array($my_messages) && sizeof($my_messages)>0){
@@ -310,22 +420,22 @@ class OrdersController extends AppController {
 		   	   $replies=$this->UserMessage->findAll("UserMessage.parent_id = '".$v['UserMessage']['id']."'");
 		   	   $my_messages[$k]['Reply']=$replies;
 		   	   if($v['UserMessage']['msg_type'] == 0){
-		   	   	      $my_messages[$k]['UserMessage']['type'] = $this->languages['message'];
+		   	   	      $my_messages[$k]['UserMessage']['type'] = $systemresource_info['msg_type']['0'];//$this->languages['message'];
 		   	   }
 		   	   else if($v['UserMessage']['msg_type'] == 1){
-		   	   	      $my_messages[$k]['UserMessage']['type'] = $this->languages['complaint'];
+		   	   	      $my_messages[$k]['UserMessage']['type'] = $systemresource_info['msg_type']['1'];//$this->languages['complaint'];
 		   	   }
 		   	   else if($v['UserMessage']['msg_type'] == 2){
-		   	   	      $my_messages[$k]['UserMessage']['type'] = $this->languages['inquiry'];
+		   	   	      $my_messages[$k]['UserMessage']['type'] = $systemresource_info['msg_type']['2'];//$this->languages['inquiry'];
 		   	   }
 		   	   else if($v['UserMessage']['msg_type'] == 3){
-		   	   	      $my_messages[$k]['UserMessage']['type'] = $this->languages['after_sale'];
+		   	   	      $my_messages[$k]['UserMessage']['type'] = $systemresource_info['msg_type']['3'];//$this->languages['after_sale'];
 		   	   }
 		   	   else if($v['UserMessage']['msg_type'] == 4){
-		   	   	     // $my_messages[$k]['UserMessage']['type'] = $this->languages['inquire'];
+		   	   	      $my_messages[$k]['UserMessage']['type'] = $systemresource_info['msg_type']['4'];//$this->languages['inquire'];
 		   	   }
 		   	  else {
-		   	   	      //$my_messages[$k]['UserMessage']['type'] = $this->languages['untyped'];
+		   	   	      $my_messages[$k]['UserMessage']['type'] = $systemresource_info['msg_type']['5'];//$this->languages['untyped'];
 		   	   }
 		   }
 		   $this->set('my_messages',$my_messages);
@@ -333,6 +443,8 @@ class OrdersController extends AppController {
 
          /* 虚拟商品付款后处理 */
          $virtual_card = array();
+         $download_product= array();
+         $service_product=array();
         if ($order_info['Order']['payment_status'] != 0)
         {
 			$condition=" OrderProduct.order_id='".$order_info['Order']['id']."' and  ProductI18n.locale='".$this->locale."' and  OrderProduct.extension_code>'' ";
@@ -342,12 +454,14 @@ class OrdersController extends AppController {
 				/* 虚拟卡处理 */
 				if($v['OrderProduct']['extension_code']=='virtual_card'){
 					$VirtualCards = $this->VirtualCard->findAll("VirtualCard.product_id='".$v['OrderProduct']['product_id']."' and VirtualCard.order_id='".$id."'");
-					
 					if(!empty($VirtualCards))foreach($VirtualCards as $kk=>$vv){
 						/* 解密 */
 						if($vv['VirtualCard']['crc32'] == 0 || $vv['VirtualCard']['crc32'] == crc32(AUTH_KEY)){
-							$vv['VirtualCard']['card_sn'] = $this->requestAction("/commons/decrypt/".$vv['VirtualCard']['card_sn']);;
-							$vv['VirtualCard']['card_password'] = $this->requestAction("/commons/decrypt/".$vv['VirtualCard']['card_password']);
+				//			$vv['VirtualCard']['card_sn'] = $this->requestAction("/commons/decrypt/".$vv['VirtualCard']['card_sn']);;
+				//			$vv['VirtualCard']['card_password'] = $this->requestAction("/commons/decrypt/".$vv['VirtualCard']['card_password']);
+							$vv['VirtualCard']['card_sn'] = $this->decrypt($vv['VirtualCard']['card_sn']);
+							$vv['VirtualCard']['card_password'] = $this->decrypt($vv['VirtualCard']['card_password']);							
+							
 						}
 						$vv['VirtualCard']['name'] = $v['ProductI18n']['name'];
 						//$order_info['Order']['virtual_card'][] = $vv['VirtualCard'];
@@ -356,24 +470,54 @@ class OrdersController extends AppController {
 					//pr($order_info['Order']['virtual_card']);
 				}
 				/* 下载处理 */
-				else if($v['OrderProduct']['extension_code']=='download'){
-				
+				else if($v['OrderProduct']['extension_code']=='download_product'){
+					$DownloadProducts = $this->ProductDownload->findAll("ProductDownload.product_id='".$v['OrderProduct']['product_id']."' ");
+					if(!empty($DownloadProducts))foreach($DownloadProducts as $kk=>$vv){	
+						$downloadlog = $this->ProductDownloadLog->findAll("ProductDownloadLog.product_id='".$vv['ProductDownload']['product_id']."' and ProductDownloadLog.order_id='".$id."'");					
+						if($vv['ProductDownload']['allow_downloadtimes']=="0"){
+							$vv['ProductDownload']['count']='forever';
+						}else{
+							$vv['ProductDownload']['count']=$vv['ProductDownload']['allow_downloadtimes']-count($downloadlog);
+						}
+						$vv['ProductDownload']['order_id']=$id;
+						$download_product[$vv['ProductDownload']['product_id']][] = $vv['ProductDownload'];
+					}
 				}
-				/* 服务处理 */
-				else if($v['OrderProduct']['extension_code']=='service'){
 				
+				/* 服务处理 */
+				else if($v['OrderProduct']['extension_code']=='services_product'){
+					$ServiceProducts = $this->ProductService->findAll("ProductService.product_id='".$v['OrderProduct']['product_id']."' ");			
+					if(!empty($ServiceProducts))foreach($ServiceProducts as $kk=>$vv){
+						if(!empty($vv['ProductService']['service_cycle'])){
+							$end_time= strtotime(substr($order_info['Order']['payment_time'], 9, 10))+86400*$vv['ProductService']['service_cycle'];  		
+							$now=strtotime(date('Y-m-d,H:i:s'));
+							$vv['ProductService']['ser_time']=date('Y-m-d',$end_time);
+							$vv['ProductService']['cycle']= ceil(($end_time-$now)/86400);
+						}else{
+							$vv['ProductService']['cycle']='forever';
+						}
+						$vv['ProductService']['order_id']=$id;
+						$service_product[$vv['ProductService']['product_id']][] = $vv['ProductService'];
+					}
 				}
 			}
         }
-//pr($virtual_card);
-		
+        /*
+	        SV_SIMPLE
+        */
+        if($order_info['Order']['payment_status']!=2){
+         	$this->order_pay($order_info['Order']['id']);
+        }
+        
+        
+
 		/* 支持纯虚拟物品购买 */
 		if(isset($shipping_info['Shipping']['support_cod']))
 			$condition=" Payment.status = '1' and PaymentI18n.status = '1' and Payment.is_cod >= '".$shipping_info['Shipping']['support_cod']."'";
 		else 
 			$condition=" Payment.status ='1' and PaymentI18n.status ='1' and Payment.is_cod = '0'";
 		$this->Payment->set_locale($this->locale);
-		$payment_list=$this->Payment->findAll($condition);
+	//	$payment_list=$this->Payment->findAll($condition);
 	   	$this->pageTitle = $this->languages['my_order']." - ".$this->configs['shop_title'];
 		//pr($order_products);
 		/* 是否显示配送 */
@@ -383,8 +527,10 @@ class OrdersController extends AppController {
 		else $this->set('all_virtual',1);
 		$this->set('order_info',$order_info);
 		$this->set('order_products',$order_products);
-		$this->set('payment_list',$payment_list);
+	//	$this->set('payment_list',$payment_list);
 		$this->set('virtual_card',$virtual_card);
+		$this->set('download_product',$download_product);
+		$this->set('service_product',$service_product);
 	    //$this->set('ur_heres',$ur_heres);
 	}
 /****************  订单详细   *****************/
@@ -484,8 +630,11 @@ function change_payment($payment_id,$order_id){
 
 
 /* 支付*/
-	function order_pay(){
-		if($this->RequestHandler->isPost()){
+	function order_pay($oid = 0){
+			if($oid != 0){
+				$_POST['id'] = $oid;
+			}
+//		if($this->RequestHandler->isPost()){
 			$order = $this->Order->findbyid($_POST['id']);
 			$pay_log = $this->PaymentApiLog->findbytype_id($_POST['id']);
 			$pay = $this->Payment->findbycode($pay_log['PaymentApiLog']['payment_code']);
@@ -505,70 +654,88 @@ function change_payment($payment_id,$order_id){
 			
 		//	$order['Order']['need_paid'] = number_format($order['Order']['total']-$order['Order']['money_paid']-$order['Order']['point_fee']-$order['Order']['coupon_fee']-$order['Order']['discount'],2 ,'.','')+0;
 			$order_pr['total'] = $pay_log['PaymentApiLog']['amount'];
-			
-			if($pay['Payment']['code'] == "alipay"){  //支付宝
-				eval($pay_php);    // - -! 执行数据库取出的php代码
-				$pay_class = new alipay();	
+			$str = "\$pay_class = new ".$pay['Payment']['code']."();";
+			if($pay['Payment']['code'] == "bank" || $pay['Payment']['code'] == "post" || $pay['Payment']['code'] == "COD" ||  $pay['Payment']['code'] == "account_pay"){
+				$pay_message = $pay['PaymentI18n']['description'];
+				$url_format = $pay_message;
+				$this->set('pay_message',$pay_message);
+			}else if($pay['Payment']['code'] == "alipay"){
+				eval($pay_php);
+				@eval($str);
+				if(isset($pay_class)){
 				$url = $pay_class->get_code($order_pr,$pay,$this);
-				
+				$url_format = "<input type=\"button\" onclick=\"window.open('".$url."')\" value=\"".$this->languages['alipay_pay_immedia']."\" />";
+				$this->set('url_format',$url_format);
 				$this->set('pay_button',$url);
-			}
-			
-			if($pay['Payment']['code'] == "chinapay"){  //银联电子支付
+				}
+			}else{
 				eval($pay_php);
-				$pay_class = new chinapay();	
-				$form = $pay_class->get_code($order_pr,$pay);
-				$this->set('pay_form',$form);
-			}
-
-			if($pay['Payment']['code'] == "bank"){  //银行转账
-				eval($pay_php);
-				$pay_message = $pay['PaymentI18n']['description'];
-				$this->set('pay_message',$pay_message);
-			}
-			
-			if($pay['Payment']['code'] == "post"){  //邮局汇款
-				eval($pay_php);
-				$pay_message = $pay['PaymentI18n']['description'];
-				$this->set('pay_message',$pay_message);
-			}
-			if($pay['Payment']['code'] == "paypal"){  //贝宝
-				eval($pay_php);
-				$pay_message = $pay['PaymentI18n']['description'];
-				$pay_class = new paypal();	
-				$form = $pay_class->get_code($order_pr,$pay,$this);
-				$this->set('pay_form',$form);
-			}
-			if($pay['Payment']['code'] == "paypalcn"){  //贝宝
-				eval($pay_php);
-				$pay_message = $pay['PaymentI18n']['description'];
-				$pay_class = new paypal();	
-				$form = $pay_class->get_code($order_pr,$pay,$this);
-				$this->set('pay_form',$form);
+				@eval($str);
+				if(isset($pay_class)){
+				$url = $pay_class->get_code($order_pr,$pay,$this);
+				$url_format = $url;
+				$this->set('pay_message',$url);
+				}
 			}		
+	   		$result['msg'] = $this->languages['supply_method_is'].":".$pay['PaymentI18n']['name'];
+
 			$result['type'] = 0;
 
-		}
-		$this->set('result',$result);
-   		$this->layout="ajax";
+	//	}
+		   if($oid != 0){
+		   	//	return $url;
+		   }else{
+			   if(!isset($_POST['is_ajax'])){
+					$flash_url = $this->server_host.$this->user_webroot."orders";			   	   
+					$this->page_init();
+					$this->pageTitle = isset($result['msg'])?$result['msg']:'';
+					if(isset($_POST['act']) && $_POST['act'] == 'index'){
+					$this->flash($url_format,$flash_url,10);		
+					}else if(isset($_POST['act']) && $_POST['act'] == 'view'){
+					$this->flash($url_format,$flash_url."/".$_POST['id'],10);		
+					}
+				}		
+				
+				$this->set('result',$result);
+		   		$this->layout="ajax";
+		  }
 	}
 	
 	function confirm_order(){
 		$result['type'] = 1;
 		$result['msg'] = "";
 		if($this->RequestHandler->isPost()){
+			$flash_url = $this->server_host.$this->user_webroot."orders";		
 			$order_info = array(
 								'id' => $_POST['id'],
 								'shipping_status' => 2
-						);
+							);
 			$this->Order->save($order_info);
 			$result['type'] = 0;
-			$result['msg'] = "谢谢您的购买";
+			$result['msg'] = $this->languages['thanks_for_purchase'];
    		}
+		if(!isset($_POST['is_ajax'])){
+		    $this->page_init();
+			$this->pageTitle = "".$result['msg']."";
+		    $this->flash($result['msg'],$flash_url,10);	
+		}   		
    		$this->set('result',$result);
    		$this->layout="ajax";
 	}
 	
+	function decrypt($str, $key = AUTH_KEY)
+	{
+	    $coded = '';
+	    $keylength = strlen($key);
+	    $str = base64_decode($str);
+
+	    for ($i = 0, $count = strlen($str); $i < $count; $i += $keylength)
+	    {
+	        $coded .= substr($str, $i, $keylength) ^ $key;
+	    }
+
+	    return $coded;
+	}	
 	
 }
 

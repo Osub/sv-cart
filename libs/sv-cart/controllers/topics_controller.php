@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: topics_controller.php 1114 2009-04-28 10:55:55Z shenyunfeng $
+ * $Id: topics_controller.php 2907 2009-07-15 11:04:21Z shenyunfeng $
 *****************************************************************************/
 class TopicsController extends AppController {
 	var $name = 'Topics';
@@ -45,7 +45,7 @@ class TopicsController extends AppController {
        	$yestoday = date("Y-m-d H:i:s",strtotime ("-1 day"));
        	$filter = "1=1";
         $filter .= " and Topic.created <= '".$now."' and  Topic.created >='".$yestoday."'";     	
-       	$one_day_promotions = $this->Topic->findall($filter);
+       	$one_day_promotions = $this->Topic->find('all',array('conditions'=>array($filter),'fields'=>array('Topic.id')));
 		$this->set("one_day_time",count($one_day_promotions));
        	$sortClass='Topic';
        	$parameters=Array($orderby,$rownum,$page);
@@ -87,11 +87,18 @@ class TopicsController extends AppController {
 		$topic['Topic']['created']=substr($topic['Topic']['start_time'],0,10);
 		$topic['Topic']['modified']=substr($topic['Topic']['end_time'],0,10);
     	//商品
-    	$topic_products = $this->TopicProduct->findallbytopic_id($id);
-		if(isset($topic_products) && count($topic_products) > 0){
+    	$topic_products = $this->TopicProduct->find('all',array('conditions'=>array('TopicProduct.topic_id'=>$id,'TopicProduct.status'=>1),'fields'=>array('TopicProduct.id','TopicProduct.topic_id','TopicProduct.product_id','TopicProduct.price')));
+   		if(isset($topic_products) && count($topic_products) > 0){
+   			$topic_ids = array();
+   			foreach($topic_products as $k=>$v){
+   				$topic_ids[] = $v['TopicProduct']['product_id'];
+   			}
+   			
+   			$all_product = $this->Product->find('all',array('conditions'=>array('Product.id'=>$topic_ids),));
+   			
 			foreach($topic_products as $k=>$v){
     			$products[$v['TopicProduct']['product_id']] = $this->Product->findbyid($v['TopicProduct']['product_id']);
-    			$products[$v['TopicProduct']['product_id']]['Product']['topic_price'] = $v['TopicProduct']['price'];
+    			$products[$v['TopicProduct']['product_id']]['Product']['shop_price'] = $v['TopicProduct']['price'];
     		}
     	}
     	$ur_heres[]	= array('name'=>$this->languages['home'],'url'=>"/");

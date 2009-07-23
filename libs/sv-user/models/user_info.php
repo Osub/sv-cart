@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: user_info.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: user_info.php 2570 2009-07-03 12:07:17Z zhengli $
 *****************************************************************************/
 class UserInfo extends AppModel
 {
@@ -49,7 +49,7 @@ function set_locale($locale){
 				if(is_array($v['UserInfoI18n'])){
 				    //$lists_formated[$v['UserInfo']['id']]['UserInfoI18n']=$v['UserInfoI18n'];
 				     $lists_formated[$v['UserInfo']['id']]['UserInfo']['name'] = $v['UserInfoI18n']['name'];
-				     $lists_formated[$v['UserInfo']['id']]['UserInfo']['values'] = $v['UserInfoI18n']['values'];
+				     $lists_formated[$v['UserInfo']['id']]['UserInfo']['user_info_values'] = $v['UserInfoI18n']['user_info_values'];
 				     $lists_formated[$v['UserInfo']['id']]['UserInfo']['message'] = $v['UserInfoI18n']['message'];
 				     $lists_formated[$v['UserInfo']['id']]['UserInfo']['remark'] = $v['UserInfoI18n']['remark'];
 				     

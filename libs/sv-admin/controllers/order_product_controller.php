@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: order_product_controller.php 786 2009-04-18 15:38:32Z huangbo $
+ * $Id: order_product_controller.php 784 2009-04-18 15:34:05Z huangbo $
 *****************************************************************************/
 class OrderProductController extends AppController {
 	var $name = 'OrderProduct';

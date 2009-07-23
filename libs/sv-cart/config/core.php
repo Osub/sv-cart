@@ -9,15 +9,9 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: core.php 1815 2009-05-27 03:13:51Z huangbo $
+ * $Id: core.php 2329 2009-06-29 02:09:27Z tangyu $
 *****************************************************************************/
-
-	Configure::write('debug', 0);
-	Configure::write('App.encoding', 'UTF-8');
-//	Configure::write('App.baseUrl', env('SCRIPT_NAME'));
-	Configure::write('Cache.disable', true);
-	Configure::write('Cache.check', true);
-	define('LOG_ERROR', 2);
+	include(ROOT."core.php");
 	Configure::write('Session.save', 'database');
 	Configure::write('Session.table', 'sessions');
 //	Configure::write('Session.database', 'default');
@@ -26,12 +20,4 @@
 	Configure::write('Session.start', true);
 	Configure::write('Session.checkAgent', true);
 	Configure::write('Security.level', 'low');
-	Configure::write('Security.salt', 'a1b9f79d12e5d1f3db8393165155b839');
-//	Configure::write('Asset.filter.css', 'css.php');
-//	Configure::write('Asset.filter.js', 'custom_javascript_output_filter.php');
-//	Configure::write('Acl.classname', 'DbAcl');
-//	Configure::write('Acl.database', 'default');
-	Cache::config('default', array('engine' => 'File'));
-	
-	Configure::write('MinifyAsset',true);
 ?>

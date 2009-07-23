@@ -9,12 +9,11 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: language_dictionary.php 1670 2009-05-25 00:47:18Z huangbo $
+ * $Id: language_dictionary.php 2855 2009-07-15 03:25:34Z shenyunfeng $
 *****************************************************************************/
 class LanguageDictionary extends AppModel{
 	var $name = 'LanguageDictionary'; 
-	var $cacheQueries = true;
-	
+	var $cacheQueries = true;	
 	
 	function getformatcode($locale){
 		
@@ -24,7 +23,8 @@ class LanguageDictionary extends AppModel{
 		if ($languages_formatcode){
 			return $languages_formatcode;
 		}else{
-			$languages = $this->findallbylocale($locale);
+		//	$languages = $this->findallbylocale($locale);
+			$languages = $this->find('all',array('fields'=>array('LanguageDictionary.name','LanguageDictionary.value'),'conditions'=>array('locale'=>$locale)));
 			$languages_formatcode =array();
 			if(is_array($languages))
 			foreach($languages as $v){

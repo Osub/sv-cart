@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: product_article.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: product_article.php 2863 2009-07-15 04:57:00Z shenyunfeng $
 *****************************************************************************/
 class ProductArticle extends AppModel
 {
@@ -20,6 +20,16 @@ class ProductArticle extends AppModel
             'foreignKey'    => 'article_id'
         )
     );
+    function find_product_article($id,$locale){
+		$params = array('order' => array('ProductArticle.modified DESC'),
+		//	'fields' =>	array('ProductArticle.id','ProductArticle.article_id','ProductArticle.product_id','ProductArticle.is_double'
+				//					,'Article.id','Article.category_id'),			
+		    			'conditions' => array(" ProductArticle.article_id= ".$id)
+			   			);
+		$article_categorys = $this->cache_find('all',$params,$this->name.$locale);	
+	//	pr($article_categorys);		
+		return $article_categorys;
+    }
     
 }
 ?>

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: regions_controller.php 1883 2009-05-31 11:20:54Z huangbo $
+ * $Id: regions_controller.php 2419 2009-06-30 02:04:57Z zhengli $
 *****************************************************************************/
 class RegionsController extends AppController {
 	var $name = 'Regions';
@@ -27,6 +27,9 @@ class RegionsController extends AppController {
 			$str = "";
 			if(isset($_POST['str'])){
 				$str = $_POST['str'];
+			}
+			if(isset($_POST['id'])){
+			$this->set('ad_id',$_POST['id']);
 			}
 			$this->children($regions,$str);
 			for($i=0;$i<4;$i++){

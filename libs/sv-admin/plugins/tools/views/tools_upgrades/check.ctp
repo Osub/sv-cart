@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 后台首页
  * ===========================================================================
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: check.ctp 1267 2009-05-08 11:01:10Z shenyunfeng $
+ * $Id: check.ctp 2703 2009-07-08 11:54:52Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $form->create('tools_upgrade',array('action'=>'/upgrade/','id'=>"js_check",'method'=>'post'));?>
@@ -25,7 +25,7 @@
 	
 <ul class="list setup" style="width:500px;margin:0 auto"> 
 	<li><h3 class="green">SV-Cart基本配置信息</h3></li>
-    <?foreach($system_info as $v){?>
+    <?php foreach($system_info as $v){?>
     <li>
 	<div class="lang"><?php echo $v[0]?></div><div class="status"><span><?php echo $v[1]?></span></div></li>
     <?php }?>
@@ -34,19 +34,19 @@
 	<li><h3 class="green">APACHE功能</h3></li>
     
     <li>
-    	<?if($mod_rewrite==1){?>
+    	<?php if($mod_rewrite==1){?>
     	<div class="lang">mod_rewrite</div><div class="status"><span style="color:green;">开启</span></div>
-    	<?}else if($mod_rewrite==2){?>
+    	<?php }else if($mod_rewrite==2){?>
     	<div class="lang">mod_rewrite</div><div class="status"><span style="color:red;">无法确认</span></div>
-    	<?}else {?>
+    	<?php }else {?>
     	<div class="lang">mod_rewrite</div><div class="status"><span style="color:red;">未开启</span></div>
-    	<?}?>
+    	<?php }?>
 	</li>
     
 </ul>
 <ul class="list setup" style="width:500px;margin:0 auto"> 
 	<li><h3 class="green">目录权限检测</h3></li>
-    <?foreach($dir_checking as $v){?>
+    <?php foreach($dir_checking as $v){?>
     <li>
     <?php if ($v[1]=="可写") {?>
 	<div class="lang"><?php echo $v[0]?></div><div class="status"><span style="color:green;"><?php echo $v[1]?></span></div>

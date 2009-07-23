@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: comment.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: comment.php 2876 2009-07-15 06:07:19Z zhengli $
 *****************************************************************************/
 class Comment extends AppModel
 {
@@ -25,6 +25,7 @@ class Comment extends AppModel
 		if($id != ''){
 		$conditions.= " AND type_id = '".$id."'";
 		}
+		
 		$Lists=$this->findAll($conditions,'','modified asc');
 		return $Lists;
 	}

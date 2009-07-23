@@ -9,35 +9,74 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: tools_app_controller.php 517 2009-04-14 01:18:28Z huangbo $
+ * $Id: tools_app_controller.php 3053 2009-07-17 11:59:14Z huangbo $
 *****************************************************************************/
 class ToolsAppController extends Controller{
 	var $uses = null;
 	var $install_err = '';
 	var $host = '';
 	function beforeFilter(){
-		$this->host = $this->get_host();
+		
+		Configure::write('debug', 0);
+		/* rewrite 模块关闭特殊处理webroot */
+		$host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
+		$this->server_host = "http://".$host;
+    	if(Configure::read('App.baseUrl')){
+        	$this->webroot = $webroot = str_replace("index.php","",$this->base);
+        	$this->root_all = str_replace( WEBROOT_DIR . '/','',$this->webroot);//sv-cart的根
+        	$this->admin_webroot = $this->root_all . 'sv-admin/index.php/';
+        	$this->user_webroot = $this->root_all . 'user/index.php/';
+        	$this->cart_webroot = $this->root_all . 'index.php/';
+        }
+        else{
+        	$this->root_all = str_replace(WEBROOT_DIR."/","",$this->webroot);//sv-cart的根
+        	$this->admin_webroot = $this->root_all . 'sv-admin/';
+        	$this->user_webroot = $this->root_all . 'user/';
+        	$this->cart_webroot = $this->root_all;
+        }
+        $this->set('root_all',$this->root_all);
+        $this->set('server_host',$this->server_host);
+        $this->set('admin_webroot',$this->admin_webroot);
+        $this->set('user_webroot',$this->user_webroot);
+        $this->set('cart_webroot',$this->cart_webroot);
+		
+		if(!empty($_GET['lang']))
+			$lang = $_GET['lang'] == 'eng' ? 'eng': 'chi';
+		else {
+			$lang = $this->Session->read('install_lang');
+			$lang = empty($lang) ? 'chi': $lang;
+		}
+		$this->Session->write('install_lang',$lang);
+		include(ROOT.WEBROOT_DIR . "/plugins/tools/data/install/language/".$lang.".php");
+		$this->set('local_lang',$lang);
+		$this->set('lang',$_LANG);
+		$this->lang = $_LANG;
 	}
 	/* 获取系统参数 */
 	function get_system_info(){
 
 	    $system_info = array();
 	    /* 检查系统基本参数 */
-	    $system_info[] = array('操作系统', PHP_OS);
-	    $system_info[] = array('PHP 版本', PHP_VERSION);
+	    $system_info[] = array($this->lang['php_os'], PHP_OS);
+	    $system_info[] = array($this->lang['php_ver'], PHP_VERSION);
 
 	    /* 检查MYSQL支持情况 */
-	    $mysql_enabled = function_exists('mysql_connect') ? '支持' : '不支持' ;
-	    $system_info[] = array('是否支持MySQL', $mysql_enabled);
-	    
+	    $mysql_enabled = function_exists('mysql_connect') ? $this->lang['support'] : $this->lang['not_support'] ;
+	    $system_info[] = array($this->lang['mysql'], $mysql_enabled);
+	    /* 检查PostgreSQL支持情况 */
+	    $pg_enabled = function_exists('pg_connect') ? $this->lang['support'] : $this->lang['not_support'] ;
+	    $system_info[] = array($this->lang['postgresql'], $pg_enabled);
+	    /* 检查SQLite支持情况 */
+	    $sl_enabled = function_exists('sqlite_open') ? $this->lang['support'] : $this->lang['not_support'] ;
+	    $system_info[] = array($this->lang['sqlite'], $sl_enabled);
 	    /* 检查图片处理函数库 */
 	    $gd_ver = $this->get_gd_version();
-	    $gd_ver = empty($gd_ver) ? "不支持" : $gd_ver;
-	    $system_info[] = array('GD 版本', $gd_ver);
+	    $gd_ver = empty($gd_ver) ? $this->lang['not_support'] : $gd_ver;
+	    $system_info[] = array($this->lang['gd_version'], $gd_ver);
 	    
 	    /* 服务器是否安全模式开启 */
-	    $safe_mode = ini_get('safe_mode') == '1' ? '开启' : '关闭';
-	    $system_info[] = array('服务器是否开启安全模式', $safe_mode);
+	    $safe_mode = ini_get('safe_mode') == '1' ? $this->lang['safe_mode_on'] : $this->lang['safe_mode_off'];
+	    $system_info[] = array($this->lang['safe_mode'], $safe_mode);
 	    
 
 	    return $system_info;
@@ -75,11 +114,11 @@ class ToolsAppController extends Controller{
 		/*   重载 database 文件    */
 	    $fp = @fopen(ROOT . '/database.php', 'wb+');
 	    if (!$fp){
-			$this->install_err .= "无法创建database.php";
+			$this->install_err .= $this->lang['cannt_mk']."database.php";
 			return false;
 	    }
 	    if (!@fwrite($fp, trim($content))){
-			$this->install_err .= "无法创建database.php";
+			$this->install_err .= $this->lang['cannt_mk']."database.php";
 			return false;
 	    }
 	    @fclose($fp);
@@ -105,7 +144,7 @@ class ToolsAppController extends Controller{
         }
     }
     /* 创建数据库和表结构 */ 
-    function install_table($db_type,$db_host, $db_user, $db_pw,$db_name, $db_charset,$prefix,$admin,$demo_products){
+    function install_table($db_type,$db_host, $db_user, $db_pw,$db_name, $db_charset,$prefix,$admin,$demo_products,$authcode,$template){
     	$source_prefix = "svcart_";
     	$target_prefix = $prefix;
 		$this->install_err = "";
@@ -139,7 +178,7 @@ class ToolsAppController extends Controller{
 				$query_items = $this->parse_sql_file($file_path,$source_prefix,$target_prefix);
 	            /* 如果解析失败，则跳过 */
 	            if (!$query_items){
-					$this->install_err .= "数据为空";
+					$this->install_err .= $this->lang['data_empty'];
 					return false;
 	            }
 	            foreach ($query_items AS $query_item){
@@ -149,21 +188,38 @@ class ToolsAppController extends Controller{
 	                }
 
 	                if (!$db->_execute($query_item)){
-	                	$this->install_err .= "数据库操作出错".$query_item.$db->lastError();
+	                	$this->install_err .= $this->lang['sql_error'].$query_item.$db->lastError();
 	                    return false;
 	                }
 	            }
+	            /* 管理员设置 */
 	            $sql = "insert into $prefix"."operators (name,password,email,actions,status,created)values('$admin[name]','$admin[pass]','$admin[email]','all',1,now())";
 	            if (!$db->_execute($sql)){
-	            	$this->install_err .= "数据库操作出错".$db->lastError();
+	            	$this->install_err .= $this->lang['sql_error'].$db->lastError();
 	            	return false;
 	            }
+	            /* 验证码设置 */
+	            if(!empty($authcode))foreach($authcode as $k=>$v){
+	            	$sql = "update $prefix"."config_i18ns set value='$v' where config_id='$k'";
+		            if (!$db->_execute($sql)){
+		            	$this->install_err .= $this->lang['sql_error'].$db->lastError();
+		            	return false;
+		            }
+				}
+	            /* 模板设置 */
+	            if(!empty($template)){
+	            	$sql = "update $prefix"."templates set name='$template[name]',template_style='$template[template_style]',url='$template[url]',status='$template[status]',is_default='$template[is_default]',author='$template[author]',version='$template[version]' where id='1'";
+		            if (!$db->_execute($sql)){
+		            	$this->install_err .= $this->lang['sql_error'].$db->lastError();
+		            	return false;
+		            }
+				}
 	            return true;
 
 			
 		}
 		else {
-			$this->install_err .= "数据库连接失败:请确认你的数据库库名已存在".$db->lastError();
+			$this->install_err .= $this->lang['conn_failed'].$db->lastError();
 			return false;
 		}
     
@@ -174,7 +230,7 @@ class ToolsAppController extends Controller{
         $sql = '';
         foreach($file_path as $v){
 	        if (!file_exists($v)){
-	        	$this->install_err .= "$v"."不存在";
+	        	$this->install_err .= "$v".$this->lang['not_exists'];
 	            return false;
 	        }
 	        /* 读取SQL文件 */
@@ -243,12 +299,12 @@ class ToolsAppController extends Controller{
 	    $fp = @fopen(ROOT . '/install.lock', 'wb+');
 	    if (!$fp)
 	    {
-	        $this->install_err .= "无法创建install.lock，无法进行安装上锁";
+	        $this->install_err .= $this->lang['connt_lock'];
 	        return false;
 	    }
 	    if (!@fwrite($fp, "SV-Cart INSTALLED"))
 	    {
-	        $this->install_err .= "无法创建install.lock，无法进行安装上锁";
+	        $this->install_err .= $this->lang['cannt_lock'];
 	        return false;
 	    }
 	    @fclose($fp);
@@ -275,7 +331,7 @@ class ToolsAppController extends Controller{
 	    while (($file = @readdir($dir)) !== false){
 	        if (is_file($source . $file)){
 	            if (!copy($source . $file, $target . $file)){
-	                $this->install_err .= '无法拷贝文件';
+	                $this->install_err .= $this->lang['cannt_copy_files'];
 	                return false;
 	            }
 	            chmod($target . $file, 0777);
@@ -402,25 +458,19 @@ class ToolsAppController extends Controller{
 	    	$root_dir = substr(ROOT,0,-5);
 	        if(!file_exists($root_dir . $dir)){
 	            $msgs['result'] = 'ERROR';
-	            $msgs['detail'][] = array($dir, "不存在");
+	            $msgs['detail'][] = array($dir, $this->lang['not_exists']);
 	            continue;
 	        }
 	        if ($this->file_mode_info($root_dir . $dir) < 2){
 	            $msgs['result'] = 'ERROR';
-	            $msgs['detail'][] = array($dir, "不可写");
+	            $msgs['detail'][] = array($dir, $this->lang['cannt_write']);
 	        }
 	        else{
-	            $msgs['detail'][] = array($dir, "可写");
+	            $msgs['detail'][] = array($dir, $this->lang['can_write']);
 	        }
 	    }
 
 	    return $msgs;
-	}
-	/* 获取域名首页 */
-	function get_host(){
-		$host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
-		$webroot = str_replace("/".WEBROOT_DIR."/","",$this->webroot);
-		return "http://".$host.$webroot;
 	}
     /**
      * 获得服务器上的 GD 版本
@@ -547,6 +597,30 @@ class ToolsAppController extends Controller{
 	function rollback_tables($db_host,$db_user,$db_pw,$db_name,$file_path){
 		$this->upgrade_tables($db_host,$db_user,$db_pw,$db_name,$file_path);
 	}
+	/* 文件字符串行模糊替换 */
+	function file_row_replace($file_path,$str,$new_str){
+		if($file_arr = file($file_path)){
+			$file_new_str = '';
+			foreach($file_arr as $k=>$v){
+				if(strripos($v,$str)){
+					//$file_arr[$k] = $new_str;
+					$v = $new_str;
+				}
+				$file_new_str .= $v;
+			}
+			/*   重载文件    */
+		    $fp = @fopen($file_path, 'wb+');
+		    if (!$fp){
+				return false;
+		    }
+		    if (!@fwrite($fp, trim($file_new_str))){
+				return false;
+		    }
+		    @fclose($fp);
+		    return true;
+		}
+		return false;
+	}
 
 }
 /* 文件夹拷贝 */
@@ -570,7 +644,7 @@ function   xCopy($source,   $destination,   $child){
    
 	 $handle=dir($source);    
 	 while($entry=$handle->read()){    
-		 if(($entry!=".")&&($entry!="..")){    
+		 if(($entry!=".")&&($entry!="..")&&($entry!=".svn")){    
 		    if(is_dir($source."/".$entry)){    
 		    	if($child)    
 		  			xCopy($source."/".$entry,$destination."/".$entry,$child);    

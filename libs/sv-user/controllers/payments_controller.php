@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * 开发人员: test $
- * $Id: payments_controller.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: payments_controller.php 722 2009-04-17 07:49:36Z shenyunfeng $
 *****************************************************************************/
 class PaymentsController extends AppController {
 

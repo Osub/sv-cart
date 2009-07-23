@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: attribute.php 1225 2009-05-06 10:41:25Z shenyunfeng $
+ * $Id: product_type_attribute.php 2699 2009-07-08 11:07:31Z huangbo $
 *****************************************************************************/
 class ProductTypeAttribute extends AppModel{
 	var $name = 'ProductTypeAttribute';
@@ -61,5 +61,22 @@ class ProductTypeAttribute extends AppModel{
 		$Lists=$this->findAll($condition,'','orderby asc');
 		return $Lists;
 	}
+	
+	function find_all_att($locale){
+		$params = array('order' => 'ProductTypeAttribute.orderby',
+		    			'conditions' => array('ProductTypeAttribute.status' => 1)
+			   			);
+		$Lists = $this->cache_find('all',$params,$this->name.$locale);	
+		$product_type_atts = array();
+		if(is_array($Lists) && sizeof($Lists)>0){
+			foreach($Lists as $k=>$v){
+				$product_type_atts[$v['ProductTypeAttribute']['id']] = $v;
+			}
+		}
+		return $product_type_atts;
+	}
+	
+	
+	
 }
 ?>

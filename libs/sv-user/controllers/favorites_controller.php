@@ -9,24 +9,31 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: favorites_controller.php 1908 2009-05-31 14:36:16Z huangbo $
+ * $Id: favorites_controller.php 3233 2009-07-22 11:41:02Z huangbo $
 *****************************************************************************/
 class FavoritesController extends AppController {
 	var $name = 'Favorites';
 //	var $helpers = array('Html');
     var $components = array ('Pagination','RequestHandler'); // Added 
     var $helpers = array('Html','Pagination'); // Added 
-	var $uses = array("User","UserFavorite","Category","Brand","Product","Cart");
+	var $uses = array("User","UserFavorite","Category","Brand","Product","Cart","ProductLocalePrice");
 
 	//添加收藏
-	function add(){
+	function add($type = '',$type_id =''){
+		if($type_id == ''){
+			$is_ajax = 1;
+		}else{
+			$is_ajax = 0;
+		}
+		
 		$result['type'] = 2;
 		$result['message'] = $this->languages['invalid_operation'];
-		if($this->RequestHandler->isPost()){
+//		if($this->RequestHandler->isPost()){
 			if(isset($_SESSION['User'])){
-				$type=$_POST['type'];
-				$type_id=$_POST['type_id'];
-				
+				if(isset($_POST['type']) && isset($_POST['type_id'])){
+					$type=$_POST['type'];
+					$type_id=$_POST['type_id'];
+				}
 				if(!isset($_SESSION['User'])){
 					$result['type'] = 1;
 					$result['message'] = $this->languages['only for membership users to keep,only_member_keep'];
@@ -41,13 +48,27 @@ class FavoritesController extends AppController {
 						$this->UserFavorite->save($favorite);
 						$result['type'] = 0;
 						$result['message'] = $this->languages['add_to_favorite'];
+						$this->Product->set_locale($this->locale);
+						$product_info = $this->Product->findbyid(intval($type_id));
+						if($this->is_promotion($product_info)){
+							$product_info['is_promotion'] = 1;
+						}
+					//	pr($product_info);
+						$this->set('product_info',$product_info);
 					}
 				}
 			}else{
 				$result['type'] = 1;
 				$result['message'] = $this->languages['time_out_relogin'];
 			}
-		}
+//		}
+		
+		if($is_ajax == 0){
+			$this->page_init();
+			$this->pageTitle = isset($result['message'])?$result['message']:''." - ".$this->configs['shop_title'];
+			$this->flash(isset($result['message'])?$result['message']:'',isset($_SERVER['HTTP_REFERER'])?$_SERVER['HTTP_REFERER']:"/",10);					
+		}	
+				
 		
 		$this->set('result',$result);
 		$this->layout = 'ajax';
@@ -69,11 +90,13 @@ class FavoritesController extends AppController {
 		//当前位置
 		$this->navigations[] = array('name'=>__($this->languages['my_favorite'],true),'url'=>"");
 		$this->set('locations',$this->navigations);
-		
+			
+			if(empty($rownum)){
 		 	$rownum=isset($this->configs['products_list_num']) ? $this->configs['products_list_num']:((!empty($rownum)) ?$rownum:20);
-
+			}
+			if(empty($showtype)){
 		 	$showtype=isset($this->configs['products_list_showtype']) ? $this->configs['products_list_showtype']:((!empty($showtype)) ?$showtype:'L');
-
+			}
 			if(empty($orderby)){
 		 		$orderby=isset($this->configs['products_category_page_orderby_type'])? $this->configs['products_category_page_orderby_type']." ". $this->configs['products_category_page_orderby_method'] :((!empty($orderby)) ?$orderby:'created '.$this->configs['products_category_page_orderby_method']);
 			}
@@ -87,8 +110,11 @@ class FavoritesController extends AppController {
 	     $products_id[$k]=$v['UserFavorite']['type_id'];
 	  }
 	  $this->Product->set_locale($this->locale);
+	  
+	  
+	  
 	  if(!empty($products_id)){
-	  	 $condition = array("Product.id"=>$products_id," status ='1'");
+	  	 $condition = array("Product.id"=>$products_id," Product.status ='1'");
 	  	 $total = $this->Product->findCount($condition,0);
  	     $sortClass='Product';
 	     $page=1;
@@ -96,13 +122,32 @@ class FavoritesController extends AppController {
 	     $options=Array();
 	     $page= $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass);
 	  	  //$this->Product->set_locale($this->locale);
-	  	  $fav_products=$this->Product->findAll($condition,'',"Product.$orderby","$rownum",$page);
-		  foreach($fav_products as $k=>$v){
-			 $fav_products[$k]['Product']['shop_price'] = $this->Product->locale_price($v['Product']['id'],$v['Product']['shop_price'],$this);
-		  }	  	  
+	 // 	  $fav_products=$this->Product->findAll($condition,'',"Product.$orderby","$rownum",$page);
 	  	  
-	     }
-	  else{
+	  	  $fav_products=$this->Product->find('all',array('conditions'=>array($condition),
+																'fields' =>	array('Product.id','Product.recommand_flag','Product.status','Product.img_thumb'
+																				,'Product.market_price'
+																				,'Product.shop_price'
+																				,'Product.promotion_price'
+																				,'Product.promotion_start'
+																				,'Product.promotion_end'
+																				,'Product.promotion_status'
+																				,'Product.code','Product.created'
+																				,'Product.product_rank_id'
+																				,'Product.quantity'	,'ProductI18n.name','ProductLocalePrice.product_price'
+																				),		  	  
+	  	  'order'=>array("Product.$orderby"),'limit'=>$rownum,'page'=>$page));
+	  	  
+	  	  
+	  	  
+	  	  
+		  foreach($fav_products as $k=>$v){
+			 if(isset($v['ProductLocalePrice']['product_price'])){
+			 		$fav_products[$k]['Product']['shop_price'] = $v['ProductLocalePrice']['product_price'];
+			 }
+			 //$fav_products[$k]['Product']['shop_price'] = $this->Product->locale_price($v['Product']['id'],$v['Product']['shop_price'],$this);
+		  }	  	  
+	  }else{
 	  	  $fav_products=array();
 	  }
 	  $fav_products_count=count($fav_products);
@@ -135,7 +180,9 @@ class FavoritesController extends AppController {
 		//显示的页面
 		$this->redirect("/favorites/");
 	}
-
+	function is_promotion($product_info){
+		return ($product_info['Product']['promotion_status'] == '1' && $product_info['Product']['promotion_start'] <= date("Y-m-d H:i:s") && $product_info['Product']['promotion_end'] >= date("Y-m-d H:i:s"));
+	}
 }
 
 ?>

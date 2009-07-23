@@ -1,5 +1,5 @@
-<?php
-/* SVN FILE: $Id: edit.ctp 7945 2008-12-19 02:16:01Z gwoo $ */
+<?php 
+/* SVN FILE: $Id: edit.ctp 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  *
  * PHP versions 4 and 5
@@ -23,7 +23,7 @@
  */
 ?>
 <div class="<?php echo $pluralVar;?> form">
-<?php
+<?php 
 	echo $form->create();
 	echo $form->inputs(null, array('created', 'modified', 'updated'));
 	echo $form->end(__('Submit', true));
@@ -35,7 +35,7 @@
 		<li><?php echo $html->link(__('Delete', true), array('action'=>'delete', $form->value($modelClass.'.'.$primaryKey)), null, __('Are you sure you want to delete', true).' #' . $form->value($modelClass.'.'.$primaryKey)); ?></li>
 <?php endif;?>
 		<li><?php echo $html->link(__('List', true).' '.$pluralHumanName, array('action'=>'index'));?></li>
-<?php
+<?php 
 		$done = array();
 		foreach ($associations as $_type => $_data) {
 			foreach ($_data as $_alias => $_details) {

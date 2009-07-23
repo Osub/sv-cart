@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: promotions_controller.php 1841 2009-05-27 06:51:37Z huangbo $
+ * $Id: promotions_controller.php 2907 2009-07-15 11:04:21Z shenyunfeng $
 *****************************************************************************/
 class PromotionsController extends AppController {
 
@@ -48,13 +48,16 @@ class PromotionsController extends AppController {
        	$filter = "1=1";
         $filter .= " and  Promotion.status = '1' and Promotion.created <= '".$now."' and  Promotion.created >='".$yestoday."'";     	
        	
-       	$one_day_promotions = $this->Promotion->findall($filter);
+       	$one_day_promotions = $this->Promotion->find('all',array('conditions'=>array($filter),'fields'=>array('Promotion.id')));
 		$this->set("one_day_time",count($one_day_promotions));
        	$condition = '1=1';
        	$sortClass='Promotion';
        	$parameters=Array($orderby,$rownum,$page);
        	$options=Array();
-       	$promotions = $this->Promotion->findAll($condition,''," Promotion.$orderby asc ","$rownum",$page);
+       	
+       //	$promotions = $this->Promotion->findAll($condition,''," Promotion.$orderby asc ","$rownum",$page);
+       	
+       	$promotions = $this->Promotion->find('all',array('conditions'=>array($condition),'fields'=>array('Promotion.id','Promotion.start_time','Promotion.end_time','PromotionI18n.title'),'order'=>"Promotion.$orderby asc",'limit'=>$rownum,'page'=>$page));
        	$page = $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass);
        	$ur_heres[]	= array('name'=>$this->languages['home'],'url'=>"/");
     	$ur_heres[]	= array('name'=>$this->languages['promotion'].$this->languages['home'],'url'=>"");
@@ -95,11 +98,13 @@ class PromotionsController extends AppController {
 		$promotion['Promotion']['created']=substr($promotion['Promotion']['start_time'],0,10);
 		$promotion['Promotion']['modified']=substr($promotion['Promotion']['end_time'],0,10);
     	//商品
-    	$promotion_products = $this->PromotionProduct->findallbypromotion_id($id);
+    //	$promotion_products = $this->PromotionProduct->findallbypromotion_id($id);
+    	$promotion_products = $this->PromotionProduct->find('all',array('conditions'=>array('PromotionProduct.promotion_id'=>$id),'fields'=>array('PromotionProduct.product_id','PromotionProduct.price','PromotionProduct.id')));	
+   // 	pr($promotion_products);
 		if(isset($promotion_products) && count($promotion_products) > 0){
 			foreach($promotion_products as $k=>$v){
     			$products[$v['PromotionProduct']['product_id']] = $this->Product->findbyid($v['PromotionProduct']['product_id']);
-    			$products[$v['PromotionProduct']['product_id']]['Product']['rank_promotion_price'] = $v['PromotionProduct']['price'];
+    			$products[$v['PromotionProduct']['product_id']]['Product']['shop_price'] = $v['PromotionProduct']['price'];
     		}
     	}
     	$ur_heres[]	= array('name'=>$this->languages['home'],'url'=>"/");

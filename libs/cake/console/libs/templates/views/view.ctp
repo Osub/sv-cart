@@ -1,5 +1,5 @@
-<?php
-/* SVN FILE: $Id: view.ctp 7945 2008-12-19 02:16:01Z gwoo $ */
+<?php 
+/* SVN FILE: $Id: view.ctp 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  *
  * PHP versions 4 and 5
@@ -25,7 +25,7 @@
 <div class="<?php echo $pluralVar;?> view">
 <h2><?php echo "<?php  __('{$singularHumanName}');?>";?></h2>
 	<dl><?php echo "<?php \$i = 0; \$class = ' class=\"altrow\"';?>\n";?>
-<?php
+<?php 
 foreach ($fields as $field) {
 	$isKey = false;
 	if (!empty($associations['belongsTo'])) {
@@ -48,7 +48,7 @@ foreach ($fields as $field) {
 </div>
 <div class="actions">
 	<ul>
-<?php
+<?php 
 	echo "\t\t<li><?php echo \$html->link(__('Edit {$singularHumanName}', true), array('action'=>'edit', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?> </li>\n";
 	echo "\t\t<li><?php echo \$html->link(__('Delete {$singularHumanName}', true), array('action'=>'delete', \${$singularVar}['{$modelClass}']['{$primaryKey}']), null, sprintf(__('Are you sure you want to delete # %s?', true), \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?> </li>\n";
 	echo "\t\t<li><?php echo \$html->link(__('List {$pluralHumanName}', true), array('action'=>'index')); ?> </li>\n";
@@ -67,14 +67,14 @@ foreach ($fields as $field) {
 ?>
 	</ul>
 </div>
-<?php
+<?php 
 if (!empty($associations['hasOne'])) :
 	foreach ($associations['hasOne'] as $alias => $details): ?>
 	<div class="related">
 		<h3><?php echo "<?php  __('Related ".Inflector::humanize($details['controller'])."');?>";?></h3>
 	<?php echo "<?php if (!empty(\${$singularVar}['{$alias}'])):?>\n";?>
 		<dl><?php echo "\t<?php \$i = 0; \$class = ' class=\"altrow\"';?>\n";?>
-	<?php
+	<?php 
 			foreach ($details['fields'] as $field) {
 				echo "\t\t<dt<?php if (\$i % 2 == 0) echo \$class;?>><?php __('".Inflector::humanize($field)."');?></dt>\n";
 				echo "\t\t<dd<?php if (\$i++ % 2 == 0) echo \$class;?>>\n\t<?php echo \${$singularVar}['{$alias}']['{$field}'];?>\n&nbsp;</dd>\n";
@@ -88,7 +88,7 @@ if (!empty($associations['hasOne'])) :
 			</ul>
 		</div>
 	</div>
-	<?php
+	<?php 
 	endforeach;
 endif;
 if (empty($associations['hasMany'])) {
@@ -108,15 +108,15 @@ foreach ($relations as $alias => $details):
 	<?php echo "<?php if (!empty(\${$singularVar}['{$alias}'])):?>\n";?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
-<?php
+<?php 
 			foreach ($details['fields'] as $field) {
 				echo "\t\t<th><?php __('".Inflector::humanize($field)."'); ?></th>\n";
 			}
 ?>
 		<th class="actions"><?php echo "<?php __('Actions');?>";?></th>
 	</tr>
-<?php
-echo "\t<?php
+<?php 
+echo "\t<?php 
 		\$i = 0;
 		foreach (\${$singularVar}['{$alias}'] as \${$otherSingularVar}):
 			\$class = null;

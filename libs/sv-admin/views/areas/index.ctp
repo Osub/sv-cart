@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 地区设置
  * ===========================================================================
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 1670 2009-05-25 00:47:18Z huangbo $
+ * $Id: index.ctp 2516 2009-07-01 10:29:18Z shenyunfeng $
 *****************************************************************************/
 ?> 
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
@@ -22,36 +22,36 @@
 <!--Areas List-->
 	<div class="order_stat properies">
 	  <div class="title">
-	  <?if(isset($pid) && $pid != 0){?>
-<?=$html->link($html->image('btn_left.gif',array('class'=>'left')).$html->image('btn_right.gif',array('class'=>'right'))."上一级","javascript:history.go(-1);",array("class"=>"add_main"),false,false);?>
+	  <?php if(isset($pid) && $pid != 0){?>
+<?php echo $html->link($html->image('btn_left.gif',array('class'=>'left')).$html->image('btn_right.gif',array('class'=>'right'))."上一级","javascript:history.go(-1);",array("class"=>"add_main"),false,false);?>
 
 	  
-	  <?}?>
-<?=$html->link($html->image('btn_left.gif',array('class'=>'left')).$html->image('btn_right.gif',array('class'=>'right'))."新增区域","javascript:showPanel2();",array("class"=>"add_main"),false,false);?>
+	  <?php }?>
+<?php echo $html->link($html->image('btn_left.gif',array('class'=>'left')).$html->image('btn_right.gif',array('class'=>'right'))."新增区域","javascript:showPanel2();",array("class"=>"add_main"),false,false);?>
 <h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
-	  <?=$num_name?></h1></div>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $num_name?></h1></div>
 	  <div class="box">
-	  <?if(isset($area_list) && sizeof($area_list)>0){?>	
-<?foreach($area_list as $k=>$v){?>
-		<div class="language_manages" style="margin-right:15px;float:left;display:inline;"><span><?=$html->image('zh_cn.gif',array('align'=>'absmiddle'))?>
-		<?if($v['RegionI18n']['name'] == '未命名'){?>
+	  <?php if(isset($area_list) && sizeof($area_list)>0){?>	
+<?php foreach($area_list as $k=>$v){?>
+		<div class="language_manages" style="margin:0 15px 4px 0;float:left;display:inline;white-space:nowrap;"><span>
+		<?php if($v['RegionI18n']['name'] == '未命名'){?>
 		<!--    <input name="region_name" id="region_name" value="未命名" onblur="javascript:edit_region_name(this.value);" size="5"/>
-		    <input name="regioni18n_id" id="regioni18n_id" value="<?echo $v['RegionI18n']['id'];?>" type="hidden"/>
-		--><?}else{?>
-		     <?echo $v['RegionI18n']['name']?>
-		<?}?>
+		    <input name="regioni18n_id" id="regioni18n_id" value="<?php echo $v['RegionI18n']['id'];?>" type="hidden"/>
+		--><?php }else{?>
+		     <?php echo $v['RegionI18n']['name']?>
+		<?php }?>
 		</a></span>
-		<span style="margin:0 3px;"><?=$html->image('line_.gif',array('align'=>'absmiddle'))?></span>
-		<span class="handle"><?=$html->link("管理","/areas/index/{$v['Region']['id']}",'',false,false);?>&nbsp&nbsp<?=$html->link("编辑","javascript:edit({$v['RegionI18n']['region_id']},{$pid})",'',false,false);?>&nbsp&nbsp<?=$html->link("删除","/areas/remove/{$v['Region']['id']}",'',false,false);?></span></div>
-<?}?><?}?>
+		<span style="margin:0 3px;"><?php echo $html->image('line_.gif',array('align'=>'absmiddle'))?></span>
+		<span class="handle"><?php echo $html->link("管理","/areas/index/{$v['Region']['id']}",'',false,false);?>&nbsp&nbsp<?php echo $html->link("编辑","javascript:edit({$v['RegionI18n']['region_id']},{$pid})",'',false,false);?>&nbsp&nbsp<?php echo $html->link("删除","/areas/remove/{$v['Region']['id']}",'',false,false);?></span></div>
+<?php }?><?php }?>
 	  </div>
 	</div>
 <!--Areas List End-->
 
 </div>
-	<?//pr($languages)?>
+	<?php //pr($languages)?>
 	
 <div id="img_dir" style="display:none">
 <?php echo $form->create('areas',array('action'=>'add','name'=>'','id'=>''));?>
@@ -61,35 +61,51 @@
 		<div id="buyshop_box">
 		<br />
 		<p>
-		<? if(isset($languages) && sizeof($languages)>0){
+		<?php if(isset($languages) && sizeof($languages)>0){
 		
-		foreach ($languages as $k => $v){?>
-			<input id="" name="data[RegionI18n][<?=$k;?>][locale]" type="hidden" value="<?= $v['Language']['locale'];?>">
-		<?}}?>
+		foreach ($area_languages as $k => $v){?>
+			<input id="" name="data[RegionI18n][<?php echo $k;?>][locale]" type="hidden" value="<?php echo  $v['Language']['locale'];?>">
+		<?php }}?>
 		</p>
-		<? if(is_array($languages)){
-			foreach ($languages as $k => $v){?>
-			<div class="keyword">
-			<input type="hidden" name="data[RegionI18n][<?=$k;?>][id]" id="RegionI18n_id_<?=$v['Language']['locale'];?>" />
-			<dd><b><?=$v['Language']['name']?></b></dd>
-			<dt><input id="RegionI18n_name_<?=$v['Language']['locale'];?>" name="data[RegionI18n][<?=$k;?>][name]" type="text" maxlength="100"  value=""></dt>
+		<div class="keyword" style="float:right">
+			<dl>
+			<dd><b>排序：</b></dd><dt><input type="text" name="orderby" id="orderby" value="" ></dt>
+			</dl>
 			</div>
-		<?}}?>
-		
-			<input type="hidden" name="r_id" id="r_id" />
-			<input type="hidden" name="parent_id" value="<?echo $pid;?>" />
-			<p align="center">
-			<input type="submit" value="确定">
-			<input type="button" value="取消" onclick="big_panel.hide()">
-			</p>
+		<?php if(is_array($languages)){?>
+			<div class="keyword">
+			<?php foreach ($area_languages as $k => $v){?>
+			<dl>
+			<input type="hidden" name="data[RegionI18n][<?php echo $k;?>][id]" id="RegionI18n_id_<?php echo $v['Language']['locale'];?>" />
+			<dd><b><?php echo $v['Language']['name']?></b></dd>
+			<dt><input id="regionI18n_name_id_<?php echo $v['Language']['locale'];?>" name="data[RegionI18n][<?php echo $k;?>][name]" type="text" maxlength="100" class="text_input"  value=""></dt>
+			</dl>
+			
+		<?php }?>
 		</div>
-		<p><?=$html->image("loginout-bottom.png");?></p>
-	</div><? echo $form->end();?>
+		<p class="clear">&nbsp;</p>
+		<p class="height_5">&nbsp;</p>	
+		<?php }?>
+			<p align="center">
+			<input type="hidden" name="region_id" id="region_id" />
+			<input type="hidden" name="r_id" id="r_id" />
+			<input type="hidden" name="parent_id" value="<?php echo $pid;?>" />
+			<input type="submit" value="确定"/>
+			<input type="button" value="取消" onclick="big_panel.hide()"/>
+			</p>
+		<p class="height_5">&nbsp;</p>	
+		</div>
+		<p><?php echo $html->image("loginout-bottom.png");?></p>
+	</div><?php echo $form->end();?>
 
 </div>
 <!--Main Start End-->	
 
 <script>
+	var local_arr = Array();
+<?php foreach ($area_languages as $k => $v){?>
+	local_arr[<?php echo $k?>] = "<?php echo $v['Language']['locale']?>";
+<?php }?>
 
 window.onload = function(){
 	document.getElementById('img_dir').style.display="block";
@@ -109,6 +125,10 @@ function initPage2(){
 			big_panel.render();
 		}
 function showPanel2(){
+	document.getElementById("region_id").value = "";
+	for( var i=0;i<local_arr.length;i++ ){
+		document.getElementById("RegionI18n_id_"+local_arr[i]).value = "";
+	}
 	big_panel.show();
 }
 
@@ -120,12 +140,14 @@ function edit(region_id,pid){
 }
 
 	var edit_record_Success = function(o){
-		//alert(o.responseText);
+	
+		
 		eval('result='+o.responseText); 
 		for(var i=0;i<=result.length-1;i++){
-			document.getElementById("RegionI18n_name_"+result[i].locale).value = result[i].name;
+			document.getElementById("regionI18n_name_id_"+result[i].locale).value = result[i].name;
 			document.getElementById("RegionI18n_id_"+result[i].locale).value = result[i].id;
-			
+			document.getElementById("orderby").value = result[i].orderby;
+			document.getElementById("region_id").value = result[i].region_id;
 			
 		}
 		//window.location.reload();

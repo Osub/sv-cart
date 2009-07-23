@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 搜索留言
  * ===========================================================================
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: view_search.ctp 1116 2009-04-28 11:04:43Z huangbo $
+ * $Id: view_search.ctp 2485 2009-06-30 11:33:00Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -24,47 +24,47 @@
 
 	<div class="order_stat athe_infos">
 	  <div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  &nbsp;留言详情&nbsp;</h1></div>
 	  <div class="box" style="padding:15px 0 5px;">
-  	   <p class="user_comments"><strong><?=$usermessage['UserMessage']['msg_title']?></strong></p>
+  	   <p class="user_comments"><strong><?php echo $usermessage['UserMessage']['msg_title']?></strong></p>
 	   <div class="comment_info">
 	   <br />
-	   <p class="content_text"><?=$usermessage['UserMessage']['msg_content']?></p>
+	   <p class="content_text"><?php echo $usermessage['UserMessage']['msg_content']?></p>
 	   <br />
-	   <p class="grad"><strong><?=$usermessage['UserMessage']['user_email']?></strong>  <?=$usermessage['UserMessage']['created']?></p>
+	   <p class="grad"><strong><?php echo $usermessage['UserMessage']['user_email']?></strong>  <?php echo $usermessage['UserMessage']['created']?></p>
 	   </div>
-<?if( isset( $restore ) ){?>
+<?php if( isset( $restore ) ){?>
 	   <p class="user_comments"><strong>回复</strong></p>
 	   <div class="comment_info">
 	   <br />
-	   <p class="content_text"><?=$restore['UserMessage']['msg_content'] ?></p>
+	   <p class="content_text"><?php echo $restore['UserMessage']['msg_content'] ?></p>
 	   <br />
-	   <p class="grad"><strong><?=$restore['UserMessage']['user_email'] ?></strong><?=$restore['UserMessage']['created'] ?></p>
+	   <p class="grad"><strong><?php echo $restore['UserMessage']['user_email'] ?></strong><?php echo $restore['UserMessage']['created'] ?></p>
 	   </div>
-<?}?>
+<?php }?>
 	   <br /><br /><br />
 	  </div>
 	</div>
 
 </td>
-<input type="hidden" name="data[UserMessage][parent_id]" value="<?=$usermessage['UserMessage']['id']; ?>">
+<input type="hidden" name="data[UserMessage][parent_id]" value="<?php echo $usermessage['UserMessage']['id']; ?>">
 		
 <td valign="top" width="50%" style="padding-left:5px;">
 	<div class="order_stat athe_infos writeback_coment">
 	  <div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  &nbsp;回复留言&nbsp;</h1></div>
 	  <div class="box">
-		<ul><li class="lang">Email:</li><li><input type="text" name="data[UserMessage][user_email]" style="width:220px;border:1px solid #629373;font-family:arial;" value="<?=$_SESSION['Operator_Info']['Operator']['email']?>" readonly="readonly" /></li></ul>
+		<ul><li class="lang">Email:</li><li><input type="text" name="data[UserMessage][user_email]" style="width:220px;border:1px solid #629373;font-family:arial;" value="<?php echo $_SESSION['Operator_Info']['Operator']['email']?>" readonly="readonly" /></li></ul>
 		<ul><li class="lang" style="padding-top:10px;">回复内容:</li><li><textarea name="data[UserMessage][msg_content]" style="width:353px;border:1px solid #629373;overflow-y:scroll;height:62px;font-family:arial;"></textarea></li></ul>
 		<p style="clear:both;">
-		<?if( isset( $restore ) ){?>
+		<?php if( isset( $restore ) ){?>
 		<ul><li class="lang" style="padding-top:10px;"></li><li>
 		提示: 此条留言已有回复, 如果继续回复将更新原来回复的内容!</li></ul>
-		<?}?>
+		<?php }?>
 		</p>
 		<br /><br />
 		<p class="submit_btn" style="padding:1px 0;*padding:10px 0;"><input type="submit" value="确定" /><input type="reset" value="重置" /></p>
@@ -74,7 +74,7 @@
 </tr>
 
 </table>
-<? echo $form->end();?>
+<?php echo $form->end();?>
 <!--Communication Stat End-->
 
 

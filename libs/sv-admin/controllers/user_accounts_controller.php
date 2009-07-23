@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: balances_controller.php 1246 2009-05-07 11:29:14Z shenyunfeng $
+ * $Id: user_accounts_controller.php 2703 2009-07-08 11:54:52Z huangbo $
 *****************************************************************************/
 class UserAccountsController extends AppController {
 
@@ -129,6 +129,10 @@ class UserAccountsController extends AppController {
    	    	
    	    	$this->UserBalanceLog->save($BalanceLog);
 			$user_info = $this->User->findById($account['UserAccount']['user_id']);
+			//操作员日志
+    	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'会员:'.$user_info["User"]["name"].' 充值确认' ,'operation');
+    	    }
 			$this->flash("会员 ".$user_info["User"]["name"]." 充值确认成功。点击反回列表页",'/user_accounts/',10);
 		}
 	}
@@ -146,6 +150,10 @@ class UserAccountsController extends AppController {
 				              array('status' =>'2'),
 				              array('id' =>$id)
 				           );
+			//操作员日志
+    	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'取消编号:'.$id.' 充值' ,'operation');
+    	    }
 			$this->flash("取消成功",'/user_accounts/',10);
 		}
 	}

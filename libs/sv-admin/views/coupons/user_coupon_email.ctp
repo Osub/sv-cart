@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-CART 修改我的信息
  *===========================================================================
@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: edit_profiles.ctp 567 2009-04-14 07:34:18Z huangbo $
+ * $Id: user_coupon_email.ctp 2703 2009-07-08 11:54:52Z huangbo $
 *****************************************************************************/
 	ob_start();
 ?>
@@ -17,15 +17,15 @@
 	<h1><b style="font-size:14px">发送邮件</b></h1>
 	<div style="border-left:1px solid #909592;border-right:1px solid #909592;background:#fff">
 		<p class="login-alettr">
-	<?=$html->image('icon-10.gif',array("align"=>"middle"));?>
+	<?php echo $html->image('icon-10.gif',array("align"=>"middle"));?>
 	<b><?php echo $result['msg']?></b></p>
 		<p class="btns">
-			<a href="javascript:window.location.reload();"><?=$html->image('loginout-btn_right.gif');?>确定</a>
+			<a href="javascript:window.location.reload();"><?php echo $html->image('loginout-btn_right.gif');?>确定</a>
 		</p>	</div>
-		<?=$html->image('loginout-bottom.png',array("align"=>"texttop"));?>
+		<?php echo $html->image('loginout-bottom.png',array("align"=>"texttop"));?>
 </div>
 
-<?php	
+<?php 	
 	$result['message'] = ob_get_contents();
 	ob_end_clean();
 	echo json_encode($result);

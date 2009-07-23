@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: email.php 8004 2009-01-16 20:15:21Z gwoo $ */
+/* SVN FILE: $Id: email.php 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  * Short description for file.
  *

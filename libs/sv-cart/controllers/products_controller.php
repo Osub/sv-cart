@@ -9,22 +9,23 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: products_controller.php 1907 2009-05-31 14:34:18Z huangbo $
+ * $Id: products_controller.php 3225 2009-07-22 10:59:01Z huangbo $
 *****************************************************************************/
 uses('sanitize');		
 class ProductsController extends AppController {
-
 	var $name = 'Products';
     var $components = array ('Pagination','RequestHandler'); // Added 
     var $helpers = array('Html','Pagination'); // Added 
-	var $uses = array('Product','ProductsCategory','Category','ProductGallery','ProductRelation','ProductArticle','Article','Comment','ProductType','UserRank','ProductRank','BookingProduct','Order','Brand','CouponType','ProductAttribute','ProductTypeAttribute','Shipping','ShippingArea','ShippingAreaRegion');
-
+	var $uses = array('Product','ProductI18n','ProductsCategory','Category','ProductGallery','ProductRelation','ProductArticle','Article','Comment','ProductType','UserRank','ProductRank','BookingProduct','Order','Brand','CouponType','ProductAttribute','ProductTypeAttribute','ProductShippingFee','Shipping','ShippingArea','ShippingAreaRegion','ProductLocalePrice','Tag','ProdcutVolume');
+//	var $cacheQueries = true;
+//	var $cacheAction = "1 day";
+	
     function view($id=""){
 	//	Configure::write('debug', 0);
 		if(!is_numeric($id) || $id<1){
 			$this->flash($this->languages['invalid_id'],"/","","");
 	    }
-	    $this->page_init();
+	    $this->full_page_init();
 	    //商品详细
 	    $this->Product->set_locale($this->locale);
 	    $info = $this->Product->findbyid($id);
@@ -43,7 +44,6 @@ class ProductsController extends AppController {
 	    	$this->flash($this->languages['product_out_of_sale'],"/","","");
 	   		$flat = "0";
 	    }
-		
 	    
 	    if($flat == 1){
 	    $this->Category->set_locale($this->locale);
@@ -67,14 +67,42 @@ class ProductsController extends AppController {
 			if(isset($category_info['ProductsCategory'])){
 				$info['ProductsCategory'] = $category_info['ProductsCategory'];
 			}		
-			$navigations=$this->Category->tree('P',$info['Product']['category_id']);
+			$navigations=$this->Category->tree('P',$info['Product']['category_id'],$this->locale);
+	
 			if($categorys['Category']['parent_id'] == 0){
 				$this->navigations[] = array('name'=>$categorys['CategoryI18n']['name'],'url'=>"/categories/".$categorys['Category']['id']);
 			}
-			if($categorys['Category']['parent_id'] == 1){
+			/*	if($categorys['Category']['parent_id'] == 1){
 				$this->navigations[] = array('name'=>$navigations['tree']['0']['CategoryI18n']['name'],'url'=>"/categories/".$navigations['tree']['0']['Category']['id']);
 				$this->navigations[] = array('name'=>$categorys['CategoryI18n']['name'],'url'=>"/categories/".$categorys['Category']['id']);
+			}*/
+			if($categorys['Category']['parent_id'] > 1){
+				if($this->configs['use_sku'] == 1){
+					if(isset($navigations['assoc'][$info['Category']['parent_id']])){
+							$info_url = str_replace(" ","-",$categorys['CategoryI18n']['name']);
+							$info_url = str_replace("/","-",$info_url);
+							$info_url_2 = str_replace(" ","-",$navigations['assoc'][$categorys['Category']['parent_id']]['CategoryI18n']['name']);
+							$info_url_2 = str_replace("/","-",$info_url_2);	
+							if($navigations['assoc'][$categorys['Category']['parent_id']]['Category']['parent_id'] >0 && isset($navigations['assoc'][$navigations['assoc'][$categorys['Category']['parent_id']]['Category']['parent_id']])){
+								$info_url_3 = str_replace(" ","-",$navigations['assoc'][$navigations['assoc'][$categorys['Category']['parent_id']]['Category']['parent_id']]['CategoryI18n']['name']);
+								$info_url_3 = str_replace("/","-",$info_url_3);	
+								$this->navigations[] = array('name'=>$navigations['assoc'][$navigations['assoc'][$categorys['Category']['parent_id']]['Category']['parent_id']]['CategoryI18n']['name'],'url'=>"/categories/".$navigations['assoc'][$navigations['assoc'][$categorys['Category']['parent_id']]['Category']['parent_id']]['Category']['id']."/".$info_url_2."/".$info_url);
+							}
+					}
+					$this->navigations[] = array('name'=>$navigations['assoc'][$categorys['Category']['parent_id']]['CategoryI18n']['name'],'url'=>"/categories/".$navigations['assoc'][$categorys['Category']['parent_id']]['Category']['id']."/".$info_url_2."/".$info_url);
+					$this->navigations[] = array('name'=>$categorys['CategoryI18n']['name'],'url'=>"/categories/".$categorys['Category']['id']."/".$info_url."/0");
+
+				}else{
+					if(isset($navigations['assoc'][$categorys['Category']['parent_id']])){
+							if($navigations['assoc'][$categorys['Category']['parent_id']]['Category']['parent_id'] >0 && isset($navigations['assoc'][$navigations['assoc'][$categorys['Category']['parent_id']]['Category']['parent_id']])){
+								$this->navigations[] = array('name'=>$navigations['assoc'][$navigations['assoc'][$categorys['Category']['parent_id']]['Category']['parent_id']]['CategoryI18n']['name'],'url'=>"/categories/".$navigations['assoc'][$navigations['assoc'][$categorys['Category']['parent_id']]['Category']['parent_id']]['Category']['id']);
+							}
+						$this->navigations[] = array('name'=>$navigations['assoc'][$categorys['Category']['parent_id']]['CategoryI18n']['name'],'url'=>"/categories/".$navigations['assoc'][$categorys['Category']['parent_id']]['Category']['id']);
+						$this->navigations[] = array('name'=>$categorys['CategoryI18n']['name'],'url'=>"/categories/".$categorys['Category']['id']);
+					}
+				}
 			}
+			
 		$this->navigations[] = array('name'=>$info['ProductI18n']['name'],'url'=>"/products/".$info['Product']['id']);
 		$this->set('locations',$this->navigations);
 		//商品基本信息
@@ -89,7 +117,10 @@ class ProductsController extends AppController {
 			$coupon_type = $this->CouponType->findbyid($product_info['Product']['coupon_type_id']);
 			$this->set('coupon_type',$coupon_type);
 		}
-
+		if(isset($this->configs['volume_setting']) && $this->configs['volume_setting'] == 1){
+			$product_volume = $this->ProdcutVolume->find('all',array('order'=>array('ProdcutVolume.volume_number ASC'),'conditions'=>array('ProdcutVolume.product_id'=>$id)));
+			$this->set('product_volume',$product_volume);
+		}
 		//是否有会员价end
 		
 		//pr($_SESSION);
@@ -98,8 +129,12 @@ class ProductsController extends AppController {
 				//会员等级
 		$this->UserRank->set_locale($this->locale);
 		$user_rank_list=$this->UserRank->findrank();
-		$product_rank = $this->ProductRank->findall('ProductRank.product_id ='.$id);
-		
+		$product_ranks = $this->ProductRank->findall_ranks();
+		if(isset($product_ranks[$id])){
+			$product_rank = $product_ranks[$id];
+		}
+		//$product_rank = $this->ProductRank->findall('ProductRank.product_id ='.$id);
+		//pr("");
 		//商品会员价 格式化  会员等级 => 是否使用
 	    if(isset($product_rank) && sizeof($product_rank)>0){
 	    	  $is_rank = array();
@@ -120,7 +155,12 @@ class ProductsController extends AppController {
 			  }
 		}
 		if(!empty($info) && $info['Product']['status'] == 1 && $info['Product']['forsale'] == 1){
-     		 $_SESSION['cookie_product']["$id"] = $info;
+     		 $_SESSION['cookie_product']["$id"] = array('Product'=>array(
+     		 											 'id'=>$info['Product']['id'],
+     		 											'img_thumb'=>$info['Product']['img_thumb'],
+     		 											'code'=>$info['Product']['code'],
+     		 											'shop_price'=>$info['Product']['shop_price']
+     		 											),'ProductI18n'=>array('name'=>$info['ProductI18n']['name']));
   		}
 		if($this->is_promotion($info)){
 			$info['Product']['shop_price'] = $info['Product']['promotion_price'];
@@ -132,37 +172,44 @@ class ProductsController extends AppController {
 		$this->ProductType->set_locale($this->locale);
 		//$product_type=$this->ProductType->gettypeformat($product_info['Product']['product_type_id']);
 		if($product_info['Product']['product_type_id'] > 0){
-		$product_type = $this->ProductType->findbyid($product_info['Product']['product_type_id']);
-		$this->set("product_type",$product_type);
+			$product_type = $this->ProductType->findbyid($product_info['Product']['product_type_id']);
+			$this->set("product_type",$product_type);
 		}
 		$product_attributes = $this->ProductAttribute->findallbyproduct_id($id);
+		$this->ProductTypeAttribute->set_locale($this->locale);
+		$product_type_atts = $this->ProductTypeAttribute->find_all_att($this->locale);
 		$format_product_attributes = array();
 		$product_attributes_name = array();
+	//	pr($product_type_atts);exit;
 		if(is_array($product_attributes) && sizeof($product_attributes)>0){
 			foreach($product_attributes as $k=>$v){
 				$format_product_attributes[$v['ProductAttribute']['product_type_attribute_id']][$k]['value'] = $v['ProductAttribute']['product_type_attribute_value'];
 				$format_product_attributes[$v['ProductAttribute']['product_type_attribute_id']][$k]['price'] = $v['ProductAttribute']['product_type_attribute_price'];
 				$format_product_attributes[$v['ProductAttribute']['product_type_attribute_id']][$k]['id'] = $v['ProductAttribute']['id'];
 			}
+		//	pr($format_product_attributes);exit;
 			$m=0;
 			foreach($format_product_attributes as $k=>$v){
 				$this->ProductTypeAttribute->set_locale($this->locale);
-				$p_t_a = $this->ProductTypeAttribute->findbyid($k);
-				$format_product_attributes_id[$m] = $v;
-				$product_attributes_name[$m] = $p_t_a['ProductTypeAttributeI18n']['name'];
-				$m++;
+			//	$p_t_a = $this->ProductTypeAttribute->findbyid($k);
+				if(isset($product_type_atts[$k])){
+					$p_t_a = $product_type_atts[$k];
+					$format_product_attributes_id[$m] = $v;
+					$product_attributes_name[$m] = $p_t_a['ProductTypeAttributeI18n']['name'];
+					$m++;
+				}
 			}
 			$this->set('product_attributes_name',$product_attributes_name);
 			$this->set('format_product_attributes',$format_product_attributes_id);
 		}
-//		pr($format_product_attributes_id);
+		//pr($format_product_attributes_id);
 		$this->set('product_attributes',$product_attributes);
 		//pr($product_attributes);
 	//	相册
 		$this->ProductGallery->set_locale($this->locale);
 	    $galleries = $this->ProductGallery->findall("ProductGallery.product_id = '$id'",null,"orderby");
-	    if(isset($this->configs['related_products_number']) && $this->configs['related_products_number'] > 0){
-	    	$show_gallery_number = $this->configs['related_products_number'];
+	    if(isset($this->configs['products_detail_page_gallery_number']) && $this->configs['products_detail_page_gallery_number'] > 0){
+	    	$show_gallery_number = $this->configs['products_detail_page_gallery_number'];
 	    }else{
 	    	$show_gallery_number = 4;
 	    }
@@ -180,7 +227,11 @@ class ProductsController extends AppController {
 	
 		//是否单独有运费
 		if($this->configs['use_product_shipping_fee'] == 1){
-			$product_shippings = $this->ProductShippingFee->findall(" ProductShippingFee.status = '1' and ProductShippingFee.product_id = ".$id);
+			$shipping_sql = " ProductShippingFee.status = '1'  and ProductShippingFee.product_id = ".$id;
+			if(isset($this->configs['mlti_currency_module']) && $this->configs['mlti_currency_module'] == 1){
+				$shipping_sql .= " and ProductShippingFee.locale = '".$this->locale."'";
+			}
+			$product_shippings = $this->ProductShippingFee->findall($shipping_sql);
 			if(is_array($product_shippings) && sizeof($product_shippings)>0){
 				$this->Shipping->set_locale($this->locale);
 				$shipping_fee = array();
@@ -193,23 +244,43 @@ class ProductsController extends AppController {
 			}
 		}
 	//	相关商品
-
-		$relation_ids = $this->ProductRelation->find("list",array('conditions'=>"ProductRelation.product_id = '$id' and Product.status ='1' and Product.forsale ='1'",'recursive'=>'1','order'=>'ProductRelation.orderby'));
-		$relation_ids_is_double = $this->ProductRelation->find("list",array('conditions'=>"ProductRelation.related_product_id = '$id' and ProductRelation.is_double = '1' and Product.status ='1' and Product.forsale ='1'",'recursive'=>'1','order'=>'ProductRelation.orderby'));
-		if(is_array($relation_ids_is_double) && sizeof($relation_ids_is_double)>0){
+		$conditions = array(
+							'AND'=>array('Product.status'=>'1','Product.forsale'=>'1'),
+							'OR'=> array("ProductRelation.product_id "=> $id,"ProductRelation.related_product_id "=> $id)
+							);
+		
+		$relation_ids = $this->ProductRelation->find("all",array('fields'=>array('ProductRelation.product_id','ProductRelation.related_product_id'),'conditions'=>$conditions,'recursive'=>'1','order'=>'ProductRelation.orderby'));
+	//	pr($relation_ids);
+	//	$relation_ids = $this->ProductRelation->find("list",array('conditions'=>"ProductRelation.product_id = '$id' and Product.status ='1' and Product.forsale ='1'",'recursive'=>'1','order'=>'ProductRelation.orderby'));
+	//	$relation_ids_is_double = $this->ProductRelation->find("list",array('conditions'=>"ProductRelation.related_product_id = '$id' and ProductRelation.is_double = '1' and Product.status ='1' and Product.forsale ='1'",'recursive'=>'1','order'=>'ProductRelation.orderby'));
+	/*	if(is_array($relation_ids_is_double) && sizeof($relation_ids_is_double)>0){
 			foreach($relation_ids_is_double as $k=>$v){
 				if(!in_array($v,$relation_ids)){
 					$relation_ids[] = $v;
 				}
 			}
-		}
+		}*/
 		if(sizeof($relation_ids)>0){
-			$relation_products = $this->Product->findall(array("Product.id"=>$relation_ids));
+			$relation_ids_list = array();
+			foreach($relation_ids as $k=>$v){
+				if($v['ProductRelation']['product_id']!=$id){
+				$relation_ids_list[] = $v['ProductRelation']['product_id'];
+				}
+				if($v['ProductRelation']['related_product_id']!=$id){
+				$relation_ids_list[] = $v['ProductRelation']['related_product_id'];
+				}				
+			}
+			
+			$relation_products = $this->Product->findall(array("Product.id"=>$relation_ids_list));
 			if(isset($this->configs['related_products_number']) && $this->configs['related_products_number'] > 0){
 				$relation_products = array_slice($relation_products,'0',$this->configs['related_products_number']);
 			}
 			foreach($relation_products as $k=>$v){
-				$relation_products[$k]['Product']['shop_price'] =$this->Product->locale_price($v['Product']['id'],$v['Product']['shop_price'],$this);
+				//$relation_products[$k]['Product']['shop_price'] =$this->Product->locale_price($v['Product']['id'],$v['Product']['shop_price'],$this);
+				if(isset($this->configs['mlti_currency_module']) && $this->configs['mlti_currency_module'] == 1 && isset($v['ProductLocalePrice']['product_price'])){
+					$relation_products[$k]['Product']['shop_price'] = $v['ProductLocalePrice']['product_price'];
+				}			
+			
 			}
 			$this->set("relation_products",$relation_products);
 		}
@@ -233,6 +304,12 @@ class ProductsController extends AppController {
 			
 			$this->set("articles",$articles);
 		}
+		if(isset($this->configs['use_tag']) && $this->configs['use_tag'] == 1){
+		// 标签
+			$this->Tag->set_locale($this->locale);
+	    	$tags = $this->Tag->findall("Tag.status ='1' and Tag.type_id =".$id." and Tag.type = 'P'");
+			$this->set('tags',$tags);
+		}
 	//	pr($this->configs['article_title_length']);
 		
 	//	用户评论
@@ -243,6 +320,29 @@ class ProductsController extends AppController {
 			$show_comments_number = 6;
 		}
 		$comments = $this->Comment->find('threaded',array('conditions'=>"Comment.type_id = '$id' and Comment.type = 'P' and Comment.status = '1'",'recursive'=>'1','order'=>'Comment.modified desc','limit'=>$show_comments_number));
+		$my_comments_id =array();
+		
+		if(isset($comments) && sizeof($comments)>0){
+			foreach($comments as $k=>$v){
+				$my_comments_id[] = $v['Comment']['id'];
+			}
+		}
+		
+	  $my_comments_replies = $this->Comment->find('all',array('conditions'=>array('Comment.parent_id'=>$my_comments_id)));
+	  $replies_list =array();
+	  if(is_array($my_comments_replies) && sizeof($my_comments_replies)>0){
+	  		foreach($my_comments_replies as $kk=>$vv){
+	  			$replies_list[$vv['Comment']['parent_id']][] = $vv;
+	  		}
+	  }
+		if(isset($comments) && sizeof($comments)>0){
+			foreach($comments as $k=>$v){
+				if(isset($replies_list[$v['Comment']['id']])){
+					$comments[$k]['children'] = $replies_list[$v['Comment']['id']];
+				}
+			}
+		}
+	
 		$this->set('comments',$comments);
 	
 	//是否可以评论
@@ -296,6 +396,12 @@ class ProductsController extends AppController {
 							"tel_number_not_empty" => $this->languages['telephone'].$this->languages['can_not_empty'],
 							"invalid_tel_number" => $this->languages['telephone'].$this->languages['format'].$this->languages['not_correct'],
 							"comments_not_empty" => $this->languages['comments'].$this->languages['can_not_empty'],
+							"page_submit" => $this->languages['submit'],
+							"page_reset" => $this->languages['reset'],	
+						   "subject_is_blank" => $this->languages['subject'].$this->languages['can_not_empty'] ,
+						   "message_type_empty" => $this->languages['message'].$this->languages['type'].$this->languages['can_not_empty'],
+						   "content_empty" => $this->languages['content'].$this->languages['can_not_empty'],
+							"tag_can_not_empty"=>$this->languages['tags'].$this->languages['apellation'].$this->languages['can_not_empty'],
 							"select_level_comments" => $this->languages['please_choose'].$this->languages['comment_rank']
 							);
 		//please_choose
@@ -349,8 +455,8 @@ class ProductsController extends AppController {
        list($page) = $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass); // Added 
        $products = $this->Product->findall($condition,'',"Product.$orderby","$rownum",$page);
 	    //商品品牌分类
-	   $res_c=$this->Category->findassoc();
-	   $res_b=$this->Brand->findassoc();
+	   $res_c=$this->Category->findassoc($this->locale);
+	   $res_b=$this->Brand->findassoc($this->locale);
 	   foreach($products as $k=>$v){
 	  	  if(is_array($res_c[$v['ProductsCategory']['id']])){
 	  	  	  $products[$k]['Category']=$res_c[$v['ProductsCategory']['id']]['Category'];
@@ -381,7 +487,7 @@ class ProductsController extends AppController {
 							"invalid_email" => $this->languages['email_letter'].$this->languages['format'].$this->languages['not_correct'],
 							"tel_number_not_empty" => $this->languages['telephone'].$this->languages['can_not_empty'],
 							"invalid_tel_number" => $this->languages['telephone'].$this->languages['format'].$this->languages['not_correct'],
-							"comments_not_empty" => $this->languages['comments'].$this->languages['can_not_empty'],
+							"comments_not_empty" => $this->languages['comments'].$this->languages['can_not_empty'],		
 							"select_level_comments" => $this->languages['please_choose'].$this->languages['comment_rank']
 							);
 		
@@ -406,17 +512,18 @@ class ProductsController extends AppController {
 	/*********高级搜索开始*********/
 	/*********ad_search   *********/
 	function advancedsearch($type,$keywords='',$category_id=0,$brand_id=0,$min_price=0,$max_price=9999999,$orderby="",$rownum='',$showtype=""){
-		$this->page_init();
 		$keywords = UrlDecode($keywords);
 		$orderby = UrlDecode($orderby);
 		$showtype = UrlDecode($showtype);
-		$mrClean = new Sanitize();
-		$keywords = $mrClean->html($keywords,true);
-		
+
+		$mrClean = new Sanitize();		
 		$not_show = 0;
-		$rownum=isset($this->configs['products_list_num']) ? $this->configs['products_list_num']:((!empty($rownum)) ?$rownum:20);//取商店设置商品数量
+		if(empty($rownum)){
+		$rownum=isset($this->configs['products_category_page_size']) ? $this->configs['products_category_page_size']:((!empty($rownum)) ?$rownum:20);//取商店设置商品数量
+		}
+		if(empty($showtype)){
 		$showtype=isset($this->configs['products_list_showtype']) ? $this->configs['products_list_showtype']:((!empty($showtype)) ?$showtype:'L');//取商店设置商品显示方式
-		
+		}
 		
 		if(empty($orderby)){
 	 		$orderby=isset($this->configs['products_category_page_orderby_type'])? $this->configs['products_category_page_orderby_type']." ". $this->configs['products_category_page_orderby_method'] :((!empty($orderby)) ?$orderby:'created '.$this->configs['products_category_page_orderby_method']);
@@ -426,12 +533,14 @@ class ProductsController extends AppController {
 	 	if($keywords == "all" && $category_id == 0 && $brand_id == 0){
 	 	 	$keywords = $this->languages['all'].$this->languages['products'];
 	 	 	$not_show = 1;
-			$pid_array=$this->requestAction("/commons/search/$type/$keywords/$category_id/$brand_id/$min_price/$max_price");
+//			$pid_array=$this->requestAction("/commons/search/$type/$keywords/$category_id/$brand_id/$min_price/$max_price");
+			$pid_array= $this->product_search($type,$keywords,$category_id,$brand_id,$min_price,$max_price);
 	 	}else{
 	 		if($keywords == 'all'){
 	 		$keywords = 0;
 			}
-			$pid_array=$this->requestAction("/commons/search/$type/$keywords/$category_id/$brand_id/$min_price/$max_price");
+	//		$pid_array=$this->requestAction("/commons/search/$type/$keywords/$category_id/$brand_id/$min_price/$max_price");
+			$pid_array= $this->product_search($type,$keywords,$category_id,$brand_id,$min_price,$max_price);
 			if($keywords == "0"){	
 				$keywords = "";
 				if($category_id > 0){
@@ -457,48 +566,120 @@ class ProductsController extends AppController {
 				$not_show = 1;	 
 			}
 	 	}
+	 	
 	 	$this->set('not_show',$not_show);
 	 	//echo "---------------";
 	 	//print_r($_SESSION);
 		$this->Product->set_locale($this->locale);
 		$condition = array("Product.id"=>$pid_array,'Product.status'=>'1','Product.forsale' =>'1');
+	    if($brand_id !='' && $brand_id != 0){
+	      //$condition .=" and Product.brand_id =$brand_id";
+	      	  $condition["Product.brand_id"]= $brand_id;
+	    }
+	    
+	    if($category_id !=''&& $category_id != 0){
+			  $this->Category->tree('P',$category_id,$this->locale);
+	    	  $category_ids = isset($this->Category->allinfo['subids'][$category_id])?$this->Category->allinfo['subids'][$category_id]:$category_id;
+	      	  $condition["Product.category_id"]= $category_ids;
+	    }
+	   if($min_price !=''&& $min_price > 0){
+	     // $condition .=" and Product.shop_price >= ".$min_price;
+	      	  $condition["Product.shop_price >= "]= $min_price;
+	    }
+	   if($max_price !=''&& $max_price < 99999999){
+	      //$condition .=" and Product.shop_price <= ".$max_price;
+	      	  $condition["Product.shop_price <= "]= $max_price;
+	    }		
+		
+		
 		//分页处理
-		$total = $this->Product->findCount($condition,0);
+		$total = $this->Product->findCount(array($condition),0);
 		$sortClass='Product';
 		$page=1;
 		$parameters=Array($orderby,$rownum,$page);
 		//pr($parameters);exit;
 		$options=Array();
 		$page = $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass); // Added 
-		$products = $this->Product->findall($condition,'',"Product.$orderby","$rownum",$page);
-	    
+		$this->Product->set_locale($this->locale);
+		$products=$this->Product->find('all',array(			
+															//	'recursive' => -1,
+																'fields' =>	array('Product.id','Product.recommand_flag','Product.status','Product.img_thumb'
+																				,'Product.market_price'
+																				,'Product.shop_price'
+																				,'Product.promotion_price'
+																				,'Product.promotion_start','Product.brand_id'
+																				,'Product.promotion_end'
+																				,'Product.promotion_status'
+																				,'Product.code'
+																				,'Product.product_rank_id'
+																				,'Product.quantity','Product.category_id'
+																				,'ProductI18n.id','ProductI18n.name','ProductI18n.product_id','ProductLocalePrice.product_price'
+																				),			
+		'conditions'=>array($condition),'order'=>array("Product.$orderby"),'limit'=>$rownum,'page'=>$page));	    
+
 	    //商品品牌分类
 		$this->Category->set_locale($this->locale);
-		$res_c=$this->Category->findassoc();
-		$res_b=$this->Brand->findassoc();
+		$res_c=$this->Category->findassoc($this->locale);
+		$res_b=$this->Brand->findassoc($this->locale);
+		$product_ranks = $this->ProductRank->findall_ranks();
+		$user_rank_list=$this->UserRank->findrank();
+		
+	    $this->Category->set_locale($this->locale);						
+		$category_lists = $this->Category->find_all($this->locale);
+		$this->set('categories',$category_lists);
+ 	    $product_category_infos = $this->ProductsCategory->find('all',array("conditions"=>array('ProductsCategory.product_id'=>$pid_array)));
+	    $product_category_lists = array();
+	    if(is_array($product_category_infos) && sizeof($product_category_infos)>0){
+	  	  	  foreach($product_category_infos as $k=>$v){
+	  			  $product_category_lists[$v['ProductsCategory']['product_id']] = $v;
+	  		  }
+	    }
+		
 		foreach($products as $k=>$v){
-			$category_info = $this->ProductsCategory->find('ProductsCategory.product_id ='.$v['Product']['id'].' and ProductsCategory.category_id ='.$v['Product']['category_id']);
-			$products[$k]['ProductsCategory'] = $category_info['ProductsCategory'];
-			$v['ProductsCategory'] = $category_info['ProductsCategory'];
-			$products[$k]['Product']['user_price'] =$this->Product->user_price($k,$v,$this);
-			$products[$k]['Product']['shop_price'] =$this->Product->locale_price($v['Product']['id'],$v['Product']['shop_price'],$this);
-			if($this->Product->is_promotion($v['Product']['id'])){
+			//$category_info = $this->ProductsCategory->find('ProductsCategory.product_id ='.$v['Product']['id'].' and ProductsCategory.category_id ='.$v['Product']['category_id']);
+			if(isset($product_category_lists[$v['Product']['id']])){
+				$products[$k]['ProductsCategory'] = $product_category_lists[$v['Product']['id']]['ProductsCategory'];
+				$v['ProductsCategory'] = $product_category_lists[$v['Product']['id']]['ProductsCategory'];
+			}
+			
+			//$v['ProductsCategory'] = $category_info['ProductsCategory'];
+			if(isset($this->configs['mlti_currency_module']) && $this->configs['mlti_currency_module'] == 1 && isset($v['ProductLocalePrice']['product_price'])){
+				$products[$k]['Product']['shop_price'] = $v['ProductLocalePrice']['product_price'];
+			}
+			if(isset($product_ranks[$v['Product']['id']]) && isset($_SESSION['User']['User']['rank']) && isset($product_ranks[$v['Product']['id']][$_SESSION['User']['User']['rank']])){
+				if(isset($product_ranks[$v['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['is_default_rank']) && $product_ranks[$v['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['is_default_rank'] == 0){
+				  $products[$k]['Product']['user_price']= $product_ranks[$v['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['product_price'];			  
+				}else if(isset($user_rank_list[$_SESSION['User']['User']['rank']])){
+				  $products[$k]['Product']['user_price']=($user_rank_list[$_SESSION['User']['User']['rank']]['UserRank']['discount']/100)*($v['Product']['shop_price']);			  
+				}
+			}			
+			
+		//	$products[$k]['Product']['user_price'] =$this->Product->user_price($k,$v,$this);
+		//	$products[$k]['Product']['shop_price'] =$this->Product->locale_price($v['Product']['id'],$v['Product']['shop_price'],$this);
+			if($this->Product->is_promotion($v)){
 				$products[$k]['Product']['shop_price'] = $v['Product']['promotion_price'];
-			}				
+			}
 			
 			if($this->configs['use_sku'] == 1){
-				$this->Category->set_locale($this->locale);						
-				$info = $this->Category->findbyid($v['Product']['category_id']);						
+				if(isset($category_lists[$v['Product']['category_id']])){
+					$info = $category_lists[$v['Product']['category_id']];
+				}						
 				$products[$k]['use_sku'] = 1;
 				if($info['Category']['parent_id']>0){
-					$parent_info = $this->Category->findbyid($info['Category']['parent_id']);
+				//	$parent_info = $this->Category->findbyid($info['Category']['parent_id']);
+					if(isset($category_lists[$info['Category']['parent_id']])){
+						$parent_info = $category_lists[$info['Category']['parent_id']];
+					}						
+					
 					if(isset($parent_info['Category'])){
+						$parent_info['CategoryI18n']['name'] = str_replace(" ","_",$parent_info['CategoryI18n']['name']);
+						$parent_info['CategoryI18n']['name'] = str_replace("/","_",$parent_info['CategoryI18n']['name']);
 						$products[$k]['parent'] = $parent_info['CategoryI18n']['name'];
 					}
 				}
 			}			
 			
-			if(isset($res_c[$v['ProductsCategory']['id']]['Category']['id'])){
+			if(isset($v['ProductsCategory']) && isset($res_c[$v['ProductsCategory']['id']]['Category']['id'])){
 				$products[$k]['Category']=$res_c[$v['ProductsCategory']['id']]['Category'];
 				$products[$k]['CategoryI18n']=$res_c[$v['ProductsCategory']['id']]['CategoryI18n'];
 			}
@@ -506,7 +687,7 @@ class ProductsController extends AppController {
 				$products[$k]['Brand']=$res_b[$v['Product']['brand_id']]['Brand'];
 				$products[$k]['BrandI18n']=$res_b[$v['Product']['brand_id']]['BrandI18n'];
 			}
-				$products[$k]['Product']['user_price'] =$this->Product->user_price($k,$v,$this);
+			//	$products[$k]['Product']['user_price'] =$this->Product->user_price($k,$v,$this);
 		}
 		//当前位置
 		$this->navigations[] = array('name'=>$this->languages['search_result'],'url'=>"");
@@ -525,7 +706,7 @@ class ProductsController extends AppController {
 			$js_language = array("enable_one_step_buy" => "0"
 										,'enter_positive_integer' => $this->languages['be_integer']);
 		}
-		$js_error = array("order_quantity_be_integer" => $this->languages['purchase'].$this->languages['quantity'].$this->languages['be_integer'],
+		$js_error = array(	"order_quantity_be_integer" => $this->languages['purchase'].$this->languages['quantity'].$this->languages['be_integer'],
 							"order_quantity_not_empty" => $this->languages['purchase'].$this->languages['quantity'].$this->languages['can_not_empty'],
 							"contact_not_empty" => $this->languages['connect_person'].$this->languages['can_not_empty'],
 							"invalid_email" => $this->languages['email_letter'].$this->languages['format'].$this->languages['not_correct'],
@@ -549,7 +730,7 @@ class ProductsController extends AppController {
 	  $this->set('orderby',$orderby);
 	  $this->set('rownum',$rownum);
 	  $this->set('showtype',$showtype);
-	  
+		$this->page_init();
 	  
 	  $this->layout = 'default';
 	}
@@ -617,10 +798,19 @@ class ProductsController extends AppController {
 	}
 	
 	function del_history(){
-	Configure::write('debug', 2);
 		if($this->RequestHandler->isPost()){
+			Configure::write('debug', 2);
 			unset($_SESSION['cookie_product']);
 			$this->layout="ajax";
+		}else{
+			unset($_SESSION['cookie_product']);
+			if(isset($_SERVER['HTTP_REFERER'])){
+				$url = $_SERVER['HTTP_REFERER'];
+			}else{
+				$url = $this->server_host.$this->cart_webroot;
+			}
+			header("Location:".$url);
+			exit;
 		}
 	}
 	
@@ -644,21 +834,63 @@ class ProductsController extends AppController {
 	function add_booking(){
 		if($this->RequestHandler->isPost()){
 			if(isset($_SESSION['User']['User']['id'])){
-				$booking=(array)json_decode(StripSlashes($_POST['booking']));
+				$no_error = 1;
+				if(!isset($_POST['is_ajax'])){
+					$booking = $_POST['data']['bookings'];
+					if($booking['product_number'] == ""){
+						$no_error = 0;
+						$result['message'] = $this->languages['purchase'].$this->languages['quantity'].$this->languages['can_not_empty'];
+					}elseif(!is_numeric($booking['product_number']) || intval($booking['product_number']) <= 0){
+						$no_error = 0;
+						$result['message'] = $this->languages['purchase'].$this->languages['quantity'].$this->languages['be_integer'];
+					}elseif($booking['contact_man'] == ""){
+						$no_error = 0;
+						$result['message'] = $this->languages['connect_person'].$this->languages['can_not_empty'];					
+					}elseif($booking['email'] == "" || !$this->is_email($booking['email'])){
+						$no_error = 0;
+						$result['message'] = $this->languages['email_letter'].$this->languages['format'].$this->languages['not_correct'];										
+					}elseif(!empty($booking['telephone']) && !preg_match( '/^[\d|\_|\-|\s]+$/', $booking['telephone'])){
+						$no_error = 0;
+						$result['message'] = $this->languages['telephone'].$this->languages['format'].$this->languages['not_correct'];															
+					}
+				}else{
+					$booking=(array)json_decode(StripSlashes($_POST['booking']));
+				}
+				
 				$booking['user_id'] = $_SESSION['User']['User']['id'];
 				$now_time = date("Y-m-d H:i:s");
 				$booking['booking_time'] = $now_time;
+				if($no_error){
 				$this->BookingProduct->save($booking);
 				$result['message'] = $this->languages['out_stock_book_successful'];
+				}
 				$result['type'] = 0;
 			}else{
 				$result['type'] = 1;
 				$result['message']=$this->languages['time_out_relogin'];
 			}
+			
+			if(!isset($_POST['is_ajax'])){
+				$this->page_init();
+				$id = isset($booking['product_id'])?$booking['product_id']:'';
+				$this->pageTitle = isset($result['message'])?$result['message']:''." - ".$this->configs['shop_title'];
+				$this->flash(isset($result['message'])?$result['message']:'','/products/add_booking_page/'.$id,10);					
+			}
+			
 			$this->set('result',$result);
 			$this->layout="ajax";
 		}
 	}
+	
+	function add_booking_page($id){
+		$this->page_init();
+		$this->pageTitle = $this->languages['booking']." - ".$this->configs['shop_title'];;
+		$this->Product->set_locale($this->locale);
+		$product_info = $this->Product->findbyid($id);
+		$this->set('product_info',$product_info);
+	
+	}
+	
 	function rss($category_id=0){
 		$this->layout = '/rss/products';
 		$this->Product->set_locale($this->locale);
@@ -676,6 +908,139 @@ class ProductsController extends AppController {
 	function is_promotion($product_info){
 		return ($product_info['Product']['promotion_status'] == '1' && $product_info['Product']['promotion_start'] <= date("Y-m-d H:i:s") && $product_info['Product']['promotion_end'] >= date("Y-m-d H:i:s"));
 	}
+	
+ function product_search($type,$keywords='',$category_id='',$brand_id='',$min_price='',$max_price=''){
+ 	 //$this->Product->set_locale($this->locale);
+ 	 $category_product_ids = array();
+ 	// pr($keywords);
+     // $condition=" 1=1 and Product.status = 1";
+	  $condition['AND'][]= "Product.status = '1'";
+    if($category_id !=''&& $category_id != 0){
+      //$condition .=" and ProductsCategory.category_id =$category_id";
+     // 	$condition['AND'][]= "ProductsCategory.category_id =$category_id";
+  /*   $arr = $this->ProductsCategory->findall('ProductsCategory.category_id ='.$category_id ,'DISTINCT ProductsCategory.product_id');
+     if(is_array($arr) && sizeof($arr)>0){
+     	foreach($arr as $v ){
+     		$con = " Product.id = ".$v['ProductsCategory']['product_id'];
+     		if($min_price != '' && $min_price >0 ){
+     			$con .= " and Product.shop_price >= ".$min_price;
+     		}
+     	    if($max_price !=''&& $max_price < 99999999){
+      	 	  	$con .= " and Product.shop_price <= ".$max_price;
+   		    }
+		    if($brand_id !='' && $brand_id != 0){
+		       	$con .=" and Product.brand_id =$brand_id";
+		    }   		    
+     		$p = $this->Product->find($con);
+     		if(isset($p['Product'])){
+     			$category_product_ids[] = $v['ProductsCategory']['product_id'];
+     		}
+     	}
+     }*/
+    // pr($arr);exit;
+    }//ProductsCategory
+    if($brand_id !='' && $brand_id != 0){
+      //$condition .=" and Product.brand_id =$brand_id";
+      	  $condition['AND'][]= "Product.brand_id =$brand_id";
+    }
+    
+    if($category_id !=''&& $category_id != 0){
+		  $this->Category->tree('P',$category_id,$this->locale);
+    	  $category_ids = isset($this->Category->allinfo['subids'][$category_id])?$this->Category->allinfo['subids'][$category_id]:$category_id;
+      //	  $condition['AND'][]= "Product.category_id =$category_ids";
+    }
+   if($min_price !=''&& $min_price > 0){
+     // $condition .=" and Product.shop_price >= ".$min_price;
+      	  $condition['AND'][]= "Product.shop_price >= ".$min_price;
+    }
+   if($max_price !=''&& $max_price < 99999999){
+      //$condition .=" and Product.shop_price <= ".$max_price;
+      	  $condition['AND'][]= "Product.shop_price <= ".$max_price;
+    }
+     if($keywords == $this->languages['all'].$this->languages['products']){
+			$product18n_pid = $this->ProductI18n->find('all',array('conditions'=>array("1=1"),'fields'=>array('ProductI18n.product_id'),'recursive'=>-1));
+     }else{
+        if($keywords != '0' && $keywords != 'all_products'){
+	/*		$condition_18n = array();
+			$condition_18n['OR'][] = "ProductI18n.name like '%$keywords%' ";
+			$condition_18n['OR'][] = "ProductI18n.description like '%$keywords%' ";    
+			$product18n_pid = $this->ProductI18n->find('all',array('conditions'=>array($condition_18n),'fields'=>array('ProductI18n.product_id'),'recursive'=>-1));
+    		$filter = "Product.code like '%$keywords%' ";
+    		$product_code_id = $this->Product->find('all',array('conditions'=>array($filter),'fields'=>array('Product.id'),'recursive'=>-1));
+    		*/
+    		$condition_18n['OR'][] = "ProductI18n.name like '%$keywords%' ";
+			$condition_18n['OR'][] = "Product.code like '%$keywords%' ";
+			$condition_18n['OR'][] = "ProductI18n.description like '%$keywords%' ";
+    		$product_code_id = $this->Product->find('all',array('conditions'=>array($condition_18n),'fields'=>array('Product.id')));
+	/*		$condition_18n['OR'][] = "ProductI18n.name like '%$keywords%' ";
+			$condition_18n['OR'][] = "Product.code like '%$keywords%' ";
+    		$product_code_id = $this->Product->find('all',array('conditions'=>array(" MATCH (ProductI18n.description) AGAINST ('".$keywords."')"),'fields'=>array('ProductI18n.product_id')));
+    		$product18n_pid = $this->Product->find('all',array('conditions'=>array($condition_18n),'fields'=>array('ProductI18n.product_id')));
+    */		
+    		
+    	}
+     }
+     //pr($condition);exit;            	
+    $pid_arrays = array();
+  /*  
+	pr($product18n_pid);
+	    [0] => Array
+        (
+            [ProductI18n] => Array
+                (
+                    [product_id] => 15
+                )
+
+        )
+	*/
+	if(isset($this->configs['use_tag']) && $this->configs['use_tag'] == 1){
+		$tag_filter = " TagI18n.locale = '".$this->locale."' and TagI18n.name = '".$keywords."' and Tag.type = 'P'";
+		$tags = $this->Tag->findall($tag_filter);
+		if(is_array($tags) && sizeof($tags)>0){
+			foreach($tags  as $k=>$v){
+				$category_product_ids[] = $v['Tag']['type_id'];
+			}
+		}
+	}
+	if(isset($product18n_pid) && sizeof($product18n_pid)>0){
+		foreach($product18n_pid as $k=>$v){
+			if(!in_array($v['ProductI18n']['product_id'],$category_product_ids)){
+				$category_product_ids[] = $v['ProductI18n']['product_id'];
+			}
+		}
+	}
+	if(isset($product_code_id) && sizeof($product_code_id)>0){
+		foreach($product_code_id as $k=>$v){
+			if(!in_array($v['Product']['id'],$category_product_ids)){
+				$category_product_ids[] = $v['Product']['id'];
+			}
+		}
+	}
+	
+   	//pr($category_product_ids);
+  	return $category_product_ids;
+ }	
+ 
+	function is_email($user_email)
+	{
+	    $chars = "/^([a-z0-9+_]|\\-|\\.)+@(([a-z0-9_]|\\-)+\\.)+[a-z]{2,6}\$/i";
+	    if (strpos($user_email, '@') !== false && strpos($user_email, '.') !== false)
+	    {
+	        if (preg_match($chars, $user_email))
+	        {
+	            return true;
+	        }
+	        else
+	        {
+	            return false;
+	        }
+	    }
+	    else
+	    {
+	        return false;
+	    }
+	}
+	
 }//end class
 
 ?>

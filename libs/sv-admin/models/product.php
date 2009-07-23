@@ -9,12 +9,12 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: product.php 1608 2009-05-21 02:50:04Z huangbo $
+ * $Id: product.php 2989 2009-07-17 02:03:04Z huangbo $
 *****************************************************************************/
 class Product extends AppModel
 {
 	var $name = 'Product';
-		var $hasOne = array('ProductI18n'     =>array
+	var $hasOne = array('ProductI18n'     =>array
 												( 
 												  'className'    => 'ProductI18n',   
 					                              'order'        => '',   
@@ -29,7 +29,35 @@ class Product extends AppModel
 					                              'dependent'    =>  true,   
 					                              'foreignKey'   => 'product_id'
 					                        	),
-							
+					   		'ProductDownload' =>array
+												(
+										          'className'     => 'ProductDownload',   
+					                              'order'        => '',   
+					                              'dependent'    =>  true,   
+					                              'foreignKey'   => 'product_id'
+					                        	),	
+					   		'ProductService' =>array
+												(
+										          'className'     => 'ProductService',   
+					                              'order'        => '',   
+					                              'dependent'    =>  true,   
+					                              'foreignKey'   => 'product_id'
+					                        	),					            						
+                 	   );
+    var $hasMany = array('Cart' =>array
+												( 
+												  'className'    => 'Cart',   
+					                              'order'        => '',   
+					                              'dependent'    =>  true,   
+					                              'foreignKey'   => 'product_id'
+					                        	 ) ,
+					   		           'OrderProduct' =>array
+												(
+										          'className'     => 'OrderProduct',   
+					                              'order'        => '',   
+					                              'dependent'    =>  true,   
+					                              'foreignKey'   => 'product_id'
+					                        	)
                  	   );
 
 
@@ -140,6 +168,19 @@ function pr(){
 	//	pr($lists_formated);
 		return $lists_formated;
 	}
+	function product_count(){
+		$this->hasOne = array();
+    	$this->hasMany = array();
+		$lists=$this->find("all",array('fields' => array('category_id', 'count(category_id) as count'),"group"=>"category_id"));
+		
+		$lists_formated = array();
+		if(is_array($lists))
+			foreach($lists as $k => $v){
+				$lists_formated[$v['Product']['category_id']]=$v['0']['count'];
+			}
+		//	pr($lists_formated);
+		return $lists_formated;
 
+	}
 }
 ?>

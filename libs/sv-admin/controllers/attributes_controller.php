@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: attributes_controller.php 1250 2009-05-07 13:59:20Z huangbo $
+ * $Id: attributes_controller.php 1932 2009-06-01 09:28:50Z zhengli $
 *****************************************************************************/
 class AttributesController extends AppController {
 	var $name = 'Attributes';
@@ -21,16 +21,27 @@ class AttributesController extends AppController {
 //-- 取得商品属性列表
 /*------------------------------------------------------ */
 function get_attr_list($cat_id, $product_id = 0){
-	 /* if(empty($cat_id)){
-	  	   $attr_cat=$this->ProductType->find();
-	  	   $cat_id=$attr_cat['ProductType']['id'];
-	  }*/
+	$this->ProductTypeAttribute->hasOne = array('ProductTypeAttributeI18n' =>   
+                        array('className'    => 'ProductTypeAttributeI18n', 
+                              'conditions'    =>  '',
+                              'order'        => '',   
+                              'dependent'    =>  true,   
+                              'foreignKey'   => 'product_type_attribute_id'  
+                        ),
+        				'ProductAttribute' =>
+        				array('className'    => 'ProductAttribute', 
+                              'conditions'    =>  'ProductAttribute.product_id='.$product_id,
+                              'order'        => '',   
+                              'dependent'    =>  true,   
+                              'foreignKey'   => 'product_type_attribute_id'  
+                        )
+                  );
 	  // 查询属性值及商品的属性值
 	  $condition="ProductTypeAttribute.product_type_id = ".intval($cat_id)." ";
 	  $this->ProductTypeAttribute->set_locale($this->locale);
 	  $lists=$this->ProductTypeAttribute->findAll($condition);
 	  //调整数据格式
-	  //pr($lists);
+	 
 	  return $lists;
 }
 }

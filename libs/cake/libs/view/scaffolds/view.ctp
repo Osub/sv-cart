@@ -1,5 +1,5 @@
-<?php
-/* SVN FILE: $Id: view.ctp 7945 2008-12-19 02:16:01Z gwoo $ */
+<?php 
+/* SVN FILE: $Id: view.ctp 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  *
  * PHP versions 4 and 5
@@ -25,7 +25,7 @@
 <div class="<?php echo $pluralVar;?> view">
 <h2><?php echo sprintf(__("View %s", true), $singularHumanName);?></h2>
 	<dl>
-<?php
+<?php 
 $i = 0;
 foreach ($scaffoldFields as $_field) {
 	$class = null;
@@ -53,7 +53,7 @@ foreach ($scaffoldFields as $_field) {
 </div>
 <div class="actions">
 	<ul>
-<?php
+<?php 
 	echo "\t\t<li>" .$html->link(sprintf(__('Edit %s', true), $singularHumanName),   array('action'=>'edit', ${$singularVar}[$modelClass][$primaryKey])). " </li>\n";
 	echo "\t\t<li>" .$html->link(sprintf(__('Delete %s', true), $singularHumanName), array('action'=>'delete', ${$singularVar}[$modelClass][$primaryKey]), null, __('Are you sure you want to delete', true).' #' . ${$singularVar}[$modelClass][$primaryKey] . '?'). " </li>\n";
 	echo "\t\t<li>" .$html->link(sprintf(__('List %s', true), $pluralHumanName), array('action'=>'index')). " </li>\n";
@@ -72,14 +72,14 @@ foreach ($scaffoldFields as $_field) {
 ?>
 	</ul>
 </div>
-<?php
+<?php 
 if (!empty($associations['hasOne'])) :
 foreach ($associations['hasOne'] as $_alias => $_details): ?>
 <div class="related">
 	<h3><?php echo sprintf(__("Related %s", true), Inflector::humanize($_details['controller']));?></h3>
 <?php if (!empty(${$singularVar}[$_alias])):?>
 	<dl>
-<?php
+<?php 
 		$i = 0;
 		$otherFields = array_keys(${$singularVar}[$_alias]);
 		foreach ($otherFields as $_field) {
@@ -99,7 +99,7 @@ foreach ($associations['hasOne'] as $_alias => $_details): ?>
 		</ul>
 	</div>
 </div>
-<?php
+<?php 
 endforeach;
 endif;
 
@@ -119,7 +119,7 @@ $otherSingularVar = Inflector::variable($_alias);
 <?php if (!empty(${$singularVar}[$_alias])):?>
 	<table cellpadding="0" cellspacing="0">
 	<tr>
-<?php
+<?php 
 		$otherFields = array_keys(${$singularVar}[$_alias][0]);
 		foreach ($otherFields as $_field) {
 			echo "\t\t<th>".Inflector::humanize($_field)."</th>\n";
@@ -127,7 +127,7 @@ $otherSingularVar = Inflector::variable($_alias);
 ?>
 		<th class="actions">Actions</th>
 	</tr>
-<?php
+<?php 
 		$i = 0;
 		foreach (${$singularVar}[$_alias] as ${$otherSingularVar}):
 			$class = null;

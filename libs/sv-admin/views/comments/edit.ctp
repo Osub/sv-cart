@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 新增评论
  * ===========================================================================
@@ -9,12 +9,12 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: edit.ctp 946 2009-04-24 00:36:19Z huangbo $
+ * $Id: edit.ctp 2485 2009-06-30 11:33:00Z huangbo $
 *****************************************************************************/
 ?> 
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
-<p class="add_categories"><strong><?=$html->link($html->image('add.gif',array('align'=>'absmiddle'))."评论列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."评论列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
 
 <!--Main Start-->
 <!--CommentsConfig-->
@@ -26,28 +26,28 @@
 
 	<div class="order_stat athe_infos">
 	  <div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  &nbsp;评论详情</h1></div>
 	  <div class="box" style="padding:15px 0 5px;">
-  	   <p class="user_comments"><strong><?=$comment['Comment']['name']; ?></strong> 对 <strong><?=$comment['Comment']['type_name']; ?></strong> 发表评论</p>
+  	   <p class="user_comments"><strong><?php echo $comment['Comment']['name']; ?></strong> 对 <strong><?php echo $comment['Comment']['type_name']; ?></strong> 发表评论</p>
 	   <div class="comment_info">
-	   <p class="time"><?=$comment['Comment']['created']; ?></p>
+	   <p class="time"><?php echo $comment['Comment']['created']; ?></p>
 	   <br />
-	   <p class="content_text"><?=$comment['Comment']['content']; ?></p>
+	   <p class="content_text"><?php echo $comment['Comment']['content']; ?></p>
 	   <br />
-	   <p class="grad">评论等级:<?=$comment['Comment']['rank']; ?>  IP地址:<?=$comment['Comment']['ipaddr']; ?></p>
+	   <p class="grad">评论等级:<?php echo $comment['Comment']['rank']; ?>  IP地址:<?php echo $comment['Comment']['ipaddr']; ?></p>
 	   </div>
-<?if(isset($restore) && sizeof($restore)>0){foreach($restore as $k=>$v){?>
-	   <p class="user_comments"><strong>管理员 <?=$v['Comment']['name']; ?></strong> 对 <strong><?=$comment['Comment']['name']; ?></strong> 回复</p>
+<?php if(isset($restore) && sizeof($restore)>0){foreach($restore as $k=>$v){?>
+	   <p class="user_comments"><strong>管理员 <?php echo $v['Comment']['name']; ?></strong> 对 <strong><?php echo $comment['Comment']['name']; ?></strong> 回复</p>
 	   <div class="comment_info">
-	   <p class="time"><?=$v['Comment']['created']; ?></p>
+	   <p class="time"><?php echo $v['Comment']['created']; ?></p>
 	   <br />
-	   <p class="content_text"><?=$v['Comment']['content']; ?></p>
+	   <p class="content_text"><?php echo $v['Comment']['content']; ?></p>
 	   <br />
-	   <p class="grad">IP地址:<?=$v['Comment']['ipaddr']; ?></p>
+	   <p class="grad">IP地址:<?php echo $v['Comment']['ipaddr']; ?></p>
 	   </div>
-<?}}?>
+<?php }}?>
 	  </div>
 	</div>
 
@@ -55,19 +55,19 @@
 <td valign="top" width="50%" style="padding-left:5px;">
 	<div class="order_stat athe_infos writeback_coment">
 	  <div class="title"><h1>
-	  <?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  回复评论</h1></div>
 	  <div class="box">
 	  <p style="clear:both"></p>
 		
-		<input type="hidden" id="comment_id" name="data[Comment][parent_id]" value="<?=$comment['Comment']['id']; ?>">
-		<ul style="margin-top:10px;*margin-top:16px;"><li class="lang">用户名:</li><li><input type="text" name="data[Comment][name]" style="width:220px;border:1px solid #629373;font-family:arial;" value="<?=$_SESSION['Operator_Info']['Operator']['name']?>" readonly="readonly" /></li></ul>
-		<ul><li class="lang">Email:</li><li><input type="text" style="width:220px;border:1px solid #629373;font-family:arial;" name="data[Comment][email]" value="<?=$_SESSION['Operator_Info']['Operator']['email']?>" readonly="readonly" /></li></ul>
+		<input type="hidden" id="comment_id" name="data[Comment][parent_id]" value="<?php echo $comment['Comment']['id']; ?>">
+		<ul style="margin-top:10px;*margin-top:16px;"><li class="lang">用户名:</li><li><input type="text" name="data[Comment][name]" style="width:220px;border:1px solid #629373;font-family:arial;" value="<?php echo $_SESSION['Operator_Info']['Operator']['name']?>" readonly="readonly" /></li></ul>
+		<ul><li class="lang">Email:</li><li><input type="text" style="width:220px;border:1px solid #629373;font-family:arial;" name="data[Comment][email]" value="<?php echo $_SESSION['Operator_Info']['Operator']['email']?>" readonly="readonly" /></li></ul>
 		<ul><li class="lang" style="padding-top:10px;">回复内容:</li><li><textarea name="data[Comment][content]" style="width:220px;border:1px solid #629373;overflow-y:scroll;height:62px;font-family:arial;"></textarea></li></ul>
 
-		<p class="submit_btn" style="padding:1px 0;*padding:10px 0;display:<?if($comment['Comment']['status']==1){echo 'none';}?>;" id="commentshow"><input type="button" value="允许显示" onclick="commentverify(1)"/></p>
-		<p class="submit_btn" style="padding:1px 0;*padding:10px 0;display:<?if($comment['Comment']['status']==0){echo 'none';}?>;" id="commenthidden"><input type="button" value="禁止显示" onclick="commentverify(0)"  /></p>
+		<p class="submit_btn" style="padding:1px 0;*padding:10px 0;display:<?php if($comment['Comment']['status']==1){echo 'none';}?>;" id="commentshow"><input type="button" value="允许显示" onclick="commentverify(1)"/></p>
+		<p class="submit_btn" style="padding:1px 0;*padding:10px 0;display:<?php if($comment['Comment']['status']==0){echo 'none';}?>;" id="commenthidden"><input type="button" value="禁止显示" onclick="commentverify(0)"  /></p>
 
 		<p class="submit_btn" style="padding:1px 0;*padding:10px 0;"><input type="submit" value="确定" /><input type="reset" value="重置" /></p>
 	  </div>
@@ -76,7 +76,7 @@
 </tr>
 
 </table>
-<? echo $form->end();?>
+<?php echo $form->end();?>
 <!--Communication Stat End-->
 
 

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: db_acl.php 8004 2009-01-16 20:15:21Z gwoo $ */
+/* SVN FILE: $Id: db_acl.php 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  * This is core configuration file.
  *

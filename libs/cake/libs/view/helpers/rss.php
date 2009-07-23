@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: rss.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: rss.php 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  * RSS Helper class file.
  *

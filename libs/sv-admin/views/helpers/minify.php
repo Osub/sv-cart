@@ -32,6 +32,8 @@ Class MinifyHelper extends AppHelper{
         function _path($assets, $ext){
         //	print_r($assets);
             $path = $this->webroot . "../min/f=";
+        	if(Configure::read('App.baseUrl'))
+            	$path = $this->webroot . "../min/index.php?f=";
             foreach($assets as $asset){
             	
             	if (strpos($asset, '?') === false) {

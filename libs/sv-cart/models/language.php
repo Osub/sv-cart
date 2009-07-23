@@ -9,11 +9,20 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: language.php 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: language.php 2290 2009-06-24 10:51:56Z shenyunfeng $
 *****************************************************************************/
 class Language extends AppModel
 {
 	var $name = 'Language';
 	
+	function findalllang(){
+		 if($this->cacheFind($this->name,'findalllang',array('front'=>'1'))){
+		 	$language = $this->cacheFind($this->name,'findalllang',array('front'=>'1'));
+		 }else{
+		 	$language = $this->findAll("Language.front = '1' ");
+			$this->cacheSave($this->name,'findalllang',array('front'=>'1'),$language);
+		 }
+		 return $language;
+	}
 }
 ?>

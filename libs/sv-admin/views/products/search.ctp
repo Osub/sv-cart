@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 商品待处理缺货
  * ===========================================================================
@@ -9,49 +9,55 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: search.ctp 781 2009-04-18 12:48:57Z huangbo $
+ * $Id: search.ctp 2608 2009-07-06 03:14:12Z shenyunfeng $
 *****************************************************************************/
 ?>
-<?=$javascript->link('listtable');?>
+ 
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));//pr($bookingproducts)?>
 <!--Main Start-->
 <br />
 <div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
 <?php echo $form->create('',array('action'=>''));?>
-
-	<ul class="product_llist unchecks product_wanted">
-	<li class="number"><input type="checkbox" name="checkbox" value="checkbox" onclick="selectAll(this,'checkbox');" />编号</li>
-	<li class="username">联系人</li>
-	<li class="email" style="text-align:center;">Email地址</li>
-	<li class="object msg_headers">缺货商品名</li>
-	<li class="type">商品货号</li>
-	<li class="comment_time msg_time" style="width:10%">登记时间<?=$html->image('sort_desc.gif',array('align'=>'absmiddle'))?></li>
-	<li class="satus">状态</li>
-	<li class="wanted_hadle">操作</li></ul>
+<table cellpadding="0" cellspacing="0" width="100%" class="list_data">
+<tr class="thead">
+	<th>编号</th>
+	<th>联系人</th>
+	<th>Email地址</th>
+	<th>缺货商品名</th>
+	<th>商品货号</th>
+	<th>登记时间<?php echo $html->image('sort_desc.gif',array('align'=>'absmiddle'))?></th>
+	<th>是否已处理</th>
+	<th>操作</th></tr>
 <!--Products Wanted-->
-<?if(isset($bookingproducts) && sizeof($bookingproducts)>0){?>
-<?php foreach($bookingproducts as $bookingproduct){?>
-	<ul class="product_llist unchecks unchecks_list product_wanted">
-	<li class="number"><input type="checkbox" name="checkbox[]" value="checkbox" /><?php echo $bookingproduct['BookingProduct']['product_id']?></li>
-	<li class="username"><span><?php echo $bookingproduct['BookingProduct']['contact_man']?></span></li>
-	<li class="email"><span><?php echo $bookingproduct['BookingProduct']['email']?></span></li>
-	<li class="object"><span><?=$html->link("{$assocproduct[$bookingproduct['BookingProduct']['product_id']]['ProductI18n']['name']}","/products/{$bookingproduct['BookingProduct']['product_id']}",'',false,false);?></span></li>
-	<li class="type"><?php if(isset($assocproduct[$bookingproduct['BookingProduct']['product_id']]['Product']['code']))echo $assocproduct[$bookingproduct['BookingProduct']['product_id']]['Product']['code']?></li>
-	<li class="comment_time msg_time" style="width:10%"><?php echo $bookingproduct['BookingProduct']['booking_time']?></li>
-	
-	<li class="satus"><?php if($bookingproduct['BookingProduct']['is_dispose'])echo '已处理';else echo '待处理';?></li>
-	<li class="wanted_hadle">
-	<?php echo $html->link("查看","../../products/{$bookingproduct['BookingProduct']['product_id']}");?>|<?php echo $html->link("编辑","{$bookingproduct['BookingProduct']['product_id']}");?>|<?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$this->webroot}products/search_remove/{$bookingproduct['BookingProduct']['id']}')"));?>
+<?php if(isset($new_bookingproduct_list) && sizeof($new_bookingproduct_list)>0){?>
+<?php foreach($new_bookingproduct_list as $k => $bookingproduct){?>
+	<tr>
+	<td><?php echo $bookingproduct['BookingProduct']['id']?></td>
+	<td><span><?php echo $bookingproduct['BookingProduct']['contact_man']?></span></td>
+	<td align="center"><span><?php echo $bookingproduct['BookingProduct']['email']?></span></td>
+	<td align="center"><span><?php echo $bookingproduct['BookingProduct']['product_name']?></span></td>
+	<td align="center"><?php echo $bookingproduct['BookingProduct']['code']?></td>
+	<td align="center"><?php echo $bookingproduct['BookingProduct']['booking_time']?></td>
+	<td align="center"><?php if ($bookingproduct['BookingProduct']['is_dispose'] == 1){?><?php echo $html->image('yes.gif',array('align'=>'absmiddle','onclick'=>'')) ?><?php }elseif($bookingproduct['BookingProduct']['is_dispose'] == 0){?><?php echo $html->image('no.gif',array('align'=>'absmiddle','onclick'=>''))?><?php }?></td>
+	<td align="center">
+	<?php echo $html->link("查看","booking_show/{$bookingproduct['BookingProduct']['id']}");?>  |  <?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$this->webroot}products/search_remove/{$bookingproduct['BookingProduct']['id']}')"));?>
 
-</li></ul>
+</td></tr>
 <?php }}?>
-
+</table>
 <!--Products Wanted End-->	
-<? echo $form->end();?>
-  <div class="pagers" style="position:relative">
+<?php echo $form->end();?>
+  <div class="pagers" style="position:relative"> <?php if(isset($new_bookingproduct_list) && sizeof($new_bookingproduct_list)>0){?> <p class='batch'><input type="button" value="导出" onclick=export_act() /></p> <?php } ?>
+<input type="hidden" id="url" <?php   if(isset($ex_page)){  ?> value="products/search/wanted?page=<?php echo $ex_page;?>&export=export"<?php }else{ ?> value="products/search/wanted?export=export"<?php } ?>/>
 <?php echo $this->element('pagers', array('cache'=>'+0 hour'));?>
 </div>
 </div>
 <!--Main Start End-->
 </div>
+<script type="text/javascript">
+function export_act(){ 
+	var url=document.getElementById("url").value;
+	window.location.href=webroot_dir+url;
+}
+</script>

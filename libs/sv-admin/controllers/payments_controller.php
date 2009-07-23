@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: payments_controller.php 1883 2009-05-31 11:20:54Z huangbo $
+ * $Id: payments_controller.php 3184 2009-07-22 06:09:42Z huangbo $
 *****************************************************************************/
 class PaymentsController extends AppController {
 	var $name = 'Payments';
@@ -50,7 +50,7 @@ class PaymentsController extends AppController {
 		$this->pageTitle = "编辑支付方式 - 支付方式"." - ".$this->configs['shop_name'];
 		$this->navigations[] = array('name'=>'支付方式','url'=>'/payments/');
 		$this->navigations[] = array('name'=>'编辑支付方式','url'=>'');
-		$this->set('navigations',$this->navigations);
+	
 		
 		if($this->RequestHandler->isPost()){
 			foreach($this->data['PaymentI18n'] as $v){
@@ -115,14 +115,18 @@ class PaymentsController extends AppController {
 					$userinformation_name = $v['name'];
 				}
 			}
+			//操作员日志
+    	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑支付方式:'.$userinformation_name ,'operation');
+    	    }
 			$this->flash("支付方式 ".$userinformation_name." 编辑成功。点击继续编辑该支付方式。",'/payments/edit/'.$id,10);
 		}
 		
-		$payment = $this->Payment->localeformat($id);
+		$payment = $this->Payment->localeformat($id);		
 		eval($payment['Payment']['config']);
+		
 		if($payment['Payment']['code'] == 'paypal'){
-			$languages = $this->Language->findall("Language.front ='1'");
-		//	pr($languages);
+			$languages = $this->Language->findall();
 			$locale = "";
 			if(is_array($languages) && sizeof($languages)>0){
 				foreach($languages as $k=>$v){
@@ -133,6 +137,8 @@ class PaymentsController extends AppController {
 																									"value" => ''
 																								//	'select_value' => array( '澳元' => 'AUD','加元' => 'CAD','欧元' => 'EUR','英镑' => 'GBP','日元' => 'JPY','美元' => 'USD','港元' => 'HKD')
 																									);
+					}else{
+						$payment_arr['languages_type']['value'][$v['Language']['locale']]['name'] = $v['Language']['name'];
 					}
 				}
 			}
@@ -142,7 +148,7 @@ class PaymentsController extends AppController {
 					if(!in_array($k,$locale_arr)){
 						unset($payment_arr['languages_type']['value'][$k]);
 					}else{
-						$payment_arr['languages_type']['value'][$k]['select_value'] = array( '澳元' => 'AUD','加元' => 'CAD','欧元' => 'EUR','英镑' => 'GBP','日元' => 'JPY','美元' => 'USD','港元' => 'HKD');
+						$payment_arr['languages_type']['value'][$k]['select_value'] = array('请选择'=>'0', '澳元' => 'AUD','加元' => 'CAD','欧元' => 'EUR','英镑' => 'GBP','日元' => 'JPY','美元' => 'USD','港元' => 'HKD');
 					}
 				}
 			}
@@ -150,9 +156,13 @@ class PaymentsController extends AppController {
 		//	pr($payment_arr);
 		}
 		
-		
 		$this->set("payment_arr",@$payment_arr);
 		$this->set( "payment",$payment );
+	
+		//leo20090722导航显示
+		$this->navigations[] = array('name'=>$payment["PaymentI18n"][$this->locale]["name"],'url'=>'');
+	    $this->set('navigations',$this->navigations);
+
 	}
 	
 	function install( $id ){
@@ -162,7 +172,11 @@ class PaymentsController extends AppController {
 			           );
 		$this->Payment->set_locale($this->locale);
 		$Payment_info = $this->Payment->find(array('Payment.id'=>$id));
-     	$this->flash($Payment_info['PaymentI18n']['name']." 安装成功",'/payments/',10);
+		//操作员日志
+    	if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	$this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'安装支付方式:'.$Payment_info['PaymentI18n']['name'] ,'operation');
+    	}
+     	$this->flash($Payment_info['PaymentI18n']['name']." 安装成功",'/payments/edit/'.$id,10);
 	}
 	
 	function uninstall( $id ){
@@ -172,7 +186,11 @@ class PaymentsController extends AppController {
 			              array('Payment.status' => '0'),
 			              array('Payment.id' => $id)
 			           );
-         $this->flash($Payment_info['PaymentI18n']['name']." 卸载成功",'/payments/',10);
+		//操作员日志
+    	if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
+    	$this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'卸载支付方式:'.$Payment_info['PaymentI18n']['name'] ,'operation');
+    	}
+        $this->flash($Payment_info['PaymentI18n']['name']." 卸载成功",'/payments/',10);
 	}
 }
 

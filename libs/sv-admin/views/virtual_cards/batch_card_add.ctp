@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*****************************************************************************
  * SV-Cart 虚拟卡批量补货
  * ===========================================================================
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 517 2009-04-14 01:18:28Z huangbo $
+ * $Id: batch_card_add.ctp 2703 2009-07-08 11:54:52Z huangbo $
 *****************************************************************************/
 ?>
 
@@ -17,13 +17,13 @@
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 <!--Main Start--><br />
-<p class="add_categories"><strong><?=$html->link($html->image('add.gif',array('align'=>'absmiddle'))."补货列表","/virtual_cards/card/".$product_id,'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."补货列表","/virtual_cards/card/".$product_id,'',false,false);?></strong></p>
 
 <div class="home_main" id="guides_1">
 <div class="order_stat athe_infos configvalues">
 	<div class="title"><h1>
-	<?=$html->image('tab_left.gif',array('class'=>'left'))?>
-	<?=$html->image('tab_right.gif',array('class'=>'right'))?>
+	<?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	<?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	批量补货</h1></div>
 	<div class="box">
 	<div class="shop_config menus_configs guides" style="width:500px;">
@@ -46,4 +46,4 @@
 		<p class="submit_btn"><input type="submit" value="确定"  /><input type="reset" value="重置" /></p>
 	</div>
 </div>
-<? echo $form->end();?>
+<?php echo $form->end();?>

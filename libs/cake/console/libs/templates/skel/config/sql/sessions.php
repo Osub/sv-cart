@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: sessions.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: sessions.php 2703 2009-07-08 11:54:52Z huangbo $ */
 /*Sessions schema generated on: 2007-11-25 07:11:54 : 1196004714*/
 /**
  * This is Sessions Schema file

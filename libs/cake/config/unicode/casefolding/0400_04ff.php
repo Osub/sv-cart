@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: 0400_04ff.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: 0400_04ff.php 2703 2009-07-08 11:54:52Z huangbo $ */
 /**
  * Case Folding Properties.
  *
