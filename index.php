@@ -9,10 +9,10 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.php 1766 2009-05-26 04:02:24Z huangbo $
+ * $Id: index.php 2583 2009-07-04 07:02:59Z huangbo $
 *****************************************************************************/
 	if(!file_exists((dirname(__FILE__))."/libs/" . "database.php")){
-		header('Location: ./systemrequire.php');
+		header('Location: ./sv-admin/index.php/tools/tools_installs/home');
 		exit;
 	}
 	if (!defined('DS')) {
