@@ -84,15 +84,7 @@ version: 2.5.2
 }
 .svcart-skin-g00 .svcartmenu ul.first-of-type{border-width:0;
 }
-.svcart-skin-g00 .svcartmenu .yui-menu-body-scrolled{
-	border-color:#ccc #808080;overflow:hidden;
-}
-.svcart-skin-g00 .svcartmenu .topscrollbar,.svcart-skin-g00 .svcartmenu .bottomscrollbar{
-	height:16px;border:solid 1px #808080;
-}
-.svcart-skin-g00 .svcartmenu .topscrollbar{
-	border-bottom-width:0;background-position:center -950px;
-}
+
 .svcart-skin-g00 .svcartmenu .topscrollbar_disabled{background-position:center -975px;}.svcart-skin-g00 .svcartmenu .bottomscrollbar{
 	border-top-width:0;background-position:center -850px;
 }

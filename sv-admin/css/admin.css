@@ -82,7 +82,10 @@ dd .confim_locale{padding-top:5px;}
 	position:absolute;right:-1px;*right:-1px; bottom:-1px;
 }
 .home_main{
-	border:1px solid #CCCCCC;width:96%; background:#F0F0F0; margin:0 auto; padding:15px 8px 25px; height:100%;overflow:hidden;min-width:942px;width:expression((documentElement.clientWidth < 942) ? "942px" : "96%" ); 
+	border:1px solid #CCCCCC;width:96%; background:#F0F0F0; margin:0 auto; padding:15px 8px 25px; height:100%;min-width:942px;width:expression((documentElement.clientWidth < 942) ? "942px" : "96%" );
+}
+.home_main:after{
+content:".";display:block;clear:both;visibility:hidden;
 }
 .home_main select{padding:0;vertical-align:middle}
 .home_main .main_left{
@@ -98,7 +101,7 @@ dd .confim_locale{padding-top:5px;}
 	height:26px;text-align:right;line-height:26px;
 }
 .order_stat .title a{
-	color:#1874C7;text-decoration:underline;
+	text-decoration:underline;
 }
 .order_stat .title h1{
 	display:block;float:left;height:21px;line-height:21px;text-align:left;padding:5px 10px 0;font-size:12px;color:#192E32; background:#F9F9F9;position:relative; border:1px solid #E0E0E0; border-bottom:0; margin-bottom:-1px;
@@ -130,7 +133,8 @@ dd .confim_locale{padding-top:5px;}
 .article_list .box{
 	height:26px;text-align:right;line-height:26px;border-bottom:0px;margin-bottom:-1px;position:relative;zoom:1;z-index:5
 }
-.article_list .box a{color:#8C8C8C;
+.article_list .box a{
+	color:#8C8C8C;
 }
 .article_list .box h1{
 	display:block;float:left;height:25px;line-height:25px;text-align:left;padding-left:10px;font-size:12px;color:#1874C7;
@@ -236,11 +240,18 @@ ul.product_llist li.best{
 	padding:2px 0 0 15px;
 }
 .search_box dd{padding-top:5px}
-.search_box dd button,.calendar{background:none; border:0; vertical-align:middle; margin:-1px 0 0;*margin:-2px 0 0; padding:0;cursor:pointer;}
-	 border:1px solid #689F7C;color:#192E32; font-size:12px;
+.search_box dd button{
+	background:none; border:0; vertical-align:middle; margin:-5px 0 0;padding:0;cursor:pointer;
 }
-.search_box dd select{
-	*font-size:10px;
+
+.calendar{
+	vertical-align:middle; margin:-3px 0 0 2px;padding:0;cursor:pointer;
+}
+* html .calendar{
+	margin:-4px 0 0 3px;
+}
+.calendar_edit{
+	vertical-align:middle; margin:0 0 0 2px;padding:0;cursor:pointer;
 }
 .search_box dd select.all{
 	width:110px; margin-right:10px;
@@ -333,10 +344,10 @@ ul.product_llist li.best{
 	vertical-align:middle;
 }
 .athe_infos p.products_name input,.athe_infos p.products_name select{
-	border:1px solid #649776; vertical-align:middle; font-size:12px;color:#010101;
+	border:1px solid #649776; vertical-align:middle;color:#010101;
 }
 .athe_infos p.products_name textarea{
-	border:1px solid #649776; overflow-y:scroll;width:300px;height:50px; font-size:12px; vertical-align:text-top;
+	border:1px solid #649776; overflow-y:scroll;width:285px;height:50px; font-size:12px; vertical-align:text-top;
 }
 .athe_infos p.products_name span{
 	margin:0 8px;
@@ -348,7 +359,7 @@ ul.product_llist li.best{
 	float:none;height:100%; overflow:hidden;padding:4px 0;*padding:3px 0;
 }
 .athe_infos dt{
-	font-weight:bold;padding:4px 0 0;*padding:6px 0 0;width:135px; text-align:right;
+	font-weight:bold;padding:3px 0 0;*padding:6px 0 0;width:135px; text-align:right;
 }
 .athe_infos dt.promotion input{
 	vertical-align:middle; margin-top:-1px;*margin-top:-5px;
@@ -360,13 +371,13 @@ ul.product_llist li.best{
 	font-size:12px; vertical-align:middle;
 }
 .athe_infos dd.best_input input{
-	vertical-align:middle; margin-top:-1px;*margin-top:-5px; position:relative;
+	vertical-align:middle; margin-top:-2px;*margin-top:-5px; position:relative;
 }
 .athe_infos dd input.text_inputs{
 	border:1px solid #679A79;width:145px;font-size:12px;
 }
 .athe_infos dd select{
-	border:1px solid #679A79;*font-size:12px;
+	border:1px solid #679A79;
 }
 .tongxun .box{
 	padding:30px 10px;
@@ -487,19 +498,19 @@ ul.other_img li{border:1px solid #DADADA;padding:4px;margin-right:4px;float:left
 	float:left;font-weight:bold;color:#192E32; text-align:center; padding:6px 0 5px;
 }
 .categories ul.cat_title li.name{
-	width:240px;padding-left:55px; text-align:left;
+	width:42%;text-align:left;
 }
 .categories ul.cat_title li.item_number{
-	width:105px;
+	width:12%;
 }
 .categories ul.cat_title li.block{
-	width:100px; margin-left:55px;
+	width:15%;
 }
 .categories ul.cat_title li.taxis{
-	width:60px;margin-left:45px;
+	width:10%;
 }
-.categories ul.cat_title li.handel{
-	width:200px;margin-left:60px;
+.categories ul.cat_title li.handle{
+	width:20%;text-align:center;border-right:none;
 }
 .categories ul.cat_list li{
 	font-weight:normal;border-right:1px solid #EEF8F9;
@@ -511,13 +522,16 @@ ul.other_img li{border:1px solid #DADADA;padding:4px;margin-right:4px;float:left
 	cursor:default;
 }
 .categories ul.cat_list li.name{
-	font-weight:bold; padding-left:15px;width:280px
+	font-weight:bold;
 }
-.categories ul.cat_list li.second_cat span{
+.categories ul.cat_list li.name p{
+	padding-left:15px;
+}
+.categories ul.cat_list li.second_cat p{
 	margin-left:15px;
 }
-.categories ul.cat_list li.three span{
-	margin-left:30px;
+.categories ul.cat_list li.three_cat p{
+	margin-left:34px;
 }
 .cat_list .name img{
 	margin-right:3px;
@@ -673,10 +687,13 @@ ul.orders_title li.hadle{
 	width:6%; border-right:0;
 }
 ul.orders-list{
-	background:#fff; height:100%; overflow:inherit; border-bottom:1px solid #F3F3F3;
+	background:#fff; height:100%; overflow:hidden; border-bottom:1px solid #F3F3F3;
+}
+ul.orders-list p{
+	padding:0 5px;
 }
 ul.orders-list li{
-	border-right:1px solid #F3F3F3; font-weight:normal; font-family:Arial, Helvetica, sans-serif;
+	border-right:1px solid #F3F3F3; font-weight:normal; font-family:Arial, Helvetica, sans-serif;height:100%; margin-bottom:-1000px;padding-bottom:1007px;
 }
 ul.orders-list li a{
 	text-decoration:none; cursor:pointer;
@@ -734,7 +751,7 @@ ul.type_list li.products_cat cite{
 ul.type_list li.hadle a{
 	text-decoration:underline;margin:0 3px;
 }
-.clear{clear:both;}
+.clear{clear:both;height:0;line-height:0;overflow:hidden;}
 /*Admin Brand*/
 ul.brands_title li.name{
 	width:16%;text-align:center;
@@ -758,7 +775,7 @@ ul.brands_list{
 	background:#fff;border-bottom:1px solid #EEF8F9;clear:both;overflow:hidden;height:100%;
 }
 ul.brands_list li{
-	font-weight:normal;border-right:1px solid #EEF8F9;margin-bottom:-10000px;padding-bottom:10008px;
+	font-weight:normal;border-right:1px solid #EEF8F9;margin-bottom:-10000px;padding-bottom:10008px;word-break:break-all;
 }
 ul.brands_list li span,ul.brands_list li p{
 	margin:0 5px;
@@ -810,10 +827,13 @@ ul.articles_type li.hadle{
 	width:17%;border-right:0;
 }
 ul.articles_list{
-	background:#fff;border-bottom:1px solid #EEF8F9;
+	background:#fff;border-bottom:1px solid #EEF8F9;height:100%;overflow:hidden;
+}
+ul.articles_type p{
+	padding:0 5px;
 }
 ul.articles_list li{
-	background:#fff;border-right:1px solid #EEF8F9;font-weight:normal;padding-bottom:10000px;margin-bottom:-10000px;
+	background:#fff;border-right:1px solid #EEF8F9;font-weight:normal;padding-bottom:10007px;margin-bottom:-10000px;
 }
 ul.articles_list li a{
 	text-decoration:none; cursor:pointer;
@@ -1199,20 +1219,22 @@ ul.friendlinks_list li.link_logo img{ margin-top:-4px;border:1px solid #F1EFE2; 
 ul.advertisement{background:url(../img/uncheck.gif) repeat-x;height:31px;}
 ul.advertisement li a{ text-decoration:underline; cursor:default;}
 ul.advertisement li.ad_name{width:17%;}
-ul.advertisement li.ad_position{width:13%;}
+ul.advertisement li.ad_position{width:15%;}
 ul.advertisement li.type{width:12%;}
 ul.advertisement li.start_time{width:16%;}
 ul.advertisement li.end_time{width:17%;}
 ul.advertisement li.click{width:7%;}
 ul.advertisement li.order{width:7%;}
-ul.advertisement li.hadle{width:10%;border-right:0;}
+ul.advertisement li.hadle{width:8%;border-right:0;}
 ul.advertisement_list{background:#fff;border-bottom:1px solid #EEF8F9;clear:both;overflow:hidden;height:100%;}
-ul.advertisement_list li{border-right:1px solid #EEF8F9;font-weight:normal;padding:7px 0 10006px;margin-bottom:-10000px;}
+ul.advertisement_list li{
+	border-right:1px solid #EEF8F9;font-weight:normal;padding:7px 0 10006px;margin-bottom:-10000px;word-break:break-all;
+}
 ul.advertisement_list li a{ cursor:pointer;}
 ul.advertisement_list li.ad_name,ul.advertisement_list li.ad_position,ul.advertisement_list li.type{text-align:left;}
-ul.advertisement_list li.ad_name span,
-ul.advertisement_list li.ad_position span
-,ul.advertisement_list li.type span{margin:0 5px;}
+ul.advertisement_list li.ad_name p,
+ul.advertisement_list li.ad_position p
+,ul.advertisement_list li.type p{margin:0 5px;}
 /*=========================Admin Themes ==========================*/
 .themes_backup p.picture{float:left;padding:10px 25px 10px 40px;}
 .themes_backup ul.bak_haddle{float:left;padding-top:5px;}
@@ -1373,20 +1395,25 @@ p.language_manages span.handle a:hover{ font-weight:normal; text-decoration:unde
 p.language_manages span a img{ margin-right:2px;}
 p.language_manages img{ margin-top:-4px;*margin-top:0;}
 /*=========================Admin Iformations ==========================*/
+.content .flash_urhere{
+	border-bottom:1px solid #E0E0E0;
+}
 .informations{
-	border:1px solid #E0E0E0; background:#F9F9F9; margin:-5px 0 -15px;
+	border:1px solid #E0E0E0;margin:40px auto 50px;padding:60px 0;width:890px;
 }
 .informations p{
 	text-align:center;
 }
-.informations p.handdle a{
-	color:#20A24F; text-decoration:underline;
-}
 .informations p strong{
 	font-size:14px;
 }
-.informations p.handdle span{
+p.handdles{text-align:center;margin-bottom:15px;color:#CCCCCC;
+}
+p.handdles span{
 	margin:0 10px;
+}
+p.handdles a{
+	color:#20A24F; text-decoration:underline;
 }
 /*=========================Admin Unvalidates ==========================*/
 ul.unvalidate{background:url(../img/type.gif) repeat-x;height:31px;}
@@ -1550,6 +1577,7 @@ ul.memberlevels_list li.email,ul.memberlevels_list li.contact_phone{ text-align:
 ul.memberlevels_list li.email span,ul.memberlevels_list li.contact_phone span{margin-left:10px;}
 /*=========================Admin Users_Config ==========================*/
 .order_stat dt.config_lang{font-family:arial;}
+* html .order_stat dd{padding-top:3px;}
 .tongxun dl.bankcroll{font-family:arial;margin:3px 0;_margin:5px 0;}
 .tongxun dl.bankcroll a{color:#325962; text-decoration:none;}
 .tongxun dl.bankcroll font{color:#325962;font-size:12px;}
@@ -1682,10 +1710,7 @@ p.user_comments strong{
 	width:424px;
 }
 #loginout h1{
-	background:url(../img/loginout.png) repeat-x; position:relative; height:23px;
-}
-#loginout h1 b{
-	line-height:23px; color:#fff;margin-left:15px;font-size:12px;
+	background:url(../img/loginout.png) repeat-x; position:relative; height:23px;font-size:12px;color:#fff;line-height:23px;padding-left:15px;
 }
 #loginout h1 img.close{
 	top:0;right:0;position:absolute; cursor:pointer;
@@ -1693,9 +1718,14 @@ p.user_comments strong{
 #loginout .login-alettr{
 	width:383px; margin:0 auto; border-bottom:1px solid #E6E6E6; text-align:center; font-size:16px;color:#40A563; padding:25px 0;
 }
-#loginout .keyword{height:100%;overflow:hidden;width:55%;margin:0 auto;}
-#loginout .keyword dd{width:25%;}
-#loginout .keyword dd b{color:#40A563;}
+#loginout .keyword{
+	height:100%;overflow:hidden;width:47%;float:left;padding-left:10px;
+}
+#loginout .keyword dl{
+	height:100%;overflow:hidden;margin:3px 0;width:auto;
+}
+#loginout .keyword dd{width:30%;padding-top:4px;}
+#loginout .keyword dd b{color:#f00;}
 /* ----show message--- */
 #loginout .btns{
 	padding:18px 20px 15px 0; height:100%; overflow:hidden;
@@ -1718,12 +1748,22 @@ p.user_comments strong{
 #buyshop_box{border-left:1px solid #909592;border-right:1px solid #909592;background:#fff;width:422px}
 #buyshop_box dl{width:80%;margin:0 auto;}
 #buyshop_box dt{text-align:left;}
-#buyshop_box p.buy_btn{
+#buyshop_box .buy_btn{
 	text-align:right;padding:0 25px 10px;overflow:hidden;height:100%;
 }
-#buyshop_box p.buy_btn a{
+#buyshop_box .buy_btn a{
 	float:right;width:74px;height:22px;color:#fff;line-height:21px;*line-height:23px;text-align:center;background:url(../img/checkout_btn.gif) no-repeat;margin-left:3px;
 }
+#buyshop_box .buy_btn .cofirm{
+	margin-top:-3px;position:relative;float:left;
+}
+* html #buyshop_box .buy_btn .cofirm{
+	margin-top:-1px;
+}
+*+ html #buyshop_box .buy_btn .cofirm {
+margin-top:-1px;
+}
+
 #buyshop_box p.mar{margin:0 100px 0 0}
 #current-color {
         display: block;

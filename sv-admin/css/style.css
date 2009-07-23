@@ -32,13 +32,46 @@ p {
 a{
 	text-decoration:none;color:#333333;
 }
+.height_5{
+	height:5px;line-height:5px;overflow:hidden;clear:both;
+}
+.vmiddle{
+	vertical-align:middle;
+}
+.icons{
+	margin-top:-1px;
+}
+.checkbox{
+	vertical-align:middle;margin:-2px 4px 0 0;
+}
+* html .checkbox{margin:-4px 4px 0 0;}
+* html .icons{
+	margin-top:0;
+}
 select{border:1px solid #699F7D;}
+* html select{font-size:85%;}
 input{font-size:100%}
- img, div, input,h1,span{ behavior: url("/sv-admin/css/iepngfix.htc") }
+textarea{
+font-size:12px;overflow-y:scroll;
+}
+.border{border:1px solid #649776}
 .pointer{cursor:pointer;font-size:12px;}
-.radio{vertical-align:middle;margin:0 4px 0 0;}
+.radio{
+	vertical-align:middle;margin:-4px 4px 0 0;
+}
+* html .radio{
+	margin-top:-5px;
+}
+.float_l{float:left;}
 .no_border_input{vertical-align:middle;border:0;margin:0 0 0 0;}
+.green{color:#1FA550;}
 .green_2{color:#216339;}
+.green_3{
+	color:#89E487;
+}
+.green_4{
+	color:#2D955A;
+}
 .text_input{border:1px solid #78828D;}
 .green_border{border:1px solid #659B77;}
 .border_green_6{border:1px solid #699F7D;}

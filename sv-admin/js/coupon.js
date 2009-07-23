@@ -14,10 +14,11 @@ function searchUsers(){
 			alert(o.responseText);
 		}
 		 var sel = document.getElementById('source_select1');
+		  sel.innerHTML = "";
 	//	 alert(sel);
 		if (result.message){
              for (i = 0; i < result.message.length; i++ ){
-                 var opt = document.createElement("OPTION");
+                  var opt = document.createElement("OPTION");
                       opt.value = result.message[i]['User'].id;
                       opt.text  = result.message[i]['User'].name;
                       sel.options.add(opt);
@@ -56,6 +57,7 @@ function addCoupon (source,act,Id,isDouble,Type)
 		var request = YAHOO.util.Connect.asyncRequest('GET', sUrl, addCoupon_callback);
     }
   }
+  
   	var addCoupon_Success = function(o){
 		try{   
 			var result = YAHOO.lang.JSON.parse(o.responseText);   
@@ -69,7 +71,7 @@ function addCoupon (source,act,Id,isDouble,Type)
         	if (result.msg && !is_div){
         		   var newDiv  = document.createElement("div");
         		   newDiv.setAttribute("id",result.msg['id']);
-                   newhtml +="<p class='rel_list'><span class='handle'><input type='button' value='删除' onclick=\"dropCoupon("+result.coupon_id+",'"+result.action+"', "+result.msg['id']+");\"/></span>"+result.msg['name']+"</p>";
+                   newhtml +="<p class='rel_list'><span class='handle'><img src='"+root_all+"sv-admin/img/delete1.gif' style='margin:5px 0px 0px 0px;' onMouseout='onMouseout_deleteimg(this);' onmouseover='onmouseover_deleteimg(this);' onclick=\"dropCoupon("+result.coupon_id+",'"+result.action+"', "+result.msg['id']+");\" /></span>"+result.msg['name']+"</p>";
                    
                    newDiv.innerHTML = newhtml;
                    document.getElementById("relativies_box").appendChild(newDiv);
@@ -88,6 +90,13 @@ function addCoupon (source,act,Id,isDouble,Type)
 		timeout : 30000,
 		argument: {}
 	};
+	
+	function onMouseout_deleteimg(obj){
+		obj.src=root_all+"sv-admin/img/delete1.gif"
+	}
+	function onmouseover_deleteimg(obj){
+		obj.src=root_all+"sv-admin/img/delete2.gif"
+	}	
 	
 	//增加select项－－－按用户发放
 function dropCoupon(id,act,user_id)
@@ -199,5 +208,5 @@ function dropCoupon(id,act,user_id)
 			layer_dialog_show("请选择会员等级","",3);
 			return;
 		}			
-		document.send_by_form.submit();
+		document.forms.user_rank.submit();
 	}

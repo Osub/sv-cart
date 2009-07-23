@@ -280,36 +280,6 @@ var getAttrList_Success = function(o){
 	
 	
 	
-	//更新关联商品排序
-function update_orderby(relationId,sort,type){
-        YAHOO.example.container.manager.hideAll();
-		YAHOO.example.container.wait.show();
-		var sUrl = webroot_dir+"products/update_orderby/"+relationId+"/"+sort+"/"+type+"/"+Math.random();
-		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, updateOrderby_callback);
-}
-
-	var updateOrderby_Success = function(o){
-		//alert(o.responseText);
-		try{   
-			var result = YAHOO.lang.JSON.parse(o.responseText);   
-		}catch (e){   
-			alert("Invalid data");
-			YAHOO.example.container.wait.hide();
-		} 
-	
-        YAHOO.example.container.wait.hide();
-	}
-
-	var updateOrderby_Failure = function(result){
-		YAHOO.example.container.wait.hide();
-	}
-
-	var updateOrderby_callback ={
-		success:updateOrderby_Success,
-		failure:updateOrderby_Failure,
-		timeout : 3000,
-		argument: {}
-	};
 	//根据货号改文件名
 	function update_code(obj){
 		var product_code = document.getElementById('product_code').value;

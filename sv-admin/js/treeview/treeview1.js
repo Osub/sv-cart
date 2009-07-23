@@ -464,26 +464,27 @@ function img_is_show(obj){
 
 //删除图片
 var image_src;
+var img_src;
 function remove_img(result){
 	var img_hide_show		= document.getElementsByName('img_hide_show[]');
-	var img_src				= result.value;
 	image_src			= document.getElementById('img_address').value;
 	//alert(img_src);
+	img_src= result.value;
 	var arr = img_src.split('/');
-	if(confirm("确定删除图片"+arr[arr.length-1]+"?")){
-		YAHOO.example.container.wait.show();
-		var sUrls = webroot_dir+"images/remove_img/?img_src="+img_src;
-		
-		YAHOO.util.Connect.asyncRequest('POST', sUrls, load_show_remove_img_callback);//AJAX删除图片
-		
-	}
+	layer_dialog();
+	layer_dialog_show("确定删除图片"+arr[arr.length-1]+"?","remove_img_confirm()",5);
 
-	
+}
+function remove_img_confirm(){
+	YAHOO.example.container.wait.show();
+	var sUrls = webroot_dir+"images/remove_img/?img_src="+img_src;
+	YAHOO.util.Connect.asyncRequest('POST', sUrls, load_show_remove_img_callback);//AJAX删除图片
 }
 //图片加载回传
 var load_show_remove_img_Success = function(oResponse){
 		var urlimg = webroot_dir+"images/treeview/?path="+image_src;
         YAHOO.util.Connect.asyncRequest('POST', urlimg, load_show_img_callback);//重载图片
+        YAHOO.example.container.wait.hide();
 	}
 
 	var load_show_remove_img_Failure = function(o){

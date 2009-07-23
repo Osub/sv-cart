@@ -72,33 +72,41 @@ function searchProducts(){
 	         document.getElementById('product_cat').value = result.productinfo['CategoryI18n'].name;
 	         document.getElementById('product_brand').value = result.productinfo['BrandI18n'].name;
 	         document.getElementById('product_code').value = result.productinfo['Product'].code;
-             document.getElementById('shop_price').value = result.productinfo['Product'].product_price;
+             //document.getElementById('shop_price').value = result.productinfo['Product'].product_price;
              document.getElementById('product_id').value = result.productid;
              
 
-        // 显示价格：包括市场价、本店价（促销价）、会员价
-
+	    	// 显示价格：包括市场价、本店价（促销价）、会员价
+	    	var priceHtml = '<input type="radio" name="add_price[]" value="' + result.productinfo['Product'].market_price + '" />市场价 [' + result.productinfo['Product'].market_price + ']<br />' +
+	      		'<input type="radio" name="add_price[]" value="' + result.productinfo['Product'].shop_price + '" checked />本店价 [' + result.productinfo['Product'].shop_price + ']<br />';
+	    	for (var i = 0; i < result.userrankinfo.length; i++)
+	    	{
+	      		priceHtml += '<input type="radio" name="add_price[]" value="' + result.userrankinfo[i].ProductRank.product_price + '" />' + result.userrankinfo[i].UserRankI18n.name + ' [' + result.userrankinfo[i].ProductRank.product_price + ']<br />';
+	     	}
+	     	priceHtml += '<input type="radio" name="add_price[]" value="user_input" />' + '自定义价格' + '<input type="text" id="user_input_price" name="user_input_price" value="" style="width:60px;" /><br />';
+	     	document.getElementById('add_product_price').innerHTML = priceHtml;
+	    
          var specCnt = 0; // 规格的数量
          var attrHtml = '';
-         var attrCnt = result.productinfo['Attribute'].length;
+         var attrCnt = result.productinfo['ProductTypeAttribute'].length;
          for (i = 0; i < attrCnt; i++){
-               var valueCnt = result.productinfo['Attribute'][i].length;
+               var valueCnt = result.productinfo['ProductTypeAttribute'][i].length;
 
               // 规格
               if (valueCnt > 1){
               //alert("大于1")
-                   attrHtml += result.productinfo['Attribute'][i][0].attr_name + ': ';
+                   attrHtml += result.productinfo['ProductTypeAttribute'][i][0].attr_name + ': ';
                    for (var j = 0; j < valueCnt; j++){
-                         attrHtml += '<input type="radio" name="spec_' + specCnt + '" value="' + result.productinfo['Attribute'][i][j].product_attr_id + '"';
+                         attrHtml += '<input type="radio" name="spec_' + specCnt + '" value="' + result.productinfo['ProductTypeAttribute'][i][j].product_attr_id + '"';
                          if (j == 0){
                                 attrHtml += ' checked';
                           }
-                          attrHtml += ' />' + result.productinfo['Attribute'][i][j].attr_value;
-                          if (result.productinfo['Attribute'][i][j].attr_price > 0){
-                                  attrHtml += ' [+' + result.productinfo['Attribute'][i][j].attr_price + ']';
+                          attrHtml += ' />' + result.productinfo['ProductTypeAttribute'][i][j].attr_value;
+                          if (result.productinfo['ProductTypeAttribute'][i][j].attr_price > 0){
+                                  attrHtml += ' [+' + result.productinfo['ProductTypeAttribute'][i][j].attr_price + ']';
                           }
-                         else if (result.productinfo['Attribute'][i][j].attr_price < 0){
-                                   attrHtml += ' [-' + Math.abs(result.productinfo['Attribute'][i][j].attr_price) + ']';
+                         else if (result.productinfo['ProductTypeAttribute'][i][j].attr_price < 0){
+                                   attrHtml += ' [-' + Math.abs(result.productinfo['ProductTypeAttribute'][i][j].attr_price) + ']';
                           }
                    }
                    attrHtml += '<br />';
@@ -106,7 +114,7 @@ function searchProducts(){
              }
             // 属性
            else{
-                 attrHtml +='<input name="pro_attr" id="pro_attr" style="border:0" value="'+result.productinfo['Attribute'][i][0].attr_name + ': ' + result.productinfo['Attribute'][i][0].attr_value + '" readonly/><br />';
+                 attrHtml +='<input name="pro_attr" id="pro_attr" style="border:0" value="'+result.productinfo['ProductTypeAttribute'][i][0].attr_name + ': ' + result.productinfo['ProductTypeAttribute'][i][0].attr_value + '" readonly/><br />';
            }
         }
        document.getElementById('spec_count').value = specCnt;
@@ -124,20 +132,6 @@ function searchProducts(){
 		timeout : 3000,
 		argument: {}
 	};
-
-
-
-
-
-
-
-//
-
-
-
-
-
-
 
 /***************操作订单各种状态***************/
 /****order_action******/
@@ -251,9 +245,6 @@ function orderaction(obj){
         	}
         }
         
-        
-        
-        
  
         YAHOO.example.container.manager.hideAll();
 	    YAHOO.example.container.wait.show();	
@@ -272,6 +263,7 @@ function orderaction(obj){
 			alert(o.responseText);
 		}
 		layer_dialog();
+		
         layer_dialog_show(result.msg,"",3);
 		YAHOO.example.container.wait.hide();
      }
@@ -282,11 +274,6 @@ function orderaction(obj){
 		timeout : 300000,
 		argument: {}
 	};
-	
-	
-	
-	
-	
 	
 	////收货人地址
 	
@@ -327,13 +314,14 @@ function orderaction(obj){
 	//重载  操作信息
 	function loading_operate_information(id){
 		YAHOO.example.container.wait.show();
-		var sUrl = webroot_dir+"orders/ajax_view/"+id+"/?status=1";
+		var sUrl = webroot_dir+"orders/ajax_edit/"+id+"/?status=1";
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, loading_operate_information_callback);	
 	} 
 	var loading_operate_information_Success = function(o){
-		document.getElementById('ajax_view').innerHTML = o.responseText;
+	
+		document.getElementById('ajax_edit').innerHTML = o.responseText;
 		YAHOO.example.container.wait.hide();
-		show_regions(regions);
+		
 		
     }
 	var loading_operate_information_Failure = function(o){}
@@ -345,8 +333,6 @@ function orderaction(obj){
 	};
 
 
-	
-	
 	function order_show_hide(id){
 		document.getElementById(id).style.display = "block";
 		document.getElementById('handle_detail').style.display = "none";
@@ -362,11 +348,6 @@ function orderaction(obj){
 
 	}
 	
-	
-	
-	
-	
-	
 	function baseinfo_submit(){
 		//其他信息
 		var data_order_note=GetId('data_order_note').value;//备注
@@ -377,7 +358,6 @@ function orderaction(obj){
 		var data_order_invoice_type=GetId('data_order_invoice_type').value;//发票类型
 		var data_order_to_buyer=GetId('data_order_to_buyer').value;//商家给客户的留言
 		var data_order_postscript=GetId('data_order_postscript').value;//客户给商家留言
-			
 		
 		//收货人信息
 		var OrderConsignee=GetId('OrderConsignee').value;//收货人
@@ -444,7 +424,19 @@ function orderaction(obj){
 function insert_productses(){
 
 	var product_number = GetId('product_number').value;//数量
-	var shop_price = GetId('shop_price').value//价格
+	var add_product_price = GetName('add_price[]');//价格
+	var shop_price = "";
+	for( var i=0;i<add_product_price.length;i++){
+		if(add_product_price[i].checked){
+			shop_price = add_product_price[i].value;
+		}
+		if(add_product_price[i].checked&&add_product_price[i].value == "user_input"){
+			shop_price = GetId('user_input_price').value;
+		}
+	
+	}
+	//价格end
+	
 	var brand_id = GetId('brand_id').value//品牌
 	var product_brand = GetId('product_brand').value//品牌
 	var product_cat = GetId('product_cat').value//分类

@@ -1,0 +1,96 @@
+.content{
+	border-top:0; padding-bottom:32px;background:#E5F2DD;
+}
+.home_main{
+	width:756px; margin:0 auto; height:100%;overflow:hidden; 
+}
+#header{
+	min-width:1000px;width:expression((documentElement.clientWidth < 1000) ? "1000px" : "100%" ); margin: 0 auto;
+}
+#header .box{
+	background:#369557;
+}
+#header .box_2{
+	background:#75CB73;
+}
+#header .logo{
+	width:756px;margin:0 auto;
+}
+#header .select_lang{
+	color:#fff;float:right;
+}
+#footer{
+	bottom:30px;margin:5px auto 0;min-width:1000px;width:expression((documentElement.clientWidth < 1000) ? "1000px" : "100%");
+}
+#footer p{
+	text-align:center; font-family:Arial;color:#337E4B;padding:2px 0;
+}
+#footer p a{color:#337E4B;}
+#footer p a:hover{ text-decoration:underline;}
+#footer p.pwoered a{margin-left:5px;}
+/*=========================Admin Iformations ==========================*/
+.informations{
+	background:#F0F0F0 url('../img/1_03.gif') repeat-y;height:100%;overflow:hidden;padding-top:26px;
+}
+.informations .box{
+	margin:0 12px 20px;border-top:1px solid #ACA899;border-left:1px solid #ACA899;border-right:1px solid #F1EFE2;border-bottom:1px solid #F1EFE2;
+}
+.informations .scroll{
+	border-top:1px solid #716F64;border-left:1px solid #716F64;height:350px;overflow-y:scroll;padding:12px;
+}
+.informations li{
+	margin:5px 0;line-height:20px;
+}
+.informations li h4{
+	margin-top:15px;
+}
+.informations p.ok{
+	text-align:center;margin-bottom:10px;
+}
+.informations p.handdle a{
+	color:#20A24F; text-decoration:underline;
+}
+.informations p strong{
+	font-size:14px;
+}
+.informations p.handdle span{
+	margin:0 10px;
+}
+/*Check*/
+.check h3{
+	background:#E9F6CF;margin:0 4px 0 2px
+}
+.check table{
+	margin:5px auto 10px;
+}
+.check td{
+	padding:3px 0;
+}
+.agree{
+	text-align:center;margin:10px 0 0;
+}
+.agree p{
+	margin-bottom:4px;
+}
+.agree input.p{
+	vertical-align:middle;margin-top:-2px;*margin-top:-5px;
+}
+.agree input.button{
+	background:url(../img/long.gif);width:202px;height:21px;border:0;font-size:12px;cursor:pointer;
+}
+* html .agree input.button{
+	padding-top:3px;
+}
+.agree input.setup{
+	background:url(../img/upload.gif);width:94px;margin:0;
+}
+.setup{
+	margin:0 56px 10px;
+}
+.setup li{
+	height:100%;overflow:hidden;position:relative;
+}
+.setup h3{font-size:108%}
+.lang{float:left;background:#fff;position:relative;zoom:1;z-index:1;}
+.status{background:url(../img/bgline.gif) left 12px repeat-x;text-align:right;_position:absolute;_width:100%;left:0;zoom:1;z-index:-1;}
+.status span{background:#fff;padding-left:5px;}

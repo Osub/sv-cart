@@ -1,6 +1,6 @@
 /*
 */
-.yui-overlay,.yui-panel-container{visibility:hidden;position:absolute;z-index:2;}
+.svcart-overlay,.yui-panel-container{visibility:hidden;position:absolute;z-index:2;}
 .yui-panel-container form{margin:0;}
 .mask{z-index:1;display:none;position:absolute;top:0;left:0;right:0;bottom:0;}
 .mask.block-scrollbars{overflow:auto;}

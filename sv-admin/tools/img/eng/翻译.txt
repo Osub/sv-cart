@@ -1,0 +1,13 @@
+欢迎使用sv-cart = Welcome to use SV-Cart
+检查环境 = Check Enviroment
+配置系统 = Config System
+安装完成 = Install Complete
+系统环境 = System enviroment
+目录权限检测 = Check directory authorization
+模板可写性检查 = Check template writable
+APACHE功能 = Apache function
+数据库账号 = Database accounts
+管理员帐号 = Administrator accounts
+
+只需3步即可轻松完成安装! = only three setps,installation can be completed easily!
+

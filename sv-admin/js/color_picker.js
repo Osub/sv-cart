@@ -3,8 +3,8 @@
             var oColorPicker = new YAHOO.widget.ColorPicker(oColorPickerMenu.body.id, {
                                     showcontrols: false,
                                     images: {
-                                        PICKER_THUMB: webroot_dir+"img/picker_thumb.png",
-                                        HUE_THUMB: webroot_dir+"img/hue_thumb.png"
+                                        PICKER_THUMB: root_all+"sv-admin/img/picker_thumb.png",
+                                        HUE_THUMB: root_all+"sv-admin/img/hue_thumb.png"
                                     }
                                 });
 

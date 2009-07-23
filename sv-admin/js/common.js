@@ -7,8 +7,8 @@ YAHOO.example.container.manager = new YAHOO.widget.OverlayManager();
 
 
 YAHOO.example.container.wait = new YAHOO.widget.Panel("wait",{ width:"240px", fixedcenter:true, close:false, draggable:false, modal:true,visible:false,effect:{effect:YAHOO.widget.ContainerEffect.FADE, duration:0.5}});
-YAHOO.example.container.wait.setHeader("<div style='background:#fff;width:100%;padding-top:5px;margin-top:2px;text-align:center'>Loading, please wait...</div>");
-YAHOO.example.container.wait.setBody("<object data='"+webroot_dir+themePath+"img/loading.swf' type='application/x-shockwave-flash' width='240' height='30'><param name='movie' value='"+webroot_dir+"img/loading.swf' /><param name='wmode' value='Opaque'></object>");
+YAHOO.example.container.wait.setHeader("<div style='background:#fff;width:100%;padding-top:5px;margin-top:2px;text-align:center'>操作中,请稍后...</div>");
+YAHOO.example.container.wait.setBody("<object data='"+root_all+'sv-admin/'+themePath+"img/loading.swf' type='application/x-shockwave-flash' width='240' height='30'><param name='movie' value='"+root_all+"sv-admin/img/loading.swf' /><param name='wmode' value='Opaque'></object>");
 //YAHOO.example.container.wait.setBody("<object id='loading' data='../../img/loading.swf' type='application/x-shockwave-flash' width='240' height='40'><param name='movie' value='../../img/loading.swf' /><param name='wmode' value='Opaque'></object>");
 
 YAHOO.example.container.wait.render(document.body);
@@ -80,16 +80,75 @@ var getElementsByClassName=function(cn){
 		return $c(elemList);
 };
 
+function selectAll(obj, chk)
+{
+  if (chk == null)
+  {
+    chk = 'checkboxes';
+  }
+  var elems = obj.form.getElementsByTagName("INPUT");
+  for (var i=0; i < elems.length; i++)
+  {
+    if (elems[i].name == chk || elems[i].name == chk + "[]")
+    {
+      elems[i].checked = obj.checked;
+    }
+  }
+}
+
+
+/*******************************************************************
+leo 2009-1-5
+
+使用说明
+list:checkbox的VALUE集合
+obj:this
+chk:要选中的name复选框
+
+frm: this.form
+checkbox: this
+**************************************************** ***************/
+//操作员分批全选
+function check(list, obj,chk)
+{
+  var frm = obj.form;
+
+    for (i = 0; i < frm.elements.length; i++)
+    {
+      if (frm.elements[i].name == chk+"[]")
+      {
+          var regx = new RegExp(frm.elements[i].value + "(?!_)", "i");
+
+          if (list.search(regx) > -1) frm.elements[i].checked = obj.checked;
+      }
+    }
+}
+//操作员复选框全部选取
+function checkAll(frm, checkbox){
+	for(i = 0; i < frm.elements.length; i++){
+		if( frm.elements[i].type == "checkbox" ){
+			frm.elements[i].checked = checkbox.checked;
+		}
+	}
+}
+
+//赠品（特惠品）商品
+function special_preference(){
+	var sp_obj = document.getElementById('special_preference');
+	var good_obj = document.getElementById('source_select1');
+}
+
+/********************/
 	//window.open图片管理
 	function img_sel(number,assign_dir){
 		
 		var win = window.open (webroot_dir+"images/?status=1", 'newwindow', 'height=600, width=800, top=0, left=0, toolbar=no, menubar=yes, scrollbars=yes,resizable=yes,location=no, status=no');
-		document.getElementById('img_src_text_number').value = number;
-		document.getElementById("assign_dir").value = assign_dir;
+		GetId('img_src_text_number').value = number;
+		GetId("assign_dir").value = assign_dir;
 	}
 	function img_src_return(img_obj){
 		if( window_option_status == 1 ){
-			var img_src_text_number = window.opener.document.getElementById('img_src_text_number').value;
+			var img_src_text_number = window.opener.GetId('img_src_text_number').value;
 			var src_arr = img_obj.src.split("/");
 			var j=0;
 			var src_str = "";
@@ -97,10 +156,10 @@ var getElementsByClassName=function(cn){
 				src_str+="/"+src_arr[i];
 				j++;
 			}
-			window.opener.document.getElementById('upload_img_text_'+img_src_text_number).value = img_obj.name;
-			window.opener.document.getElementById('img_src_text_number').value = "";
-			window.opener.document.getElementById('logo_thumb_img_'+img_src_text_number).src = src_str;
-			window.opener.document.getElementById('logo_thumb_img_'+img_src_text_number).style.display="block";
+			window.opener.GetId('upload_img_text_'+img_src_text_number).value = img_obj.name;
+			window.opener.GetId('img_src_text_number').value = "";
+			window.opener.GetId('logo_thumb_img_'+img_src_text_number).src = src_str;
+			window.opener.GetId('logo_thumb_img_'+img_src_text_number).style.display="block";
 			window.close();
 		}
 	}
@@ -108,13 +167,13 @@ var getElementsByClassName=function(cn){
 	
 	function layer_dialog(){
 		tabView = new YAHOO.widget.TabView('contextPane'); 
-        layer_dialog_obj = new YAHOO.widget.Panel("layer_dialog", 
+        layer_dialog_obj = new YAHOO.widget.Overlay("layer_dialog", 
 							{
+								width:"422px",
 								visible:false,
 								draggable:false,
-								modal:true,
-								style:"margin 0 auto",
-								fixedcenter: true
+								modal:true,close: true,
+								fixedcenter: true,zindex:"40"
 							} 
 						); 
 		layer_dialog_obj.render();
@@ -123,13 +182,14 @@ var getElementsByClassName=function(cn){
 	/***************************提示信息********连接地址********3*******类拟alert					*/
 	/***************************提示信息********连接地址********4*******类拟alert   加刷新			*/
 	/***************************提示信息********函数************5*******类拟confirm但用法不一样		*/
-	function layer_dialog_show(dialog_content,url_or_function,button_num){
-		document.getElementById('layer_dialog').style.display = "block";
+	function layer_dialog_show(admin_dialog_content,url_or_function,button_num){
 		if(url_or_function!=''){
-			document.getElementById('confirm').value = url_or_function;//删除层传URL
+			GetId('confirm').value = url_or_function;//删除层传URL
 		}
-		document.getElementById('dialog_content').innerHTML = dialog_content;//对话框中的中文
-		var button_replace = document.getElementById('button_replace');
+		
+		//alert(document.getElementById("dialog_content").innerHTML);
+		GetId('admin_dialog_content').innerHTML = admin_dialog_content;//对话框中的中文
+		var button_replace = GetId('admin_button_replace');
 		if(button_num==3){
 			button_replace.innerHTML = "<a href='javascript:layer_dialog_obj.hide();' style='padding-right:50px;'>确定</a>";
 		}
@@ -137,17 +197,20 @@ var getElementsByClassName=function(cn){
 			button_replace.innerHTML = "<a href='javascript:window.location.reload();' style='padding-right:50px;'>确定</a>";
 		}
 		if(button_num==5){
-			button_replace.innerHTML = "<a href='javascript:layer_dialog_obj.hide();' >取消</a><a href='javascript:layer_dialog_hide();"+url_or_function+";' >确定</a>";
+			button_replace.innerHTML = "<a href='javascript:layer_dialog_obj.hide();' >取消</a><a href='javascript:layer_dialog_obj.hide();"+url_or_function+";' >确定</a>";
 
+		}
+		if(button_num==6){
+			button_replace.innerHTML = "<a href='javascript:layer_dialog_obj.hide();YAHOO.example.container.wait.hide();' >取消</a><a href="+url_or_function+" style='padding-right:50px;'>确定</a>";
 		}
 		layer_dialog_obj.show();
 	}
 	function layer_dialog_hide(){
-		document.getElementById('layer_dialog').style.display = "none";
+		GetId('layer_dialog').style.display = "none";
 	}
 	//确认后操作
 	function confirm_record(){
-		var sUrl = document.getElementById('confirm').value;
+		var sUrl = GetId('confirm').value;
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, remove_record_callback);
 	}
 	var remove_record_Success = function(o){
@@ -172,7 +235,9 @@ function close_message(){
 }
 
 function show_login_captcha(){
-	document.getElementById("authnum_img").src = webroot_dir+"authnums/get_authnums/?"+Math.random();
+	GetId("authnum_img_span").style.display = "";
+	GetId("authnum").value = "";
+	GetId("authnum_img").src = webroot_dir+"authnums/get_authnums/?"+Math.random();
 }
 
 //指定输入框为数字主要为排序
@@ -184,7 +249,7 @@ function check_input_num(obj){
 
 //用户信息管理
 function userinformations_check(){
-	var name = document.getElementById('name'+now_locale);
+	var name = GetId('name'+now_locale);
 	if( Trim(name.value,'g') == "" ){
 		layer_dialog();
 		layer_dialog_show("名称不能为空!","",3);
@@ -194,7 +259,7 @@ function userinformations_check(){
 }
 //用户设置管理
 function userconfigs_checks(){
-	var name = document.getElementById('nowname'+now_locale);
+	var name = GetId('nowname'+now_locale);
 	if( Trim(name.value,'g') == "" ){
 		layer_dialog();
 		layer_dialog_show("用户名称不能为空!","",3);
@@ -203,9 +268,9 @@ function userconfigs_checks(){
 }
 //商店设置管理 
 function userconfigs_check(){
-	var name = document.getElementById('name'+now_locale);
-	var config_group = document.getElementById('config_group');
-	var config_code = document.getElementById('config_code');
+	var name = GetId('name'+now_locale);
+	var config_group = GetId('config_group');
+	var config_code = GetId('config_code');
 	layer_dialog();
 	if( Trim( config_group.value,'g' ) == "" ){
 		layer_dialog_show("设置参数组不能为空!","",3);
@@ -223,8 +288,8 @@ function userconfigs_check(){
 }
 //访问权限管理 
 function competences_check(){
-	var operatoraction_parentid = document.getElementById('operatoraction_parentid');
-	var name = document.getElementById('name'+now_locale);
+	var operatoraction_parentid = GetId('operatoraction_parentid');
+	var name = GetId('name'+now_locale);
 	layer_dialog();
 	if( Trim( operatoraction_parentid.value,'g' ) == "" ){
 		layer_dialog_show("上级权限编号不能为空!","",3);
@@ -237,7 +302,7 @@ function competences_check(){
 }
 //菜单管理
 function menus_check(){
-	var name = document.getElementById('name'+now_locale);
+	var name = GetId('name'+now_locale);
 	layer_dialog();
 	if( Trim( name.value,'g' ) == "" ){
 		layer_dialog_show("菜单名称不能为空!","",3);
@@ -246,8 +311,8 @@ function menus_check(){
 }
 //邮件模板管理
 function mailtemplates_check(){
-	var title = document.getElementById('title'+now_locale);
-	var data_mailtemplate_code = document.getElementById('data_mailtemplate_code');
+	var title = GetId('title'+now_locale);
+	var data_mailtemplate_code = GetId('data_mailtemplate_code');
 
 	layer_dialog();
 	if( Trim( title.value,'g' ) == "" ){
@@ -262,11 +327,11 @@ function mailtemplates_check(){
 
 //语言管理 
 function languages_check(){
-	var language_name = document.getElementById('language_name');
-	var language_locale = document.getElementById('language_locale');
-	var language_charset = document.getElementById('language_charset');
-	var language_map = document.getElementById('language_map');
-	var language_google_translate_code = document.getElementById('language_google_translate_code');
+	var language_name = GetId('language_name');
+	var language_locale = GetId('language_locale');
+	var language_charset = GetId('language_charset');
+	var language_map = GetId('language_map');
+	var language_google_translate_code = GetId('language_google_translate_code');
 	layer_dialog();
 	if( Trim( language_name.value,'g' ) == "" ){
 		layer_dialog_show("语言名称不能为空!","",3);
@@ -291,7 +356,7 @@ function languages_check(){
 }
 //支付方式
 function payments_check(){
-	var name = document.getElementById('name'+now_locale);
+	var name = GetId('name'+now_locale);
 	layer_dialog();
 	if( Trim( name.value,'g' ) == "" ){
 		layer_dialog_show("支付方式名称不能为空!","",3);
@@ -302,7 +367,7 @@ function payments_check(){
 
 //配送区域
 function shippingments_check(){
-	var name = document.getElementById('name'+now_locale);
+	var name = GetId('name'+now_locale);
 	layer_dialog();
 	if( Trim( name.value,'g' ) == "" ){
 		layer_dialog_show("配送区域名称不能为空!","",3);
@@ -312,7 +377,7 @@ function shippingments_check(){
 
 //导航设置 
 function navigations_check(){
-	var name = document.getElementById('name'+now_locale);
+	var name = GetId('name'+now_locale);
 	layer_dialog();
 	if( Trim( name.value,'g' ) == "" ){
 		layer_dialog_show("导航名称不能为空!","",3);
@@ -321,9 +386,9 @@ function navigations_check(){
 }
 //广告管理
 function advertisements_check(){
-	var advertisement_name = document.getElementById('advertisement_name');
-	var data_AdvertisementI18n_start_time = document.getElementById('date');
-	var data_AdvertisementI18n_end_time = document.getElementById('date2');
+	var advertisement_name = GetId('advertisement_name_'+now_locale);
+	var data_AdvertisementI18n_start_time = GetId('date');
+	var data_AdvertisementI18n_end_time = GetId('date2');
 	layer_dialog();
 	if( Trim( advertisement_name.value,'g' ) == "" ){
 		layer_dialog_show("广告名称不能为空!","",3);
@@ -340,8 +405,8 @@ function advertisements_check(){
 }
 //友情链接管理 
 function links_check(){
-	var name = document.getElementById('name'+now_locale);
-	var url = document.getElementById('url'+now_locale);
+	var name = GetId('name'+now_locale);
+	var url = GetId('url'+now_locale);
 	layer_dialog();
 	if( Trim( name.value,'g' ) == "" ){
 		layer_dialog_show("连接名称不能为空!","",3);
@@ -356,17 +421,36 @@ function links_check(){
 
 //供应商管理
 function providers_check(){
-	var provider_name = document.getElementById('provider_name');
+	var provider_name = GetId('provider_name');
 	layer_dialog();
 	if( Trim( provider_name.value,'g' ) == "" ){
 		layer_dialog_show("供应商名称不能为空!","",3);
 		return false;
 	}
-
 }
+
+//Sitemap
+function sitemap_check(){
+	var name = GetId('name');
+	var url = GetId('url');
+	var orderby = GetId('orderby');
+	var cycle = GetId('cycle');
+	layer_dialog();
+	if( Trim( name.value,'g' ) == "" ){
+		layer_dialog_show("模块名称不能为空!","",3);
+		return false;
+	}
+	if( Trim( url.value,'g' ) == "" ){
+		layer_dialog_show("URL不能为空!","",3);
+		return false;
+	}
+	
+}
+
+
 //部门管理
 function departments_check(){
-	var name = document.getElementById('name'+now_locale);
+	var name = GetId('name'+now_locale);
 	layer_dialog();
 	if( Trim( name.value,'g' ) == "" ){
 		layer_dialog_show("部门名称不能为空!","",3);
@@ -376,7 +460,7 @@ function departments_check(){
 
 //角色管理
 function roles_check(){
-	var name = document.getElementById('name'+now_locale);
+	var name = GetId('name'+now_locale);
 	layer_dialog();
 	if( Trim( name.value,'g' ) == "" ){
 		layer_dialog_show("角色名称不能为空!","",3);
@@ -386,10 +470,10 @@ function roles_check(){
 
 //操作员管理 
 function operators_check(){
-	var OperatorName = document.getElementById('OperatorName');
-	var OperatorEmail = document.getElementById('OperatorEmail');
-	var NewPassword = document.getElementById('NewPassword');
-	var ConfirmPassword = document.getElementById('ConfirmPassword');
+	var OperatorName = GetId('OperatorName');
+	var OperatorEmail = GetId('OperatorEmail');
+	var NewPassword = GetId('NewPassword');
+	var ConfirmPassword = GetId('ConfirmPassword');
 	layer_dialog();
 	if( Trim( OperatorName.value,'g' ) == "" ){
 		layer_dialog_show("用户名不能为空!","",3);
@@ -416,7 +500,7 @@ function operators_check(){
 
 //实体店管理
 function stores_check(){
-	var name = document.getElementById('name'+now_locale);
+	var name = GetId('name'+now_locale);
 	layer_dialog();
 	if( Trim( name.value,'g' ) == "" ){
 		layer_dialog_show("实体店名称不能为空!","",3);
@@ -425,9 +509,9 @@ function stores_check(){
 }
 //会员管理
 function users_check(){
-	var user_email = document.getElementById('user_email');
-	var user_new_password = document.getElementById('user_new_password');
-	var user_new_password2 = document.getElementById('user_new_password2');
+	var user_email = GetId('user_email');
+	var user_new_password = GetId('user_new_password');
+	var user_new_password2 = GetId('user_new_password2');
 	
 	layer_dialog();
 	if( Trim( user_email.value,'g' ) == "" ){
@@ -445,8 +529,12 @@ function users_check(){
 }
 //商品管理
 function products_check(){
-	var ProductsCategory = document.getElementById('ProductsCategory');
-	var productes_name = document.getElementById('product_name_'+now_locale);
+	var ProductsCategory = GetId('ProductsCategory');
+	var productes_name = GetId('product_name_'+now_locale);
+	var ProductPromotionStatus = GetId('ProductPromotionStatus');
+	var ProductPromotionPrice= GetId('ProductPromotionPrice');
+	var date= GetId('date');
+	var date2= GetId('date2');	
 	layer_dialog();
 	if( Trim( productes_name.value,'g' ) == "" ){
 		layer_dialog_show("商品名称不能为空!","",3);
@@ -454,15 +542,50 @@ function products_check(){
 	}
 	if(ProductsCategory.value==0){
 		layer_dialog_show("商品分类必须选择!","",3);
-		return false;
-	
+		return false;	
+	}
+	if(ProductPromotionStatus.checked){
+		if( Trim( ProductPromotionPrice.value,'g' ) == "" ){
+			layer_dialog_show("促销价不能为空!","",3);
+			return false;
+		}
+		if( Trim( date.value,'g' ) == "" || Trim( date2.value,'g' ) == "" ){
+			layer_dialog_show("促销日期不能为空!","",3);
+			return false;
+		}			
 	}
 
 }
+function product_code_unique(obj,product_id){
+	//YAHOO.example.container.wait.show();
+	var sUrl = webroot_dir+"products/product_code_unique/"+obj.value+"/"+product_id;
 
+	var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, product_code_unique_callback);
+}
+var product_code_unique_Success = function(o){
+	var productbassic = document.getElementById("productbassic");
+	//YAHOO.example.container.wait.hide();
+	if(o.responseText){
+	}else{
+		var pcode = GetName("data[Product][code]");
+		pcode[0].value = "";
+		layer_dialog();
+		layer_dialog_show("货号已经存在请重新输入!","",3);
+	}
+	
+}
+var product_code_unique_Failure = function(o){
+	YAHOO.example.container.wait.hide();
+}
+var product_code_unique_callback ={
+	success:product_code_unique_Success,
+	failure:product_code_unique_Failure,
+	timeout : 30000,
+	argument: {}
+};
 //商品类型管理 
 function productstypes_check(){
-	var name = document.getElementById('name'+now_locale);
+	var name = GetId('name'+now_locale);
 	layer_dialog();
 	if( Trim( name.value,'g' ) == "" ){
 		layer_dialog_show("商品类型名称不能为空!","",3);
@@ -471,7 +594,7 @@ function productstypes_check(){
 }
 //商品属性管理
 function products_attribute(){
-	var attribute_name = document.getElementById("attribute_name_"+now_locale);
+	var attribute_name = GetId("attribute_name_"+now_locale);
 	layer_dialog();
 	if( Trim( attribute_name.value,'g' ) == "" ){
 		layer_dialog_show("属性名称不能为空!","",3);
@@ -480,7 +603,7 @@ function products_attribute(){
 }
 //商品分类管理 
 function categories_P_check(){
-	var category_name = document.getElementById('category_name_'+now_locale);
+	var category_name = GetId('category_name_'+now_locale);
 	layer_dialog();
 	if( Trim( category_name.value,'g' ) == "" ){
 		layer_dialog_show("分类名称不能为空!","",3);
@@ -489,7 +612,7 @@ function categories_P_check(){
 }
 //文章分类管理 
 function categories_A_check(){
-	var category_name = document.getElementById('category_name_'+now_locale);
+	var category_name = GetId('category_name_'+now_locale);
 	layer_dialog();
 	if( Trim( category_name.value,'g' ) == "" ){
 		layer_dialog_show("分类名称不能为空!","",3);
@@ -499,7 +622,7 @@ function categories_A_check(){
 }
 //品牌管理
 function brands_check(){
-	var brand_name = document.getElementById('brand_name_'+now_locale);
+	var brand_name = GetId('brand_name_'+now_locale);
 	layer_dialog();
 	if( Trim( brand_name.value,'g' ) == "" ){
 		layer_dialog_show("品牌名称不能为空!","",3);
@@ -509,7 +632,7 @@ function brands_check(){
 }
 //文章管理
 function articles_check(){
-	var article_name = document.getElementById('article_name_'+now_locale);
+	var article_name = GetId('article_name_'+now_locale);
 	layer_dialog();
 	if( Trim( article_name.value,'g' ) == "" ){
 		layer_dialog_show("文章标题不能为空!","",3);
@@ -519,7 +642,7 @@ function articles_check(){
 }
 //会员等级管理 
 function memberlevels_check(){
-	var user_rank_name = document.getElementById('user_rank_name_'+now_locale);
+	var user_rank_name = GetId('user_rank_name_'+now_locale);
 	layer_dialog();
 	if( Trim( user_rank_name.value,'g' ) == "" ){
 		layer_dialog_show("会员等级名称不能为空!","",3);
@@ -528,25 +651,66 @@ function memberlevels_check(){
 }
 //虚拟卡管理 
 function virtual_cards_check(){
-	var ProductsCategory = document.getElementById('ProductsCategory');
-	var virtual_cards_name = document.getElementById('virtual_cards_name_'+now_locale);
-	layer_dialog();
+	var ProductsCategory = GetId('ProductsCategory');
+	var virtual_cards_name = GetId('virtual_cards_name_'+now_locale);
+	var ProductPromotionStatus = GetId('ProductPromotionStatus');
+	var ProductPromotionPrice= GetId('ProductPromotionPrice');
+	var date= GetId('date');
+	var date2= GetId('date2');	
+	layer_dialog();	
 	if( Trim( virtual_cards_name.value,'g' ) == "" ){
 		layer_dialog_show("商品名称不能为空!","",3);
 		return false;
 	}
 	if(ProductsCategory.value==0){
 		layer_dialog_show("商品分类必须选择!","",3);
-		return false;
-	
+		return false;	
 	}
-
+	if(ProductPromotionStatus.checked){
+		if( Trim( ProductPromotionPrice.value,'g' ) == "" ){
+			layer_dialog_show("促销价不能为空!","",3);
+			return false;
+		}
+		if( Trim( date.value,'g' ) == "" || Trim( date2.value,'g' ) == "" ){
+			layer_dialog_show("促销日期不能为空!","",3);
+			return false;
+		}
+	}	
 }
+//下载服务管理 
+function download_product_check(){
+	var ProductsCategory = GetId('ProductsCategory');
+	var Product_name = GetId('down_name_'+now_locale);
+	var ProductPromotionStatus = GetId('ProductPromotionStatus');
+	var ProductPromotionPrice= GetId('ProductPromotionPrice');
+	var date= GetId('date');
+	var date2= GetId('date2');
+	layer_dialog();
+	if( Trim( Product_name.value,'g' ) == "" ){
+		layer_dialog_show("商品名称不能为空!","",3);
+		return false;
+	}
+	if(ProductsCategory.value==0){
+		layer_dialog_show("商品分类必须选择!","",3);
+		return false;	
+	}
+	if(ProductPromotionStatus.checked){
+		if( Trim( ProductPromotionPrice.value,'g' ) == "" ){
+			layer_dialog_show("促销价不能为空!","",3);
+			return false;
+		}
+		if( Trim( date.value,'g' ) == "" || Trim( date2.value,'g' ) == "" ){
+			layer_dialog_show("促销日期不能为空!","",3);
+			return false;
+		}			
+	}		
+}
+
 //促销活动管理
 function promotions_check(){
-	var promotion_title = document.getElementById('promotion_title_'+now_locale);
-	var data_Promotion_end_time = document.getElementById("date2");
-	var data_Promotion_start_time = document.getElementById("date");
+	var promotion_title = GetId('promotion_title_'+now_locale);
+	var data_Promotion_end_time = GetId("date2");
+	var data_Promotion_start_time = GetId("date");
 	layer_dialog();
 	if( Trim( promotion_title.value,'g' ) == "" ){
 		layer_dialog_show("商品名称不能为空!","",3);
@@ -563,7 +727,7 @@ function promotions_check(){
 }
 //贺卡管理
 function cards_check(){
-	var cards_name = document.getElementById('cards_name_'+now_locale);
+	var cards_name = GetId('cards_name_'+now_locale);
 	layer_dialog();
 	if( Trim( cards_name.value,'g' ) == "" ){
 		layer_dialog_show("贺卡名称不能为空!","",3);
@@ -574,11 +738,11 @@ function cards_check(){
 
 //电子优惠券管理
 function coupons_check(){
-	var coupontype_name = document.getElementById('coupontype_name_'+now_locale);
-	var date = document.getElementById("date");
-	var date2 = document.getElementById("date2");
-	var date3 = document.getElementById("date3");
-	var date4 = document.getElementById("date4");
+	var coupontype_name = GetId('coupontype_name_'+now_locale);
+	var date = GetId("date");
+	var date2 = GetId("date2");
+	var date3 = GetId("date3");
+	var date4 = GetId("date4");
 	layer_dialog();
 	if( Trim( coupontype_name.value,'g' ) == "" ){
 		layer_dialog_show("电子优惠券名称不能为空!","",3);
@@ -605,7 +769,7 @@ function coupons_check(){
 }
 //包装
 function packages_check(){
-	var Packaging_name = document.getElementById('Packaging_name_'+now_locale);
+	var Packaging_name = GetId('Packaging_name_'+now_locale);
 	layer_dialog();
 	if( Trim( Packaging_name.value,'g' ) == "" ){
 		layer_dialog_show("包装名称不能为空!","",3);
@@ -615,7 +779,7 @@ function packages_check(){
 }
 //专题管理
 function topics_check(){
-	var topic_title = document.getElementById('topic_title_'+now_locale);
+	var topic_title = GetId('topic_title_'+now_locale);
 	layer_dialog();
 	if( Trim( topic_title.value,'g' ) == "" ){
 		layer_dialog_show("专题名称不能为空!","",3);
@@ -655,7 +819,7 @@ function Trim(str,is_global){
 
 function check() { 
 	var lee=document.forms["login_form"].cookie;
-	var cookie = document.getElementById("cookie").value;
+	var cookie = GetId("cookie").value;
 	if (lee.checked == true){ 
 		ajax_login(cookie);
 	}else{ 
@@ -672,9 +836,9 @@ function login_event(e){
 	}
 	if(keynum==13)
 	{	
-		var UserName = document.getElementById('operator_id').value;
-		var UserPassword = document.getElementById('operator_pwd').value;
-		var UserCaptcha = document.getElementById('authnum').value;
+		var UserName = GetId('operator_id').value;
+		var UserPassword = GetId('operator_pwd').value;
+		var UserCaptcha = GetId('authnum').value;
 		if(UserName != "" && UserPassword != "" && UserCaptcha != ""){
 			check();
 		}
@@ -683,11 +847,11 @@ function login_event(e){
 }*/
 function ajax_login(cookie){
 		YAHOO.example.container.wait.show();
-		var operator_pwd =document.getElementById("operator_pwd").value;
-		var operator_id =document.getElementById("operator_id").value;
-		var authnum = document.getElementById("authnum").value;
-		var locale = document.getElementById("locale").value;
-		var oCheckbox   =document.getElementById("cookie");  
+		var operator_pwd =GetId("operator_pwd").value;
+		var operator_id =GetId("operator_id").value;
+		var authnum = GetId("authnum").value;
+		var locale = GetId("locale").value;
+		var oCheckbox   =GetId("cookie");  
 		var sUrl = webroot_dir+"pages/act_login/";
 		//check();
 		var postData = "operator_pwd="+operator_pwd+"&operator="+operator_id+"&authnum="+authnum+"&locale="+locale+"&cookie="+cookie;
@@ -703,12 +867,17 @@ function ajax_login(cookie){
 			alert(o.responseText); 
 			YAHOO.example.container.wait.hide();
 		} 
+		if(result.type=="5"){
+			window.location.href=result.url
+			return;
+		}
+		
 		if(result.type=="0"){
 			window.location.href= webroot_dir+"pages/home";
 		}else{
-			document.getElementById('message_content').innerHTML = result.message;
+			GetId('message_content').innerHTML = result.message;
 			show_login_captcha();
-			//document.getElementById("login_msg").innerHTML = result.error_msg;
+			//GetId("login_msg").innerHTML = result.error_msg;
 			YAHOO.example.container.message.show();	
 			YAHOO.example.container.wait.hide();
 		}
@@ -761,3 +930,59 @@ var ajax_pagers_callback ={
 	timeout : 30000,
 	argument: {}
 };
+
+
+
+
+//后台问号帮助信息
+function help_show_or_hide(text_id){
+	var text_help = GetId(text_id);
+	if(text_help.style.display  == "none"){
+		text_help.style.display  = "block";
+	}else{
+		text_help.style.display  = "none";
+	
+	}
+}
+
+
+
+
+
+/*
+	function show_pic_original(img){
+		var width = img.clientWidth;
+		var height = img.clientHeight;
+		if(height > 500){
+			var num = 500 / height;
+			height = 500;
+			width = width * num;
+		}
+	    if(width > 800){
+			var num = 800 / width;
+			height = height * num;
+		}
+		YAHOO.example.container.message_img_show = new YAHOO.widget.Panel("message_img_show",
+					{
+						width:width+"px",
+						zIndex:1000,
+						fixedcenter:false, 
+						close:false, 
+						draggable:false, 
+						modal:true,
+						visible:false,
+						effect:{
+							effect:YAHOO.widget.ContainerEffect.FADE, 
+							duration:0.5
+						}
+					}
+		);
+		YAHOO.example.container.message_img_show.setBody("<div id='message_img_show'></div>");
+		YAHOO.example.container.message_img_show.render(document.body);
+		GetId('message_img_show').innerHTML = "<div onclick='javascript:close_img_show();'><img src='"+img.src+"'/></div>";
+		YAHOO.example.container.message_img_show.show();
+
+	}
+	function close_img_show(){
+		YAHOO.example.container.message_img_show.hide();
+	}*/

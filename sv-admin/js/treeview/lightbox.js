@@ -1,8 +1,8 @@
 
 LightboxOptions = Object.extend({
 
-    fileLoadingImage:        webroot_dir+'img/loading.gif',     
-    fileBottomNavCloseImage: webroot_dir+'img/closelabel.gif',
+    fileLoadingImage:        root_all+'sv-admin/img/loading.gif',     
+    fileBottomNavCloseImage: root_all+'sv-admin/img/closelabel.gif',
 
     overlayOpacity: 0.8,  
 
