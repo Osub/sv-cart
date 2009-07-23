@@ -1,0 +1,1019 @@
+/*****************************************************************************
+ * SV-CART CSS
+ * ===========================================================================
+ * 版权所有  上海实玮网络科技有限公司，并保留所有权利。
+ * 网站地址: http://www.seevia.cn
+ * ---------------------------------------------------------------------------
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用；
+ * 不允许对程序代码以任何形式任何目的的再发布。
+ * ===========================================================================
+ * $开发: 上海实玮$
+ * $Id: index.php 900 2009-03-16 12:10:20Z huangbo $
+*****************************************************************************/
+body {background:#fff;}
+a{text-decoration:none;color:#666;}
+input.text_input{border:1px solid #FED5AA;}
+.text_input{border:1px solid #FED5AA;}
+hr{border:none;border-top:1px solid #FEA34C;}
+
+/*Color*/
+.green_8{color:#889D95;}
+.green_3{color:#FF800E;}
+.color_4{color:#FF5400;}
+.color_5{color:#535353;}
+.color_f9{color:#FF9000;}
+.color_53{color:#535353;}
+.fff{color:#fff}
+
+/*=========================header==========================*/
+#header{
+	background:#fff;border-bottom:5px solid #FF9E56;
+}
+.member{
+	background:#fff;
+}
+#search .enter_text{
+	border:1px solid #535353;
+}
+.tools{
+	background:#fff;
+}
+
+#footer{
+	background:#fff;color:#B4B4B4;border-top:5px solid #FF9E56;
+}
+#footer .link{color:#F88808;}
+#footer .link a{color:#F88808;}
+.submit_btn input.submit{
+	background:url(../img/orange/cencle.gif) no-repeat;border:0;
+}
+.submit_btn input.reset{
+	background:url(../img/orange/btn_reset.gif) no-repeat;border:0;
+}
+
+h1.headers{
+	color:#FFFFFF;background:url(../img/orange/headers.gif) 0 -36px repeat-x;
+}
+h1.headers span.l{
+	background:url(../img/orange/headers.gif) 0 0 no-repeat;
+}
+h1.headers span.r{
+	background:url(../img/orange/headers.gif) 100% -72px no-repeat;
+}
+
+/*buttons*/
+.gray_btn a{
+	background:url(../img/orange/find.gif) 100% -20px no-repeat;
+}
+.gray_btn a span{
+	background:url(../img/orange/find.gif) 0 0 no-repeat;
+}
+
+.not{color:#FF5400;}
+
+/*================== Left ====================*/
+.category_box .box{
+	border-left:1px solid #FEA34C;border-right:1px solid #FEA34C;
+}
+.category_box h3{
+	background:url(../img/orange/category.gif) 0 -29px repeat-x;color:#fff;
+}
+.category_box h3 .l{
+	background:url(../img/orange/category.gif) 0 0 no-repeat;
+}
+.category_box h3 .r{
+	background:url(../img/orange/category.gif) 0 -58px no-repeat;
+}
+ul.left_menus .Nav a{color:#F85808;}
+ul.left_menus .Nav a:hover{background:url(../img/orange/over_bg.gif) bottom no-repeat;}
+.category_box .Help ul li a{
+	background:none;color:#F85808;
+}
+/*================== Home item_list ====================*/
+#container #Item_List{
+	border:1px solid #FEA34C;
+}
+#Item_List ul li .info .name a{
+	color:#F85808;
+}
+#Item_List ul li .info .Price{color:#6D6D6D;}
+#Item_List ul li .info .stow{color:#F85808;}
+#Item_List ul li .info .stow a{color:#F85808;}
+#Item_List ul li .pic img{
+	border:1px solid #ccc;
+}
+/*================== Home News ====================*/
+#News p.text{
+	color:#FF800E;
+}
+/*  ==================== advaearch/login ====================  */
+#advanced_search .title,#User_Login .title,#language .title{
+	background:url(../img/orange/login_title.png) no-repeat;color:#fff;
+}
+#User_Login .keywords{
+	background:#FFFFFF;border-right:1px solid #E65C1E;border-left:1px solid #E65C1E;
+}
+#advanced_search .keywords{
+	background:#FFFFFF;border-right:1px solid #E65C1E;border-left:1px solid #E65C1E;
+}
+#advanced_search .keywords dl dt{
+	color:#FF800E;
+}
+#User_Login .keywords dl dt{
+	color:#FF800E;
+}
+#advanced_search .keywords dl dd .enter,#User_Login .keywords dl dd .enter{
+	color:#64765B;
+}
+#advanced_search .keywords dl dd .selects,#User_Login .keywords dl dd .selects{
+	color:#64765B;
+}
+#advanced_search .keywords dl dd .Price,#User_Login .keywords dl dd .Price{
+	color:#64765B;
+}
+#advanced_search .keywords dl dd span,#User_Login .keywords dl dd span{
+	color:#7D9BBD;
+}
+#advanced_search .keywords dl .passbox img,#User_Login .keywords dl .passbox img{
+	border:1px solid #949695;
+}
+#User_Login .keywords dl .logon a{
+	background:url(../img/orange/logon_img.gif) no-repeat;color:#fff;
+}
+.keywords dl .forget_pass a{
+	color:#FF800E;
+}
+/*  ==================== catedory_products ====================  */
+#Right #Item_ListBox{
+	border:1px solid #004B1C;
+}
+#Right .View_item{
+	color:#ffffff;background:#FE9E3E;
+}
+#Right .View_item .select_view select{
+	color:#535353;
+}
+#Item_ListBox .Title_Item{
+	color:#F85808;background:#DDF4E6;
+}
+#Item_ListBox .Title_Item .select_Territory select{
+	color:#535353;
+}
+#Item_ListBox ul li .pic img{
+	border:1px solid #E3E3E3;
+}
+#Item_ListBox ul li .right .item_info{
+	color:#F85808;
+}
+.right .item_info .name{
+	color:#F8A868;
+}
+.right .item_info .name a{
+	color:#F8A868;
+}
+.right .item_info .Price{
+	color:#F85808;
+}
+#Item_ListBox ul li .right .btn_list{
+	color:#0756A3;
+}
+/*  ==================== ur_here ====================  */
+#ur_here,#ur_here a{color:#F85808;}
+/*  ==================== pager ====================  */
+#pager p{
+	color:#F8A868;
+}
+#pager p a{
+	color:#F85808;
+}
+#pager p a:hover{
+	color:#F8A868;
+}
+#pager p span input{
+	border:1px solid #FEA34C;
+}
+#pager .totally{color:#F85808;}
+/*========================= Brands_list ==========================*/
+#globalBrand{
+	border:1px solid #004B1C;
+}
+#globalBrand h1{
+	background:#DDF4E6;color:#4BC679;
+}
+.Brand_list p span a:hover{
+	color:#F8A868;
+}
+.Brand_list p span a{
+	color:#F85808;
+}
+/*  ==================== products ====================  */
+#globalMain #main_left h1{
+	color:#F85808;
+}
+#main_left .pic{
+	background:url(../img/orange/Shadow_bg.gif) right bottom;
+}
+#main_left .pic img{
+	border:1px solid #004B1C;
+}
+#globalMain #main_right h1{
+	color:#fff;background:url(../img/orange/iteminfo_title.gif) no-repeat left;
+}
+#main_right #item_infos{
+	border:1px solid #004B1C;
+}
+.item_box ul li{
+	color:#808080;
+}
+.item_box ul li.btn_list{
+	color:#808080;
+}
+.item_box ul li .price{
+	color:#FF6502;
+}
+.item_box h2{
+	color:#F85808;
+}
+#item_info h2{
+	color:#F85808;
+}
+#item_info .infos{
+	color:#808080;
+	
+}
+#main_right #Correlation .item_title,#main_right #Correlation_article .item_title{
+	background:#fff;color:#F85808;
+}
+#item_info .yui-content{
+	border-top:1px solid #004B1C;
+}
+/*  ==================== carts ====================  */
+
+#Right #Products{
+	background:#fff;border:1px solid #FEA34C;
+}
+#Products .ur_here{
+	color:#40AAFE;
+}
+#Products .ur_here a{
+	color:#40AAFE;
+}
+#Products .Title_list{
+	color:#F85808;border-bottom:1px solid #004B1C;
+}
+#Products #Item_box{
+	border-bottom:1px solid #FEA34C;
+}
+#Item_box .Item_info{
+	color:#F8A868;
+}
+#Item_box .Item_info a{
+	color:#F8A868;
+}
+#Item_box .Item_info .pic img{
+	border:1px solid #eee;
+}
+#Item_box .Item_Price span{
+	color:#F8A868;
+}
+#Item_box .Item_Price .Price{
+	color:#03B746;
+	
+}
+#Item_box .Item_Price .save{
+	color:#FF9C01;
+}
+#Item_box .Number_select .Number input{
+	width:60px;
+	text-align:center;
+	border:none;
+	background:none;
+	color:#F8A868;
+}
+#Item_box .Saves{
+	float:left;
+	width:90px;
+}
+#Item_box .Saves .Number{
+	color:#F8A868;
+}
+#Item_box .Sums .Number{
+	color:#F8A868;
+}
+#Products #balance span{
+	color:#F85808;
+}
+/*========================= articles ==========================*/
+.information h1 .more a,.activity_column h1 .more a{
+	color:#00FF78;
+}
+.information .infos h2{
+	color:#F8A868;
+}
+.information .infos{
+	border:1px solid #004B1C;
+}
+.information .infos .txt{
+	color:#8F8F8F;
+}
+.activity_column h1{
+	background:url(../img/orange/clunm_bg.gif) left no-repeat;
+}
+.activity_column .main{
+	border:1px solid #004B1C;
+}
+.activity_column .main .subject{
+	border-bottom:1px dashed #C6C6C6;
+}
+/*========================= carts checkout ==========================*/
+#globalBalance{
+	border-top:1px solid #004B1C;background:url(../img/orange/Balance_bg.gif) repeat-y;
+}
+#globalBalance .buy_title{
+	color:#30A65D;
+}
+#globalBalance .list_title{
+	border-bottom:2px solid #BBEBA5;color:#407B38;
+}
+#globalBalance .list_title .pic img{
+	border:1px solid #E2E2E2;
+}
+#globalBalance .lists{
+	border-bottom:none;color:#64765B;
+}
+#globalBalance .lists a{
+	color:#004B17;
+}
+#globalBalance .buy_allmeny{
+	color:#64765B;border-top:2px solid #BBEBA5;
+}
+#Balance_info{
+	border-bottom:1px solid #004B1C;background:url(../img/orange/Balance_bg.gif) repeat-y;
+}
+#Balance_info .address{
+	color:#30A65D;
+}
+#Balance_info .new_add{
+	color:#30A65D;background:#4BC679;
+}
+#Balance_info .address_title{
+	background:#DDF4E6;color:#F8A868;border-bottom:1px solid #19AC5D;
+}
+#Balance_info .address_list{
+	background:#fff;color:#F8A868;border-bottom:1px solid #4BC679;
+}
+#Balance_info table.address_list td{
+	border-right:1px solid #4BC679;border-bottom:1px solid #4BC679;
+}
+#Balance_info table.address_list td.handel{
+	border-right:none;
+}
+#Balance_info table.address_list .send_title td{
+	border-right:1px solid #4BC679;border-bottom:1px solid #4BC679;
+}
+#Balance_info table.address_list .send_title td.handel{
+	border-right:none;
+}
+#Balance_info table.address_list .list td{
+	border-bottom:none;
+}
+
+#Balance_info .item_price{
+	color:#4BC679;background:#DDF4E6;
+}
+#Balance_info .order_integral{
+	color:#fff;
+}
+#Balance_info .item_price .sum_meny{
+	color:#F8A868
+}
+.Balance_alltitle{
+	background:url(../img/orange/balancel_bg.png) left no-repeat;
+}
+.Balance_alltitle span{
+	color:#fff;
+}
+#globalBalance .back_home a:hover{
+	color:#FF9000;
+}
+/*==================== Language =========================*/
+#language ul{
+	border-left:1px solid #FEA34C;border-right:1px solid #FEA34C;background:#fff;
+}
+#language li img{
+	border:1px solid #e1e1e1;
+}
+/*========================= Search-out ==========================*/
+#noproducts{
+	border:1px solid #004B1C;
+}
+#noproducts p{
+	color:#0CB152;
+}
+/*========================= History ==========================*/
+
+.history ul li .pic img{
+	border:1px solid #eee;
+}
+.history ul li .price{
+	color:#F8A868;
+}
+/*  ==================== Menber Center ====================  */
+#infos #wellcom_info{
+	color:#FEA34C;
+}
+#infos #wellcom_info p.atte{
+	color:#F8A868;
+}
+#infos #wellcom_info p.atte a{
+	color:#FEA34C;
+}
+#infos #wellcom_info h2{
+	color:#FEA34C;
+}
+#infos .affiche{
+	color:#FEA34C;background:#FFECDA;border:1px solid #FEA34C;border-left:none;border-right:none;
+}
+#infos #money_info{
+	color:#F8A868;
+}
+#Products_box #infos{
+	border:1px solid #FEA34C;
+}
+/*  ==================== Favorites ====================  */
+#Item_box .Item_info .info span.item_name{
+	color:#F8A868;
+}
+#Item_box .mart .Goods_Price{
+	color:#F85808;
+}
+#Item_box .Number_select .goodprice{
+	color:#f00;
+}
+#Products .collection{
+	color:#F85808;border-bottom:1px solid #FEA34C;
+}
+#Item_box .good_price{
+	color:#f00;
+}
+/*  ==================== 我的订单 ====================  */
+#order_box{
+	border:1px solid #FEA34C;
+}
+#order_box p.note{
+	color:#F8A868;
+}
+#order_box p.OrderNote{
+	color:#F85808;
+}
+#order_box p.note .query select{
+	border:1px solid #008732;color:#018730;
+}
+#order_box p.title{
+	color:#F8A868;border-bottom:1px solid #FEA34C;
+}
+#order_box p.order_list{
+	color:#F8A868;border-bottom:1px solid #FEA34C;background:#fff;
+}
+/*===================Tab======================*/
+ul.content_tab li{
+	color:#fff;background:url(../img/orange/collection.gif);
+}
+ul.content_tab li.hover{
+	color:#09774E;background:url(../img/orange/collection_over.gif);
+}
+/*  ==================== my addresses ====================  */
+#reguser_gut01 ul li span.adrees textarea{
+	width:320px;height:30px;border:1px solid #78828D;vertical-align:middle;
+}
+#reguser_gut01 ul li span.addrees_territory select{
+	border:1px solid #78828D;
+}
+#reguser_gut01 .add_title{
+	color:#F8A868;
+}
+#reguser_gut01 .aleter{
+	background:#FFC790;color:#F85808;
+}
+#reguser_gut01 table tr{
+	color:#F8A868;
+}
+#reguser_gut01 table tr td{
+	border-bottom:1px solid #FEA34C;border-right:1px solid #FEA34C;
+}
+#reguser_gut01 table tr td.btn_list{
+	border-right:none;
+}
+#Right .addrees_box{
+	border:1px solid #FEA34C;
+}
+h2.add-addresses{
+	background:url(../img/orange/adddresses-title.gif) repeat-x;
+}
+h2.add-addresses span{
+	color:#fff;
+}
+h2.add-addresses a.close{background:url(../img/orange/close_img.png) no-repeat;}
+h2.add-addresses a.close:hover{background:url(../img/orange/close_img_over.png) no-repeat;}
+/*==================== 购买成功 =========================*/
+#buyshop_box ul{
+	border-bottom:1px solid #E1E1E1;
+}
+#buyshop_box li.pic img{
+	border:1px solid #E1E1E1;
+}
+#buyshop_box .name a{
+	color:#F85808;
+}
+#buyshop_box p{
+	color:#F85808;
+}
+#buyshop_box .shops{
+	border-left:1px solid #FEA34C;border-right:1px solid #FEA34C;background:#fff;
+}
+#buyshop_box p.buy_btn a{
+	color:#fff;background:url(../img/orange/checkout_btn.gif) no-repeat;
+}
+/*===================Login out======================*/
+#loginout h1{
+	background:url(../img/orange/loginout.png) repeat-x; 
+}
+#loginout h1 b{
+	color:#fff;
+}
+#loginout .login-alettr{
+	border-bottom:1px solid #E6E6E6; color:#F0481B;
+}
+#loginout .btns a{
+	background:url(../img/orange/loginout-btn.gif) no-repeat;color:#fff;
+}
+/*=============My Friends==================*/
+ul.friend_title{
+	color:#F8A868; background:#fff;border-top:1px solid #FEA34C;border-bottom:1px solid #FEA34C;
+}
+cite.new_group a{color:#fff;}
+ul.friend_list{
+	color:#999999;
+}
+.cat_friend{
+	color:#FFC790; background:#fff;
+}
+.note_sum{
+	color:#17A65B; background:#FFECDA;
+}
+.myfriends{
+	background:#FFC790; color:#fff;
+}
+.myfriends a{
+	color:#fff;
+}
+.cat_friend .add_friend{
+	color:#FEA34C;
+}
+.note_sum .add_friend a{
+	color:#F8A868;
+}
+.add_froend_box li input{
+	border:1px solid #FEA34C;
+}
+.add_froend_box li select{
+	border:1px solid #FEA34C;
+}
+.add_froend_box li.submit_btn a{
+	background:url(../img/orange/cencle.gif) no-repeat;color:#F8A868;
+}
+.addgroup a{
+	background:url(../img/orange/addgroup.gif) no-repeat;color:#fff;
+}
+p.droup_bg b{color:#9A9A9A;}
+.addgroup_box{border-left:1px solid #FEA34C;border-right:1px solid #FEA34C;background:#fff;}
+/*==================== Points ======================*/
+ul.integral_title{
+	border-top:1px solid #FEA34C;color:#F8A868;
+}
+.integral_list ul.integral_title{
+	background:#fff;border:0;border-bottom:1px solid #FEA34C;
+}
+.integral_list ul.integral_title li.integral {
+	color:#F8A868;
+}
+.last_integral{
+	color:#F8A868;
+}
+.last_integral span{
+	color:#FF6C00;
+}
+.history_detail{
+	color:#F8A868;
+}
+.history_detail input.text{
+	border:1px solid #999;
+}
+.history_detail span select{
+	border:1px solid #008833;color:#F85808;
+}
+.find-btns input.find{
+	background:url(../img/orange/find.gif) 0 0 no-repeat;border:0;color:#FF9000;
+}
+.find-btns a{
+	background:url(../img/orange/find.gif) 100% -20px no-repeat;
+}
+.query_submit{
+	background:url(../img/orange/query.gif) no-repeat;border:none;color:#FF9000;
+}
+
+/*==================== payment ======================*/
+.many_input{
+	color:#909592;
+}
+.many_input input{
+	border:1px solid #FEA34C;
+}
+.payment_table{border-top:1px solid #E5E5E5;}
+.payment_table td{
+	color:#909592;border-bottom:1px solid #E5E5E5;
+}
+.payment_table td.border_right{
+	border-right:1px solid #E5E5E5;
+}
+.payment_table .explain_box{
+	border:1px solid #E5E5E5; background:#FFECDA;color:#F85808;
+}
+/*==================== 已购买商品 ======================*/
+ul.buy_products_title{
+	border-bottom:1px solid #FEA34C;
+}
+ul.buy_products_title li{
+	color:#F85808;
+}
+ul.products_list{
+	background:#fff;border-bottom:1px solid #FEA34C;
+}
+ul.products_list .pic img{
+	border:1px solid #E7E7E7;
+}
+ul.products_list .cat_name{
+	color:#F8A868;
+}
+ul.products_list .cat_name a{
+	color:#F8A868;
+}
+ul.products_text{
+	background:#fff;border-bottom:1px solid #FEA34C;
+}
+ul.products_text span.name a{color:#F8A868;}
+/*=================Order Detail==================*/
+.order_state dd{
+	border-bottom:1px solid #DADADA;color:#808080;
+}
+.order_state dt{
+	color:#F8A868;
+}
+#Edit_info ul.already_shop li{
+	color:#F85808;
+}
+ul.already_shop li.name p.pic img{
+	border:1px solid #E3E3E3;
+}
+#Edit_info ul.already_shop li.name p.item_name{
+	color:#F85808
+}
+.cardnumber{border-bottom:1px dashed #909592}
+li.name p.item_name a{
+	color:#F85808
+}
+.already_box{
+	 border-bottom:2px solid #FEA34C; border-top:2px solid #FEA34C;
+}
+ul.address_info li.lang_title{
+	color:#F85808;
+}
+ul.address_info li.filed{
+	color:#FF9000;
+}
+p.amend_address a{
+	background:url(/user../img/orange/stow_img.gif) no-repeat;color:#fff;
+}
+p.amend_address a:hover{
+	text-decoration:none;
+}
+#Edit_info p.balances{
+	color:#808080;
+}
+p.balances b{
+	color:#FC5F00;
+}
+#Edit_info p.saves_many{
+	color:#F85808;
+}
+/*=========================Admin Iformations ==========================*/
+.contents{
+	border-top:0;
+}
+.home_main{
+	border:1px solid #CCCCCC;background:#F0F0F0;
+}
+.informations{
+	border:1px solid #E0E0E0; background:#F9F9F9;
+}
+.informations p.handdle a{
+	color:#FF800E;
+}
+/*按钮*/
+.btn_list a{
+	color:#fff;background:url(../img/orange/stow_img.gif) 100% -20px no-repeat;
+}
+.btn_list a span{background:url(../img/orange/stow_img.gif) left top no-repeat;}
+.btn_list a:hover{
+	background:url(../img/orange/stow_img_over.gif) 100% -20px no-repeat;color:#fff;
+}
+.btn_list a:hover span{background:url(../img/orange/stow_img_over.gif) left top no-repeat;}
+.calendar{border:0;background:none;}
+.big_buttons input{
+	background:url(../img/orange/add_adrees.gif) left top no-repeat;border:0;color:#fff;
+}
+.big_buttons span{
+	background:url(../img/orange/add_adrees.gif) 100% -38px no-repeat;
+}
+
+/*====================== 用户注册 =========================*/
+#reguser_gut01 {
+	background:url(../img/orange/reg_bg.gif) top repeat-y;
+}
+#reguser_gut01_01 ul.reg_flow li{color:#F0481B;}
+ul.reg_flow li.over{background:url(../img/orange/reg_flow.gif) left top no-repeat;}
+ul.reg_flow li.over span{background:url(../img/orange/reg_flow.gif) 100% -51px no-repeat;color:#fff;}
+ul.reg_flow li.normal{background:url(../img/orange/reg_flow.gif) left -102px no-repeat;}
+ul.reg_flow li.normal span{background:url(../img/orange/reg_flow.gif) 100% -153px no-repeat;}
+
+#reguser_gut01 ul {
+	color:#848389;
+}
+#reguser_gut01 ul .sorty{
+	color:#9FA8AD;
+}
+#reguser_gut01 ul .sorty a{
+	background:url(../img/orange/down_icon.gif) no-repeat;
+}
+#reguser_gut01 li input {
+	border: 1px solid #B3B3B3;color:#848389;
+}
+.z_c{
+	color:#808080;
+}
+.Agreement{
+	border:1px solid #DEDEDE;
+}
+#reguser_gut01 .Agreement .text{
+	color:#848389;
+}
+#reguser_box .Agreement_box{
+	border-bottom:none;background:url(../img/orange/Agreement_bg.gif) repeat-y;
+}
+#reguser_box_user .Agreement_box{
+	border-bottom:none;background:url(../img/orange/Agreement_bg.gif) repeat-y;
+}
+#reguser_gut01 #Title {
+	color:#848389;
+}
+.datefield button{
+	background:none;border:0;
+}
+/*====================== 编辑个个人信息 =========================*/
+
+#Edit_box #Edit_info {
+	border:1px #FEA34C solid;
+}
+#Edit_info_01 {
+	color: #0b4b88;
+}
+#Edit_info_username {
+	color: #0b4b88;
+}
+#Edit_info ul {
+	color:#848389;
+}
+#Edit_info ul .sorty{
+	color:#9FA8AD;
+}
+
+#Edit_info ul li span.Pass_mantis select{
+	color: #333333;
+}
+#Edit_info li input {
+	border: 1px solid #B3B3B3;color:#848389;
+}
+.ws_xx a{
+	color:#0268CE;
+}
+.Agreement{
+	border:1px solid #DEDEDE;
+}
+#Edit_info .Agreement p.text{
+	color:#848389;
+}
+#Edit_box .Agreement_box{
+	background:none;border-bottom:none;
+}
+#Edit_info #Title {
+	color:#848389;
+}
+/*====================== 密码管理 =========================*/
+#clew .clewtxt{
+	color:#7F7F7F;
+}
+#clew .clewtxt span.bold{
+	color:#f50;
+}
+/*  ==================== 用户中心留言 ====================  */
+#Edit_info .massege p.msg{
+	color:#64765B;
+}
+#user_msg p.msg_title{
+	background:#FFECDA;
+}
+#user_msg p{
+	color:#F8A868;
+}
+#Edit_info p.note,.sufficient{
+	color:#F85808;
+}
+/*  ==================== 用户中心我的评论 ====================  */
+#Edit_info .comment p{
+	color:#F8A868;
+}
+#Edit_info .comment{
+	background:#EAFFE0;
+}
+/*  ==================== 用户中心文章详细 ====================  */
+#user_msg p.article span{
+	color:#9D9D9D;
+}
+#user_msg p.article_time{
+	background:#DDF4E6;
+}
+#user_msg p.article_time span{
+	color:#9D9D9D;
+}
+#select_article{
+	border-top:3px solid #DDF4E6;
+}
+#select_article p{
+	color:#9D9D9D;
+}
+.article_title span.amenber_balances a{
+	background:url(/user../img/orange/stow_img.gif) no-repeat;color:#fff;
+}
+#comments #user_comment{
+	width:360px;
+}
+#comments #user_comment p{
+	color:#15A35B;
+}
+#comment_box p.textarea_box textarea{
+	border:1px solid #BBEBA5;
+}
+#user_comment p.email .enter_txt input{
+	border:1px solid #BBEBA5;
+}
+.article_items{
+	border:1px solid #004B1C;
+}
+.article_items h1.title_nobg{
+	background:none;color:#F85808;
+}
+/*  ==================== 用户中心文章列表 ====================  */
+#user_msg p.article_title span{
+	color:#F85808;border-bottom:1px solid #fff;border-right:1px solid #fff;
+}
+#user_msg p.article_title span.add_time{
+	border-right:none;
+}
+#user_msg #article_box{
+	margin:20px 0;
+}
+#user_msg #article_box p{
+	color:#9D9D9D;
+}
+#article_box p.list .title a{
+	color:#9D9D9D;
+}
+/*  ====================  ====================  */
+#globalBalance{
+	border-top:1px solid #E65C1E;background:url(../img/orange/Balance_bg.gif) repeat-y;
+}
+#globalBalance .buy_title{
+	color:#30A65D;
+}
+#globalBalance .list_title{
+	border-bottom:2px solid #BBEBA5;color:#407B38;
+}
+#globalBalance .list_title .pic img{
+	border:1px solid #E2E2E2;
+}
+#globalBalance .lists{
+	border-bottom:none;color:#64765B;
+}
+#globalBalance .lists a{
+	color:#004B17;
+}
+#globalBalance .buy_allmeny{
+	color:#64765B;border-top:2px solid #BBEBA5;
+}
+#Balance_info{
+	border-bottom:1px solid #004B1C;background:url(../img/orange/Balance_bg.gif) repeat-y;
+}
+#Balance_info .address{
+	color:#30A65D;
+}
+#Balance_info .new_add{
+	color:#30A65D;background:#4BC679;
+}
+#Balance_info .address_title{
+	background:#DDF4E6;color:#F8A868;border-bottom:1px solid #19AC5D;
+}
+#Balance_info .address_list{
+	background:#fff;color:#F8A868;border-bottom:1px solid #4BC679;
+}
+#Balance_info table.address_list td{
+	border-right:1px solid #4BC679;border-bottom:1px solid #4BC679;
+}
+#Balance_info table.address_list td.handel{
+	border-right:none;
+}
+#Balance_info table.address_list .send_title td{
+	border-right:1px solid #4BC679;border-bottom:1px solid #4BC679;
+}
+#Balance_info table.address_list .send_title td.handel{
+	border-right:none;
+}
+#Balance_info table.address_list .list td{
+	border-bottom:none;
+}
+
+#Balance_info .item_price{
+	color:#4BC679;background:#DDF4E6;
+}
+#Balance_info .order_integral{
+	color:#fff;
+}
+#Balance_info .item_price .sum_meny{
+	color:#F8A868
+}
+#globalBalance .back_home a:hover{
+	color:#FF9000;
+}
+/*  ==================== My Setting ====================  */
+#setting{
+	border:1px solid #FEA34C;color:#85848C;
+}
+.set-box li.area select{
+	border:1px solid #7F9DB9;
+}
+.set-box li.accessories select{
+	border:1px solid #7F9DB9;
+}
+.submits span{background:url(../img/orange/submit.gif) no-repeat 100% -21px;}
+.submits span input{background:url(../img/orange/submit.gif) 0 0 no-repeat;border:0;color:#fff;}
+/*==================== Menber Login =========================*/
+#login-box{
+	border:1px solid #FEA34C;
+}
+#login-box h1{
+	color:#F0481B;
+}
+.menber-login .box{
+	border-left:1px solid #FFD8AE;border-right:1px solid #FFD8AE;background:#F5F5F5;
+}
+.menber-login .box dl{
+	color:#FF9000;
+}
+.menber-login .box dd input{
+	border:1px solid #B3B3B3;padding:3px 1px;color:#FF9000;
+}
+.menber-login .box dd a{
+	color:#FF9000;
+}
+.menber-login .box dd.vidata input{
+	border:1px solid #B3B3B3;
+}
+dd.vidata img{border:1px solid #949695;}
+.box .submit-btn a{
+	background:url(../img/orange/login-submit.gif) no-repeat;color:#FFF;
+}
+.login-banner li{
+	color:#9EA09F;
+}
+#login-box .cart-login{
+	border-right:1px solid #DDDDDD;
+}
+
+.svcart-skin-g00 .container-close{
+	background:url(../img/orange/close_img.png) no-repeat right;
+}
+.svcart-skin-g00 .container-close:hover{
+	background:url(../img/orange/close_img_over.png) no-repeat right;
+}
+.svcart-skin-g00 .yui-simple-dialog .bd .yui-icon{
+	background:url(../img/orange/close_img_over.png) no-repeat 0 0;
+}

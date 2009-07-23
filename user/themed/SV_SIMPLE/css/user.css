@@ -1,0 +1,734 @@
+/*  ==================== MemberLogin ====================  */
+.login{
+	width:430px;margin:35px auto 30px;padding:0 10px;
+}
+.login dl{
+	padding-left:115px;margin:12px 0;
+}
+.login dt{
+	width:20%;padding-top:4px;
+}
+.login dd{
+	width:80%;
+}
+.login .submit_form{
+	height:100%;overflow:hidden;padding-left:160px;
+}
+.login .forget{
+	text-align:center;padding:15px 0 10px;
+}
+.login .banner{
+	text-align:center;margin-top:10px;
+}
+.login .banner img{
+	width:424px;
+}
+
+/*  ==================== Register ====================  */
+.register{
+	width:630px;margin:20px auto 20px;
+}
+.register fieldset{
+	padding:0 10px;
+}
+.register dl{
+	margin:8px 0;padding-left:15px;
+}
+.register dt{
+	width:18%;padding-top:4px;
+}
+.register dd{
+	width:82%;
+}
+/*  ==================== Profiles ====================  */
+.profile dl{
+	margin:0 5px 0 10px;padding:5px 0;overflow:hidden;height:100%;
+}
+.profile dl.submitform{
+	padding-top:15px
+}
+.profile dt{
+	width:20%;font-weight:bold;
+}
+.profile dd{
+	width:80%
+}
+/*  ==================== MyOrder ====================  */
+.my_order fieldset{
+	padding:5px 10px;margin:15px 0 5px;
+}
+.my_order fieldset .button{margin-top:-3px;}
+* html .my_order fieldset .button{margin-top:-1px;}
+.my_order .table_cell li{padding-top:20px;}
+.my_order .table_row li.number{
+	width:26%;
+}
+.my_order .table_row li.time{
+	width:24%;
+}
+.my_order .table_row li.fee{
+	width:14%;
+}
+.my_order .table_row li.weight{
+	width:12%;
+}
+.my_order .table_row li.status{
+	width:10%;padding-top:5px;
+}
+.my_order .table_row li.handle{
+	width:12%;text-align:center;
+}
+.my_order .order_handle{
+	text-align:center;padding:15px 0;margin-top:15px;
+}
+.order_handle span{margin-right:5px;}
+.order_handle img{margin:-3px 2px 0 0;}
+* html .order_handle img{margin-top:-2px;}
+
+
+/*  ==================== ur_here ====================  */
+#ur_here,#main_right #ur_here{
+	height:25px;line-height:25px;
+}
+/*  ==================== pager ====================  */
+#pager{
+	height:30px;line-height:30px;clear:both;
+}
+#pager p{
+	float:right;padding-top:5px;
+}
+#pager p img{
+	margin:0 0 -3px 0;_margin:0 0 -1px 3px;
+}
+#pager p a{
+	margin:0 2px;
+}
+#pager p span input{
+	width:25px;text-align:center;margin:0 3px;
+}
+#pager span.totally{float:left;margin-left:20px;padding-top:5px;}
+
+/*==================== Language =========================*/
+#language{
+	width:266px;
+	
+}
+#language h1{
+	position:relative;
+}
+#language ul{
+	padding:15px 15px 5px;height:100%;overflow:hidden;
+}
+#language li{
+	width:117px;float:left;margin-bottom:10px;
+}
+#language li a:hover{
+	font-weight:bold;text-decoration:none;
+}
+
+#language li img{
+	width:37px;height:27px;margin-right:10px;
+}
+.close{
+	position:absolute;top:0;right:0px;z-index:-1px;
+}
+/*========================= Search-out ==========================*/
+#noproducts{
+	height:220px;width:740px;
+}
+#noproducts p{
+	margin:100px 0 0 250px;
+}
+/*  ==================== Menber Center ====================  */
+#infos #wellcom_info{
+	margin:15px 0 15px 84px;
+}
+#infos #wellcom_info p{
+	line-height:18px;
+}
+#infos #wellcom_info h2{
+	font-size:18px;
+	font-weight:bold;
+	line-height:30px;
+}
+#infos .affiche{
+	padding:14px 20px 14px 84px;
+}
+#infos #money_info{
+	padding:14px 20px 50px 84px;
+}
+#infos #money_info h3{
+	font-weight:bold;
+}
+#infos #money_info h3.menber{
+	line-height:20px;font-size:12px;
+}
+#infos #money_info h3 span{
+	font-weight:normal;margin-left:91px;
+}
+#infos #money_info p{
+	line-height:27px;height:27px;
+}
+#infos #money_info h3.remind{
+	margin-top:20px;font-size:12px;
+}
+#infos #money_info p span.title{
+	float:left;
+	width:140px;
+}
+#Products_box #infos{
+	height:auto;margin-top:5px;height:100%;overflow:hidden;
+}
+#Products_box #addgroup_box{
+	height:auto;margin-top:5px;height:100%;overflow:hidden;
+}
+/*  ==================== Favorites ====================  */
+#Item_box .Item_info .info span.item_name{
+	text-align:center;
+	margin:34px 0;
+	font-weight:bold;
+}
+#Item_box .mart .Products_Price{
+	font-weight:normal;	width:150px;
+}
+#Item_box .Number_select .goodprice{
+	margin-top:39px;
+}
+#Products .collection{
+	height:25px;margin-bottom:0;line-height:25px;
+}
+.collection span{
+	float:left;
+}
+.collection .nonts{
+	margin-left:20px;
+	width:370px;
+}
+.collection .Mart_prices{
+	width:110px;
+}
+.collection .products_prices{
+	width:130px;
+}
+.collection .handels{
+	width:100px;
+	text-align:center;
+}
+#Item_box .mart{
+	float:left;
+	width:100px;
+	margin:34px 0;
+	margin-left:134px;
+
+}
+#Item_box .good_price{
+	float:left;
+	width:126px;
+	margin:34px 0;
+	margin-left:10px;
+
+}
+#Item_box .collection_btn{
+	padding-top:10px;margin-left:8px;
+
+}
+/*  ==================== 我的订单 ====================  */
+#order_box{
+	padding-bottom:50px;margin-top:3px;
+}
+#order_box p.note{
+	height:30px;line-height:30px;padding-left:15px;
+}
+#order_box p.OrderNote{
+	padding-top:0;*padding-top:4px;height:30px;*height:26px;
+}
+#order_box p.note .query{
+	float:right;margin:2px 20px 0 0 !important;margin:5px 20px 0 0;	height:25px;font-weight:bold;
+}
+#order_box p.note .query select{
+	margin:0 20px 5px 0;width:155px;height:20px;vertical-align:middle;font-weight:normal;
+}
+#order_box p.note .query input{
+	margin-top:3px !important;margin-top:1px;
+}
+#order_box p.title{
+	height:25px;line-height:25px;
+}
+p.title .order_number{
+	width:120px;text-align:center;
+}
+p.title span{
+	float:left;
+}
+p.title .order_time{
+	width:120px;text-align:center;
+}
+p.title .order_menny{
+	width:110px;text-align:center;
+}
+p.title .order_estate{
+	width:125px;margin-left:10px;
+}
+p.title .handel{
+	width:120px;text-align:center;
+}
+p.title .handel a{
+	margin-right:2px;width:90px;margin-left:auto;margin-right:auto;margin-top:0;margin-bottom:1px;
+}
+p.title .handel a:hover{margin-right:2px;width:90px;margin-left:auto;margin-right:auto;margin-top:0;margin-bottom:1px;}
+p.title .handel span{float:none;}
+#order_box p.order_list{
+	padding:5px 0;line-height:normal;height:100%;overflow:hidden;
+}
+/*  ==================== my addresses ====================  */
+#Products_box{
+	width:743px;
+}
+#reguser_gut01 ul li span.adrees textarea{
+	width:320px;height:30px;vertical-align:middle;
+}
+#reguser_gut01 ul li span.addrees_territory select{
+	width:118px;height:20px;
+}
+#reguser_gut01 .add_title{
+	text-align:center;text-indent:0;font-size:14px;margin-top:20px;
+}
+#reguser_gut01 .aleter{
+	padding:2px 0;font-weight:normal;
+}
+#reguser_gut01 table .adrees_list td{
+	padding:10px 0;
+}
+#reguser_gut01 table tr td.btn_list img{
+	margin:0 1px;
+}
+#Right .addrees_box{
+	width:auto;padding-top:0px;margin-top:3px;
+}
+#reguser_gut01 .add_btn{
+	text-align:center;margin-bottom:10px;
+}
+h2.add-addresses{
+	height:23px;line-height:23px;margin:0 8px;position:relative;zoom:1;z-index:1;
+}
+h2.add-addresses span{
+	font-size:12px;margin-left:12px;
+}
+h2.add-addresses a.close{position:absolute;right:0;margin-right:-8px;top:0;height:23px;width:30px;}
+h2.add-addresses a.close:hover{position:absolute;right:0;margin-right:-8px;top:0;height:23px;width:30px;}
+h2.add-addresses span.left{position:absolute;margin-left:-8px;top:0}
+h2.add-addresses span.right{position:absolute;right:0;margin-right:-8px;top:0}
+/*==================== 购买成功 =========================*/
+#buyshop_box{
+	width:424px;
+}
+#buyshop_box h1{
+	position:relative;
+}
+#buyshop_box h1 span{
+	position:absolute;right:0;cursor:pointer;
+}
+#buyshop_box ul{
+	margin:20px 25px 15px;overflow:hidden;height:100%;padding-bottom:15px;
+}
+#buyshop_box li{
+	float:left;
+}
+#buyshop_box li.pic{
+	padding:0 15px 0 3px;
+}
+#buyshop_box .buy_number{
+	margin:5px 0;
+}
+#buyshop_box .name{
+	margin:3px 0 0;font-weight:bold;
+}
+#buyshop_box .shops{
+	height:100%;overflow:hidden;
+}
+#buyshop_box p.buy_btn{
+	text-align:right;padding:0 25px 10px;overflow:hidden;height:100%;
+}
+#buyshop_box p.buy_btn a{
+	float:right;width:74px;height:22px;line-height:21px;*line-height:23px;text-align:center;margin-left:3px;
+}
+/*===================Login out======================*/
+#loginout{
+	width:424px;
+}
+#loginout h1{
+	position:relative; height:23px;font-size:13px;
+}
+#loginout h1 b{
+	line-height:23px;margin-left:25px;
+}
+#loginout h1 img.close{
+	top:0;right:0;position:absolute; cursor:pointer;
+}
+#loginout .login-alettr{
+	width:383px; margin:0 auto;text-align:center; font-size:16px;padding:25px 0;
+}
+.login-alettr img{
+ 	margin-right:25px;vertical-align:middle;
+}
+#loginout .btns{
+	padding:18px 20px 15px 0; height:100%; overflow:hidden;
+}
+#loginout .btns a{
+	float:right;width:86px; height:22px;text-align:center;line-height:22px; position:relative; margin-left:5px;
+}
+#loginout .btns a img{
+	position:absolute; right:0; top:0;
+}
+#loginout .btns a:hover{
+	text-decoration:none;
+}
+#loginout .btns a.to_login{
+	width:98px;
+}
+/*=============My Friends==================*/
+ul.friend_title{
+	height:100%; overflow:hidden;margin:0; padding:8px 45px 6px;
+}
+cite.new_group{
+	position:absolute;right:-4px;top:8px;font-size:12px;cursor:pointer;
+}
+cite.new_group img{
+	margin-right:3px;vertical-align:middle;
+}
+ul.friend_list{
+	padding:12px 45px 6px; 
+}
+.friend_title li{
+	float:left;text-align:center; padding:0; height:auto;
+}
+.friend_title li.name{
+	width:175px; text-align:left;
+}
+.friend_title li.email{
+	width:180px;
+}
+.friend_title li.tel{
+	width:175px;
+}
+.friend_title li.handel{
+	width:115px;*width:120px;
+}
+.friend_title li.handel a:hover{
+	text-decoration:none;
+}
+.cat_friend{
+	font-weight:normal;position:relative; height:32px;padding-left:1.6em;line-height:30px;margin-top:10px;
+}
+.note_sum{
+	font-weight:normal;position:relative; height:30px;padding-left:1.6em;line-height:30px;
+}
+.myfriends{
+	position:relative;
+}
+.myfriends img.left{
+	position:absolute;left:0;top:-1px;
+}
+.myfriends img.right{
+	position:absolute;right:0;top:-1px;*right:-1px;
+}
+.cat_friend .add_friend{
+	position:absolute; top:0px; right:25px;
+}
+.note_sum .add_friend{
+	position:absolute; top:0px;*top:5px; right:25px;
+}
+.note_sum .amenber{
+	position:absolute; top:2px; right:25px;
+}
+.note_sum .amenber a{
+	margin:0 5px;
+}
+.note_sum .amenber a:hover{
+	text-decoration:none;
+}
+.note_sum .add_friend a:hover{
+	text-decoration:none;
+}
+.add_froend_box li{
+	margin:10px 0;height:100%;overflow:hidden;
+}
+.add_froend_box li dd{padding:4px 0 0 0;width:20%;}
+.add_froend_box li input{
+	padding:1px 2px; vertical-align:middle;
+}
+.add_froend_box li select{
+	vertical-align:middle;
+}
+.add_froend_box li font{
+	font-size:12px;
+}
+.add_froend_box li.address input{
+	width:270px;
+}
+.add_froend_box li.address select{
+	width:66px;
+}
+.add_froend_box li .birthdy select{
+	width:131px;
+}
+.add_froend_box li font.trionname{
+	letter-spacing:6px;
+}
+.add_froend_box li.submit_btn{
+	height:100%; overflow:hidden;text-indent:0;
+}
+.add_froend_box p.submit_btn a:hover{ text-decoration:none;}
+.addgroup{
+	padding:0 25px 10px 0;height:100%;overflow:hidden;margin-top:20px;
+}
+.addgroup a{
+	display:block;width:99px;height:20px;text-align:center;line-height:20px;letter-spacing:5px;float:right;
+}
+p.droup_bg b{margin-left:20px;}
+.addgroup_box{padding:0 0 10px 0;height:100%;}
+.addgroup_box ul.list{padding:0 10px 0;*padding:10px 10px 0;height:100%;overflow:hidden;}
+.addgroup_box ul.list dd.l{width:30%;*padding-top:5px;}
+/*==================== Points ======================*/
+ul.integral_title{
+	height:25px;
+}
+ul.integral_title li{
+	float:left; line-height:25px; text-align:center; margin-left:5px;
+}
+ul.integral_title li.integral{
+	width:160px;
+}
+ul.integral_title li.time{
+	width:140px;
+}
+ul.integral_title li.gift{
+	width:250px; margin-left:25px;text-align:center;
+}
+ul.integral_title li.handel{
+	width:120px;
+}
+.integral_list{
+	margin-top:10px;
+}
+.integral_list ul.integral_title{
+	padding:10px 0;
+}
+.integral_list ul.integral_title li.gift {
+	text-align:center;width:250px;
+}
+.last_integral{
+	font-size:14px; font-weight:bold; margin:15px 10px;
+}
+.last_integral span{
+	 margin:0 5px 0 10px;
+}
+.history_detail{
+	height:30px;padding:0 10px; position:relative; line-height:30px;
+}
+.history_detail input.text{
+	width:84px;margin-top:-3px;padding:1px 1px;*padding:1px 1px 0;*line-height:15px;
+}
+.history_detail input{
+	vertical-align:middle;
+}
+.history_detail span{
+	float:right;margin-right:5px;*padding-top:7px;
+}
+.history_detail b{
+	white-space:nowrap;
+}
+.history_detail span button{*margin:-5px 0 0 0;}
+.history_detail span select{
+	width:155px;margin:-3px 10px 0;
+}
+.find-btns input.find{
+	height:20px;line-height:20px;cursor:pointer;padding:0 0 3px 3px;*padding:1px 0 3px 2px;
+}
+.find-btns a{
+	display:block;padding-right:2px;
+}
+.query_submit{width:57px;height:20px;padding-bottom:2px;}
+* html .query_submit{padding:2px 0 0;}
+*+ html .query_submit{padding:2px 0 0;}
+/*==================== payment ======================*/
+.last_integral cite{
+	margin-left:40px;font-size:12px;
+}
+.sufficient{
+	padding:7px 10px;
+}
+.many_input{
+	margin:25px 0 30px;padding-left:80px;
+}
+.many_input input{
+	width:78px;padding:1px 2px;
+}
+.payment_table td{
+	padding:5px;
+}
+.payment_table td.border_right{
+	padding-left:50px;
+}
+.payment_table td.padding_left{
+	padding-left:20px;
+}
+.payment_table .explain_box{
+	padding:5px 10px 5px 15px;width:450px; margin-left:-15px;
+}
+.payment_table .submit_payment{
+	padding:20px 0 40px;
+}
+/*==================== 已购买商品 ======================*/
+ul.buy_products_title{
+	padding:7px 0 4px;overflow:hidden;height:100%;
+}
+ul.buy_products_title li{
+	float:left; text-align:center;
+}
+ul.buy_products_title li.sum{
+	width:336px;margin-left:15px;display:inline; text-align:left;
+}
+ul.buy_products_title li.number{
+	width:90px;
+}
+ul.buy_products_title li.time{
+	width:95px;
+}
+ul.buy_products_title li.many{
+	width:97px;
+}
+ul.buy_products_title li.handel{
+	width:98px;
+}
+ul.products_list li{
+	margin-top:30px;
+}
+ul.products_list li.sum{
+	margin-top:0;
+}
+ul.products_list .pic{
+	float:left;padding-left:20px;
+}
+ul.products_list .cat_name{
+	float:left;padding-left:10px;font-weight:bold;margin-top:30px;
+}
+ul.products_list li.handel{
+	margin-top:10px;
+}
+ul.products_text a:hover{text-decoration:underline;}
+/*=================Order Detail==================*/
+.order_state{
+	height:100%;overflow:hidden; padding:10px 20px 15px;
+}
+.order_state dd{
+	width:595px; padding:5px 0;*padding:6px 0 5px;margin-left:10px;
+}
+.order_state dt{
+	width:90px;padding:5px 0; position:relative;*margin-top:2px;
+}
+.order_state dt b{
+	position:absolute;right:0;top:6px;
+}
+#Edit_info ul.already_shop{
+	margin:0;height:100%;overflow:hidden;
+}
+#Edit_info ul.already_shop li{
+	float:left;padding:5px 0; line-height:normal; text-align:center; margin-right:4px;
+}
+ul.already_shop li.name{
+	width:225px;
+}
+ul.already_shop li.name span{
+	margin-right:50px;
+}
+ul.already_shop li.profile{
+	width:75px;
+}
+ul.already_shop li.marke_price{
+	width:100px;margin-left:15px;
+}
+ul.already_shop li.shop_price{
+	width:115px;
+}
+ul.already_shop li.number{
+	width:75px;
+}
+ul.already_shop li.subtotal{
+	width:100px; margin-right:0;
+}
+#Edit_info ul.already_shop li.name p{
+	float:left; text-indent:0;
+}
+#Edit_info ul.already_shop li.name p.pic{
+	padding-left:8px;
+}
+#Edit_info ul.already_shop li.name p.item_name{
+	margin-left:10px; margin-top:28px;
+}
+.cardnumber{margin:-4px 0 10px;}
+.cardnumber div{margin:4px 10px;}
+#Edit_info ul.already_list li{
+	margin-top:35px;
+}
+#Edit_info ul.already_list li.name{
+	margin-top:0;
+}
+.already_box{
+	 margin:0 2px;height:100%;
+}
+ul.address_info{
+	padding:0 18px 15px;height:100%;overflow:hidden;
+}
+ul.address_info li{
+	float:left;margin:5px 0;margin-right:8px;
+}
+ul.address_info li.lang_title{
+	width:120px;
+}
+ul.address_info li.filed{
+	width:210px; line-height:15px; overflow:hidden;
+}
+p.amend_address span{
+	float:right;margin:5px 15px 0 0;
+}
+p.amend_address{
+	overflow:hidden;height:100%;
+}
+p.amend_address a{
+	display:block;width:49px;height:20px;text-align:center; line-height:20px;
+}
+p.amend_address a:hover{
+	text-decoration:none;
+}
+#Edit_info p.balances{
+	line-height:22px; text-indent:0; padding:20px 20px 0;font-weight:normal;
+}
+p.balances span{
+	margin-left:30px;
+}
+#Edit_info p.saves_many{
+	text-indent:0;padding:10px 15px;
+}
+/*=========================Admin Iformations ==========================*/
+.contents{
+	width:950px;position:relative;padding-bottom:32px; height:100%;margin:0 auto;
+}
+.home_main{
+	width:934px; margin:0 auto; padding:15px 8px 25px; height:100%;overflow:hidden;
+}
+.informations{
+	margin:-5px 0 -15px;
+}
+.informations p{
+	text-align:center;
+}
+.informations p.handdle a{
+	text-decoration:underline;
+}
+.informations p strong{
+	font-size:14px;
+}
+.informations p.handdle span{
+	margin:0 10px;
+}

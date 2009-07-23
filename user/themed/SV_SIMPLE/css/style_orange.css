@@ -1,0 +1,171 @@
+﻿/*****************************************************************************
+ * SV-CART CSS
+ * ===========================================================================
+ * 版权所有  上海实玮网络科技有限公司，并保留所有权利。
+ * 网站地址: http://www.seevia.cn
+ * ---------------------------------------------------------------------------
+ * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用；
+ * 不允许对程序代码以任何形式任何目的的再发布。
+ * ===========================================================================
+ * $开发: 上海实玮$
+ * $Id: style.css 965 2009-04-24 04:40:00Z zhangshisong $
+*****************************************************************************/
+body{background:#fff;}
+
+/* Colors */
+a{
+	text-decoration:none;color:#FF7E00;
+}
+a:hover{
+	color:#F73301;
+}
+.font_color_1{
+	color:#0167CB;
+}
+.font_red{
+	color:#FF3200;
+}
+.font_white{
+	color:#ffffff;
+}
+.font_green{
+	color:#0066CC;
+}
+.font_yellow{
+	color:#FF6600;
+}
+.navs li a{
+	color:#000;
+}
+.member{
+	color:#AAAAAA;
+}
+.header .tools .cart a:hover{
+	color:#0167CB;
+}
+
+/* Borders */
+fieldset{
+	border:1px solid #DADDEC;
+}
+h4{
+	border-bottom:1px dashed #A0C0FF;
+}
+
+#footer{
+	border-top:2px solid #FF800E;
+}
+.cont{
+	border:1px solid #FFCC8F;
+}
+
+.not{border:1px solid #A0C0FF;}
+.tips{
+	border:1px solid #A0C0FF;
+}
+.tips a{
+	color:#0000ff;
+}
+
+.login .banner img{
+	border:1px solid #FFCDFF;
+}
+.profile dl{
+	border-bottom:1px dashed #DADDEC;
+}
+.profile dl.submitform{
+	border-bottom:none;
+}
+.my_order .table_row{
+	border-bottom:1px dashed #DADDEC;
+}
+.my_order .order_handle{
+	border:1px solid #DADDEC;background:#F0F0FC;
+}
+#pager p span input{
+	border:1px solid #7F9DB9;
+}
+
+
+/*Background*/
+h2{
+	border-bottom:1px solid #C6CDD5;
+}
+h3{
+	border-bottom:1px solid #FFCC8F;
+}
+h3 span{
+	background:url('../img/orange/title.gif') 0 0 no-repeat;
+}
+h3 .more{
+	background:url('../img/orange/title.gif') 100% -44px no-repeat;
+}
+
+.header .search {
+	background:#FF9E56;
+}
+.header .navs li a,.header .navs .home a{
+	background:#FFDEB7;
+}
+.header .navs li a:hover,.header .navs .home a:hover{
+	background:#FF9E56;color:#fff;
+}
+ul#categories ul {
+	background:#FF9E56;
+}
+/*当鼠标在子菜单和父菜单上时，父菜单的样式*/
+ul#categories li.over a,ul#categories li:hover a{
+	background:#FF9E56;color:#ffffff;font-weight:bold;
+}
+
+#footer{
+	background:#fff;
+}
+
+.cont .left_up{
+	background:url('../img/orange/title.gif') 0 -14px no-repeat;
+}
+.cont .right_up{
+	background:url('../img/orange/title.gif') 100% -14px no-repeat;
+}
+.cont .left_down{
+	background:url('../img/orange/title.gif') 0 -40px no-repeat;
+}
+.cont .right_down{
+	background:url('../img/orange/title.gif') 100% -40px no-repeat;
+}
+.list li{
+	background:url('../img/orange/listicon.gif') 0 5px no-repeat;
+}
+.list li.squareico{
+	background:url('../img/orange/square.gif') 0 5px no-repeat;
+}
+.list .more{
+	background:none;
+}
+
+/* Button */
+.button{
+	border:1px solid #FFB98E;
+}
+.button a{
+	border:1px solid #FFFFFF;background:#B6C8D4 url('../img/orange/search.gif') 0 0 repeat-x;color:#FF3300;
+}
+
+.submit{
+	background:url('../img/orange/submit.gif') 100% -25px no-repeat;
+}
+.submit a{
+	color:#fff;background:url('../img/orange/submit.gif') 0 0 no-repeat;
+}
+
+.addtocart{
+	color:#fff;background:url('../img/orange/addcart.gif') 100% -36px no-repeat;
+}
+.addtocart a{
+	background:url('../img/orange/addcart.gif') 0 0 no-repeat;
+}
+.table_data{
+	background:#FFCC8F;color:#FE5F01;
+}
+.table_data .rows{background:#ffffff;}

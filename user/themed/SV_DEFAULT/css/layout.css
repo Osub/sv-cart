@@ -1,0 +1,114 @@
+body {
+	margin: 0 auto;
+}
+img{
+	border:0px;
+}
+ul {
+	padding: 0px; display: block; font-weight: normal;margin: 0px; border-style: none;  list-style-type: none;
+}
+li {
+	padding:0px; display: block;font-weight: normal;margin:0px; border-style: none;   list-style-type: none;
+}
+dl {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+dt {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+dd {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+h1 {
+	padding:0px;margin: 0px;display:block;
+}
+h2 {
+	padding: 0px;margin: 0px;
+}
+h3 {
+	margin: 0px;padding: 0px;display:block;
+}
+h4 {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+h5 {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+h6 {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+p {
+	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+}
+form{padding:0;margin:0;}
+
+.float_l{float:left;}.float_r{float:right}
+.clear{clear:both;line-height:0;height:0;overflow:hidden;display:block;}
+.cursor{cursor:pointer;}
+.vmiddle{vertical-align:middle;}
+.margin_sid{margin-left:5px;margin-right:5px;}
+.radio{margin:-5px 3px 0 0;vertical-align:middle;position:relative;}
+input.text_input{padding-top:1px;padding-bottom:1px;font-family:arial;}
+.font_14{font-size:14px;}
+
+#ysearch { text-align:center; }
+#ysearchinput { position:static;width:20em; } /* to center, set static and explicit width: */
+#ysearchcontainer { text-align:left;width:20em;font-family:arial;} /* to center, set left-align and explicit width: */
+
+/*=========================header==========================*/
+#container{
+  width: 951px; margin: 0 auto; overflow:hidden;
+}
+#header{
+	width:950px;margin:0 auto;margin-bottom:10px;min-height:74px;
+}
+* html #header{
+	height:74px;
+}
+
+#footer{
+	width:950px;height:99px;padding-top:15px;margin:0 auto;margin-top:20px;clear:both;
+}
+#footer p{
+	text-align:center;
+}
+#footer .link{
+	line-height:30px;
+}
+#footer .link a{
+	margin:8px;
+}
+#footer .Power{
+	line-height:20px;
+}
+#footer .Power .number{
+	margin-left:10px;
+}
+#footer .copyRight font{
+	margin-right:4px;
+}
+#Left{
+	float:left;margin-left:8px;display:inline;width:176px;
+}
+#Right{
+	margin-right:7px;float:right;width:742px;display:inline;
+}
+
+
+.submit_btn input.submit{width:63px;height:21px;cursor:pointer;}
+.submit_btn input.reset{width:63px;height:21px;cursor:pointer;}
+
+h1.headers{padding:5px 0 0 27px;height:31px;position:relative;margin:0 30px;}
+h1.headers span.l{width:41px;height:36px;position:absolute;left:-30px;top:0;;overflow:hidden}
+h1.headers span.r{width:41px;height:36px;position:absolute;right:-30px;top:0;z-index:-1;overflow:hidden}
+h1.headers b{font-size:15px;line-height:28px;}
+
+* html h1.friendheader{height:36px;padding-top:0;line-height:30px;}
+
+/*buttons*/
+.gray_btn a{display:block;padding-right:2px;cursor:pointer;}
+.gray_btn a span{display:block;padding:0 3px 0 5px;height:20px;line-height:20px;}
+
+.not{text-align:center;font-size:14px;}
+.not strong{font-weight:bold}
+.not img{vertical-align:middle;margin:-5px 15px 0 0;}

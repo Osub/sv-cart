@@ -1,0 +1,278 @@
+body{
+	margin: 0 auto;font-size:.75em;
+}
+form{
+	padding:0;margin:0;display:inline;
+}
+img{
+	border:none;vertical-align:middle;
+}
+ul {
+	padding: 0;margin: 0;list-style-type: none;
+}
+li {
+	padding:0;margin:0; list-style-type: none;
+}
+
+p {
+	padding: 0;margin: 0;
+}
+.radio{margin:-5px 3px 0 0;vertical-align:middle;position:relative;}
+
+input,textarea,select{font-size:inherit;font-weight:inherit;margin:0;padding:0;}
+* html input,textarea,select{font-size:100%;}
+.checkbox{
+	vertical-align:middle;margin:0 3px 5px 0;position:relative;
+}
+dl {
+	padding: 0;margin:0;height:100%;overflow:hidden;
+}
+dt {
+	float:left; padding:0;margin:0;
+}
+dd {
+	padding:0; float: left; margin: 0;
+}
+.clear{
+	clear:both;height:0;line-height:0;overflow:hidden;
+}
+fieldset legend{
+	font-size:116.67%;font-weight:bold;
+}
+
+.height_3{
+	clear:both;height:3px;line-height:3px;overflow:hidden;
+}
+.height_10{
+	clear:both;height:10px;line-height:10px;overflow:hidden;
+}
+.content{
+  width: 980px; margin: 0 auto;
+}
+.clearfix:after{
+content:".";display:block;clear:both;visibility:hidden;
+}
+* html .clearfix{
+	height:1%;
+}
+#Left{
+	float:left;width:760px;
+}
+#Right{
+	float:right;width:200px;
+}
+
+.mainbox{
+	padding:10px 0;
+}
+.float_right{
+	float:right;
+}
+.float_left{
+	float:left;
+}
+.vmiddle{vertical-align:middle;}
+h2{
+	padding:0 0 2px;font-size:116.67%;
+}
+h3{
+	padding:0 0 0;font-size:116.67%;position:relative;margin:0;
+}
+h3 span{
+	line-height:25px;padding-left:12px;margin-left:8px;
+}
+h3 .more{
+	line-height:25px;padding:0 8px 0 0;font-weight:normal;font-size:85%;position:absolute;right:5px;top:2px;
+}
+* html h3 .more{
+	top:-2px;
+}
+*+ html h3 .more{
+	top:-2px;
+}
+h4{
+	padding:5px 10px;font-size:114.67%;margin:0;
+}
+ul.table_row{
+	height:100%;overflow:hidden;
+}
+ul.table_row li{
+	float:left;padding:5px 0;
+}
+ul.table_cell{
+	height:100%;overflow:hidden;
+}
+ul.table_cell li{
+	float:left;padding:5px 0 10005px;margin-bottom:-10000px;
+}
+
+
+/* Button */
+.button{
+	display:block;height:21px;margin:0 2px
+}
+.button a{
+	display:block;line-height:19px;padding:0 10px;
+}
+
+.submit{
+	height:36px;float:left;margin-left:10px;
+}
+.submit a{
+	float:left;margin-left:10px;line-height:25px;
+}
+
+.addtocart{
+	height:36px;float:left;margin-left:10px;
+}
+.addtocart a{
+	display:block;padding:0 16px 0 43px;line-height:36px;
+}
+/*=========================Tips==========================*/
+.tips{
+	padding-bottom:28px;width:500px;margin:0 auto;
+}
+.tips p{
+	margin-top:28px;text-align:center;
+}
+.tips a{
+	text-decoration:underline;
+}
+/*=========================header==========================*/
+.header{
+	width:980px;margin:0 auto;margin-bottom:10px;min-height:74px;height:100%;
+}
+.header .logo{
+	padding:5px 0 0 4px;width: auto;float: left;
+}
+.header .tools{
+	float:right;
+}
+.header .member{
+	margin:14px 0 0 15px;white-space:nowrap;text-align:right;
+}
+.header .member a.name{
+	font-size:14px;text-decoration:underline;
+}
+.header .member a.name:hover{
+	text-decoration:underline;
+}
+.header .tools .cart{
+	margin-top:8px;
+}
+.header .tools .cart img{margin:-4px 4px 0 0;}
+.header .tools .cart a:hover{
+	text-decoration:underline;
+}
+.header .search {
+	padding:5px 0;text-align:center;height:100%;overflow:hidden;
+}
+.header .search .keys{padding:3px 5px 0 130px;}
+* html .header .search .keys{padding-top:2px;}
+.search .keywords{
+	width:176px;
+}
+* html .search select{font-size:80%}
+.header .search .category_id{
+	width:88px;
+}
+.header .search .brand_id{
+	width:180px;
+}
+.header .search .price_id{
+	width:105px;
+}
+* html .search .button{
+	width:50px;
+}
+.header .navs{
+	padding-left:200px;height:30px;margin-top:8px;
+}
+.header .navs li,.header .navs .home{
+	float:left;height:30px;margin-right:1px;
+}
+.header .navs li a,.header .navs .home a{
+	display:block;padding:0 15px;line-height:30px;
+}
+.header .navs li a:hover,.header .navs .home a:hover{
+	font-weight:bold;
+}
+ul#categories {
+	position:relative;z-index: 99;
+}
+ul#categories ul {
+	width:980px;position:absolute;text-align:center;left:0;display: none;padding-top:2px;
+}
+/*当鼠标在子菜单和父菜单上时，父菜单的样式*/
+ul#categories li.over a,ul#categories li:hover a{
+	font-weight:bold;
+}
+/*将子菜单的样式清除*/
+ul#categories li.over ul a,ul#categories li:hover ul a{
+	font-weight: normal;background:none;
+}
+/* Styles for Menu Items */
+/* End */
+ul#categories ul a {
+	padding:0;display:inline;
+}
+ul#categories ul a:hover{
+	text-decoration:underline;
+}
+ul#categories li:hover ul,ul#categories li.over ul {
+	display:block; /* The magic */
+}
+
+/*========================= Footer ==========================*/
+#footer{
+	width:980px;padding:15px 0 3px;margin:10px auto 0;clear:both;
+}
+#footer p{
+	text-align:center;
+}
+#footer .link{
+	line-height:30px;
+}
+#footer .link a{
+	margin:8px;
+}
+
+#Left{
+	float:left;margin-left:8px;display:inline;width:176px;
+}
+#Right{
+	margin-right:7px;float:right;width:742px;display:inline;
+}
+
+.not{text-align:center;font-size:14px;}
+.not strong{font-weight:bold}
+.not img{vertical-align:middle;margin:-5px 15px 0 0;}
+
+/* Left */
+.cont{
+	height:100%;position:relative;padding-top:4px;
+}
+.cont .left_up{
+	margin:0;padding:0;width:5px;height:26px;left:-1px;top:-1px;position:absolute;
+}
+.cont .right_up{
+	margin:0;padding:0;width:5px;height:26px;right:-1px;top:-1px;position:absolute;
+}
+.cont .left_down{
+	margin:0;padding:0;width:5px;height:5px;left:-1px;bottom:-1px;position:absolute;line-height:0;overflow:hidden;
+}
+.cont .right_down{
+	margin:0;padding:0;width:5px;height:5px;right:-1px;bottom:-1px;position:absolute;line-height:0;overflow:hidden;
+}
+.list{
+	padding:0 0 0 22px;height:100%;
+}
+.list li{
+	margin:6px 0;padding-left:14px;
+}
+.list li a:hover{
+	text-decoration:underline;
+}
+.list .more{
+	text-align:right;padding:6px 5px 0 0;
+}
