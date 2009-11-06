@@ -9,33 +9,26 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: payments_controller.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: payments_controller.php 4708 2009-09-28 13:45:35Z huangbo $
 *****************************************************************************/
 class PaymentsController extends AppController {
 	var $name = 'Payments';
-	var $helpers = array('Html','Pagination');
+	var $helpers = array('Html','Pagination','Tinymce','fck');
 	var $components = array('Pagination','RequestHandler');
-	var $uses = array('Payment','PaymentI18n','Language');
+	var $uses = array('Payment','PaymentI18n','Language','Currency');
 
 	function index(){
 		/*判断权限*/
 		$this->operator_privilege('pay_view');
 		/*end*/
 		$this->pageTitle = '支付方式'." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'系统管理','url'=>'');
 		$this->navigations[] = array('name'=>'支付方式','url'=>'/payments/');
 		$this->set('navigations',$this->navigations);
 		
 	    $this->Payment->set_locale($this->locale);
 		$condition = '';
 		$data = $this->Payment->find('all',array('conditions'=>$condition,'order'=>'Payment.orderby,Payment.created,Payment.id'));
-		/*foreach($data as $k=>$v){
-			$data[$k]['Payment']['name'] = '';
-			$data[$k]['Payment']['description'] = '';
-			if(!empty($v['PaymentI18n']))foreach($v['PaymentI18n'] as $vv){
-					$data[$k]['Payment']['name'] .= $vv['name'] . "|";
-					$data[$k]['Payment']['description'] .= $vv['description'] . "<br/>";
-			}
-		}*/
 		$this->set('payments',$data);
 	}
 	function search(){
@@ -48,6 +41,7 @@ class PaymentsController extends AppController {
 	
 	function edit( $id ){
 		$this->pageTitle = "编辑支付方式 - 支付方式"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'系统管理','url'=>'');
 		$this->navigations[] = array('name'=>'支付方式','url'=>'/payments/');
 		$this->navigations[] = array('name'=>'编辑支付方式','url'=>'');
 	
@@ -119,7 +113,7 @@ class PaymentsController extends AppController {
     	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑支付方式:'.$userinformation_name ,'operation');
     	    }
-			$this->flash("支付方式 ".$userinformation_name." 编辑成功。点击继续编辑该支付方式。",'/payments/edit/'.$id,10);
+			$this->flash("支付方式 ".$userinformation_name." 编辑成功。点击这里继续编辑该支付方式。",'/payments/edit/'.$id,10);
 		}
 		
 		$payment = $this->Payment->localeformat($id);		
@@ -154,7 +148,13 @@ class PaymentsController extends AppController {
 			}
 			//
 		//	pr($payment_arr);
+	//	}elseif($payment['Payment']['code'] == 'account_pay'){
 		}
+	        $this->Currency->set_locale($this->locale);
+			$currency_list = $this->Currency->find("all");
+			$this->set('currency_locale',$this->locale);
+			$this->set('currency_list',$currency_list);
+	//	}
 		
 		$this->set("payment_arr",@$payment_arr);
 		$this->set( "payment",$payment );

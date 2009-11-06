@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: integrations_controller.php 2703 2009-07-08 11:54:52Z huangbo $
+ * $Id: integrations_controller.php 4366 2009-09-18 09:49:37Z huangbo $
 *****************************************************************************/
 class IntegrationsController extends AppController {
 
@@ -20,6 +20,7 @@ class IntegrationsController extends AppController {
 		
 	function index(){
 		$this->pageTitle = '会员整合'." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'客户管理','url'=>'');
 		$this->navigations[] = array('name'=>'会员整合','url'=>'/integrations/');
 		$this->set('navigations',$this->navigations);
 		

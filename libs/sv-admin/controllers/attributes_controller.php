@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: attributes_controller.php 1932 2009-06-01 09:28:50Z zhengli $
+ * $Id: attributes_controller.php 5433 2009-10-26 09:49:14Z huangbo $
 *****************************************************************************/
 class AttributesController extends AppController {
 	var $name = 'Attributes';
@@ -37,9 +37,10 @@ function get_attr_list($cat_id, $product_id = 0){
                         )
                   );
 	  // 查询属性值及商品的属性值
-	  $condition="ProductTypeAttribute.product_type_id = ".intval($cat_id)." ";
+	  $condition["ProductTypeAttribute.product_type_id"]["and"]="".intval($cat_id)." ";
+	  $condition["ProductTypeAttribute.product_type_id"]["or"]="0";
 	  $this->ProductTypeAttribute->set_locale($this->locale);
-	  $lists=$this->ProductTypeAttribute->findAll($condition);
+	  $lists=$this->ProductTypeAttribute->find("all",array("conditions"=>$condition,"order"=>"orderby,name"));
 	  //调整数据格式
 	 
 	  return $lists;

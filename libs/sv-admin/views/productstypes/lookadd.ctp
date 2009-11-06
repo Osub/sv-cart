@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: lookadd.ctp 2485 2009-06-30 11:33:00Z huangbo $
+ * $Id: lookadd.ctp 5425 2009-10-26 05:25:54Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -37,13 +37,25 @@
 
 <?php }
 		}?>
+		<dl><dt style="width:105px;">编码: </dt>
+		<dd class="lang_if"><input  name="data[ProductTypeAttribute][code]" style="border:1px solid #649776"  /></dd></dl>
+
 		<input type="hidden" name="back_id" value="<?php echo $id?>" />
 			
-			<dl><dt style="width:105px;">所属商品类型: </dt>
+		<dl><dt style="width:105px;">所属商品类型: </dt>
 		<dd>
 		<select name="data[ProductTypeAttribute][product_type_id]">
+				<option value="0" <?php if($id=="0"){echo "selected";}?> >公共属性</option>
 		<?php foreach($ss as $k=>$v){?>
 				<option value="<?php echo $k?>" <?php if($id==$k){echo "selected";}?> ><?php echo $v?></option>
+		<?php }?>		
+		</select>
+		</dd></dl>
+		<dl><dt style="width:105px;">属性类型: </dt>
+		<dd>
+		<select name="data[ProductTypeAttribute][type]">
+		<?php foreach($systemresource_info["property_type"] as $k=>$v){?>
+				<option value="<?php echo $k?>" <?php if($k=="basic"){echo "selected";}?> ><?php echo $v?></option>
 		<?php }?>		
 		</select>
 		</dd></dl>
@@ -54,17 +66,19 @@
 		<dd><input type="radio" value="1" name="data[ProductTypeAttribute][attr_type]" checked />是 <input type="radio" value="0" name="data[ProductTypeAttribute][attr_type]" />否</dd></dl>
 		
 		
-		<dl><dt style="width:105px;">该属性值的录入方式: </dt>
+		<dl><dt style="width:105px;">属性值录入方式: </dt>
 		<dd><input type="radio" value="0" name="data[ProductTypeAttribute][attr_input_type]" checked >手工录入  
 			<input type="radio" value="1" name="data[ProductTypeAttribute][attr_input_type]" >从下面的列表中选择（一行代表一个可选值）
 			<input type="radio" value="2" name="data[ProductTypeAttribute][attr_input_type]" >多行文本框</dd></dl>
 		
+		<dl><dt style="width:105px;">默认值：</dt>
+			<dd><input type="text" style="width:360px;border:1px solid #649776;" name="data[ProductTypeAttribute][default_value]" ></dd></dl>
 		<dl><dt style="width:105px;">可选值列表：</dt>
-			<dd><textarea name="data[ProductTypeAttribute][attr_value]"></textarea></dd></dl>
+			<dd><textarea style="height:120px;width:360px;border:1px solid #649776;"  name="data[ProductTypeAttribute][attr_value]"></textarea></dd></dl>
 		<dl><dt style="width:105px;">是否有效：</dt>
 			<dd><input type="radio" name="data[ProductTypeAttribute][status]" value="1"checked />是<input type="radio" name="data[ProductTypeAttribute][status]" value="0" />否</dd></dl>
 		<dl><dt style="width:105px;">排序：</dt>
-			<dd><input  name="data[ProductTypeAttribute][orderby]" onkeyup="check_input_num(this)"  /><br /> 如果您不输入排序号，系统将默认为50</dd></dl>
+			<dd><input style="border:1px solid #649776;" name="data[ProductTypeAttribute][orderby]" onkeyup="check_input_num(this)"  /><br /> 如果您不输入排序号，系统将默认为50</dd></dl>
 		<br />
 		
 		</div>

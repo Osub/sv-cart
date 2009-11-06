@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: product_type_attribute.php 2699 2009-07-08 11:07:31Z huangbo $
+ * $Id: product_type_attribute.php 5527 2009-11-05 02:07:24Z huangbo $
 *****************************************************************************/
 class ProductTypeAttribute extends AppModel{
 	var $name = 'ProductTypeAttribute';
@@ -19,14 +19,14 @@ class ProductTypeAttribute extends AppModel{
                               'order'        => '',   
                               'dependent'    =>  true,   
                               'foreignKey'   => 'product_type_attribute_id'  
-                        ),
+                        )/*,
         				'ProductAttribute' =>
         				array('className'    => 'ProductAttribute', 
                               'conditions'    =>  '',
                               'order'        => '',   
                               'dependent'    =>  true,   
                               'foreignKey'   => 'product_type_attribute_id'  
-                        )
+                        )*/
                   );
 
     function set_locale($locale){
@@ -63,7 +63,7 @@ class ProductTypeAttribute extends AppModel{
 	}
 	
 	function find_all_att($locale){
-		$params = array('order' => 'ProductTypeAttribute.orderby',
+		$params = array('order' => 'ProductTypeAttribute.orderby,ProductTypeAttribute.id desc',
 		    			'conditions' => array('ProductTypeAttribute.status' => 1)
 			   			);
 		$Lists = $this->cache_find('all',$params,$this->name.$locale);	
@@ -76,7 +76,19 @@ class ProductTypeAttribute extends AppModel{
 		return $product_type_atts;
 	}
 	
-	
+	function find_product_att($locale,$product_type_id){
+		$params = array('order' => 'ProductTypeAttribute.orderby,ProductTypeAttribute.id desc',
+		    			'conditions' => array('ProductTypeAttribute.status' => 1,'product_type_id'=>$product_type_id)
+			   			);
+		$Lists = $this->cache_find('all',$params,$this->name.$locale);	
+		$product_type_atts = array();
+		if(is_array($Lists) && sizeof($Lists)>0){
+			foreach($Lists as $k=>$v){
+				$product_type_atts[$v['ProductTypeAttribute']['id']] = $v;
+			}
+		}
+		return $product_type_atts;
+	}
 	
 }
 ?>

@@ -9,12 +9,12 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 2485 2009-06-30 11:33:00Z huangbo $
+ * $Id: add.ctp 4820 2009-10-09 12:22:53Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
-<p class="add_categories"><strong><?php echo $html->link("供应商列表","/".$_SESSION['cart_back_url'],false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link("供应商列表","/".(empty($_SESSION['cart_back_url'])?$this->params['controller']:$_SESSION['cart_back_url']),false,false);?></strong></p>
 
 <!--Main Start-->
 
@@ -24,18 +24,28 @@
 	<div class="title"><h1>
 	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
 	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
-	  编辑供应商</h1></div>
+	  新增供应商</h1></div>
 	  <div class="box">
 	  
 <!--Providers_Config-->
 	  <div class="shop_config menus_configs">
 	  	<dl><dt style="width:105px;">供应商名称: </dt>
 		<dd><input type="text" style="width:200px;border:1px solid #649776;" id="provider_name" name="data[Provider][name]"/> <font color="#F90046">*</font></dd></dl>
+	  	<dl><dt style="width:105px;">供应商编号: </dt>
+		<dd><input type="text" style="width:200px;border:1px solid #649776;" id="provider_name" name="data[Provider][provider_sn]"/></dd></dl>
 		<dl><dt style="width:105px;">供应商描述: </dt>
 		<dd><input type="text" style="width:200px;border:1px solid #649776;" id="provider_description" name="data[Provider][description]"/> <font color="#F90046">*</font></dd></dl>
 		
 		<dl><dt style="width:105px;">关键字: </dt>
-		<dd><input type="text" style="width:355px;border:1px solid #649776;"name="data[Provider][meta_keywords]"/></dd></dl>
+		<dd><input type="text" style="width:355px;border:1px solid #649776;" id="Providermeta_keywords" name="data[Provider][meta_keywords]"/>
+			<select style="width:90px;border:1px solid #649776" onchange="add_to_seokeyword(this,'Providermeta_keywords')">
+				<option value='常用关键字'>常用关键字</option>
+				<?php foreach( $seokeyword_data as $sk=>$sv){?>
+					<option value='<?php echo $sv["SeoKeyword"]["name"]?>'><?php echo $sv["SeoKeyword"]["name"]?></option>
+				<?php }?>
+			</select>
+
+		</dd></dl>
 		
 		<dl><dt style="width:105px;">关键字描述: </dt>
 		<dd><textarea style="width:355px;border:1px solid #649776;height:95px;overflow-y:scroll;"name="data[Provider][meta_description]"></textarea></dd></dl>
@@ -59,7 +69,7 @@
 		<dl><dt style="width:105px;">排序: </dt>
 		<dd><input type="text" style="width:113px;border:1px solid #649776;" name="data[Provider][orderby]"/></dd></dl>
 		<dl><dt style="width:105px;">是否有效: </dt>
-		<dd><input id="BrandStatus" name="data[Provider][status]" type="radio" value="1" checked> 是 <input id="BrandStatus" name="data[Provider][status]" type="radio" value="0"> 否</dd></dl>
+		<dd><input id="BrandStatus" name="data[Provider][status]" type="radio" value="1" checked> <label>是</label> <input id="BrandStatus" name="data[Provider][status]" type="radio" value="0"> <label>否</label></dd></dl>
 		
 
 		
@@ -138,3 +148,26 @@
 </div>
 <!--Main End-->
 </div>
+<script type="text/javascript">
+  function add_to_seokeyword(obj,keyword_id){
+	
+	var keyword_str = GetId(keyword_id).value;
+	var keyword_str_arr = keyword_str.split(",");
+	for( var i=0;i<keyword_str_arr.length;i++ ){
+		if(keyword_str_arr[i]==obj.value){
+			return false;
+		}
+	}
+	if(keyword_str!=""){
+		GetId(keyword_id).value+= ","+obj.value;
+	}else{
+		GetId(keyword_id).value+= obj.value;
+	}
+}
+</script>
+
+<style>
+label{vertical-align:middle}
+.inputcheckboxradio{vertical-align:middle;}
+body{font-family:tahoma;font-size:12px;}
+</style>

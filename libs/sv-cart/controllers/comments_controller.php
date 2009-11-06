@@ -9,14 +9,136 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: comments_controller.php 2761 2009-07-10 09:06:59Z shenyunfeng $
+ * $Id: comments_controller.php 4512 2009-09-24 11:15:59Z huangbo $
 *****************************************************************************/
 class CommentsController extends AppController {
 
 	var $name = 'Comments';
-//	var $helpers = array('Html');
-	var $uses = array('Comment');
-	var $components = array('RequestHandler','Captcha');
+	var $helpers = array('Html','Pagination');
+	var $uses = array('Comment','User','Cache');
+	var $components = array('RequestHandler','Captcha','Pagination');
+ 
+ 
+ 	function index($page = 1){
+    	$this->cacheQueries = true;
+    	$this->cacheAction = "1 day";		
+ 		
+		$this->page_init();
+		
+		//当前位置
+		$this->navigations[] = array('name'=>__($this->languages['all'].$this->languages['comments'],true),'url'=>"");
+		$this->set('locations',$this->navigations);
+	   //取商店设置评论显示数量
+ 	   $rownum=isset($this->configs['show_count']) ? $this->configs['show_count']:((!empty($rownum)) ?$rownum:20);
+ 	   
+	 	 if(isset($_GET['page'])){
+	 	 	$page = $_GET['page'];
+	 	 }else{
+	 		 $_GET['page'] = $page;
+	 	 } 	   
+	   
+	   $condition=" 1=1 and Comment.parent_id = '0' and Comment.status = '1'";
+	   $my_comments=$this->Comment->find('all',array(
+	   'order' => 'Comment.created DESC',
+//	   'fields' => array('Comment.id','Comment.type','Comment.type_id','Comment.title','Comment.user_id','Comment.parent_id','Comment.status','Comment.created','Comment.content'),
+	   'conditions'=>array($condition)));//,'limit'=>$rownum,'page'=>$page
+	   if(empty($my_comments)){
+	   	   $my_comments=array();
+	   }
+	   $my_comments_id = array();
+	   $p_ids = array();
+	   $a_ids = array();
+	   $u_ids = array();
+	   $p_ids[] = 0;
+	   $u_ids[] = 0;
+	   $a_ids[] = 0;
+	   $my_comments_id[] = 0;	   
+	   foreach($my_comments as $k=>$v){
+	     	if($v['Comment']['type'] == "P"){
+	   			$p_ids[] = $v['Comment']['type_id'];
+	   		}else if($v['Comment']['type'] == "A"){
+	   			$a_ids[] = $v['Comment']['type_id'];
+	   		}
+	   		$u_ids[] =  $v['Comment']['user_id'];
+	   		$my_comments_id[] = $v['Comment']['id'];
+	   	    $my_comments[$k]['Comment']['sub_content'] = $this->sub_str($v['Comment']['content'],60);
+	   }	   
+	   
+  	   $this->Product->set_locale($this->locale);
+  	   $this->Article->set_locale($this->locale);
+	   $users = $this->User->find('all',array('conditions'=>array('User.id'=>$u_ids),'fields'=>array('User.id','User.name')));
+	   $user_list = array();
+	   if(isset($users) && sizeof($users)>0){
+		  foreach($users as $k=>$v){
+		  	 $user_list[$v['User']['id']] = $v;
+		  }
+	   }
+
+	   $condition=array('Product.id'=>$p_ids);
+	   $total = $this->Product->findCount($condition,0);
+	   $sortClass='Product';
+	   $page=1;
+	   $parameters=Array($rownum,$page);
+	   $options=Array();
+	   $page= $this->Pagination->init($condition,"",$options,$total,$rownum,$sortClass);
+
+
+
+	   $product_infos = $this->Product->find("all",array("conditions"=>array("Product.id"=>$p_ids),'limit'=>$rownum,'page'=>$page));
+	   $products_list = array();
+	   if(is_array($product_infos) && sizeof($product_infos) > 0){
+	   		foreach($product_infos as $k=>$v){
+	   			$products_list[$v['Product']['id']] = $v;
+	   		}
+	   }
+	 /*  $article_infos = $this->Article->find("all",array("conditions"=>array("Article.id"=>$a_ids)));
+	   $articles_list = array();
+	   if(is_array($article_infos) && sizeof($article_infos) > 0){
+	   		foreach($article_infos as $k=>$v){
+	   			$articles_list[$v['Article']['id']] = $v;
+	   		}
+	  }
+		
+	  $my_comments_replies = $this->Comment->find('all',array('conditions'=>array('Comment.parent_id'=>$my_comments_id)));
+	  $replies_list =array();
+	  if(is_array($my_comments_replies) && sizeof($my_comments_replies)>0){
+	  		foreach($my_comments_replies as $kk=>$vv){
+	  			$replies_list[$vv['Comment']['parent_id']][] = $vv;
+	  		}
+	  }
+	  */
+	   foreach($my_comments as $k=>$v){
+	   	   $arr_formate = $v;
+	   	   if(isset($user_list[$v['Comment']['user_id']])){
+	   	   	    $arr_formate['User'] =  $user_list[$v['Comment']['user_id']];
+	  	   }
+	   	   $products_list[$v['Comment']['type_id']]['comments'][] = $arr_formate;
+	   	   unset($arr_formate);
+	   	   /*$my_comments[$k]['Comment']['content'] = $this->sub_str($v['Comment']['content'],12);
+	   	   if($v['Comment']['type'] == "P" && isset($products_list[$v['Comment']['type_id']])){
+	   	   		$my_comments[$k]['Product']		= $products_list[$v['Comment']['type_id']]['Product'];
+	   	   		$my_comments[$k]['ProductI18n'] =$products_list[$v['Comment']['type_id']]['ProductI18n'];
+	   	   }else if($v['Comment']['type'] == "A" && isset($articles_list[$v['Comment']['type_id']])){
+	   	   		$my_comments[$k]['Article']		=$articles_list[$v['Comment']['type_id']]['Article'];
+	   	   		$my_comments[$k]['ArticleI18n'] =$articles_list[$v['Comment']['type_id']]['ArticleI18n'];
+	   	   }*/
+
+	   	   /*if(isset($replies_list[$v['Comment']['id']])){
+	   	   $my_comments[$k]['Reply']=$replies_list[$v['Comment']['id']];
+	   	  }*/
+	   }
+	 //  pr($products_list);
+	$js_languages = array("page_number_expand_max" => $this->languages['page_number'].$this->languages['not_exist']);
+			$this->set('js_languages',$js_languages);
+		   $this->pageTitle = $this->languages['all'].$this->languages['comments']." - ".$this->configs['shop_title'];
+		   $this->set('total',$total);
+		   $this->set('my_comments',$my_comments);
+//		pr($my_comments);exit;
+ 		$this->set('products_lists',$products_list);
+    	$this->data['pages_url_1'] = $this->server_host.$this->cart_webroot."comments/index/";
+    	$this->data['pages_url_2'] = "/"; 		
+ 		
+ 	}
  
 //添加评论
 	function add(){
@@ -101,6 +223,113 @@ class CommentsController extends AppController {
 	        return false;
 	    }
 	}
+	
+	function sub_str2($str, $length = 0, $append = true)
+	{
+	    $str = trim($str);
+	    $strlength = strlen($str);
+
+	    if ($length == 0 || $length >= $strlength)
+	    {
+	        return $str;
+	    }
+	    elseif ($length < 0)
+	    {
+	        $length = $strlength + $length;
+	        if ($length < 0)
+	        {
+	            $length = $strlength;
+	        }
+	    }
+
+	    if (function_exists('mb_substr'))
+	    {
+	        $newstr = mb_substr($str, 0, $length, 'utf-8');
+	    }
+	    elseif (function_exists('iconv_substr'))
+	    {
+	        $newstr = iconv_substr($str, 0, $length, 'utf-8');
+	    }
+	    else
+	    {
+	        //$newstr = trim_right(substr($str, 0, $length));
+	        $newstr = substr($str, 0, $length);
+	    }
+
+	    if ($append && $str != $newstr)
+	    {
+	        $newstr .= '...';
+	    }
+	    return $newstr;	
+
+	}		
+	
+function sub_str($string, $length, $dot = ' ...') {
+	global $charset;
+	$oldstr = strlen($string) ;
+	if(strlen($string) <= $length) {
+		return $string;
+	}
+
+	$string = str_replace(array('&amp;', '&quot;', '&lt;', '&gt;'), array('&', '"', '<', '>'), $string);
+	    if (function_exists('mb_substr'))
+	    {
+	        $string = mb_substr($string, 0, $length, 'utf-8');
+	        $charset = 'utf-8';
+	    }
+	    elseif (function_exists('iconv_substr'))
+	    {
+	        $string = iconv_substr($string, 0, $length, 'utf-8');
+	        $charset = 'utf-8';
+	    }
+	$strcut = '';
+	if(strtolower($charset) == 'utf-8') {
+
+		$n = $tn = $noc = 0;
+		while($n < strlen($string)) {
+
+			$t = ord($string[$n]);
+			if($t == 9 || $t == 10 || (32 <= $t && $t <= 126)) {
+				$tn = 1; $n++; $noc++;
+			} elseif(194 <= $t && $t <= 223) {
+				$tn = 2; $n += 2; $noc += 2;
+			} elseif(224 <= $t && $t <= 239) {
+				$tn = 3; $n += 3; $noc += 2;
+			} elseif(240 <= $t && $t <= 247) {
+				$tn = 4; $n += 4; $noc += 2;
+			} elseif(248 <= $t && $t <= 251) {
+				$tn = 5; $n += 5; $noc += 2;
+			} elseif($t == 252 || $t == 253) {
+				$tn = 6; $n += 6; $noc += 2;
+			} else {
+				$n++;
+			}
+
+			if($noc >= $length) {
+				break;
+			}
+
+		}
+		if($noc > $length) {
+			$n -= $tn;
+		}
+
+		$strcut = substr($string, 0, $n);
+
+	} else {
+		for($i = 0; $i < $length; $i++) {
+			$strcut .= ord($string[$i]) > 127 ? $string[$i].$string[++$i] : $string[$i];
+		}
+	}
+
+	$strcut = str_replace(array('&', '"', '<', '>'), array('&amp;', '&quot;', '&lt;', '&gt;'), $strcut);
+	if($oldstr > strlen($strcut)){
+			return $strcut.$dot;
+	}
+	
+	return $strcut;
+}	
+	
 
 }
 

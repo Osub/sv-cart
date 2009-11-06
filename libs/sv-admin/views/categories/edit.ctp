@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: edit.ctp 3053 2009-07-17 11:59:14Z huangbo $
+ * $Id: edit.ctp 5265 2009-10-21 08:50:11Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -27,183 +27,130 @@
 <tr>
 <td align="left" width="50%" valign="top" style="padding-right:5px">
 <!--Communication Stat-->
-	<div class="order_stat athe_infos">
+	<div class="order_stat athe_infos configvalues">
 	  <div class="title"><h1>
 	  <?php echo @$html->image('tab_left.gif',array('class'=>'left'))?>
 	  <?php echo @$html->image('tab_right.gif',array('class'=>'right'))?>
 	  编辑分类</h1></div>
-	  <div class="box">
+	  	<div class="box">
+		<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+			<input id="CategoryI18n<?php echo $k;?>Locale" name="data[CategoryI18n][<?php echo $k;?>][locale]" type="hidden" value="<?php echo  $v['Language']['locale'];?>">
+		   	<?php if(isset($this->data['CategoryI18n'][$v['Language']['locale']])){?>
+			<input id="CategoryI18n<?php echo $k;?>Id" name="data[CategoryI18n][<?php echo $k;?>][id]" type="hidden" value="<?php echo  $this->data['CategoryI18n'][$v['Language']['locale']]['id'];?>">
+		   	<?php }?>
+		   	<input id="categoryid" name="data[CategoryI18n][<?php echo $k;?>][category_id]" type="hidden" value="<?php echo  $this->data['Category']['id'];?>">
+		<?php }}?>
 
 
-<?php if(isset($languages) && sizeof($languages)>0){
-	foreach ($languages as $k => $v){?>
-	<input id="CategoryI18n<?php echo $k;?>Locale" name="data[CategoryI18n][<?php echo $k;?>][locale]" type="hidden" value="<?php echo  $v['Language']['locale'];?>">
-	   <?php if(isset($this->data['CategoryI18n'][$v['Language']['locale']])){?>
-	<input id="CategoryI18n<?php echo $k;?>Id" name="data[CategoryI18n][<?php echo $k;?>][id]" type="hidden" value="<?php echo  $this->data['CategoryI18n'][$v['Language']['locale']]['id'];?>">
-	   <?php }?>
-	   	<input id="categoryid" name="data[CategoryI18n][<?php echo $k;?>][category_id]" type="hidden" value="<?php echo  $this->data['Category']['id'];?>">
-<?php 
-	}
-}?>
+		<dl><dt>分类名称: </dt><dd></dd></dl>
+		<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+			<dl><dt><?php echo $html->image($v['Language']['img01'])?></dt><dd><input style="width:195px;border:1px solid #649776"  id="category_name_<?php echo $v['Language']['locale']?>" name="data[CategoryI18n][<?php echo $k;?>][name]" type="text" maxlength="100" value="<?php if(isset($this->data['CategoryI18n'][$v['Language']['locale']]['name'])){echo $this->data['CategoryI18n'][$v['Language']['locale']]['name'];}?>"> <font color="#ff0000">*</font></dd></dl>
+		<?php }}?>
+		
+		<dl><dt>关键字: </dt><dd></dd></dl>
+		<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+			<dl><dt><?php echo $html->image($v['Language']['img01'])?></dt><dd><input style="width:195px;border:1px solid #649776"  id="CategoryI18n<?php echo $k;?>MetaKeywords" name="data[CategoryI18n][<?php echo $k;?>][meta_keywords]" type="text" style="width:215px;" value="<?php if(isset($this->data['CategoryI18n'][$v['Language']['locale']]['meta_keywords'])){ echo $this->data['CategoryI18n'][$v['Language']['locale']]['meta_keywords'];}?>">
+			<select style="width:90px;border:1px solid #649776" onchange="add_to_seokeyword(this,'CategoryI18n<?php echo $k;?>MetaKeywords')">
+				<option value='常用关键字'>常用关键字</option>
+				<?php foreach( $seokeyword_data as $sk=>$sv){?>
+					<option value='<?php echo $sv["SeoKeyword"]["name"]?>'><?php echo $sv["SeoKeyword"]["name"]?></option>
+				<?php }?>
+			</select>
 
-
-  	    <h2>分类名称：</h2>
-<?php if(isset($languages) && sizeof($languages)>0){
-	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input  id="category_name_<?php echo $v['Language']['locale']?>" name="data[CategoryI18n][<?php echo $k;?>][name]" type="text" maxlength="100" value="<?php if(isset($this->data['CategoryI18n'][$v['Language']['locale']]['name'])){echo $this->data['CategoryI18n'][$v['Language']['locale']]['name'];}?>"> <font color="#ff0000">*</font></span></p>
-<?php 
-	}
-}?>
-
-		<h2>关键字：</h2>
-<?php if(isset($languages) && sizeof($languages)>0){
-	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input id="CategoryI18n<?php echo $k;?>MetaKeywords" name="data[CategoryI18n][<?php echo $k;?>][meta_keywords]" type="text" style="width:215px;" value="<?php if(isset($this->data['CategoryI18n'][$v['Language']['locale']]['meta_keywords'])){ echo $this->data['CategoryI18n'][$v['Language']['locale']]['meta_keywords'];}?>"> </span></p>
-<?php 
-	}
-}?>
-		<h2>分类描述：</h2>
-<?php if(isset($languages) && sizeof($languages)>0){
-	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><textarea id="CategoryI18n<?php echo $k;?>MetaDescription" name="data[CategoryI18n][<?php echo $k;?>][meta_description]" ><?php if(isset($this->data['CategoryI18n'][$v['Language']['locale']]['meta_description'])){echo $this->data['CategoryI18n'][$v['Language']['locale']]['meta_description'];}?></textarea> </span></p>
-<?php 
-	}
-}?>
-
-<?php if($type == "P"){?>
-		<h2>上传图片01：</h2>
-<?php if(isset($languages) && sizeof($languages)>0){
-	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input id="upload_img_text_1<?php echo $k?>" name="data[CategoryI18n][<?php echo $k;?>][img01]" type="text" size="45" value="<?php if(isset($this->data['CategoryI18n'][$v['Language']['locale']]['img01'])){echo $this->data['CategoryI18n'][$v['Language']['locale']]['img01'];}?>" /></span><?php echo $html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(1".$k.",'product_categories')",'',false,false)?> <button type="button" class="pointer" onclick="change_img_name(1,'<?php echo $v['Language']['locale']?>',<?php echo $this->data['Category']['id']?>,<?php echo $k?>)">自动命名</button>
-<br />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-	<?php echo @$html->image("/..{$this->data['CategoryI18n'][$v['Language']['locale']]['img01']}",array('id'=>'logo_thumb_img_1'.$k,'height'=>'150','style'=>!empty($this->data['CategoryI18n'][$v['Language']['locale']]['img01'])?"display:block":"display:none"))?>
-			</p>
-<?php 
-	}
-}?>
-		<h2>上传图片02：</h2>
-<?php if(isset($languages) && sizeof($languages)>0){
-	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input id="upload_img_text_2<?php echo $k?>" name="data[CategoryI18n][<?php echo $k;?>][img02]" type="text" size="45" value="<?php if(isset($this->data['CategoryI18n'][$v['Language']['locale']]['img02'])){echo $this->data['CategoryI18n'][$v['Language']['locale']]['img02'];}?>"   /></span> <?php echo $html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(2".$k.",'product_categories')",'',false,false)?> <button type="button" class="pointer" onclick="change_img_name(2,'<?php echo $v['Language']['locale']?>',<?php echo $this->data['Category']['id']?>,<?php echo $k?>)">自动命名</button>
-			<br />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-				<?php echo @$html->image("/..{$this->data['CategoryI18n'][$v['Language']['locale']]['img02']}",array('id'=>'logo_thumb_img_2'.$k,'height'=>'150','style'=>!empty($this->data['CategoryI18n'][$v['Language']['locale']]['img02'])?"display:block":"display:none"))?>
-</p>
-<?php 
-	}
-}?>
-<?php }?>
-<?php if($type == "A"){?>
-		<h2>上传图片01：</h2>
-<?php if(isset($languages) && sizeof($languages)>0){
-	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input id="upload_img_text_1<?php echo $k?>" name="data[CategoryI18n][<?php echo $k;?>][img01]" type="text" size="45" value="<?php if(isset($this->data['CategoryI18n'][$v['Language']['locale']]['img01'])){echo $this->data['CategoryI18n'][$v['Language']['locale']]['img01'];}?>" /></span> <?php echo $html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(1".$k.",'article_categories')",'',false,false)?> <button type="button"  class="pointer" onclick="change_img_name_gif(1,'<?php echo $v['Language']['locale']?>',<?php echo $this->data['Category']['id']?>,<?php echo $k?>)">自动命名</button>
-	<br />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp	<?php echo @$html->image("/..{$this->data['CategoryI18n'][$v['Language']['locale']]['img01']}",array('id'=>'logo_thumb_img_1'.$k,'height'=>'150','style'=>!empty($this->data['CategoryI18n'][$v['Language']['locale']]['img01'])?"display:block":"display:none"))?>
-
-<?php 
-	}
-}?>
-		<h2>上传图片02：</h2>
-<?php if(isset($languages) && sizeof($languages)>0){
-	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input id="upload_img_text_2<?php echo $k?>" name="data[CategoryI18n][<?php echo $k;?>][img02]" type="text" size="45" value="<?php if(isset($this->data['CategoryI18n'][$v['Language']['locale']]['img02'])){echo $this->data['CategoryI18n'][$v['Language']['locale']]['img02'];}?>"   /></span> <?php echo $html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(2".$k.",'article_categories')",'',false,false)?> <button type="button" onclick="change_img_name_gif(2,'<?php echo $v['Language']['locale']?>',<?php echo $this->data['Category']['id']?>,<?php echo $k?>)" class="pointer">自动命名</button>
-					<br />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp	<?php echo @$html->image("/..{$this->data['CategoryI18n'][$v['Language']['locale']]['img02']}",array('id'=>'logo_thumb_img_2'.$k,'height'=>'150','style'=>!empty($this->data['CategoryI18n'][$v['Language']['locale']]['img02'])?"display:block":"display:none"))?>
-
-
-			</p>
-<?php 
-	}
-}?>
-<?php }?>
-
-<?php if($type == "A"){
-?>
-<!-- fck start-->
-	  <div class="title"><h1>
-	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
-	  详细内容</h1></div>
-	  <div class="box">
-	  <?php echo $javascript->link('fckeditor/fckeditor'); ?>
-<?php if(isset($languages) && sizeof($languages)>0){
-	foreach ($languages as $k => $v){?>
-	  <?php echo $html->image($v['Language']['img01'])?><br />
-<p class="profiles">
-    <?php  if(isset($this->data['CategoryI18n'][$v['Language']['locale']]['detail'])){?>
-       <?php echo $form->textarea('TopicI18n/intro', array("cols" => "60","rows" => "20","value" => "{$this->data['CategoryI18n'][$v['Language']['locale']]['detail']}","name"=>"data[CategoryI18n][{$k}][detail]","id"=>"TopicI18n{$k}Intro"));?>
-        <?php echo $fck->load("TopicI18n{$k}/intro"); ?>
-        
-    <?php }else{?>
-       <?php echo $form->textarea('CategoryI18n/intro', array('cols' => '60', 'rows' => '20','value'=>"","name"=>"data[CategoryI18n][{$k}][detail]","id"=>"CategoryI18n{$k}Intro"));?> 
-       <?php  echo $fck->load("CategoryI18n{$k}/intro"); ?>
-	<?php }?>
-		</p>
-		<br /><br />
-<?php 
-}}}?>
-<?php if($type == "P"){
-?>
-<!-- fck start-->
-	  <div class="title"><h1>
-	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
-	  详细内容</h1></div>
-	  <div class="box">
-	  <?php echo $javascript->link('fckeditor/fckeditor'); ?>
-<?php if(isset($languages) && sizeof($languages)>0){
-	foreach ($languages as $k => $v){?>
-	  <?php echo $html->image($v['Language']['img01'])?><br />
-<p class="profiles">
-    <?php  if(isset($this->data['CategoryI18n'][$v['Language']['locale']]['detail'])){?>
-       <?php echo $form->textarea('TopicI18n/intro', array("cols" => "60","rows" => "20","value" => "{$this->data['CategoryI18n'][$v['Language']['locale']]['detail']}","name"=>"data[CategoryI18n][{$k}][detail]","id"=>"TopicI18n{$k}Intro"));?>
-        <?php echo $fck->load("TopicI18n{$k}/intro"); ?>
-        
-    <?php }else{?>
-       <?php echo $form->textarea('CategoryI18n/intro', array('cols' => '60', 'rows' => '20','value'=>"","name"=>"data[CategoryI18n][{$k}][detail]","id"=>"CategoryI18n{$k}Intro"));?> 
-       <?php  echo $fck->load("CategoryI18n{$k}/intro"); ?>
-	<?php }?>
-		</p>
-		<br /><br />
-<?php 
-}}}?>
-	  </div>
-	</div>
+			</dd></dl>
+		<?php }}?>
+		
+		<dl><dt>分类描述: </dt><dd></dd></dl>
+		<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+			<dl><dt><?php echo $html->image($v['Language']['img01'])?></dt><dd><textarea style="width:195px;border:1px solid #649776"  id="CategoryI18n<?php echo $k;?>MetaDescription" name="data[CategoryI18n][<?php echo $k;?>][meta_description]" ><?php if(isset($this->data['CategoryI18n'][$v['Language']['locale']]['meta_description'])){echo $this->data['CategoryI18n'][$v['Language']['locale']]['meta_description'];}?></textarea></dd></dl>
+		<?php }}?>
+<?php if($type == 'P'){?>
+		<dl><dt>上传图片01: </dt><dd></dd></dl>
+		<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+			<dl><dt><?php echo $html->image($v['Language']['img01'])?></dt><dd><input id="upload_img_text_1<?php echo $k?>" name="data[CategoryI18n][<?php echo $k;?>][img01]" type="text" style="width:195px;border:1px solid #649776" value="<?php if(isset($this->data['CategoryI18n'][$v['Language']['locale']]['img01'])){echo $this->data['CategoryI18n'][$v['Language']['locale']]['img01'];}?>" /><?php echo @$html->link($html->image('select_img.gif',array("height"=>"20","class"=>"vmiddle icons","title"=>$title_arr['select_img'])),"javascript:img_sel(1$k,'product_categories')",'',false,false)?><button type="button" class="pointer" onclick="change_img_name(1,'<?php echo $v['Language']['locale']?>',<?php echo $this->data['Category']['id']?>,<?php echo $k?>)">自动命名</button>
+			<br /><?php echo @$html->image("{$server_host}{$this->data['CategoryI18n'][$v['Language']['locale']]['img01']}",array('id'=>'logo_thumb_img_1'.$k,'height'=>'150','style'=>!empty($this->data['CategoryI18n'][$v['Language']['locale']]['img01'])?"display:block":"display:none"))?>
+			</dd></dl>
+			<style>
+			<!--
+			#logo_thumb_img_1<?php echo $k;?>{ padding:4px; border:1px #E3E3DF solid; vertical-align:middle;width:200px;height:100px;}
+			-->
+			</style>
+		<?php }}?>
+		<dl><dt>图片01超链接: </dt><dd></dd></dl>
+		<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+			<dl><dt><?php echo $html->image($v['Language']['img01'])?></dt><dd><input  name="data[CategoryI18n][<?php echo $k;?>][img01_link]" type="text" style="width:195px;border:1px solid #649776" value="<?php if(isset($this->data['CategoryI18n'][$v['Language']['locale']]['img01_link'])){echo $this->data['CategoryI18n'][$v['Language']['locale']]['img01_link'];}?>" /></dd></dl>
+		<?php }}?>
+		<dl><dt>上传图片02: </dt><dd></dd></dl>
+		<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+			<dl><dt><?php echo $html->image($v['Language']['img01'])?></dt><dd><input id="upload_img_text_2<?php echo $k?>" name="data[CategoryI18n][<?php echo $k;?>][img02]" type="text" style="width:195px;border:1px solid #649776" value="<?php if(isset($this->data['CategoryI18n'][$v['Language']['locale']]['img02'])){echo $this->data['CategoryI18n'][$v['Language']['locale']]['img02'];}?>"   /><?php echo @$html->link($html->image('select_img.gif',array("height"=>"20","class"=>"vmiddle icons","title"=>$title_arr['select_img'])),"javascript:img_sel(2$k,'product_categories')",'',false,false)?><button type="button" class="pointer" onclick="change_img_name(2,'<?php echo $v['Language']['locale']?>',<?php echo $this->data['Category']['id']?>,<?php echo $k?>)">自动命名</button>
+			<br /><?php echo @$html->image("{$server_host}{$this->data['CategoryI18n'][$v['Language']['locale']]['img02']}",array('id'=>'logo_thumb_img_2'.$k,'height'=>'150','style'=>!empty($this->data['CategoryI18n'][$v['Language']['locale']]['img02'])?"display:block":"display:none"))?>
+			</dd></dl>
+			<style>
+			<!--
+			#logo_thumb_img_2<?php echo $k;?>{ padding:4px; border:1px #E3E3DF solid; vertical-align:middle;width:200px;height:100px;}
+			-->
+			</style>
+		<?php 	}}?>
+		<dl><dt>图片02超链接: </dt><dd></dd></dl>
+		<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+			<dl><dt><?php echo $html->image($v['Language']['img01'])?></dt><dd><input name="data[CategoryI18n][<?php echo $k;?>][img02_link]" type="text" style="width:195px;border:1px solid #649776" value="<?php if(isset($this->data['CategoryI18n'][$v['Language']['locale']]['img02_link'])){echo $this->data['CategoryI18n'][$v['Language']['locale']]['img02_link'];}?>" /></dd></dl>
+		<?php }}?>
+		<?php }?>
+<?php if($type == 'A'){?>
+		<dl><dt>上传图片01: </dt><dd></dd></dl>
+		<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+			<dl><dt><?php echo $html->image($v['Language']['img01'])?></dt><dd><input id="upload_img_text_1<?php echo $k?>" name="data[CategoryI18n][<?php echo $k;?>][img01]" type="text" style="width:195px;border:1px solid #649776" value="<?php if(isset($this->data['CategoryI18n'][$v['Language']['locale']]['img01'])){echo $this->data['CategoryI18n'][$v['Language']['locale']]['img01'];}?>" /><?php echo @$html->link($html->image('select_img.gif',array("height"=>"20","class"=>"vmiddle icons","title"=>$title_arr['select_img'])),"javascript:img_sel(1$k,'article_categories')",'',false,false)?><button type="button" class="pointer" onclick="change_img_name(1,'<?php echo $v['Language']['locale']?>',<?php echo $this->data['Category']['id']?>,<?php echo $k?>)">自动命名</button>
+			<br /><?php echo @$html->image("{$server_host}{$this->data['CategoryI18n'][$v['Language']['locale']]['img01']}",array('id'=>'logo_thumb_img_1'.$k,'height'=>'150','style'=>!empty($this->data['CategoryI18n'][$v['Language']['locale']]['img01'])?"display:block":"display:none"))?>
+			</dd></dl>
+			<style>
+			<!--
+			#logo_thumb_img_1<?php echo $k;?>{ padding:4px; border:1px #E3E3DF solid; vertical-align:middle;width:200px;height:100px;}
+			-->
+			</style>
+		<?php }}?>
+		<dl><dt>图片01超链接: </dt><dd></dd></dl>
+		<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+			<dl><dt><?php echo $html->image($v['Language']['img01'])?></dt><dd><input  name="data[CategoryI18n][<?php echo $k;?>][img01_link]" type="text" style="width:195px;border:1px solid #649776" value="<?php if(isset($this->data['CategoryI18n'][$v['Language']['locale']]['img01_link'])){echo $this->data['CategoryI18n'][$v['Language']['locale']]['img01_link'];}?>" /></dd></dl>
+		<?php }}?>
+		<dl><dt>上传图片02: </dt><dd></dd></dl>
+		<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+			<dl><dt><?php echo $html->image($v['Language']['img01'])?></dt><dd><input id="upload_img_text_2<?php echo $k?>" name="data[CategoryI18n][<?php echo $k;?>][img02]" type="text" style="width:195px;border:1px solid #649776" value="<?php if(isset($this->data['CategoryI18n'][$v['Language']['locale']]['img02'])){echo $this->data['CategoryI18n'][$v['Language']['locale']]['img02'];}?>"   /><?php echo @$html->link($html->image('select_img.gif',array("height"=>"20","class"=>"vmiddle icons","title"=>$title_arr['select_img'])),"javascript:img_sel(2$k,'article_categories')",'',false,false)?><button type="button" class="pointer" onclick="change_img_name(2,'<?php echo $v['Language']['locale']?>',<?php echo $this->data['Category']['id']?>,<?php echo $k?>)">自动命名</button>
+			<br /><?php echo @$html->image("{$server_host}{$this->data['CategoryI18n'][$v['Language']['locale']]['img02']}",array('id'=>'logo_thumb_img_2'.$k,'height'=>'150','style'=>!empty($this->data['CategoryI18n'][$v['Language']['locale']]['img02'])?"display:block":"display:none"))?>
+			</dd></dl>
+			<style>
+			<!--
+			#logo_thumb_img_2<?php echo $k;?>{ padding:4px; border:1px #E3E3DF solid; vertical-align:middle;width:200px;height:100px;}
+			-->
+			</style>
+		<?php 	}}?>
+		<dl><dt>图片02超链接: </dt><dd></dd></dl>
+		<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+			<dl><dt><?php echo $html->image($v['Language']['img01'])?></dt><dd><input name="data[CategoryI18n][<?php echo $k;?>][img02_link]" type="text" style="width:195px;border:1px solid #649776" value="<?php if(isset($this->data['CategoryI18n'][$v['Language']['locale']]['img02_link'])){echo $this->data['CategoryI18n'][$v['Language']['locale']]['img02_link'];}?>" /></dd></dl>
+		<?php }}}?>
 <!--Communication Stat End-->
 </td>
 <td valign="top" width="50%" style="padding-left:5px;padding-top:25px;">
 <!--Other Stat-->
 <?php if($type == 'P'):?>
-	<div class="order_stat athe_infos tongxun">
-	  
+	<div class="order_stat athe_infos configvalues">
 	  <div class="box">
-		
-		<dl><dt>上级分类：</dt><dd><select id="CategoryParentId" name="data[Category][parent_id]">
+
+		<dl><dt>上级分类：</dt><dd>
+		<select id="CategoryParentId" name="data[Category][parent_id]">
 			<option value="0">顶层</option>
-			<?php if(isset($categories_tree) && sizeof($categories_tree)){  //第一层
-	   				foreach($categories_tree as $k=>$v){
-				  ?>
+			<?php if(isset($categories_tree) && sizeof($categories_tree)){foreach($categories_tree as $k=>$v){//第一层 ?>
 				 <option value="<?php echo $v['Category']['id'];?>" <?php if($v['Category']['id'] == $this->data['Category']['parent_id']){?>selected<?php }?>><?php echo $v['CategoryI18n']['name'];?></option>
-				 	  <?php if(isset($v['SubCategory']) && sizeof($v['SubCategory'])>0){ //第二层
-		           	     foreach($v['SubCategory'] as $kk=>$vv){		  
-		            		?>
-		            		<option value="<?php echo $vv['Category']['id'];?>" <?php if($vv['Category']['id'] == $this->data['Category']['parent_id']){?>selected<?php }?> >|-- <?php echo $vv['CategoryI18n']['name'];?></option>
-		            			<?php if(isset($vv['SubCategory']) && sizeof($vv['SubCategory'])>0){ //第二层
-				           	     foreach($v['SubCategory'] as $kkk=>$vvv){		  
-				            		?> 
-				            	<!--	<option value="<?php echo $vvv['Category']['id'];?>"  >|---- <?php echo $vvv['CategoryI18n']['name'];?></option>
-				            		-->	<?php }
-								  }?>
-		            			<?php }
-						  }?>
-					<?php }
-				  }?>
-			</select></dd></dl>
-		<dl><dt>排序：</dt><dd class="time"><!--<?php echo $form->input('orderby',array('label'=>false,'div'=>false));?>--><input id="CategoryOrderby" name="data[Category][orderby]" type="text" class="text" style="width:108px;"   value="<?php echo $this->data['Category']['orderby'];?>"/></dd></dl>
-		<dl><dt>超级连接：</dt><dd class="time"><input id="CategoryFlashConfig" name="data[Category][link]" type="text" class="text"  style="width:108px;" value="<?php echo $this->data['Category']['link'];?>"/></dd></dl>
-
-		</span><dl style="padding:5px 0;*padding:6px 0;"><dt style="padding-top:1px">是否显示：</dt><dd class="best_input"><input id="CategoryStatus" name="data[Category][status]" type="radio" value="1" <?php if($this->data['Category']['status']){?>checked<?php }?> >是<input id="CategoryStatus" name="data[Category][status]" type="radio" value="0" <?php if($this->data['Category']['status']==0){?>checked<?php }?> >否</dd></dl>
-
-		<dl style="padding:5px 0;*padding:6px 0;"><dt style="padding-top:1px">开启筛选：</dt><dd class="best_input"><input  type="checkbox"  name="data[CategoryFilter][status]" value="1" <?php if(isset($filer_status)&&$filer_status=="1"){?>checked<?php }?> id="open_filter" onclick="filter_open()">打钩表示开启筛选属性</dd></dl>
-
+				<?php if(isset($v['SubCategory']) && sizeof($v['SubCategory'])>0){foreach($v['SubCategory'] as $kk=>$vv){//第二层?>
+		   		<option value="<?php echo $vv['Category']['id'];?>" <?php if($vv['Category']['id'] == $this->data['Category']['parent_id']){?>selected<?php }?> >|-- <?php echo $vv['CategoryI18n']['name'];?></option>
+		        <?php if(isset($vv['SubCategory']) && sizeof($vv['SubCategory'])>0){foreach($v['SubCategory'] as $kkk=>$vvv){//第二层 ?> 
+				<?php }}}}}}?>
+			</select>
+		</dd></dl>
+		<dl><dt>排序：</dt><dd><input id="CategoryOrderby" name="data[Category][orderby]" type="text" class="text" style="width:108px;"   value="<?php echo $this->data['Category']['orderby'];?>"/></dd></dl>
+		<dl><dt>超级连接：</dt><dd><input id="CategoryFlashConfig" name="data[Category][link]" type="text" class="text"  style="width:108px;" value="<?php echo $this->data['Category']['link'];?>"/></dd></dl>
+		<dl><dt>是否显示：</dt><dd><input id="CategoryStatus" name="data[Category][status]" type="radio" value="1" <?php if($this->data['Category']['status']){?>checked<?php }?> >是<input id="CategoryStatus" name="data[Category][status]" type="radio" value="0" <?php if($this->data['Category']['status']==0){?>checked<?php }?> >否</dd></dl>
+		<dl><dt>显示new：</dt><dd><input id="CategoryStatus" name="data[Category][new_show]" type="radio" value="1" <?php if($this->data['Category']['new_show']){?>checked<?php }?> >是<input id="CategoryStatus" name="data[Category][new_show]" type="radio" value="0" <?php if($this->data['Category']['new_show']==0){?>checked<?php }?> >否</dd></dl>
+		<dl><dt>开启筛选：</dt><dd><input  type="checkbox"  name="data[CategoryFilter][status]" value="1" <?php if(isset($filer_status)&&$filer_status=="1"){?>checked<?php }?> id="open_filter" onclick="filter_open()">打钩表示开启筛选属性</dd></dl>
 		<div id="is_filter">
 			<dl style="padding:5px 0;*padding:6px 0;" ><dt style="padding-top:1px">价格区间：</dt><dd class="best_input" >[<?php echo $html->link("+","javascript:;",array("onclick"=>"add_price()"),false,false);?>]<span id="original_price"><input  type="text"  class="text" value="<?php if(isset($first_price[0])){echo $first_price[0];}?>" style="width:108px;" name="data[Category][start_price][]" > — <input  type="text" class="text" value="<?php if(isset($first_price[1])){ echo $first_price[1];}?>" style="width:108px;" name="data[Category][end_price][]" ></span></dd></dl>
 			<div id="hidden_price" style="display:none;"><dl style="padding:5px 0;*padding:6px 0;"><dt style="padding-top:1px"></dt> <dd class="best_input">[<?php echo $html->link("-","javascript:;",array("onclick"=>"del_price(this)"),false,false);?>] <input  type="text" class="text" value="" style="width:108px;"  name="data[Category][start_price][]"> — <input  type="text" class="text" value="" style="width:108px;" name="data[Category][end_price][]"></dd></dl></div>
@@ -215,56 +162,59 @@
 			</div>
 
 
-			<div id="hidden_attr" style="display:none;"><dl style="padding:5px 0;*padding:6px 0;"><dt style="padding-top:1px"></dt><dd><span>[<?php echo $html->link("-","javascript:;",array("onclick"=>"del_attr(this)"),false,false);?>] </span><span><select name="attr_type[]" onchange="attr_filter(this)"><option value="0">请选择商品类型</option>	 
+		<div id="hidden_attr" style="display:none;"><dl style="padding:5px 0;*padding:6px 0;"><dt style="padding-top:1px"></dt><dd><span>[<?php echo $html->link("-","javascript:;",array("onclick"=>"del_attr(this)"),false,false);?>] </span><span><select name="attr_type[]" onchange="attr_filter(this)"><option value="0">请选择商品类型</option>	 
 		<?php if(isset($product_type) && sizeof($product_type)>0){
 			 foreach($product_type as $k=>$v){?>
 				 <option value="<?php echo $v['ProductType']['type_id']?>"> <?php echo $v['ProductType']['name']?></option>
-		<?	 }
-		 }?></select></span><span>&nbsp;<select name="data[Category][attr_filter][]"><option value="0">请选择筛选属性</option></select></span></dd></dl></div>
-		
+		<?php }}?>
+		</select>
+		</span><span>&nbsp;<select name="data[Category][attr_filter][]"><option value="0">请选择筛选属性</option></select></span></dd></dl></div>
+		<input type="hidden" id="show_control" <?php if(isset($clone_attr) && sizeof($clone_attr)>0){?>value="1"<?php }else{?>value="0"<?php }?>/>
 			<?php if(isset($clone_attr) && sizeof($clone_attr)>0){?><div id="add_attr">
-			<?php	foreach($clone_attr as $kk=>$vv){ ?>
+			<?php foreach($clone_attr as $kk=>$vv){ ?>
 				 <div>
 				 <dl style="padding:5px 0;*padding:6px 0;"><dt style="padding-top:1px"><?php if($kk=="0"){?>筛选属性：<?php }?></dt><dd><span>[<?php if($kk=="0"){ echo $html->link("+","javascript:;",array("onclick"=>"add_attr()"),false,false);}else{echo $html->link("-","javascript:;",array("onclick"=>"del_attr(this)"),false,false);}?>] </span><span><select name="attr_type[]" onchange="attr_filter(this)" id="original_attr1">
 				 <option value="0">请选择商品类型</option>	 
 			<?php if(isset($product_type) && sizeof($product_type)>0){
 				 foreach($product_type as $k=>$v){?>
 					 <option value="<?php echo $v['ProductType']['type_id']?>" <?php if($v['ProductType']['type_id']==$check_id[$kk]){?> selected<?php }?>> <?php echo $v['ProductType']['name']?></option>
-			<?	 }
-			 }?></select></span><span>&nbsp;<?php echo $vv?></span></dd></dl>
+			<?php }}?></select></span><span>&nbsp;<?php echo $vv?></span></dd></dl>
 		 </div>
-		<?php }?></div><?php }else{ ?>
+		<?php }?></div><!--有数据--><?php }else{ ?>
 		
 		<dl style="padding:5px 0;*padding:6px 0;"><dt style="padding-top:1px">筛选属性：</dt><dd ><span>[<?php echo $html->link("+","javascript:;",array("onclick"=>"add_attr()"),false,false);?>]</span><span><select onchange="attr_filter(this)" id="original_attr1"><option value="0">请选择商品类型</option>
 		 <?php if(isset($product_type) && sizeof($product_type)>0){
 			 foreach($product_type as $k=>$v){?>
 			 <option value="<?php echo $v['ProductType']['type_id']?>"> <?php echo $v['ProductType']['name']?></option>
 			 	
-		<?	 }
-		 }?>
+		<?	 }}?>
 		</select></span><span id="original_attr2">&nbsp;<select name="data[Category][attr_filter][]"	onchange="check_filter(this)"><option value="0">请选择筛选属性</option></select></span></dd></dl>		
 		<div id="add_attr"></div>
-			<?php }?>	
-		
-		
-	</div><!-filter end-->
-
-
-
-
-		<dl><dt>分类图片01：</dt><dd><input id="upload_img_text_3" name="data[Category][img01]" type="text" size="45" value="<?php echo  $this->data['Category']['img01'];?>"  /><br /><br />	<?php echo @$html->image("/..{$this->data['Category']['img01']}",array('id'=>'logo_thumb_img_3','height'=>'150','style'=>!empty($this->data['Category']['img01'])?"display:block":"display:none"))?>
-</dd><dd><?php echo @$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(3,'product_categories')",'',false,false)?></dd></dl>
-		<dl><dt>分类图片02：</dt><dd><input id="upload_img_text_4" name="data[Category][img02]" type="text" size="45" value="<?php echo  $this->data['Category']['img02'];?>"  /><br /><br /><?php echo @$html->image("/..{$this->data['Category']['img02']}",array('id'=>'logo_thumb_img_4','height'=>'150','style'=>!empty($this->data['Category']['img02'])?"display:block":"display:none"))?> </dd><dd><?php echo @$html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(4,'product_categories')",'',false,false)?></dd></dl>
-		
-		<br /><br /><br /><br /><br /><br /><br />
-	  </div>
+			<?php }?>
+		</div><!--filter end-->
+		<dl><dt>分类图片01：</dt><dd><input id="upload_img_text_3" name="data[Category][img01]" type="text" style="width:357px;border:1px solid #649776" value="<?php echo  $this->data['Category']['img01'];?>"  /><br /><?php echo @$html->image("/..{$this->data['Category']['img01']}",array('id'=>'logo_thumb_img_3','height'=>'150','style'=>!empty($this->data['Category']['img01'])?"display:block":"display:none"))?>
+		</dd><dd><?php echo @$html->link($html->image('select_img.gif',array("height"=>"20","class"=>"vmiddle icons","title"=>$title_arr['select_img'])),"javascript:img_sel(3,'product_categories')",'',false,false)?></dd></dl>
+		<dl><dt>分类图片01超链接：</dt><dd><input  name="data[Category][img01_link]" type="text" style="width:357px;border:1px solid #649776" value="<?php echo  $this->data['Category']['img01_link'];?>"  /></dd><dd></dd></dl>
+		<dl><dt>分类图片02：</dt><dd><input id="upload_img_text_4" name="data[Category][img02]" type="text" style="width:357px;border:1px solid #649776" value="<?php echo  $this->data['Category']['img02'];?>"  /><br /><?php echo @$html->image("/..{$this->data['Category']['img02']}",array('id'=>'logo_thumb_img_4','height'=>'150','style'=>!empty($this->data['Category']['img02'])?"display:block":"display:none"))?> </dd><dd><?php echo @$html->link($html->image('select_img.gif',array("height"=>"20","class"=>"vmiddle icons","title"=>$title_arr['select_img'])),"javascript:img_sel(4,'product_categories')",'',false,false)?></dd></dl>
+		<dl><dt>分类图片02超链接：</dt><dd><input  name="data[Category][img02_link]" type="text" style="width:357px;border:1px solid #649776" value="<?php echo  $this->data['Category']['img02_link'];?>"  /></dd></dl>
+		</div>
 	</div>
 <?php endif;?>
 <?php if($type == 'A'):?>
-	<div class="order_stat athe_infos tongxun">
+	<div class="order_stat athe_infos configvalues">
 	  
 	  <div class="box">
 	  <!-- start -->
+	  		<dl><dt>系统类型: </dt>
+			<dd>
+			<select name="data[Category][sub_type]">
+			<?php foreach( $systemresource_info["sub_type"] as $k=>$v ){?>
+				<option value="<?php echo $k;?>" <?php if($k == $this->data['Category']['sub_type']){echo "selected";}?>><?php echo $v;?></option>
+			<?php }?>
+			</select>
+			</dd>
+			</dl>
+
 	  		<dl><dt>上级分类：</dt><dd><select id="CategoryParentId" name="data[Category][parent_id]">
 			<option value="0">顶层</option>
 			<?php if(isset($categories_tree) && sizeof($categories_tree)>0){  //第一层
@@ -278,8 +228,7 @@
 		            			<?php if(isset($vv['SubCategory']) && sizeof($vv['SubCategory'])>0){ //第二层
 				           	     foreach($v['SubCategory'] as $kkk=>$vvv){		  
 				            		?>
-				            	<!--	<option value="<?php echo $vvv['Category']['id'];?>">|---- <?php echo $vvv['CategoryI18n']['name'];?></option>
-				            		-->	<?php }
+				            		<?php }
 								  }?>
 		            			<?php }
 						  }?>
@@ -290,9 +239,12 @@
 		<dl><dt>排序：</dt><dd class="time"><!--<?php echo $form->input('orderby',array('label'=>false,'div'=>false));?>--><input id="CategoryOrderby" name="data[Category][orderby]" type="text" class="text" style="width:108px;"   value="<?php echo $this->data['Category']['orderby'];?>"/></dd></dl>
 		<dl><dt>超级连接：</dt><dd class="time"><input id="CategoryFlashConfig" name="data[Category][link]" type="text" class="text"  style="width:108px;" value="<?php echo $this->data['Category']['link'];?>"/></dd></dl>
 		<dl style="padding:5px 0;*padding:6px 0;"><dt style="padding-top:1px">是否显示：</dt><dd class="best_input"><input id="CategoryStatus" name="data[Category][status]" type="radio" value="1" <?php if($this->data['Category']['status']){?>checked<?php }?> >是<input id="CategoryStatus" name="data[Category][status]" type="radio" value="0" <?php if($this->data['Category']['status']==0){?>checked<?php }?> >否</dd></dl>
-		<dl><dt>分类图片01：</dt><dd><input id="upload_img_text_5" name="data[Category][img01]" type="text" size="50" value="<?php echo  $this->data['Category']['img01'];?>"  /><br /><br /><?php echo $html->image("/..{$this->data['Category']['img01']}",array('id'=>'logo_thumb_img_5','height'=>'150','style'=>!empty($this->data['Category']['img01'])?"display:block":"display:none"))?> </dd><dd><?php echo $html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(5,'article_categories')",'',false,false)?></dd></dl>
-		<dl><dt>分类图片02：</dt><dd><input id="upload_img_text_6" name="data[Category][img02]" type="text" size="50" value="<?php echo  $this->data['Category']['img02'];?>"  /><br /><br /><?php echo $html->image("/..{$this->data['Category']['img02']}",array('id'=>'logo_thumb_img_6','height'=>'150','style'=>!empty($this->data['Category']['img02'])?"display:block":"display:none"))?></dd><dd><?php echo $html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(6,'article_categories')",'',false,false)?></dd></dl>
-		<br /><br /><br /><br /><br /><br /><br />
+		<dl style="padding:5px 0;*padding:6px 0;"><dt style="padding-top:1px">显示new：</dt><dd class="best_input"><input id="CategoryStatus" name="data[Category][new_show]" type="radio" value="1" <?php if($this->data['Category']['new_show']){?>checked<?php }?> >是<input id="CategoryStatus" name="data[Category][new_show]" type="radio" value="0" <?php if($this->data['Category']['new_show']==0){?>checked<?php }?> >否</dd></dl>
+		<dl><dt>分类图片01：</dt><dd><input id="upload_img_text_5" name="data[Category][img01]" type="text" style="width:357px;border:1px solid #649776" value="<?php echo  $this->data['Category']['img01'];?>"  /><br /><?php echo $html->image("/..{$this->data['Category']['img01']}",array('id'=>'logo_thumb_img_5','height'=>'150','style'=>!empty($this->data['Category']['img01'])?"display:block":"display:none"))?> </dd><dd><?php echo @$html->link($html->image('select_img.gif',array("height"=>"20","class"=>"vmiddle icons","title"=>$title_arr['select_img'])),"javascript:img_sel(5,'article_categories')",'',false,false)?></dd></dl>
+		<dl><dt>分类图片01超链接：</dt><dd><input  name="data[Category][img01_link]" type="text" style="width:357px;border:1px solid #649776" value="<?php echo  $this->data['Category']['img01_link'];?>"  /></dd></dl>
+		<dl><dt>分类图片02：</dt><dd><input id="upload_img_text_6" name="data[Category][img02]" type="text" style="width:357px;border:1px solid #649776" value="<?php echo  $this->data['Category']['img02'];?>"  /><br /><?php echo $html->image("/..{$this->data['Category']['img02']}",array('id'=>'logo_thumb_img_6','height'=>'150','style'=>!empty($this->data['Category']['img02'])?"display:block":"display:none"))?></dd><dd><?php echo @$html->link($html->image('select_img.gif',array("height"=>"20","class"=>"vmiddle icons","title"=>$title_arr['select_img'])),"javascript:img_sel(6,'article_categories')",'',false,false)?></dd></dl>
+		<dl><dt>分类图片02超链接：</dt><dd><input  name="data[Category][img02_link]" type="text" style="width:357px;border:1px solid #649776" value="<?php echo  $this->data['Category']['img02_link'];?>"  /></dd></dl>
+		
 		<input name="data[Category][type]" type="hidden"  value="A"/>
 	  </div>
 	</div>
@@ -302,16 +254,110 @@
 </tr>
 
 </table>
+<?php if($type == "A"){
+?>
+<!-- tinymce start-->
+<div class="order_stat properies">
+	  <div class="title"><h1>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
+	  详细内容</h1></div>
+	  <div class="box">
+		<?php if($SVConfigs["select_editor"]=="2"||empty($SVConfigs["select_editor"])){?>
+	  	<?php echo $javascript->link('tinymce/tiny_mce/tiny_mce'); ?>
+	  	<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?><table><tr><td valign="top">
+	  	<?php echo $html->image($v['Language']['img01'])?></td><td valign="top">
+		<textarea id="elm<?php echo $v['Language']['locale'];?>" name="data[CategoryI18n][<?php echo $k;?>][detail]" rows="15" cols="80" style="width: 80%"><?php echo $this->data['CategoryI18n'][$v['Language']['locale']]['detail'];?></textarea>
+		<?php  echo $tinymce->load("elm".$v['Language']['locale'],$now_locale); ?><br /><br /></td></tr>
+</table>
+    	<?php }?></p>
+		<?php }?><?php }?>
+		<?php if($SVConfigs["select_editor"]=="1"){?>
+			<?php echo $javascript->link('fckeditor/fckeditor'); ?>
+		  	<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+		  	<?php echo $html->image($v['Language']['img01'])?><br />
+			<p class="profiles">
+			<?php  if(isset($article['BrandI18n'][$k]['description'])){?>
+	        <?php echo $form->textarea('ArticleI18n/content', array("cols" => "60","rows" => "20","name"=>"data[CategoryI18n][{$k}][detail]","id"=>"ArticleI18n{$k}Content"));?>
+	        <?php echo $fck->load("ArticleI18n{$k}/content"); ?>
+	        
+	    	<?php }else{?>
+	       	<?php echo $form->textarea('ArticleI18n/content', array('cols' => '60', 'rows' => '20','value'=>"{$this->data['CategoryI18n'][$v['Language']['locale']]['detail']}","name"=>"data[CategoryI18n][{$k}][detail]","id"=>"ArticleI18n{$k}Content"));?> 
+	       	<?php echo $fck->load("ArticleI18n{$k}/content"); ?>
+	    	<?php }?>
+		    </p>
+			<br /><br />
+			<?php }}?>
+		<?php }?>
+<?php }?>
+<?php if($type == "P"){
+?>
+<!-- tinymce start-->	
+<div class="order_stat properies">
+	  <div class="title"><h1>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
+	  详细内容</h1></div>
+	  <div class="box">
+		<?php if($SVConfigs["select_editor"]=="2"||empty($SVConfigs["select_editor"])){?>
+	  	<?php echo $javascript->link('tinymce/tiny_mce/tiny_mce'); ?>
+	  	<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?><table><tr><td valign="top">
+	  	<?php echo $html->image($v['Language']['img01'])?></td><td valign="top">
+		<textarea id="elm<?php echo $v['Language']['locale'];?>" name="data[CategoryI18n][<?php echo $k;?>][detail]" rows="15" cols="80" style="width: 80%"><?php echo $this->data['CategoryI18n'][$v['Language']['locale']]['detail'];?></textarea>
+		<?php  echo $tinymce->load("elm".$v['Language']['locale'],$now_locale); ?><br /><br /></td></tr>
+</table>
+    	<?php }?></p>
+		<?php }?><?php }?>
+		<?php if($SVConfigs["select_editor"]=="1"){?>
+			<?php echo $javascript->link('fckeditor/fckeditor'); ?>
+		  	<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+		  	<?php echo $html->image($v['Language']['img01'])?><br />
+			<p class="profiles">
+			<?php  if(isset($article['BrandI18n'][$k]['description'])){?>
+	        <?php echo $form->textarea('ArticleI18n/content', array("cols" => "60","rows" => "20","name"=>"data[CategoryI18n][{$k}][detail]","id"=>"ArticleI18n{$k}Content"));?>
+	        <?php echo $fck->load("ArticleI18n{$k}/content"); ?>
+	        
+	    	<?php }else{?>
+	       	<?php echo $form->textarea('ArticleI18n/content', array('cols' => '60', 'rows' => '20','value'=>"{$this->data['CategoryI18n'][$v['Language']['locale']]['detail']}","name"=>"data[CategoryI18n][{$k}][detail]","id"=>"ArticleI18n{$k}Content"));?> 
+	       	<?php echo $fck->load("ArticleI18n{$k}/content"); ?>
+	    	<?php }?>
+		    </p>
+			<br /><br />
+			<?php }}?>
+		<?php }?>
+<?php 
+}?>
+	  </div>
+	</div>
 <p class="submit_btn"><input type="submit" value="确定" /><input type="reset" value="重置" /></p>
 <?php echo $form->end();?>
 </div>
 <!--Main Start End-->
 </div>
+<script type="text/javascript">
+  function add_to_seokeyword(obj,keyword_id){
+	
+	var keyword_str = GetId(keyword_id).value;
+	var keyword_str_arr = keyword_str.split(",");
+	for( var i=0;i<keyword_str_arr.length;i++ ){
+		if(keyword_str_arr[i]==obj.value){
+			return false;
+		}
+	}
+	if(keyword_str!=""){
+		GetId(keyword_id).value+= ","+obj.value;
+	}else{
+		GetId(keyword_id).value+= obj.value;
+	}
+}
+</script>
 <script>
+
 filter_open();
 //显示 隐藏层
 function filter_open(){
 	var obj=document.getElementById('open_filter');
+	var show_control=document.getElementById('show_control').value;
 	if(obj.checked== true){
 		document.getElementById('is_filter').style.display="block";
 	}else{
@@ -319,13 +365,15 @@ function filter_open(){
 		document.getElementById('add_attr').innerHTML="";
 		document.getElementById('add_price').innerHTML="";
 		document.getElementById('original_price').innerHTML='<input  type="text" class="text" value="" style="width:108px;" name="data[Category][start_price][]" > — <input  type="text" class="text" value="" style="width:108px;" name="data[Category][end_price][]" >';
-		var div = document.createElement("div");
-		var imgupload_str = document.getElementById("hidden_attr").innerHTML; 
-		div.innerHTML=imgupload_str;
-		document.getElementById("add_attr").appendChild(div);	
-		var add_attr=document.getElementById("add_attr");
-		add_attr.childNodes[0].childNodes[0].childNodes[0].innerHTML="筛选属性：";
-		add_attr.childNodes[0].childNodes[0].childNodes[1].childNodes[0].innerHTML='[<?php echo $html->link("+","javascript:;",array("onclick"=>"add_attr()"),false,false);?>]';
+		if(show_control=="1"){
+			var div = document.createElement("div");
+			var imgupload_str = document.getElementById("hidden_attr").innerHTML; 
+			div.innerHTML=imgupload_str;
+			document.getElementById("add_attr").appendChild(div);	
+			var add_attr=document.getElementById("add_attr");
+			add_attr.childNodes[0].childNodes[0].childNodes[0].innerHTML="筛选属性：";
+			add_attr.childNodes[0].childNodes[0].childNodes[1].childNodes[0].innerHTML='[<?php echo $html->link("+","javascript:;",array("onclick"=>"add_attr()"),false,false);?>]';
+		}
 	}
 }
 
@@ -454,3 +502,11 @@ function change_img_name_gif(nu,type,id,e_id){
 }
 <?php }?>
 </script>
+<style>
+<!--
+#logo_thumb_img_3{ padding:4px; border:1px #E3E3DF solid; vertical-align:middle;width:200px;height:100px;}
+#logo_thumb_img_4{ padding:4px; border:1px #E3E3DF solid; vertical-align:middle;width:200px;height:100px;}
+#logo_thumb_img_5{ padding:4px; border:1px #E3E3DF solid; vertical-align:middle;width:200px;height:100px;}
+#logo_thumb_img_6{ padding:4px; border:1px #E3E3DF solid; vertical-align:middle;width:200px;height:100px;}
+-->
+</style>

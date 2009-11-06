@@ -1,6 +1,6 @@
 <?php
 /*****************************************************************************
- * SV-Cart 专题管理
+ * SV-Cart 专题介绍
  * ===========================================================================
  * 版权所有  上海实玮网络科技有限公司，并保留所有权利。
  * 网站地址: http://www.seevia.cn
@@ -9,19 +9,20 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: topics_controller.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: topics_controller.php 4708 2009-09-28 13:45:35Z huangbo $
  *****************************************************************************/
 class TopicsController extends AppController{
     var $name='Topics';
     var $components=array('Pagination','RequestHandler');
-    var $helpers=array('Pagination','Html','Form','Javascript','Fck');
-    var $uses=array('Topic','TopicI18n','Brand','ProductType','Category','Product','TopicProduct');
+    var $helpers=array('Pagination','Html','Form','Javascript','Tinymce','fck');
+    var $uses=array('Topic','TopicI18n','Brand','ProductType','Category','Product','TopicProduct','SeoKeyword');
     function index(){
         /*判断权限*/
         $this->operator_privilege('special_topic_view');
         /*end*/
-        $this->pageTitle='专题管理'." - ".$this->configs['shop_name'];
-        $this->navigations[]=array('name' => '专题管理','url' => '/topics/');
+        $this->pageTitle='专题介绍'." - ".$this->configs['shop_name'];
+        $this->navigations[] = array('name'=>'促销栏目','url'=>'');
+        $this->navigations[]=array('name' => '专题介绍','url' => '/topics/');
         $this->set('navigations',$this->navigations);
         $this->Topic->set_locale($this->locale);
         $condition='';
@@ -39,17 +40,21 @@ class TopicsController extends AppController{
         /*判断权限*/
         $this->operator_privilege('special_topic_operation');
         /*end*/
-        $this->pageTitle="专题部门 - 专题管理"." - ".$this->configs['shop_name'];
-        $this->navigations[]=array('name' => '专题管理','url' => '/topics/');
-        $this->navigations[]=array('name' => '专题部门','url' => '');
+        $this->pageTitle="专题部门 - 专题介绍"." - ".$this->configs['shop_name'];
+        $this->navigations[] = array('name'=>'促销栏目','url'=>'');
+        $this->navigations[]=array('name' => '专题介绍','url' => '/topics/');
+        $this->navigations[]=array('name' => '专题编辑','url' => '');
         $this->set('navigations',$this->navigations);
         if($this->RequestHandler->isPost()){
             foreach($this->data['TopicI18n']as $v){
-                $topicI18n_info=array('id' => isset($v['id']) ? $v['id']: '',
-                    'locale' => $v['locale'],'topic_id' => isset($v['topic_id'])
-                    ? $v['topic_id']: $id,'title' => isset($v['title']) ?
-                    $v['title']: '','intro' => isset($v['intro']) ? $v['intro']
-                    : ''
+                $topicI18n_info=array(
+                	'id' => isset($v['id']) ? $v['id']: '',
+                    'locale' => $v['locale'],
+                    'topic_id' => isset($v['topic_id'])? $v['topic_id']: $id,
+                    'title' => isset($v['title']) ?$v['title']: '',
+                    'intro' => isset($v['intro']) ? $v['intro']: '',
+                    'meta_keywords' => isset($v['meta_keywords']) ? $v['meta_keywords']: '',
+                    'meta_description' => isset($v['meta_description']) ? $v['meta_description']: ''
                 );
                 $this->TopicI18n->saveall(array('TopicI18n' => $topicI18n_info)); //更新多语言
             }
@@ -64,7 +69,7 @@ class TopicsController extends AppController{
             if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log']==1){
                 $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑专题:'.$userinformation_name,'operation');
             }
-            $this->flash("专题  ".$userinformation_name." 编辑成功。点击继续编辑该专题。",'/topics/edit/'.$id,10);
+            $this->flash("专题  ".$userinformation_name." 编辑成功。点击这里继续编辑该专题。",'/topics/edit/'.$id,10);
         }
         $topic=$this->Topic->localeformat($id);
         $categories_tree=$this->Category->tree('P',$this->locale);
@@ -84,12 +89,16 @@ class TopicsController extends AppController{
 		//leo20090722导航显示
 		$this->navigations[] = array('name'=>$topic["TopicI18n"][$this->locale]["title"],'url'=>'');
 	    $this->set('navigations',$this->navigations);
+			//关键字
+			$seokeyword_data = $this->SeoKeyword->find("all",array("conditions"=>array("status"=>1)));
+			$this->set("seokeyword_data",$seokeyword_data);
 
     }
     function add(){
-        $this->pageTitle="专题部门 - 专题管理"." - ".$this->configs['shop_name'];
-        $this->navigations[]=array('name' => '专题管理','url' => '/topics/');
-        $this->navigations[]=array('name' => '专题部门','url' => '');
+        $this->pageTitle="专题部门 - 专题介绍"." - ".$this->configs['shop_name'];
+        $this->navigations[] = array('name'=>'促销栏目','url'=>'');
+        $this->navigations[]=array('name' => '专题介绍','url' => '/topics/');
+        $this->navigations[]=array('name' => '新增专题','url' => '');
         $this->set('navigations',$this->navigations);
         if($this->RequestHandler->isPost()){
             $this->Topic->save($this->data); //保存
@@ -111,8 +120,12 @@ class TopicsController extends AppController{
             if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log']==1){
                 $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加专题:'.$userinformation_name,'operation');
             }
-            $this->flash("专题  ".$userinformation_name." 添加成功。点击继续编辑该专题。",'/topics/edit/'.$id,10);
+            $this->flash("专题  ".$userinformation_name." 添加成功。点击这里继续编辑该专题。",'/topics/edit/'.$id,10);
         }
+			//关键字
+			$seokeyword_data = $this->SeoKeyword->find("all",array("conditions"=>array("status"=>1)));
+			$this->set("seokeyword_data",$seokeyword_data);
+
     }
     function remove($id){
         /*判断权限*/

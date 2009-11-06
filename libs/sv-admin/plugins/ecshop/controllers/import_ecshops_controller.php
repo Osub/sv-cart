@@ -120,6 +120,7 @@ class ImportEcshopsController extends EcshopAppController {
 	}
 	//ecshop数据导入
 	function import_ecshop(){
+		set_time_limit(3600000);
 		//要导入的数据表
 		$import_ecshop_mysql_table_value = $_REQUEST["import_ecshop_mysql_table_value"];
 		$import_ecshop_mysql_table = explode(",",$import_ecshop_mysql_table_value);//数据表组数

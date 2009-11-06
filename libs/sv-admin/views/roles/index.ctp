@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 2516 2009-07-01 10:29:18Z shenyunfeng $
+ * $Id: index.ctp 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -18,8 +18,9 @@
 <!--Main Start-->
 <p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."新增角色","../roles/add/",'',false,false);?></strong></p>
 
-<div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
+<div class="home_main" style="padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' ); ">
 <?php echo $form->create('',array('action'=>'/'));?>
+<div id="listDiv">
 <table cellpadding="0" cellspacing="0" width="100%" class="list_data">
 <tr class="thead">
 	<th>角色名称</th>
@@ -29,7 +30,7 @@
 </tr>
 	<?php if(isset($role_list) && sizeof($role_list)>0){?>
 <?php foreach($role_list as $k=>$v){?>	
-<tr>
+<tr <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >
 	<td align="center"><?php echo $v['OperatorRole']['name']?></td>
 	<td align="center"><?php echo $v['OperatorRole']['number']?></td>
 	<td align="center"><?php echo $v['OperatorRole']['actionses']?></td>
@@ -37,7 +38,7 @@
 |<?php echo $html->link("移除","/roles/remove/{$v['OperatorRole']['id']}");?></td>
 </tr>
 <?php }} ?>		
-</table>
+</table></div>
 <?php echo $form->end();?>
 <?php echo $this->element('pagers', array('cache'=>'+0 hour'));?>
 </div>

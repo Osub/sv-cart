@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: product.php 2989 2009-07-17 02:03:04Z huangbo $
+ * $Id: product.php 5425 2009-10-26 05:25:54Z huangbo $
 *****************************************************************************/
 class Product extends AppModel
 {
@@ -39,6 +39,13 @@ class Product extends AppModel
 					   		'ProductService' =>array
 												(
 										          'className'     => 'ProductService',   
+					                              'order'        => '',   
+					                              'dependent'    =>  true,   
+					                              'foreignKey'   => 'product_id'
+					                        	),					            						
+					   		'Stock' =>array
+												(
+										          'className'     => 'Stock',   
 					                              'order'        => '',   
 					                              'dependent'    =>  true,   
 					                              'foreignKey'   => 'product_id'
@@ -159,7 +166,7 @@ function pr(){
 			     $v['Product']['promotion_start']=substr($v['Product']['promotion_start'], 0, 10);
 			     $v['Product']['promotion_end']=substr($v['Product']['promotion_end'], 0, 10);
 				 $lists_formated['Product']=$v['Product'];
-				 $lists_formated['ProviderProduct']=$v['ProviderProduct'];
+				 $lists_formated['ProviderProduct']=@$v['ProviderProduct'];
 				 $lists_formated['ProductI18n'][]=$v['ProductI18n'];
 				 foreach($lists_formated['ProductI18n'] as $key=>$val){
 				 	  $lists_formated['ProductI18n'][$val['locale']]=$val;

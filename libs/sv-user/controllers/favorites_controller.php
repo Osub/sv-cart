@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: favorites_controller.php 3233 2009-07-22 11:41:02Z huangbo $
+ * $Id: favorites_controller.php 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 class FavoritesController extends AppController {
 	var $name = 'Favorites';
@@ -100,6 +100,14 @@ class FavoritesController extends AppController {
 			if(empty($orderby)){
 		 		$orderby=isset($this->configs['products_category_page_orderby_type'])? $this->configs['products_category_page_orderby_type']." ". $this->configs['products_category_page_orderby_method'] :((!empty($orderby)) ?$orderby:'created '.$this->configs['products_category_page_orderby_method']);
 			}
+			
+		if($rownum == "all"){
+			$rownum_sql = 99999;
+		}else{
+			$rownum_sql = $rownum;
+		}			
+			
+			
 	  $user_id=$_SESSION['User']['User']['id'];
 	   //pr($_SESSION['User']);
 
@@ -118,9 +126,9 @@ class FavoritesController extends AppController {
 	  	 $total = $this->Product->findCount($condition,0);
  	     $sortClass='Product';
 	     $page=1;
-	     $parameters=Array($orderby,$rownum,$page);
+	     $parameters=Array($orderby,$rownum_sql,$page);
 	     $options=Array();
-	     $page= $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass);
+	     $page= $this->Pagination->init($condition,$parameters,$options,$total,$rownum_sql,$sortClass);
 	  	  //$this->Product->set_locale($this->locale);
 	 // 	  $fav_products=$this->Product->findAll($condition,'',"Product.$orderby","$rownum",$page);
 	  	  
@@ -134,9 +142,9 @@ class FavoritesController extends AppController {
 																				,'Product.promotion_status'
 																				,'Product.code','Product.created'
 																				,'Product.product_rank_id'
-																				,'Product.quantity'	,'ProductI18n.name','ProductLocalePrice.product_price'
+																				,'Product.quantity'	,'ProductI18n.name'
 																				),		  	  
-	  	  'order'=>array("Product.$orderby"),'limit'=>$rownum,'page'=>$page));
+	  	  'order'=>array("Product.$orderby"),'limit'=>$rownum_sql,'page'=>$page));
 	  	  
 	  	  
 	  	  

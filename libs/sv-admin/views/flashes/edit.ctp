@@ -9,14 +9,14 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: edit.ctp 2498 2009-07-01 07:17:42Z huangbo $
+ * $Id: edit.ctp 4372 2009-09-18 10:38:17Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 <!--Main Start-->
 <br />
-<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('class'=>'vmiddle'))."flash列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('class'=>'vmiddle'))."flash列表","/".(empty($_SESSION['cart_back_url'])?$this->params['controller']:$_SESSION['cart_back_url']),'',false,false);?></strong></p>
 <div class="home_main">
 <?php echo $form->create('Flashe',array('action'=>'edit/'.$flashimage['FlashImage']['id']));?>
 <div class="order_stat athe_infos configvalues" style="align:center">
@@ -58,45 +58,36 @@
 			<dd><input type="text" style="width:280px;border:1px solid #649776"  name="data[FlashImage][url]"  size= "35"  value="<?php echo $flashimage['FlashImage']['url']?>" />
 			
 			</dd></dl>
-
 		<dl><dt style="width:105px;">图片显示： </dt>
 		<dd><input type="text" style="width:280px;border:1px solid #649776"  name="data[FlashImage][image]"  size= "35" id="upload_img_text_1" value="<?php echo $flashimage['FlashImage']['image']?>" />
-		<br /><br />
-		<?php echo $html->image("/..{$flashimage['FlashImage']['image']}",array('id'=>'logo_thumb_img_1','height'=>'150','style'=>!empty($flashimage['FlashImage']['image'])?"display:block":"display:none"))?>
-		</dd>
-		<dd><?php echo $html->link($html->image('select_img.gif',array("height"=>"20","class"=>"vmiddle icons","title"=>$title_arr['select_img'])),"javascript:img_sel(1,'all')",'',false,false)?></dd>
-		</dl>
 
+		<?php echo $html->image("{$server_host}{$flashimage['FlashImage']['image']}",array('id'=>'logo_thumb_img_1','style'=>!empty($flashimage['FlashImage']['image'])?"display:block":"display:none"))?>
+		</dd>
+		<dd><?php echo $html->link($html->image('select_img.gif',array("height"=>"20","class"=>"vmiddle icons","title"=>$title_arr['select_img'])),"javascript:img_sel(1,'home')",'',false,false)?></dd>
+		</dl>
 		<?php if(!empty($flashimages['FlashImage'])) for($i=0;$i<=count($flashimages['FlashImage'])-1;$i++){?>
 		<dl><dt style="width:105px;"></dt>
 		<dd><?php echo $html->image($flashimages['FlashImage'][$i]['image'] ,array('class'=>'vmiddle','onclick'=>''))?> </dd>
 		</dl>
-	<?php }?>
-	 
-
+		<?php }?>
 		<input type="hidden" style="width:280px;border:1px solid #649776" name="data[FlashImage][flash_id]" value="<?php echo $flashimage['FlashImage']['flash_id']?>" />
 		<input type="hidden" style="width:280px;border:1px solid #649776" name="data[FlashImage][id]" value="<?php echo $flashimage['FlashImage']['id']?>" />
 		<dl><dt style="width:105px;">描述： </dt>
 		<dd><input type="text" style="width:280px;border:1px solid #649776" name="data[FlashImage][description]" value="<?php echo $flashimage['FlashImage']['description']?>" /></dd></dl>
-
 		<dl style="padding-bottom:0"><dt style="width:105px;">排序： </dt>
 		<dd><input type="text" style="width:100px;border:1px solid #649776" name="data[FlashImage][orderby]" value="<?php echo $flashimage['FlashImage']['orderby']?>" onkeyup="check_input_num(this)" />
-			<p class="msg"> 如果您不输入排序号，系统将默认为50</p></dd></dl>	
+		<p class="msg"> 如果您不输入排序号，系统将默认为50</p></dd></dl>	
 		<dl style="margin-top:-4px;">
 		<dt style="width:105px;">是否有效： </dt>
 		<dd style="padding-top:3px;">
 		<input type="radio" class="radio" name="data[FlashImage][status]" value="1" <?php if($flashimage['FlashImage']['status'] == "1"){ echo "checked";}?> />是
 		<input type="radio" class="radio"  name="data[FlashImage][status]" value="0"  <?php if($flashimage['FlashImage']['status'] == "0"){ echo "checked";}?> />否</dd></dl>
-		<br />
-		
 		</div>  	
 <!--Mailtemplates_Config End-->
-		
 	  </div>
 	  <p class="submit_btn"><input type="submit" value="确定" /><input type="reset" value="重置" /></p>
 	</div>
 </form>
-
 <span style="display:none">
 	<span id="select1">
 <select  name="data[Flash][type_id]" id='bTypeId'>
@@ -137,7 +128,7 @@ function typechange(){
 	}
 }
 
-window.onload=function(){
+
 	var	selects = document.getElementById('selects');
 	var	select1 = document.getElementById('select1');
 	var	select2 = document.getElementById('select2');
@@ -149,8 +140,15 @@ window.onload=function(){
 		case 'AC':selects.innerHTML = select3.innerHTML;break;
 		default:selects.innerHTML = "";
 	}
-} 
+
 </script>
 </div>
 <!--Main End-->
 </div>
+<style>
+<!--
+#logo_thumb_img_1{ padding:4px; border:1px #E3E3DF solid; vertical-align:middle;
+width:220px;height:100px;
+}
+-->
+</style>

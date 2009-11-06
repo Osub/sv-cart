@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: provider.php 725 2009-04-17 08:00:21Z huangbo $
+ * $Id: provider.php 5195 2009-10-20 05:29:32Z huangbo $
 *****************************************************************************/
 class Provider extends AppModel{
 	var $name = 'Provider';
@@ -21,12 +21,13 @@ class Provider extends AppModel{
                               'foreignKey'   => 'provider_id'  
                         )
                   );
-    	function get_provider_list(){
-    		$condition['status'] = 1;
-			$provider_list = $this->findAll($condition);
-			return $provider_list;
-		}
+	function get_provider_list(){
+		$condition['status'] = 1;
+		$provider_list = $this->find("all",array("conditions"=>$condition,"fields"=>array("Provider.id,Provider.name")));
+		return $provider_list;
+
 	}
+}
 	
 
 ?>

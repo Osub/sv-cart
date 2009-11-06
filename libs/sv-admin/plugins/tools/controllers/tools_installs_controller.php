@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: tools_installs_controller.php 3187 2009-07-22 06:35:42Z huangbo $
+ * $Id: tools_installs_controller.php 4433 2009-09-22 10:08:09Z huangbo $
 *****************************************************************************/
 class ToolsInstallsController extends ToolsAppController{
 	var $helpers = array('Html','Form','Javascript');
@@ -78,6 +78,7 @@ class ToolsInstallsController extends ToolsAppController{
 		    $authcode['455']    = !empty($_POST['user_login_authcode'])         	 ?   1 : 0;//use_captcha
 		    $authcode['467']    = !empty($_POST['user_comment_authcode'])       	 ?   1 : 0;//comment_captcha
 		    $authcode['468']    = !empty($_POST['admin_login_authcode'])        	 ?   1 : 0;//admin_captcha
+		    $authcode['260']    = !empty($_POST['time_zone_set'])        	 ?   $_POST['time_zone_set'] : "-8";//default_timezone
 		    $template['name']   = isset($_POST['template_name'])    			     ?   trim($_POST['template_name']) : '';
 		    $template['template_style']  = isset($_POST["template_style_".$template['name']]) ?   trim($_POST["template_style_".$template['name']]) : '';
 			$template_info = $this->get_template_info($template['name']);
@@ -184,14 +185,14 @@ class ToolsInstallsController extends ToolsAppController{
 	    $info['code']       = $file_name;
 
 	    if (file_exists(ROOT . '../themed/' . $file_name . '/readme.txt') && !empty($file_name)){
-	        $arr = array_slice(file(ROOT . '../themed/'. $file_name. '/readme.txt'), 0, 7);
+	        $arr = array_slice(file(ROOT . '../themed/'. $file_name. '/readme.txt'), 0, 8);
 	        $template_name      = explode(': ', $arr[0]);
 	        $template_uri       = explode(': ', $arr[1]);
 	        $template_desc      = explode(': ', $arr[2]);
 	        $template_version   = explode(': ', $arr[3]);
 	        $template_author    = explode(': ', $arr[4]);
 	        $author_uri         = explode(': ', $arr[5]);
-	        $template_style     = explode(': ', $arr[6]);
+	        $template_style     = explode(': ', $arr[7]);
 			
 
 	        $info['name']       = isset($template_name[1]) ? trim($template_name[1]) : '';

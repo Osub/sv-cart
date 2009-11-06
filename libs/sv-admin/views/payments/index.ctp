@@ -9,21 +9,28 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 2485 2009-06-30 11:33:00Z huangbo $
+ * $Id: index.ctp 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));//pr($payments);?>
 
 <!--Main Start-->
-<div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
-	<ul class="product_llist payments">
-	<li class="paymentname">支付方式名称</li><li class="bewrite">支付方式描述</li><li class="edition">插件版本</li><li class="expenditure">费用</li><li class="taixs">排序</li><li class="hadle">操作</li></ul>
+<div class="home_main" style="padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' ); ">
+<div id="listDiv">
+<table cellpadding="0" cellspacing="0" width="100%" class="list_data">
+	<tr>
+	<th>支付方式名称</th>
+	<th>支付方式描述</th>
+	<th>插件版本</th>
+	<th>费用</th>
+	<th>排序</th>
+	<th>操作</th>
+	</tr>
 <!--Payments List-->
-	<table cellpadding="0" cellspacing="0" class="payments_list" width="100%">
 	<?php if(isset($payments) && sizeof($payments)>0){?>
-	<?php foreach($payments as $payment){?>
-    	<tr>
+	<?php foreach($payments as $k=>$payment){?>
+    	<tr <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >
 		<td width="13%" valign="top"><strong><?php echo $payment['PaymentI18n']['name']?></strong></td>
 		<td width="54%" valign="top"><?php echo $payment['PaymentI18n']['description']?></td>
 		<td width="9%" valign="top" align="center"><?php echo $payment['Payment']['version']?></td>

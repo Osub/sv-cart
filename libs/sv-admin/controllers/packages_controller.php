@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: packages_controller.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: packages_controller.php 4691 2009-09-28 10:11:57Z huangbo $
 *****************************************************************************/
 class PackagesController extends AppController {
 
@@ -23,8 +23,9 @@ class PackagesController extends AppController {
 		$this->operator_privilege('package_view');
 		/*end*/
 		$this->pageTitle = "包装"." - ".$this->configs['shop_name'];
-		
+		$this->navigations[] = array('name'=>'促销栏目','url'=>'');
 		$this->navigations[] = array('name'=>'包装','url'=>'/packagings/');
+		
 		$this->set('navigations',$this->navigations);
 		$packaging_list=$this->Packaging->findAll();
    		
@@ -49,6 +50,7 @@ class PackagesController extends AppController {
 		$this->operator_privilege('package_operation');
 		/*end*/
 		$this->pageTitle = "编辑包装 - 包装管理"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'促销栏目','url'=>'');
 		$this->navigations[] = array('name'=>'包装管理','url'=>'/packages/');
 		$this->navigations[] = array('name'=>'编辑包装','url'=>'');
 		
@@ -79,7 +81,7 @@ class PackagesController extends AppController {
     	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑包装:'.$userinformation_name ,'operation');
     	    }
-			$this->flash("包装  ".$userinformation_name." 编辑成功。点击继续编辑该包装。",'/packages/edit/'.$id,10);
+			$this->flash("包装  ".$userinformation_name." 编辑成功。点击这里继续编辑该包装。",'/packages/edit/'.$id,10);
 
 			
 			
@@ -95,6 +97,7 @@ class PackagesController extends AppController {
 	
 	function add(){
 		$this->pageTitle = "添加包装 - 包装管理"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'促销栏目','url'=>'');
 		$this->navigations[] = array('name'=>'包装管理','url'=>'/packages/');
 		$this->navigations[] = array('name'=>'添加包装','url'=>'');
 		$this->set('navigations',$this->navigations);
@@ -124,7 +127,7 @@ class PackagesController extends AppController {
     	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加包装:'.$userinformation_name ,'operation');
     	    }
-			$this->flash("包装  ".$userinformation_name." 添加成功。点击继续编辑该包装。",'/packages/edit/'.$id,10);
+			$this->flash("包装  ".$userinformation_name." 添加成功。点击这里继续编辑该包装。",'/packages/edit/'.$id,10);
 		}
 	}
 	

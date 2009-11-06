@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 2703 2009-07-08 11:54:52Z huangbo $
+ * $Id: index.ctp 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -17,18 +17,19 @@
 
 <!--Main Start-->
 <br />
-<div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
+<div class="home_main" style="padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' ); ">
+<div id="listDiv">
 <table cellpadding="0" cellspacing="0" width="100%" class="list_data">
 <tr class="thead">
-	<th>编号</th>
+	<th width="6%">编号</th>
 	<th>名称</th>
 	<th>版本</th>
 	<th>作者</th>
 	<th>地址</th>
-	<th>操作</th></tr>
+	<th width="8%">操作</th></tr>
 <!--Promotions List-->
 <?php $i=1;foreach( $modules as $k=>$v ){?>
-	<tr>
+	<tr <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >
 	<td align="center"><?php echo $i?></td>
 	<td align="center"><span><strong><?php echo $v['name']?></strong></span></td>
 	<td align="center"><?php echo $v['version']?></td>
@@ -38,7 +39,7 @@
 
 	<?php if($integrate_code!="ucenter"){?><?php echo $html->link("安装",$v['install']);?><?php }else{?><?php echo $html->link("设置",$v['setup']);?>|<?php echo $html->link("积分兑换设置",$v['points_set']);?><?php }?>
 	</td></tr>	
-<?php $i++;}?></table>
+<?php $i++;}?></table></div>
 <!--Promotions List End-->	
   <div class="pagers" style="position:relative">
 </div>

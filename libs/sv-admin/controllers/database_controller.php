@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: database_controller.php 3113 2009-07-20 11:14:34Z huangbo $
+ * $Id: database_controller.php 4366 2009-09-18 09:49:37Z huangbo $
  *****************************************************************************/
 class DatabaseController extends AppController
 {
@@ -27,8 +27,10 @@ class DatabaseController extends AppController
     function index()
     {
     	//Configure::write('debug',0);
-        $this->pageTitle="数据库备份与恢复"." - ".$this->configs['shop_name'];
-        $this->navigations[]=array('name' => '数据库备份与恢复','url' => '/database/');
+        $this->pageTitle="数据库备份,优化,修复"." - ".$this->configs['shop_name'];
+        $this->navigations[] = array('name'=>'功能管理','url'=>'');
+        $this->navigations[]=array('name' => '数据库备份,优化,修复','url' => '/database/');
+        $this->navigations[]=array('name' => '数据库备份','url' => '');
         $this->set('navigations',$this->navigations);
 
         $db =& ConnectionManager::getDataSource($useDbConfig='default');
@@ -293,7 +295,9 @@ class DatabaseController extends AppController
     /*恢复备份*/
     function restore()
     {
-    	$this->pageTitle="恢复备份"." - ".$this->configs['shop_name'];
+    	$this->pageTitle="数据库备份,优化,修复"." - ".$this->configs['shop_name'];
+    	$this->navigations[] = array('name'=>'功能管理','url'=>'');
+        $this->navigations[]=array('name' => '数据库备份,优化,修复','url' => '/database/');
         $this->navigations[]=array('name' => '恢复备份','url' => '/restore/');
         $this->set('navigations',$this->navigations);
     	
@@ -466,6 +470,8 @@ class DatabaseController extends AppController
     function optimize()
     {
     	$this->pageTitle="数据表优化"." - ".$this->configs['shop_name'];
+    	$this->navigations[] = array('name'=>'功能管理','url'=>'');
+        $this->navigations[]=array('name' => '数据库备份,优化,修复','url' => '/database/');
         $this->navigations[]=array('name' => '数据表优化','url' => '/optimize/');
         $this->set('navigations',$this->navigations);
         

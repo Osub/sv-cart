@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 3258 2009-07-23 05:17:16Z huangbo $
+ * $Id: index.ctp 3779 2009-08-19 10:40:08Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -45,7 +45,7 @@ td select,td input{font-size:12px;font-family:arial;}
     
     <?php if(isset($config_group_code) && sizeof($config_group_code)>0){?>
   <?php $i=0;$n=1;
-   foreach($config_group_code as $k=>$v){?>
+   foreach($config_group_code as $k=>$v){if($k=="email"){continue;}?>
  <?php if($k==$group_codess){?>
  <li class="hdblock3_on" id="hdblock3_t<?php echo $sumbasic.$n;?>" onclick="show_intro('<?php echo $k?>')"><?php echo $v?></li> 
  <?php }else{?>

@@ -9,14 +9,14 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: edit.ctp 2498 2009-07-01 07:17:42Z huangbo $
+ * $Id: edit.ctp 4372 2009-09-18 10:38:17Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
 <?php  echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
 <!--Main Start-->
 <br />
-<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."包装列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."包装列表","/".(empty($_SESSION['cart_back_url'])?$this->params['controller']:$_SESSION['cart_back_url']),'',false,false);?></strong></p>
 
 <div class="home_main">
 <?php echo $form->create('Packages',array('action'=>'edit/'.$packaging['Packaging']['id'],'onsubmit'=>'return packages_check();'));?>
@@ -98,7 +98,7 @@
 			<dd style="padding-top:4px;">
 			<input type="radio" class="radio" name="data[Packaging][status]" value="1" <?php //if($packaging['Packaging']['status']){?>checked<?php //}?> /> 是
 			<input type="radio" class="radio" name="data[Packaging][status]" value="0" <?php if($packaging['Packaging']['status']==0){?>checked<?php }?>/> 否</dd></dl>
-		<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+
 	  </div>
 	</div>
 <!--Password End-->

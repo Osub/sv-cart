@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 2989 2009-07-17 02:03:04Z huangbo $
+ * $Id: add.ctp 4372 2009-09-18 10:38:17Z huangbo $
 *****************************************************************************/
 ?>
 
@@ -17,8 +17,25 @@
 
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
-<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."会员列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
-
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."会员列表","/".(empty($_SESSION['cart_back_url'])?$this->params['controller']:$_SESSION['cart_back_url']),'',false,false);?></strong></p>
+		  <!--时间控件层start-->
+	<div id="container_cal" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal"></div><div style="clear:both;"></div></div>
+	</div>
+	<div id="container_cal2" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal2"></div><div style="clear:both;"></div></div>
+	</div>
+	<div id="container_cal3" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal3"></div><div style="clear:both;"></div></div>
+	</div>
+	<div id="container_cal4" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal4"></div><div style="clear:both;"></div></div>
+	</div>
+<!--end-->
 <!--Main Start-->
 <div class="home_main">
 <?php echo $form->create('User',array('action'=>'add' ,'onsubmit'=>'return users_check();'));?>
@@ -137,21 +154,3 @@
 <!--Main Start End-->
 <?php echo $html->image('content_left.gif',array('class'=>'content_left'))?><?php echo $html->image('content_right.gif',array('class'=>'content_right'))?>
 </div>
-		  <!--时间控件层start-->
-	<div id="container_cal" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal2" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal2"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal3" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal3"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal4" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal4"></div><div style="clear:both;"></div></div>
-	</div>
-<!--end-->

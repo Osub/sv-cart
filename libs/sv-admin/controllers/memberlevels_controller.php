@@ -1,6 +1,6 @@
 <?php
 /*****************************************************************************
- * SV-Cart 会员等级管理
+ * SV-Cart 会员等级
  * ===========================================================================
  * 版权所有  上海实玮网络科技有限公司，并保留所有权利。
  * 网站地址: http://www.seevia.cn
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: memberlevels_controller.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: memberlevels_controller.php 4691 2009-09-28 10:11:57Z huangbo $
 *****************************************************************************/
 class MemberlevelsController  extends AppController {
 
@@ -23,8 +23,9 @@ class MemberlevelsController  extends AppController {
 		/*判断权限*/
 		$this->operator_privilege('member_rank_view');
 		/*end*/
-		$this->pageTitle = "会员等级管理"." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'会员等级管理','url'=>'/memberlevels/');
+		$this->pageTitle = "会员等级"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'客户管理','url'=>'');
+		$this->navigations[] = array('name'=>'会员等级','url'=>'/memberlevels/');
 		$this->set('navigations',$this->navigations);
 		
 		$this->UserRank->hasOne = array();
@@ -55,8 +56,9 @@ class MemberlevelsController  extends AppController {
 		/*判断权限*/
 		$this->operator_privilege('member_rank_edit');
 		/*end*/
-		$this->pageTitle = "编辑会员等级 - 会员等级管理"." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'会员等级管理','url'=>'/memberlevels/');
+		$this->pageTitle = "编辑会员等级 - 会员等级"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'客户管理','url'=>'');
+		$this->navigations[] = array('name'=>'会员等级','url'=>'/memberlevels/');
 		$this->navigations[] = array('name'=>'编辑会员等级','url'=>'');
 	
 		$this->UserRank->hasOne = array();
@@ -83,7 +85,7 @@ class MemberlevelsController  extends AppController {
     	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑会员等级:'.$userinformation_name ,'operation');
     	    }
-			$this->flash("会员等级  ".$userinformation_name." 添加成功。点击继续编辑该会员等级。",'/memberlevels/edit/'.$id,10);
+			$this->flash("会员等级  ".$userinformation_name." 添加成功。点击这里继续编辑该会员等级。",'/memberlevels/edit/'.$id,10);
 		}
 		
 		$userrank_info = $this->UserRank->findById($id);
@@ -111,8 +113,9 @@ class MemberlevelsController  extends AppController {
 		/*判断权限*/
 		$this->operator_privilege('member_rank_add');
 		/*end*/
-		$this->pageTitle = "编辑会员等级 - 会员等级管理"." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'会员等级管理','url'=>'/memberlevels/');
+		$this->pageTitle = "编辑会员等级 - 会员等级"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'客户管理','url'=>'');
+		$this->navigations[] = array('name'=>'会员等级','url'=>'/memberlevels/');
 		$this->navigations[] = array('name'=>'添加会员等级','url'=>'');
 		$this->set('navigations',$this->navigations);
 
@@ -135,7 +138,7 @@ class MemberlevelsController  extends AppController {
     	        if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	        $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加会员等级:'.$userinformation_name ,'operation');
     	        }
-				$this->flash("会员等级  ".$userinformation_name." 添加成功。点击继续编辑该会员等级。",'/memberlevels/edit/'.$id,10);
+				$this->flash("会员等级  ".$userinformation_name." 添加成功。点击这里继续编辑该会员等级。",'/memberlevels/edit/'.$id,10);
 
 			
 		}

@@ -9,19 +9,20 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: promotions_controller.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: promotions_controller.php 4874 2009-10-10 11:04:27Z huangbo $
  *****************************************************************************/
 class PromotionsController extends AppController{
     var $name='Promotions';
     var $components=array('Pagination','RequestHandler');
-    var $helpers=array('Pagination','Html');
+    var $helpers=array('Pagination','Tinymce','Html','fck');
     var $uses=array('Promotion','PromotionI18n','PromotionProduct','Product');
     function index(){
         /*判断权限*/
         $this->operator_privilege('promotion_view');
         /*end*/
-        $this->pageTitle='促销活动管理'." - ".$this->configs['shop_name'];
-        $this->navigations[]=array('name' => '促销活动管理','url' => '/promotions/');
+        $this->pageTitle='促销活动'." - ".$this->configs['shop_name'];
+        $this->navigations[] = array('name'=>'促销栏目','url'=>'');
+        $this->navigations[]=array('name' => '促销活动','url' => '/promotions/');
         $this->set('navigations',$this->navigations);
         $this->Promotion->set_locale($this->locale);
         $condition="1=1";
@@ -78,8 +79,9 @@ class PromotionsController extends AppController{
         /*判断权限*/
         $this->operator_privilege('promotion_operation');
         /*end*/
-        $this->pageTitle="促销活动管理 - 促销活动管理"." - ".$this->configs['shop_name'];
-        $this->navigations[]=array('name' => '促销活动管理','url' => '/promotions/');
+        $this->pageTitle="促销活动 - 促销活动"." - ".$this->configs['shop_name'];
+        $this->navigations[] = array('name'=>'促销栏目','url'=>'');
+        $this->navigations[]=array('name' => '促销活动','url' => '/promotions/');
         $this->navigations[]=array('name' => '编辑促销活动','url' => '');
         $this->set('navigations',$this->navigations);
         if($this->RequestHandler->isPost()){
@@ -87,8 +89,7 @@ class PromotionsController extends AppController{
             $this->data['Promotion']['max_amount']=!empty($this->data['Promotion']['max_amount']) ? $this->data['Promotion']['max_amount']: 0;
             $this->data['Promotion']['type_ext']=!empty($this->data['Promotion']['type_ext']) ? $this->data['Promotion']['type_ext']: 0;
             $this->data['Promotion']['end_time']=date("Y-m-d",strtotime($this->data['Promotion']['end_time']))." 23:59:59";
-            //$this->Promotion->deleteall("id = '".$this->data['Promotion']['id']."'",false);
-            //$this->PromotionI18n->deleteall("promotion_id = '".$this->data['Promotion']['id']."'",false);
+
             foreach($this->data['PromotionI18n']as $v){
                 $promotionI18n_info=array('id' => isset($v['id']) ? $v['id']: '','locale' => $v['locale'],'promotion_id' => isset($v['promotion_id']) ? $v['promotion_id']: $id,'title' => isset($v['title']) ? $v['title']: '','meta_description' => $v['meta_description']);
                 $this->PromotionI18n->saveall(array('PromotionI18n' => $promotionI18n_info)); //更新多语言
@@ -115,16 +116,21 @@ class PromotionsController extends AppController{
             if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log']==1){
                 $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑促销活动'.$userinformation_name,'operation');
             }
-            $this->flash("促销活动  ".$userinformation_name." 编辑成功。点击继续编辑该促销活动。",'/promotions/edit/'.$id,10);
+            $this->flash("促销活动  ".$userinformation_name." 编辑成功。点击这里继续编辑该促销活动。",'/promotions/edit/'.$id,10);
         }
         $this->Product->hasOne=array();
-        $this->Product->hasMany=array('ProductI18n' => array('className' =>
-            'ProductI18n','conditions' => '','order' => '','dependent' => true,
+        $this->Product->hasMany=array('ProductI18n' => 
+        	array('className' =>
+            'ProductI18n','conditions' => '',
+            'order' => '',
+            'dependent' => true,
             'foreignKey' => 'product_id'
         ));
-        $PromotionProduct=$this->PromotionProduct->findall(array("promotion_id" => $id));
+        $PromotionProductlist=$this->PromotionProduct->findall(array("promotion_id" => $id));
         $condition2="";
-        foreach($PromotionProduct as $v){
+        $PromotionProduct = array();
+        foreach($PromotionProductlist as $v){
+        	$PromotionProduct[$v["PromotionProduct"]["product_id"]] = $v;
             $condition2["or"][]["id"]=$v["PromotionProduct"]["product_id"];
         }
         if($condition2!=""){
@@ -133,11 +139,13 @@ class PromotionsController extends AppController{
         else{
             $products=array();
         }
+        
         foreach($products as $kk => $vv){
-            $PromotionProduct[$kk]["PromotionProduct"]["name"]="";
+            $PromotionProduct[$vv["Product"]["id"]]["PromotionProduct"]["name"]="";
+            $PromotionProduct[$vv["Product"]["id"]]["PromotionProduct"]["product_code"]=$vv["Product"]["code"];
             foreach($vv['ProductI18n']as $kkk => $vvv){
                 if($vvv['locale']==$this->locale){
-                    $PromotionProduct[$kk]["PromotionProduct"]["name"]=$vvv['name'];
+                    $PromotionProduct[$vv["Product"]["id"]]["PromotionProduct"]["name"]=$vvv['name'];
                 }
             }
         }
@@ -164,8 +172,9 @@ class PromotionsController extends AppController{
         $this->flash("删除成功",'/promotions/',10);
     }
     function add(){
-        $this->pageTitle="添加促销活动 - 促销活动管理"." - ".$this->configs['shop_name'];
-        $this->navigations[]=array('name' => '促销活动管理','url' => '/promotions/');
+        $this->pageTitle="添加促销活动 - 促销活动"." - ".$this->configs['shop_name'];
+        $this->navigations[] = array('name'=>'促销栏目','url'=>'');
+        $this->navigations[]=array('name' => '促销活动','url' => '/promotions/');
         $this->navigations[]=array('name' => '添加促销活动','url' => '');
         $this->set('navigations',$this->navigations);
         if($this->RequestHandler->isPost()){
@@ -192,7 +201,7 @@ class PromotionsController extends AppController{
             if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log']==1){
                 $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加促销活动'.$userinformation_name,'operation');
             }
-            $this->flash("促销活动  ".$userinformation_name." 添加成功。点击继续编辑该促销活动。",'/promotions/edit/'.$id,10);
+            $this->flash("促销活动  ".$userinformation_name." 添加成功。点击这里继续编辑该促销活动。",'/promotions/edit/'.$id,10);
             if(isset($_REQUEST['specialpreferences']) && isset($_REQUEST['prices'])){
                 $specialpreferences=$_REQUEST['specialpreferences'];
                 $prices=$_REQUEST['prices'];

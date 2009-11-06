@@ -9,21 +9,29 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: brands_controller.php 2845 2009-07-14 10:58:39Z shenyunfeng $
+ * $Id: brands_controller.php 5209 2009-10-20 08:40:13Z huangbo $
 *****************************************************************************/
 
 class BrandsController extends AppController {
 	var $name = 'Brands';
     var $components = array ('Pagination'); // Added 
-    var $helpers = array('Pagination'); // Added 
+    var $helpers = array('Pagination','Flash'); // Added 
 	var $uses = array('Brand','Product','Flash','Category','UserRank','ProductsCategory','ProductRank','ProductLocalePrice','ProductI18n');
+	var $cacheQueries = true;
+	var $cacheAction = "1 hour";
 
-function view($id="",$orderby="",$rownum='',$showtype=""){
+function view($id="",$page=1,$orderby=0,$rownum=0,$showtype=0){
 		$orderby = UrlDecode($orderby);
 		$rownum = UrlDecode($rownum);
 		$showtype = UrlDecode($showtype);
 		$this->page_init();
 		$flag = 1;
+		$this->data['to_page_id'] = $id;
+		if(!isset($_GET['page'])){
+			$_GET['page'] = $page;
+		}
+		$this->data['get_page'] = $_GET['page'];
+
 		// Configure::write('debug', 0);
 	 if(!is_numeric($id) || $id<1){
 	     $this->pageTitle = $this->languages['parameter_error']." - ".$this->configs['shop_title'];
@@ -33,17 +41,16 @@ function view($id="",$orderby="",$rownum='',$showtype=""){
 	 $this->Brand->set_locale($this->locale);
  	  //取得该品牌信息
 	  $brand_info=$this->Brand->findbyid($id);
-	if(empty($brand_info)){
-	       	 $this->pageTitle = $this->languages['brand'].$this->languages['not_exist']." - ".$this->configs['shop_title'];
-			 $this->flash($this->languages['brand'].$this->languages['not_exist'],"/",5);
-			 $flag = 0;
-	  }
-	elseif($brand_info['Brand']['status'] == 0){
-	       	 $this->pageTitle = $this->languages['brand'].$this->languages['not_exist']." - ".$this->configs['shop_title'];
-			 $this->flash($this->languages['brand'].$this->languages['not_exist'],"/",5);
-			 $flag = 0;
-	  }
-	  
+		if(empty($brand_info)){
+		       	 $this->pageTitle = $this->languages['brand'].$this->languages['not_exist']." - ".$this->configs['shop_title'];
+				 $this->flash($this->languages['brand'].$this->languages['not_exist'],"/",5);
+				 $flag = 0;
+		}elseif($brand_info['Brand']['status'] == 0){
+		       	 $this->pageTitle = $this->languages['brand'].$this->languages['not_exist']." - ".$this->configs['shop_title'];
+				 $this->flash($this->languages['brand'].$this->languages['not_exist'],"/",5);
+				 $flag = 0;
+		}
+	    
 	    if($flag == 1){
 		
 		$this->pageTitle = $brand_info['BrandI18n']['name']." - ".$this->configs['shop_title']." - ".$this->configs['shop_title'];
@@ -53,35 +60,68 @@ function view($id="",$orderby="",$rownum='',$showtype=""){
 		$this->navigations[] = array('name'=>$navigations['BrandI18n']['name'],'url'=>"/brands/".$navigations['Brand']['id']);
 		$this->set('locations',$this->navigations);
 	  
-		if(empty($rownum)){
+		if(empty($rownum) && $rownum == 0){
 			$rownum=isset($this->configs['products_list_num']) ? $this->configs['products_list_num']:((!empty($rownum)) ?$rownum:20);
 		}
-		if(empty($showtype)){
+		if(empty($showtype) && $showtype == 0){
 			$showtype=isset($this->configs['products_list_showtype']) ? $this->configs['products_list_showtype']:((!empty($showtype)) ?$showtype:'L');
 		}
  		  //取商店设置商品排序
-	    if(empty($orderby)){
+	    if(empty($orderby) && $orderby == 0){
 		  	$orderby=isset($this->configs['products_category_page_orderby_type'])? $this->configs['products_category_page_orderby_type']." ". $this->configs['products_category_page_orderby_method'] :((!empty($orderby)) ?$orderby:'created '.$this->configs['products_category_page_orderby_method']);
 		}
+		
+		if($rownum == 'all'){
+			$rownum_sql = 99999;
+		}else{
+			$rownum_sql = $rownum;
+		}
+		
+		$this->data['orderby'] = $orderby;
+		$this->data['rownum'] = $rownum;
+		$this->data['showtype'] = $showtype;
+		
  	  $this->Product->set_locale($this->locale);
       //取得属于该品牌的商品,以及分页
-	  $condition = " Product.brand_id='$id' and Product.forsale ='1'";
-	  $total = $this->Product->findCount($condition,0);
+	    $condition = " Product.brand_id='$id' and Product.forsale ='1'";
+		$cache_key = md5('brand_view_total'.'_'.$this->locale.'_'.$condition);
+		$total = cache::read($cache_key);	
+		if(!$total){
+		  $total = $this->Product->find('count',array('fields' => 'DISTINCT Product.id',	'recursive' => -1,'conditions'=>array($condition)));
+		  cache::write($cache_key,$total);
+	  	}
+	  	$this->data['page_total'] = $total;
 	  $sortClass='Product';
 	  //pr($parameters);
 	  $page=1;
-	  $parameters=Array($orderby,$rownum,$page);
+	  $parameters=Array($orderby,$rownum_sql,$page);
 	  $options=Array();
-	  list($page) = $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass); // Added 
+	  list($page) = $this->Pagination->init($condition,$parameters,$options,$total,$rownum_sql,$sortClass); // Added 
 	  
 	 // $products_list=$this->Product->findAll($condition,'',"Product.$orderby asc ","$rownum",$page);
 	 
+			$product_ranks = $this->ProductRank->findall_ranks();
+			$user_rank_list=$this->UserRank->findrank();
+			
+		    if(isset($product_ranks) && sizeof($product_ranks)>0){
+				  foreach($product_ranks as $k=>$v){
+				  	  if(isset($v) && sizeof($v)>0){
+				  	  	 foreach($v as $kk=>$vv){
+				  	  	 	 if($vv['ProductRank']['is_default_rank'] == 1){
+				  	  	 	 	$product_ranks[$k][$kk]['ProductRank']['discount'] = ($user_rank_list[$vv['ProductRank']['rank_id']]['UserRank']['discount']/100);	
+				  	  	 	 }			  	  	 
+				  	  	 }
+				  	  }
+				  }
+			}	 
 	 
-	  $products_list=$this->Product->find('all',array(
+	 
+	 		 $products_list=$this->Product->find('all',array(
 															'recursive' => -1,
 																'fields' =>	array('Product.id','Product.recommand_flag','Product.status','Product.img_thumb'
-																				,'Product.market_price'
+																				,'Product.market_price','Product.brand_id'
 																				,'Product.shop_price'
+																				,'Product.category_id'
 																				,'Product.promotion_price'
 																				,'Product.promotion_start'
 																				,'Product.promotion_end'
@@ -90,11 +130,9 @@ function view($id="",$orderby="",$rownum='',$showtype=""){
 																				,'Product.product_rank_id'
 																				,'Product.quantity'
 																				),				  	  
-	  	  
-	  	  
 	  												'order' => array("Product.$orderby asc "),
 	  												'conditions' => array($condition),
-	  												'limit' => $rownum,
+	  												'limit' => $rownum_sql,
 	  												'page'=>$page));
 	  
 	  												
@@ -142,14 +180,14 @@ function view($id="",$orderby="",$rownum='',$showtype=""){
 	  			$product_category_lists[$v['ProductsCategory']['product_id']] = $v;
 	  		}
 	  }
-	  $this->Category->set_locale($this->locale);						
+	  $this->Category->set_locale($this->locale);
 	  $category_lists = $this->Category->find_all($this->locale);
 	  $this->set('categories',$category_lists);
 	 //pr($product_category_lists);
 	 //pr($category_ids);
-	  $product_ranks = $this->ProductRank->findall_ranks();
 		  if(isset($_SESSION['User']['User'])){
 		  	  $user_rank_list=$this->UserRank->findrank();		
+	 		  $product_ranks = $this->ProductRank->findall_ranks();
 		  }
 			foreach($products_list as $k=>$v){
 					if(isset($productI18ns_list[$v['Product']['id']])){
@@ -158,10 +196,12 @@ function view($id="",$orderby="",$rownum='',$showtype=""){
 						$products_list[$k]['ProductI18n']['name'] = "";
 					}	
 		 			 if(isset($this->configs['products_name_length']) && $this->configs['products_name_length'] >0){
-							$products_list[$k]['ProductI18n']['name'] = $this->Product->sub_str($products_list[$k]['ProductI18n']['name'], $this->configs['products_name_length']);
+						$products_list[$k]['ProductI18n']['sub_name'] = $this->Product->sub_str($products_list[$k]['ProductI18n']['name'], $this->configs['products_name_length']);
+	 				 }else{
+	 				 	$products_list[$k]['ProductI18n']['sub_name'] = $products_list[$k]['ProductI18n']['name'];
 	 				 }
 				//	$category_info = $this->ProductsCategory->find('ProductsCategory.product_id ='.$v['Product']['id'].' and ProductsCategory.category_id ='.$v['Product']['category_id']);
-					if($this->configs['use_sku'] == 1){
+					if($this->configs['category_link_type'] == 1){
 					//	$info = $this->Category->findbyid($v['Product']['category_id']);						
 						if(isset($category_lists[$v['Product']['category_id']])){
 							$info = $category_lists[$v['Product']['category_id']];
@@ -178,13 +218,13 @@ function view($id="",$orderby="",$rownum='',$showtype=""){
 						}
 					}
 					if(isset($this->configs['mlti_currency_module']) && $this->configs['mlti_currency_module'] == 1 && isset($locale_price_list[$v['Product']['id']]['ProductLocalePrice']['product_price'])){
-						$products[$k]['Product']['shop_price'] = $locale_price_list[$v['Product']['id']]['ProductLocalePrice']['product_price'];
+						$products_list[$k]['Product']['shop_price'] = $locale_price_list[$v['Product']['id']]['ProductLocalePrice']['product_price'];
 					}
 					if(isset($product_ranks[$v['Product']['id']]) && isset($_SESSION['User']['User']['rank']) && isset($product_ranks[$v['Product']['id']][$_SESSION['User']['User']['rank']])){
 						if(isset($product_ranks[$v['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['is_default_rank']) && $product_ranks[$v['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['is_default_rank'] == 0){
-						  $products[$k]['Product']['user_price']= $product_ranks[$v['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['product_price'];			  
+						  $products_list[$k]['Product']['user_price']= $product_ranks[$v['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['product_price'];			  
 						}else if(isset($user_rank_list[$_SESSION['User']['User']['rank']])){
-						  $products[$k]['Product']['user_price']=($user_rank_list[$_SESSION['User']['User']['rank']]['UserRank']['discount']/100)*($v['Product']['shop_price']);			  
+						  $products_list[$k]['Product']['user_price']=($user_rank_list[$_SESSION['User']['User']['rank']]['UserRank']['discount']/100)*($v['Product']['shop_price']);			  
 						}
 					}						
 					if(isset($product_category_lists[$v['Product']['id']])){
@@ -202,8 +242,13 @@ function view($id="",$orderby="",$rownum='',$showtype=""){
 	
 
 	  $this->Flash->set_locale($this->locale);
-	  $this->set('flashes',$this->Flash->find("type ='PC' and type_id='$id' ")); //flash轮播
+	  $this->set('flashes',$this->Flash->find("type ='B' and type_id='$id' ")); //flash轮播
 	  
+    	$this->data['pages_url_1'] = $this->server_host.$this->cart_webroot.$this->params['controller']."/".$this->params['action']."/".$this->data['to_page_id']."/";
+    	$this->data['pages_url_2'] = "/".$this->data['orderby']."/".$this->data['rownum']."/".$this->data['showtype']."/";
+	  
+	  $this->data['product_ranks'] = $product_ranks;
+	  $this->data['products'] = $products_list;	  
  	  $this->set('products',$products_list);
  	  $this->set('id',$id);
  	  $this->set('type','B');

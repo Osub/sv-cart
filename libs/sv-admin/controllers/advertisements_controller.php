@@ -1,6 +1,6 @@
 <?php
 /*****************************************************************************
- * SV-Cart 广告管理
+ * SV-Cart 广告条
  * ===========================================================================
  * 版权所有  上海实玮网络科技有限公司，并保留所有权利。
  * 网站地址: http://www.seevia.cn
@@ -9,20 +9,21 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: advertisements_controller.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: advertisements_controller.php 5439 2009-10-26 10:10:48Z huangbo $
 *****************************************************************************/
 
 class AdvertisementsController extends AppController {
 	var $name = 'Advertisements';
-	var $helpers = array('Html','Pagination');
+	var $helpers = array('Html','Pagination','Tinymce','fck');
 	var $components = array('Pagination','RequestHandler');
 	var $uses = array('Advertisement','AdvertisementI18n','AdvertisementPosition','Language');
 	function index(){
 		/*判 断 权 限*/
 		$this->operator_privilege('advertisment_view');
 		/*end*/
-		$this->pageTitle = '广告管理'." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'广告管理','url'=>'/advertisement/');
+		$this->pageTitle = '广告条'." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'界面管理','url'=>'');
+		$this->navigations[] = array('name'=>'广告条','url'=>'/advertisement/');
 		$this->set('navigations',$this->navigations);
 	    $this->Advertisement->set_locale($this->locale);
 		$condition = '';
@@ -38,12 +39,14 @@ class AdvertisementsController extends AppController {
 		
 	}
 	function edit( $id ){
-		$this->pageTitle = "编辑广告- 广告管理"." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'广告管理','url'=>'/advertisements/');
+		$this->pageTitle = "编辑广告- 广告条"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'界面管理','url'=>'');
+		$this->navigations[] = array('name'=>'广告条','url'=>'/advertisements/');
 		$this->navigations[] = array('name'=>'编辑广告','url'=>'');
 		if($this->RequestHandler->isPost()){
 			$data1 = array();
 			$url = isset($this->data['AdvertisementI18n']['url'])?$this->data['AdvertisementI18n']['url']:'';
+			$url_type = isset($this->data['AdvertisementI18n']['url_type'])?$this->data['AdvertisementI18n']['url_type']:'0';
 			$enddate = !empty($this->data['AdvertisementI18n']['end_time'])?$this->data['AdvertisementI18n']['end_time']:
 			date("Y-m-d",strtotime($this->data['AdvertisementI18n']['end_time']))." 23:59:59";
 			
@@ -64,6 +67,7 @@ class AdvertisementsController extends AppController {
 		    			           $data2=array('AdvertisementI18n.description'=>"'".$this->data['AdvertisementI18n']['description']."'",
 				           'AdvertisementI18n.start_time'=>"'".$this->data['AdvertisementI18n']['start_time']."'",
 				           'AdvertisementI18n.end_time'=>"'".$enddate."'",
+				           'AdvertisementI18n.url_type'=>"'".$url_type."'",
 				           'AdvertisementI18n.url'=>"'".$url."'",
 				           'AdvertisementI18n.code'=>"'".$this->data['AdvertisementI18n']['code']."'",
 				           'AdvertisementI18n.name' => "'".$v['name']."'",
@@ -85,6 +89,7 @@ class AdvertisementsController extends AppController {
 		}
 		$this->Advertisement->set_locale($this->locale);
 		$advertisement = $this->Advertisement->findbyid($id);
+		
 		//取得所有语言广告
 		$this->AdvertisementI18n->hasOne = array('Language' =>   
                         array('className'    => 'Language', 
@@ -96,7 +101,7 @@ class AdvertisementsController extends AppController {
                   );
         
         $alllanadvertisement = $this->AdvertisementI18n->find('list',array('fields'=>array('AdvertisementI18n.locale','AdvertisementI18n.name'),'conditions'=>array('AdvertisementI18n.advertisement_id'=>$id)));
-		
+
 		//取得广告位
 	    $advertisement_positions = $this->AdvertisementPosition->find('all',array('fields' => array('id','name')));
 		//leo20090722导航显示
@@ -110,9 +115,10 @@ class AdvertisementsController extends AppController {
 	}
 	
 	function add(){
-		$this->pageTitle = "编辑广告- 广告管理" ." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'广告管理','url'=>'/advertisements/');
-		$this->navigations[] = array('name'=>'编辑广告','url'=>'');
+		$this->pageTitle = "添加广告- 广告条" ." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'界面管理','url'=>'');
+		$this->navigations[] = array('name'=>'广告条','url'=>'/advertisements/');
+		$this->navigations[] = array('name'=>'添加广告','url'=>'');
 		$this->set('navigations',$this->navigations);
 		if($this->RequestHandler->isPost()){
 			$data1 = array();
@@ -125,10 +131,10 @@ class AdvertisementsController extends AppController {
 			{
 				$data1['AdvertisementI18n']['description'] = $this->data['AdvertisementI18n']['description'];
 				$data1['AdvertisementI18n']['start_time'] = $this->data['AdvertisementI18n']['start_time'];
-				$data1['AdvertisementI18n']['end_time'] =!empty($this->data['AdvertisementI18n']['end_time'])?
-				$this->data['AdvertisementI18n']['end_time']:date("Y-m-d",strtotime($this->data['AdvertisementI18n']['end_time']))." 23:59:59";
+				$data1['AdvertisementI18n']['end_time'] =!empty($this->data['AdvertisementI18n']['end_time'])?$this->data['AdvertisementI18n']['end_time']:date("Y-m-d",strtotime($this->data['AdvertisementI18n']['end_time']))." 23:59:59";
 				$data1['AdvertisementI18n']['code'] = $this->data['AdvertisementI18n']['code_0'];
 				$data1['AdvertisementI18n']['url'] = $this->data['AdvertisementI18n']['url_0'];
+				$data1['AdvertisementI18n']['url_type'] = $this->data['AdvertisementI18n']['url_type'];
 				
 			}
 			elseif($this->data['Advertisement']['media_type']=='1')
@@ -145,7 +151,7 @@ class AdvertisementsController extends AppController {
 				$data1['AdvertisementI18n']['start_time'] = $this->data['AdvertisementI18n']['start_time'];
 				$data1['AdvertisementI18n']['end_time'] = 
 				date("Y-m-d",strtotime($this->data['AdvertisementI18n']['end_time']))." 23:59:59";
-				$data1['AdvertisementI18n']['code'] = $this->data['AdvertisementI18n']['code_2'];
+				$data1['AdvertisementI18n']['code'] = $this->data['AdvertisementI18n']['code'];
 			}
 			elseif($this->data['Advertisement']['media_type']=='3')
 			{
@@ -169,7 +175,7 @@ class AdvertisementsController extends AppController {
 				}
 			}
 			
-			$this->flash("广告  ".$advertisement_name."  添加成功。点击继续编辑该广告。",'/advertisements/edit/'.$this->Advertisement->getLastInsertId(),10);
+			$this->flash("广告  ".$advertisement_name."  添加成功。点击这里继续编辑该广告。",'/advertisements/edit/'.$this->Advertisement->getLastInsertId(),10);
 			//操作员日志
         	if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	     $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加广告:'.$advertisement_name,'operation');

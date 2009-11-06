@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: login.ctp 2498 2009-07-01 07:17:42Z huangbo $
+ * $Id: login.ctp 3949 2009-08-31 07:34:05Z huangbo $
 *****************************************************************************/
 ?>
 <div class="menber_login">
@@ -32,12 +32,12 @@
 		   <dd><input type="text" name="authnum" id="authnum" class="Price" value="点击获取验证码" onfocus="javascript:show_login_captcha();" /></dd>
 		   <dd class="captcha">
 		    <span id="authnum_img_span" style="display:none">
-		    <a href='javascript:show_login_captcha();'><img id='authnum_img' align='absmiddle' /></a>
+		    <a href='javascript:change_captcha();'><img id='authnum_img' align='absmiddle' /></a>
 		    </span>
 		    </dd>
 	   </dl>
 		<p class="save_cookie"><label for="cookie"><input id="cookie" type="checkbox" name="radiobutton" value="radiobutton" tabindex="0" />保存这次登录信息</label></p>
-		<p class="login"><input onfocus="blur()" type="button" onclick="javascript:check();" value="进入管理中心" /></p>
+		<p class="login"><input onfocus="blur()" type="button" onclick="javascript:ajax_login_check();" value="进入管理中心" /></p>
 		<p class="forget_password">
 		<?php echo $html->image('icon-right.gif',array('align'=>'absmiddle'))?>
 		<span><?php echo $html->link("您忘记了密码吗?","javascript:forget_password();",'',false,false);?></span></p>
@@ -53,7 +53,7 @@
 			var UserPassword = document.getElementById('operator_pwd').value;
 			var UserCaptcha = document.getElementById('authnum').value;
 			if(UserName != "" && UserPassword != "" && UserCaptcha != ""){
-				check();
+				ajax_login_check();
 			}
 		}
 	}

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: search.ctp 2806 2009-07-13 09:44:42Z zhengli $
+ * $Id: search.ctp 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 ?> 
 <div class="content">
@@ -18,24 +18,27 @@
 
 <!--Main Start-->
 <br />
-<div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."评论查询","/comments/",'',false,false);?></strong></p>
+
+<div class="home_main" style="padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' ); ">
 
 <?php echo $form->create('',array('action'=>'','name'=>'UserForm','type'=>'get','onsubmit'=>"return false"));?>
+<div id="listDiv">
 <table cellpadding="0" cellspacing="0" width="100%" class="list_data">
 <tr class="thead">	
-	<th align="left"><input type="checkbox" name="chkall" value="checkbox" onclick="selectAll(this,'checkbox');" />编号</th>
+	<th align="left" width="6%"><input type="checkbox" name="chkall" value="checkbox" onclick="selectAll(this,'checkbox');" />编号</th>
 	<th>用户名</th>
-	<th>会员等级</th>
-	<th>类型</th>
-	<th>评论对象</th>
-	<th>IP地址</th>
-	<th>评论时间<?php echo $html->image('sort_desc.gif',array('align'=>'absmiddle'))?></th>
-	<th>操作</th></tr>
+	<th width="8%">会员等级</th>
+	<th width="8%">类型</th>
+	<th width="8%">评论对象</th>
+	<th width="12%">IP地址</th>
+	<th width="14%">评论时间<?php echo $html->image('sort_desc.gif',array('align'=>'absmiddle'))?></th>
+	<th width="10%">操作</th></tr>
 <!--Comment Uncheck-->
 <?php if(isset($comments_info) && sizeof($comments_info)>0){?>
 <?php foreach($comments_info as $k=>$v){?>
 
-<tr>
+<tr <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >
 	<td><input type="checkbox" name="checkbox[]" value="<?php echo $v['Comment']['id']?>" /><?php echo $v['Comment']['id']?></td>
 	<td><span><?php echo $v['Comment']['name']?></span></td>
 	<td align="center"><?php echo $v['Comment']['user_rank'];?></td>
@@ -45,9 +48,9 @@
 	<td align="center"><?php echo $v['Comment']['created']?></td>
 	<td align="center">
 	<?php echo $html->link("查看详情","/comments/edit_search/{$v['Comment']['id']}");?>
-	|<?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$this->webroot}comments/searchremove/{$v['Comment']['id']}')"));?>
+	|<?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$admin_webroot}comments/searchremove/{$v['Comment']['id']}')"));?>
 	</td></tr>
-	<?php }?><?php }?></table>
+	<?php }?><?php }?></table></div>
 <!--Comment Uncheck End-->	
  <input type="hidden" name="search" value="search">
 <div class="pagers" style="position:relative">

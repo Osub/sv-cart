@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: edit.ctp 2989 2009-07-17 02:03:04Z huangbo $
+ * $Id: edit.ctp 4708 2009-09-28 13:45:35Z huangbo $
 *****************************************************************************/
 ?>
 
@@ -21,8 +21,26 @@
 <?php  echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
 <!--Main Start-->
 <br />
+	<!--时间控件层start-->
+	<div id="container_cal" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal"></div><div style="clear:both;"></div></div>
+	</div>
+	<div id="container_cal2" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal2"></div><div style="clear:both;"></div></div>
+	</div>
+	<div id="container_cal3" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal3"></div><div style="clear:both;"></div></div>
+	</div>
+	<div id="container_cal4" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal4"></div><div style="clear:both;"></div></div>
+	</div>
+<!--end-->
 
-<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."促销活动列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."促销活动列表","/".(empty($_SESSION['cart_back_url'])?$this->params['controller']:$_SESSION['cart_back_url']),'',false,false);?></strong></p>
 <div class="home_main">
 <?php echo $form->create('Promotion',array('action'=>'edit/'.$promotion['Promotion']['id'],'onsubmit'=>'return promotions_check();'));?>
 		<input type="hidden" name="data[Promotion][id]" value="<?php echo $promotion['Promotion']['id']?>">
@@ -60,12 +78,9 @@
 }?>
 	
 	
-		<dl><strong style="table-layout:fixed">促销活动描述:</strong><dd></dd></dl>
 
 <?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-			<dl><dt class="config_lang"><?php echo $html->image($v['Language']['img01'])?></dt><dd><textarea name="data[PromotionI18n][<?php echo $k?>][meta_description]" ><?php echo @$promotion['PromotionI18n'][$k]['meta_description']?></textarea></dd></dl>
-
 	<input type="hidden" name="data[PromotionI18n][<?php echo $k?>][locale]" value="<?php echo @$v['Language']['locale']?>" />		
 <?php 
 	}
@@ -119,8 +134,8 @@
 				<div id="special_preference">
 				<?php if( isset($PromotionProduct) && sizeof($PromotionProduct)>0){foreach( $PromotionProduct as $k=>$v ){?>
 				<ul class="ajax_promotion">
-				<li class="special"><input class="checkbox" type='checkbox' name='specialpreferences[]' value="<?php echo $v['PromotionProduct']['product_id']?>" checked> <?php echo $v['PromotionProduct']['name'];?></li>
-				<li class="price"><input type='text' name=prices[] size=2 value='<?php echo $v["PromotionProduct"]["price"]?>' /></li>
+				<li class="special"><input class="checkbox" type='checkbox' name='specialpreferences[]' value="<?php echo $v['PromotionProduct']['product_id']?>" checked> [<?php echo $v['PromotionProduct']['product_code']?>]<?php echo preg_replace('#^(?:[\x00-\x7F]|[\xC0-\xFF][\x80-\xBF]+){0,0}'.'((?:[\x00-\x7F]|[\xC0-\xFF][\x80-\xBF]+){0,19}).*#s','$1',$v['PromotionProduct']['name']);?></li>
+				<li class="price"><input type='text' name=prices[] style="width:100px;border:1px solid #649776" value='<?php echo $v["PromotionProduct"]["price"]?>' /></li>
 				</ul>
 				<?php }}?>
 				</div>
@@ -136,7 +151,6 @@
 				<input type="button" value="+" name="" onclick="special_preferences()" />
 			</dd></dl>
 		<?php }?></div></span>
-		<br /><br /><br /><br /><br />
 		
 	  </div>
 	</div>
@@ -144,10 +158,46 @@
 
 </td>
 </tr>
+<tr><td colspan="2">	
+	<div class="order_stat properies">
+	  <div class="title"><h1>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
+	  描述</h1></div>
+	  <div class="box">
+		<?php if($SVConfigs["select_editor"]=="2"||empty($SVConfigs["select_editor"])){?>
+	  	<?php echo $javascript->link('tinymce/tiny_mce/tiny_mce'); ?>
+	  	<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+		<table><tr><td valign="top">
+	  	<?php echo $html->image($v['Language']['img01'])?></td><td valign="top">
+		<textarea id="elm<?php echo $v['Language']['locale'];?>" name="data[PromotionI18n][<?php echo $k?>][meta_description]" rows="15" cols="80" style="width: 80%"><?php echo @$promotion['PromotionI18n'][$k]['meta_description']?></textarea>
+		<?php  echo $tinymce->load("elm".$v['Language']['locale'],$now_locale); ?><br /><br /></td></tr>
+		</table>
+    	<?php }?></p>
+		<?php }?>><?php }?>
+		<?php if($SVConfigs["select_editor"]=="1"){?>
+			<?php echo $javascript->link('fckeditor/fckeditor'); ?>
+		  	<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+		  	<?php echo $html->image($v['Language']['img01'])?><br />
+			<p class="profiles">
+			<?php  if(isset($article['BrandI18n'][$k]['description'])){?>
+	        <?php echo $form->textarea('ArticleI18n/content', array("cols" => "60","rows" => "20",'value'=>"{$promotion['PromotionI18n'][$k]['meta_description']}","name"=>"data[PromotionI18n][{$k}][meta_description]","id"=>"ArticleI118n{$k}Content"));?>
+	        <?php echo $fck->load("ArticleI118n{$k}/content"); ?>
+	        
+	    	<?php }else{?>
+	       	<?php echo $form->textarea('ArticleI18n/content', array('cols' => '60', 'rows' => '20','value'=>"{$promotion['PromotionI18n'][$k]['meta_description']}","name"=>"data[PromotionI18n][{$k}][meta_description]","id"=>"ArticleI118n{$k}Content"));?> 
+	       	<?php echo $fck->load("ArticleI118n{$k}/content"); ?>
+	    	<?php }?>
+		    </p>
+			<br /><br />
+			<?php }}?>
+		<?php }?>
+</td></tr>
 <tr><td colspan="2"><p class="submit_btn"><input type="submit" value="确定" /><input type="reset" value="重置" /></p></td></tr>
 </table>
+
 <?php echo $form->end();?>
-<span id="gg" style="display:none">赠品（特惠品）<span id="tt">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span> 价格<br />
+<span id="gg" style="display:none">赠品（特惠品）<span id="tt"></span> 价格<br />
 						<span id="special_preference"></span>
 			<dl><dt>搜索并加入赠品：</dt>
 			<dd><input type="text" name="keywords" id="keywords" class="text_inputs" style="width:120px;" /><input type="button" value="搜索" onclick="searchProducts();" /><input type="hidden" name="brand_id" id="brand_id">	<input type="hidden" name="category_id" id="category_id">
@@ -159,24 +209,6 @@
 <?php echo $html->image('content_left.gif',array('class'=>'content_left'))?><?php echo $html->image('content_right.gif',array('class'=>'content_right'))?>
 </div>
 	
-	<!--时间控件层start-->
-	<div id="container_cal" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal2" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal2"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal3" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal3"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal4" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal4"></div><div style="clear:both;"></div></div>
-	</div>
-<!--end-->
 <script type="text/javascript">
 function special_preferences(){
 	var special_preference = document.getElementById("special_preference");
@@ -192,7 +224,7 @@ function special_preferences(){
     				return;
     			}
     		}//alert(source_select1.value);
-    	special_preference.innerHTML+="<ul class='ajax_promotion'><li class='special'><input class='checkbox' type='checkbox' name=specialpreferences[] value="+source_select1.value+" checked>"+source_select1.options[i].text+tt.innerHTML+"</li><li class='price'><input type='text' name=prices[] size=2 value='0'></li></ul>";
+    	special_preference.innerHTML+="<ul class='ajax_promotion'><li class='special'><input class='checkbox' type='checkbox' name=specialpreferences[] value="+source_select1.value+" checked>"+source_select1.options[i].text+tt.innerHTML+"</li><li class='price'><input type='text' name=prices[] style='width:100px;border:1px solid #649776' value='0'></li></ul>";
     	}
     
     }

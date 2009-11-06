@@ -9,20 +9,33 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: commons_controller.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: commons_controller.php 5527 2009-11-05 02:07:24Z huangbo $
 *****************************************************************************/
 
 class CommonsController extends AppController {
     var $name = 'Commons';
-    var $components = array ('Pagination','RequestHandler','Session','Cookie'); // Added
+    var $components = array ('Pagination','RequestHandler','Session','Cookie','Email'); // Added
     var $helpers = array('Pagination'); // Added
-    var $uses = array('Language','SystemResource','Navigation','Category','UserMessage','Brand','Article','Comment','Config','Product','Card','Packaging','ProductsCategory','Tag','TagI18n','LanguageDictionary','Order');
+    var $uses = array('User','Language','SystemResource','Plugin','Navigation','MailTemplate','Category','UserMessage','Brand','Article','Comment','Config','Product','Card','Packaging','ProductsCategory','Tag','TagI18n','LanguageDictionary','Order','UserProductGallerie','OrderProduct','Payment');
     //$languages = $this->requestAction('commons/get_languages_front/');
      function get_languages_front(){
          $languages = $this->Language->findall("Language.front <> '0' ");
         return $languages;
      }
-     
+     function get_web_url(){
+         $url_arr['server_host']  =  $this->server_host;
+         $url_arr['user_webroot'] =  $this->user_webroot;
+         $url_arr['cart_webroot'] =  $this->cart_webroot;
+         return $url_arr;
+     }     
+    
+     function is_error(){
+	    	$this->page_init();
+	       $this->pageTitle = $this->languages['page_not_exist']." - ".$this->configs['shop_title'];
+		   $this->flash($this->languages['page_not_exist'],isset($_SERVER['HTTP_REFERER'])?$_SERVER['HTTP_REFERER']:"/",3);
+     	 
+     }
+    
      //$categories = $this->requestAction('commons/get_categories_tree/');
      function get_categories_tree($type='P',$category_id = 0){//Shogun:增加参数 $type,'P'->列出商品分类树；'A'->列出文章分类树
          $this->Category->set_locale($this->locale);
@@ -59,6 +72,72 @@ class CommonsController extends AppController {
          $articls = $this->Article->getlist();
          return $articls;
      }
+     
+     function change_theme(){
+		$result =array();
+		$result['type'] = 2;
+		$result['msg'] = "";
+		//Configure::write('debug', 0);
+		if($this->RequestHandler->isPost()){
+			if(isset($_POST['no_ajax'])){
+				$arr = explode('_|_',$_POST['select_theme']);
+		        $_SESSION['template_style'] = $arr['1'];
+		        $_SESSION['template_use'] = $arr['0'];
+		       	$this->Cookie->write('template_style',$arr['1']);
+				$this->Cookie->write('template',$arr['0']);
+				$url = isset($_SERVER['HTTP_REFERER'])?$_SERVER['HTTP_REFERER']:$this->server_host.$this->cart_webroot;
+				header('Location:'.$url);exit;
+			}else{
+				$result['type'] = 1;
+		        $_SESSION['template_style'] = $_POST['style'];
+		        $_SESSION['template_use'] = $_POST['theme'];
+		       	$this->Cookie->write('template_style',$_POST['style']);
+				$this->Cookie->write('template',$_POST['theme']);
+				die(json_encode($result));
+			}
+     	}elseif(isset($_GET['themes']) || isset($_GET['theme_style'])){
+     		if(isset($_GET['themes'])){
+     			$_SESSION['template_use'] = $_GET['themes'];
+				$this->Cookie->write('template',$_GET['themes']);
+     		}
+     		if(isset($_GET['theme_style'])){
+     			$_SESSION['template_style'] = $_GET['theme_style'];
+				$this->Cookie->write('template_style',$_GET['theme_style']);
+     		}
+			header('Location:'.$this->server_host.$this->cart_webroot);exit;
+     	}
+			header('Location:'.$this->server_host.$this->cart_webroot);exit;
+     }
+     
+     function currencie(){
+		$result =array();
+		$result['type'] = 2;
+		$result['msg'] = "";
+		Configure::write('debug', 0);
+		if($this->RequestHandler->isPost()){
+			$result['type'] = 1;
+	        $_SESSION['currencies'] = $_POST['code'];
+			$this->currencie = $_POST['code'];
+	       	$this->Cookie->write('currencies',$_POST['code']);
+			$this->Cookie->write('currencies',$_POST['code']);    
+			
+			if(isset($_SESSION['svcart']['payment']['payment_id']) && $_SESSION['svcart']['payment']['code'] == "account_pay"){
+					$this->Payment->set_locale($this->locale);
+					$pay = $this->Payment->findbyid($_SESSION['svcart']['payment']['payment_id']);
+						eval($pay['Payment']['config']);
+						if(@isset($payment_arr['currency_code']['value']) && $payment_arr['currency_code']['value'] == $this->currencie){
+							$pay_can_use = 1;
+						}else{
+							unset($_SESSION['svcart']['payment']);
+						}					
+			}			
+			
+			die(json_encode($result));				
+     	}     
+     }
+     
+     
+     
     function locale($locale="chi",$is_ajax = 0) {
         $result = NULL;
         $default_locale="chi";
@@ -99,8 +178,22 @@ class CommonsController extends AppController {
 		    $this->locale = $locale;
     //      pr($_COOKIE);
         /* 切换语言后更改SESSION中 商品的属性 */
+				$this->Product->set_locale($locale);
+	        	if(isset($_SESSION['cookie_product']) && sizeof($_SESSION['cookie_product']) > 0){
+	        		foreach($_SESSION['cookie_product'] as $k=>$v){
+					$product_i18n = $this->Product->findbyid($v['Product']['id']);
+	        			
+		     		 $_SESSION['cookie_product'][$k] = array('Product'=>array(
+		     		 											 'id'=>$product_i18n['Product']['id'],
+		     		 											'img_thumb'=>$product_i18n['Product']['img_thumb'],
+		     		 											'code'=>$product_i18n['Product']['code'],
+		     		 											'shop_price'=>$product_i18n['Product']['shop_price']
+		     		 											),'ProductI18n'=>array('sub_name'=>$this->Product->sub_str($product_i18n['ProductI18n']['name'],6),
+		     		 																	'name' => $product_i18n['ProductI18n']['name']
+		     		 																	));
+	        		}
+	        	}
 				if(isset($_SESSION['svcart']['products'])){
-					$this->Product->set_locale($locale);
 					foreach($_SESSION['svcart']['products'] as $product){
 						$attributes = isset($product['attributes'])?$product['attributes']:'';
 						$quantity = $product['quantity'];
@@ -507,12 +600,13 @@ function real_ip()
 		$this->Product->set_locale($this->locale);
 		$home_category = $this->Category->home_category($this->locale);
 	//	$home_category = array_slice($home_category,'0','2');
-		//pr($home_category);
+	//  pr($home_category);
 		$home_category_ids = array();
 		$home_category_names = array();
 		if(isset($home_category) && sizeof($home_category) > 0){
 			foreach($home_category as $k=>$v){
 				$home_category_ids[] = $v['Category']['id'];
+				$home_category_names[$v['Category']['id']]['category_id'] = $v['Category']['id'];
 				$home_category_names[$v['Category']['id']]['category_name'] = $v['CategoryI18n']['name'];
 			}
 		}
@@ -552,11 +646,168 @@ function real_ip()
 								'msg_content'=>$_POST['content'],
 								'status'=> 0
 								);
-				$result['msg'] = $this->languages['add'].$this->languages['successfully']." ".$this->languages['waitting_for_check'];
+				$result['msg'] = $this->languages['message'].$this->languages['successfully']." ".$this->languages['waiting_reply'];
 				$this->UserMessage->save($message); 
 				die(json_encode($result));
 			}
 		}
+		
+	function commend_friend(){
+		$result = array();
+		if($this->RequestHandler->isPost()){				
+				$this->Product->set_locale($this->locale);
+				$product_info = $this->Product->findbyid($_POST['product_id']);
+				$product_desc ="";
+                $product_desc.= $this->languages['products'].$this->languages['names']."：".$product_info['ProductI18n']['name']."<br />";
+                $product_desc.= $this->languages['sku']."：".$product_info['Product']['code']."<br />";
+                $product_desc.= $this->languages['our_price']."：".$product_info['Product']['shop_price']." <br />";
+				
+				$url = $this->server_host.$this->cart_webroot."/products/".$_POST['product_id'];
+				$user_name = $_POST['username'];
+				$shop_url = $this->server_host.$this->cart_webroot;
+				$shop_name=$this->configs['shop_name'];
+				$send_date=date('Y-m-d');
+		 		$this->MailTemplate->set_locale($this->locale);
+  	            $template=$this->MailTemplate->find("code = 'commend_friend' ");
+  	            $template_str=$template['MailTemplateI18n']['html_body'];
+  	            eval("\$template_str = \"$template_str\";");
+		        $text_body = $template['MailTemplateI18n']['text_body'];
+		     	eval("\$text_body = \"$text_body\";");
+				$subject = $template['MailTemplateI18n']['title'];
+				eval("\$subject = \"$subject\";");
+				$mailsendqueue = array(
+					"sender_name"=>$shop_name,//发送从姓名
+					"receiver_email"=>";".$to_email,//接收人姓名;接收人地址
+				 	"cc_email"=>";",//抄送人
+				 	"bcc_email"=>";",//暗送人
+				  	"title"=>$subject,//主题 
+				   	"html_body"=>$template_str,//内容
+				  	"text_body"=>$text_body,//内容
+				 	"sendas"=>"html"
+				);
+				$this->Email->send_mail($this->locale,$this->configs['email_the_way'], $mailsendqueue);
+				if(@$this->Email->send_mail($this->locale,$this->configs['email_the_way'], $mailsendqueue)){
+			      $result['type'] = 0;
+			      $result['msg'] = $this->languages['send_mail'].$this->languages['successfully'];
+			    }else{
+			      $result['type'] = 1;
+			      $result['msg'] = $this->languages['send_mail'].$this->languages['failed'];
+			    }
+		}
+		$this->set('result',$result);
+		$this->layout = 'ajax';
+	}
 	
+	function upfile(){
+		$this->page_init();
+		$this->pageTitle = $this->languages['upload'].$this->languages['my_photos']." - ".$this->configs['shop_title'];
+			if($this->RequestHandler->isPost()){	
+					$orders = $this->Order->findallbyuser_id($_SESSION['User']['User']['id']);
+					$is_upfile = 0;
+					foreach($orders as $k=>$v){
+						foreach($v['order_products'] as $kk=>$vv){
+							if($vv['product_id'] == $_POST['product_id']){
+								$is_upfile = 1;
+							}
+						}
+					}			
+			
+			
+				if($is_upfile == 0){
+					$this->flash($this->languages['users_purchased_upload_photos'],isset($_SERVER['HTTP_REFERER'])?$_SERVER['HTTP_REFERER']:'','');
+				}else{
+					$img_dir =  dirname(dirname(dirname(dirname(__FILE__))));
+					$img_dir .= "\\img\\products\\".$_POST['product_code']."\\";
+					$type = explode('/',$_FILES['photo']['type']);
+					if(isset($type[0]) && $type[0] == "image"){
+						$name_s = explode('.',$_FILES['photo']['name']);
+						$exe = isset($name_s[1])?$name_s[1]:'';
+						$target_path = time(); 
+						copy($_FILES['photo']['tmp_name'], $img_dir.$target_path.".".$exe); 
+						if(file_exists($img_dir.$target_path.".".$exe)) { 
+							$img_arr = array('id'=>'','user_id'=>$_SESSION['User']['User']['id'],'product_id'=>$_POST['product_id'],'status'=>0,'img'=>"/img/products/".$_POST['product_code']."/".$target_path.".".$exe);
+							$this->UserProductGallerie->save($img_arr);
+							$this->flash($this->languages['upload'].$this->languages['successfully'],isset($_SERVER['HTTP_REFERER'])?$_SERVER['HTTP_REFERER']:'','');
+						} else { 
+							$this->flash($this->languages['upload'].$this->languages['failed'],isset($_SERVER['HTTP_REFERER'])?$_SERVER['HTTP_REFERER']:'','');
+						}  		
+					}else{
+						$this->flash($this->languages['upload_pictures_only'],isset($_SERVER['HTTP_REFERER'])?$_SERVER['HTTP_REFERER']:'','');
+					}
+				}
+		}
+	}
+	
+	function can_updata_photo(){
+		Configure::write('debug', 0);
+		$result = array();
+		$result['type'] = 1;
+		$result['msg'] = $this->languages['not_buy_product_not_upload'];
+		if($this->RequestHandler->isPost()){
+			if(isset($_SESSION['User']['User']['id'])){
+				$order_p = $this->OrderProduct->find('list',array('conditions'=>array('OrderProduct.product_id'=>$_POST['id']),'fields'=>array('OrderProduct.order_id')));
+				if(isset($order_p) && sizeof($order_p)>0){
+					$order_i = $this->Order->find('all',array('conditions'=>array('Order.id'=>$order_p,'Order.user_id'=>$_SESSION['User']['User']['id'])));
+					if(isset($order_i) && sizeof($order_i)>0){
+						$result['type'] = 0;
+					}					
+				}
+			}
+		}
+		die(json_encode($result));
+	}
+	
+	function save_value_pu($pid,$id){
+			$is_user = $this->User->findbyid($id);
+			if(isset($is_user['User'])){
+				if( $this->affiliate_config['ConfigI18n'][$this->locale]['value']['config']['expire_unit'] == "hour"){
+					$save_time = $this->affiliate_config['ConfigI18n'][$this->locale]['value']['config']['expire']*60*60;
+				}
+				if( $this->affiliate_config['ConfigI18n'][$this->locale]['value']['config']['expire_unit'] == "day"){
+					$save_time = $this->affiliate_config['ConfigI18n'][$this->locale]['value']['config']['expire']*60*60*24;
+				}
+				if( $this->affiliate_config['ConfigI18n'][$this->locale]['value']['config']['expire_unit'] == "week"){
+					$save_time = $this->affiliate_config['ConfigI18n'][$this->locale]['value']['config']['expire']*60*60*24*7;
+				}				
+				$this->Cookie->write('affiliate_user_id',$id,false,time()+$save_time);
+				$this->Cookie->write('affiliate_product_id',$pid,false,time()+$save_time);			
+			}
+			header("Location:".$this->server_host.$this->cart_webroot."products/".$pid);exit;		
+	}
+	
+	function save_value_u($id){
+		$is_user = $this->User->findbyid($id);
+		if(isset($is_user['User'])){
+			if( $this->affiliate_config['ConfigI18n'][$this->locale]['value']['config']['expire_unit'] == "hour"){
+				$save_time = $this->affiliate_config['ConfigI18n'][$this->locale]['value']['config']['expire']*60*60;
+			}
+			if( $this->affiliate_config['ConfigI18n'][$this->locale]['value']['config']['expire_unit'] == "day"){
+				$save_time = $this->affiliate_config['ConfigI18n'][$this->locale]['value']['config']['expire']*60*60*24;
+			}
+			if( $this->affiliate_config['ConfigI18n'][$this->locale]['value']['config']['expire_unit'] == "week"){
+				$save_time = $this->affiliate_config['ConfigI18n'][$this->locale]['value']['config']['expire']*60*60*24*7;
+			}				
+			$this->Cookie->write('affiliate_uid',$id,false,time()+$save_time);
+		}
+		header("Location:".$this->server_host.$this->cart_webroot);	exit;
+	}
+	
+	function save_get_source($id){
+		$plugin_union = $this->Plugin->find_union();
+		if(isset($plugin_union['Plugin'])){ 
+			$this->requestAction($plugin_union['Plugin']['function'].$id);
+		}
+		header("Location:".$this->server_host.$this->cart_webroot);exit;		
+	}
+	
+	/*
+	function save_get_value($id = 0){
+		if(isset($_GET['pu'])){
+		}elseif(isset($_GET['u'])){
+		}elseif(isset($_GET['source'])){
+		}
+		header("Location:".$this->server_host.$this->cart_webroot);exit;
+	}*/	
+
 }
 ?>

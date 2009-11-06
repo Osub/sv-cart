@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: test.php 2703 2009-07-08 11:54:52Z huangbo $ */
+/* SVN FILE: $Id: test.php 4366 2009-09-18 09:49:37Z huangbo $ */
 /**
  * Short description for file.
  *
@@ -19,12 +19,11 @@
  * @package       cake
  * @subpackage    cake.cake.tests.libs
  * @since         CakePHP(tm) v 1.2.0.4433
- * @version       $Revision: 7945 $
- * @modifiedby    $LastChangedBy: gwoo $
- * @lastmodified  $Date: 2008-12-18 18:16:01 -0800 (Thu, 18 Dec 2008) $
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-error_reporting(E_ALL);
 set_time_limit(0);
 ini_set('memory_limit','128M');
 ini_set('display_errors', 1);

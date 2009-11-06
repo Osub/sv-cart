@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 2516 2009-07-01 10:29:18Z shenyunfeng $
+ * $Id: index.ctp 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -18,31 +18,32 @@
 <!--Main Start-->
 <p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."新增部门","add/",'',false,false);?></strong></p>
 
-<div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
+<div class="home_main" style="padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' ); ">
+<div id="listDiv">
 <table cellpadding="0" cellspacing="0" width="100%" class="list_data">
 <tr class="thead">
-	<th>部门名称</th>
-	<th>联系人</th>
-	<th>Email地址</th>
-	<th>系电话</th>
-	<th>是否有效</th>
-	<th>操作</th>
+	<th width="22%">部门名称</th>
+	<th width="20%">联系人</th>
+	<th width="20%">Email地址</th>
+	<th width="20%">联系电话</th>
+	<th width="8%">是否有效</th>
+	<th width="8%">操作</th>
 </tr>
 <!--Products Cat List-->
 <?php if(isset($department_list) && sizeof($department_list)>0){?>
 <?php foreach($department_list as $k=>$v){ ?>
-<tr>	
+<tr <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >	
 	<td><?php echo $v['DepartmentI18n']['name'] ?></td>
 	<td align="center"><?php echo $v['Department']['contact_name'] ?></td>
 	<td align="center"><?php echo $v['Department']['contact_email'] ?></td>
 	<td align="center"><?php echo $v['Department']['contact_mobile'] ?></td>
 	<td align="center"><?php if ($v['Department']['status'] == 1){?><?php echo $html->image('yes.gif',array('align'=>'absmiddle','onclick'=>'')) ?><?php }elseif($v['Department']['status'] == 0){?><?php echo $html->image('no.gif',array('align'=>'absmiddle','onclick'=>''))?><?php }?></td>
 	<td align="center">
-	<?php echo $html->link("编辑","/departments/edit/{$v['Department']['id']}");?>|<?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$this->webroot}departments/remove/{$v['Department']['id']}')"));?>
+	<?php echo $html->link("编辑","/departments/edit/{$v['Department']['id']}");?>|<?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$admin_webroot}departments/remove/{$v['Department']['id']}')"));?>
 	</td>
 </tr>
 <?php } ?><?php }?>
-</table>
+</table></div>
 
 
 <!--Products Cat List End-->

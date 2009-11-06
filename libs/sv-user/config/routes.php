@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: routes.php 1210 2009-05-06 03:50:23Z shenyunfeng $
+ * $Id: routes.php 3454 2009-08-03 08:04:25Z huangbo $
 *****************************************************************************/
 
 	Router::connect('/', array('controller' => 'pages', 'action' => 'home'));
@@ -17,6 +17,7 @@
 	Router::connect('/tests', array('controller' => 'tests', 'action' => 'index'));
 	Router::connect('/:controller/:id',array('action' => 'view'),array('pass' => array('id'),'id' => '[0-9]+'));
 	Router::connect('/login', array('controller' => 'pages', 'action' => 'login'));
+	Router::connect('/act_login', array('controller' => 'pages', 'action' => 'act_login'));
 	Router::connect('/logout', array('controller' => 'pages', 'action' => 'logout'));
 	Router::connect('/register', array('controller' => 'pages', 'action' => 'register'));
 	Router::connect('/forget_password', array('controller' => 'pages', 'action' => 'forget_password'));

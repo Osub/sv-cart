@@ -9,12 +9,13 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: order_product.php 945 2009-04-23 11:34:23Z tangyu $
+ * $Id: order_product.php 3428 2009-07-31 11:48:18Z huangbo $
 *****************************************************************************/
 class OrderProduct extends AppModel
 {
 	var $name = 'OrderProduct';
-	var $hasOne = array('Product' =>array
+		var $hasOne = array(
+		'Product' =>array 
 							(
 							  'className'     => 'Product',   
 			                                      'conditions'   => 'Product.id=OrderProduct.product_id',

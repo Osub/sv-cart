@@ -166,7 +166,7 @@ var ecshop_import_Failure = function(o){
 var ecshop_import_callback ={
 	success:ecshop_import_Success,
 	failure:ecshop_import_Failure,
-	timeout : 30000,
+	timeout : 30000000,
 	argument: {}
 };
 </script>

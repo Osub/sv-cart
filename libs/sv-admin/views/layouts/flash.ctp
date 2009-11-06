@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: flash.ctp 3268 2009-07-23 06:02:01Z huangbo $
+ * $Id: flash.ctp 4384 2009-09-20 03:08:43Z huangbo $
 *****************************************************************************/
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -61,7 +61,7 @@ header("Content-Type: text/html; charset=utf-8");
 <div class="content">
 <div id="ur_here" class="flash_urhere" style="padding-bottom:5px;">当前位置：系统提示</div>
 <!--Main Start-->
-<?php if(!empty($_SESSION['cart_back_url'])){$href=$_SESSION['cart_back_url'];}else{$href=$this->params['controller'];}?>
+<?php if(!empty($_SESSION['cart_back_url'])){$href=(empty($_SESSION['cart_back_url'])?$this->params['controller']:$_SESSION['cart_back_url']);}else{$href=$this->params['controller'];}?>
 	<div class="informations">
 	<p><?php if($type=='true'){echo $html->image('success.jpg',array('align'=>'absmiddle'));}else{ echo $html->image('failure.jpg',array('align'=>'absmiddle'));}?> &nbsp;&nbsp;<a href="<?php echo $url; ?>" style="color:<?php if($type=='true'){?>#188B40<?php }else{?>#EE6203<?php }?>"><?php echo $message; ?></a></p>
 	</div>

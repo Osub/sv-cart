@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: points_controller.php 3225 2009-07-22 10:59:01Z huangbo $
+ * $Id: points_controller.php 5209 2009-10-20 08:40:13Z huangbo $
 *****************************************************************************/
 uses('sanitize');		
 class PointsController extends AppController {
@@ -17,7 +17,7 @@ class PointsController extends AppController {
 	var $name = 'Points';
     var $components = array ('Pagination'); // Added 
     var $helpers = array('Pagination'); // Added 
-	var $uses = array("SystemResource","UserPointLog","Order","User","Product","ProductI18n");
+	var $uses = array("UserPointLog","Order","User","Product","ProductI18n","Payment","UserAccount","PaymentApiLog");
 
 
 	function index(){
@@ -45,12 +45,48 @@ class PointsController extends AppController {
 		$this->set('all_order_fee',$all_order_fee);
 		/*************************************/
 		$this->page_init();
-		$mrClean = new Sanitize();		
+		$mrClean = new Sanitize();			
 		
-        //资源库信息
-        $this->SystemResource->set_locale($this->locale);
-        $systemresource_info = $this->SystemResource->resource_formated(true,$this->locale);
-        $this->set('systemresource_info',$systemresource_info);//资源库信息		
+	   $this->Payment->set_locale($this->locale);
+	   $condition=" Payment.status = '1' and PaymentI18n.status = '1'  and Payment.code <> 'COD'";
+	   $payment_list=$this->Payment->findAll($condition);
+	   $this->set('payment_list',$payment_list);
+	   $pays = $this->Payment->find('all',array('conditions'=>array('1=1')));
+	   $pay_list = array();
+	   foreach($pays as $k=>$v){
+	   		$pay_list[$v['Payment']['id']] = $v;
+	   }	   
+	   
+	   $user_account = $this->UserAccount->findall('UserAccount.user_id ='.$_SESSION['User']['User']['id']);
+	   $account_ids = array();
+	   $account_ids[] = 0;
+	   foreach($user_account as $k=>$v){
+	   		$account_ids[] = $v['UserAccount']['id'];
+	   }		
+	   $account_order = $this->PaymentApiLog->find('all',array('conditions'=>array('PaymentApiLog.type_id'=>$account_ids,'PaymentApiLog.type'=>2)));
+	   $account_order_list = array();
+
+	   if(is_array($account_order) && sizeof($account_order)>0){
+	   		foreach($account_order as $k=>$v){
+	   			$account_order_list[$v['PaymentApiLog']['type_id']] = $v;
+	   		}
+	   }
+
+	   if(is_array($user_account) && sizeof($user_account)>0){
+	   		foreach($user_account as $k=>$v){
+	   			if(isset($account_order_list[$v['UserAccount']['id']]) && isset($pay_list[$v['UserAccount']['payment']])){
+		   			$api_log = $account_order_list[$v['UserAccount']['id']];
+		   			$pay = $pay_list[$v['UserAccount']['payment']];
+		   	   	//   $api_log = $this->PaymentApiLog->find('PaymentApiLog.type_id = '.$v['UserAccount']['id'].' and PaymentApiLog.type = 1');
+		   	   	//   $pay = $this->Payment->findbyid($v['UserAccount']['payment']);
+		   		   $user_account[$k]['UserAccount']['pay_name'] = $pay['PaymentI18n']['name'];
+		   		   $user_account[$k]['UserAccount']['pay_id'] = $api_log['PaymentApiLog']['id'];
+	   			}else{
+	   				unset($user_account[$k]);
+	   			}
+	   		}
+	   }
+	   $this->set('user_account',$user_account);
 		
 		//当前位置
 		$this->navigations[] = array('name'=>__($this->languages['points'],true),'url'=>"");
@@ -105,8 +141,6 @@ class PointsController extends AppController {
 	   	   }
 	   }
 	   
-	   
-	   
 	   foreach($my_points as $k=>$v){
 	   	//   $condition=" id = '".$v['UserPointLog']['type_id']."'";
 	   	//   $my_points[$k]['Order']=$this->Order->find($condition);
@@ -146,10 +180,7 @@ class PointsController extends AppController {
    	   $start_date=isset($this->params['url']['date'])?$this->params['url']['date']:'';
    	   $end_date=isset($this->params['url']['date2'])?$this->params['url']['date2']:''; 
    	   
-   	   
 	   $total_no_confirm=$this->Order->findCount($condition,0);
-	   
-	   
    	   
 	   $js_languages = array("page_number_expand_max" => $this->languages['page_number'].$this->languages['not_exist'] ,
 	   						"recharge_amount_not_empty" => $this->languages['supply'].$this->languages['amount'].$this->languages['can_not_empty'],
@@ -231,6 +262,149 @@ class PointsController extends AppController {
 				}				
 			}
 	}
+	
+	
+	
+		function payment_point(){
+				$no_error = 1;
+			   if(!isset($_POST['is_ajax'])){
+			   	   if($_POST['amount_num'] == ""){
+			   	   		$no_error = 0;//larger_zero
+			   	   		$_REQUEST['msg'] = $this->languages['supply'].$this->languages['amount'].$this->languages['can_not_empty'];
+			   	   }elseif($_POST['amount_num'] == 0){
+			   	   		$no_error = 0;//larger_zero
+			   	   		$_REQUEST['msg'] = $this->languages['supply'].$this->languages['amount'].$this->languages['larger_zero'];
+			   	   }else if(!isset($_POST['payment_id']) || $_POST['payment_id'] == "" || $_POST['payment_id'] < 1){
+			   	   		$no_error = 0;
+			   	   		$_REQUEST['msg'] = $this->languages['please_choose'].$this->languages['payment'];
+			   	   }else{
+			   	   		$_REQUEST['money'] = $_POST['amount_num'];
+			   	   }
+			   	   $url_format = isset($_REQUEST['msg'])?$_REQUEST['msg']:'';
+				}
+			if(!(isset($_REQUEST['msg']))){
+			$modified=date('Y-m-d H:i:s');
+			$user_id=$_SESSION['User']['User']['id'];
+			$user_info=$this->User->find("User.id='".$user_id."'");
+			$user_money=$user_info['User']['balance']+$_REQUEST['money'];
+			$amount_money=$_REQUEST['money'];
+			$payment_id = $_POST['payment_id'];
+			$this->Payment->set_locale($this->locale);
+			$pay = $this->Payment->findbyid($payment_id);
+			$pay_php = $pay['Payment']['php_code'];
+			$account_info = array(
+									"id"=>"",
+									"user_id"=>$user_id,
+									"amount"=>$amount_money,
+									"payment"=>$payment_id,
+									"status"=> 0
+									);
+				$this->UserAccount->save($account_info);
+				$account_id = $this->UserAccount->id;
+
+				$pay_log = array();
+				$pay_log['id'] = '';
+				$pay_log['payment_code'] = $pay['Payment']['code'];
+				$pay_log['type'] = 2;
+				$pay_log['type_id'] = $account_id;
+				$pay_log['amount'] = $amount_money;
+				$pay_log['is_paid'] = 0;
+				$this->PaymentApiLog->save($pay_log);
+				$log_id = $this->PaymentApiLog->id;
+				$pay_created = $this->PaymentApiLog->findbyid($log_id);
+				$order = array(
+							'total' => $amount_money,
+							'log_id' => $log_id,
+							'created' => $pay_created['PaymentApiLog']['created']
+							);	
+			    $message=array(
+			    	'msg'=>$this->languages['supply_method_is'].":".$pay['PaymentI18n']['name'],
+			    	'url'=>''
+			    );			
+			    $_REQUEST['msg'] = $this->languages['supply_method_is'].":".$pay['PaymentI18n']['name'];
+					$str = "\$pay_class = new ".$pay['Payment']['code']."();";
+					if($pay['Payment']['code'] == "bank" || $pay['Payment']['code'] == "post" || $pay['Payment']['code'] == "COD" ||  $pay['Payment']['code'] == "account_pay"){
+						$pay_message = $pay['PaymentI18n']['description'];
+						$url_format = $pay_message;
+						$this->set('pay_message',$pay_message);
+					}else if($pay['Payment']['code'] == "alipay"){
+						eval($pay_php);
+						eval($str);
+						$url = $pay_class->get_code($order,$pay,$this);
+						$url_format = "<input type=\"button\" onclick=\"window.open('".$url."')\" value=\"".$this->languages['alipay_pay_immedia']."\" />";
+						$this->set('pay_button',$url);
+					}else{
+						eval($pay_php);
+						eval($str);
+						$url = $pay_class->get_code($order,$pay,$this);
+						$url_format = $url;
+						$this->set('pay_message',$url);
+					}
+			}else{
+			    $message=array(
+			    'msg'=>$_REQUEST['msg'],
+			    'url'=>''
+				);
+			}
+			if(!isset($_POST['is_ajax'])){
+				$this->page_init();
+				$this->pageTitle = $_REQUEST['msg'];
+				$flash_url = $this->server_host.$this->user_webroot."balances";		
+				$this->flash($url_format,$flash_url,10);	
+			}
+			$this->set('result',$message);
+		   	$this->layout="ajax";
+	 }
+	
+	function pay_point(){
+		$no_error = 1;
+		if($this->RequestHandler->isPost()){
+			$pay_log = $this->PaymentApiLog->findbyid($_POST['id']);
+			$this->Payment->set_locale($this->locale);
+			$pay = $this->Payment->findbycode($pay_log['PaymentApiLog']['payment_code']);
+			$order_pr = array(
+					"total" =>   $pay_log['PaymentApiLog']['amount'],
+					'log_id' =>  $pay_log['PaymentApiLog']['id'],
+					'created' => $pay_log['PaymentApiLog']['created']
+					);				
+			
+		//	$result['msg'] = $this->languages['supply'];
+	   		$result['msg'] = $this->languages['supply_method_is'].":".$pay['PaymentI18n']['name'];
+			$pay_php = $pay['Payment']['php_code'];
+			$str = "\$pay_class = new ".$pay['Payment']['code']."();";
+			if($pay['Payment']['code'] == "bank" || $pay['Payment']['code'] == "post" || $pay['Payment']['code'] == "COD" ||  $pay['Payment']['code'] == "account_pay"){
+				$pay_message = $pay['PaymentI18n']['description'];
+				$url_format = $pay_message;
+				$this->set('pay_message',$pay_message);
+			}else if($pay['Payment']['code'] == "alipay"){
+				eval($pay_php);
+				eval($str);
+				$url = $pay_class->get_code($order_pr,$pay,$this);
+				$url_format = "<input type=\"button\" onclick=\"window.open('".$url."')\" value=\"".$this->languages['alipay_pay_immedia']."\" />";
+				$this->set('pay_button',$url);
+			}else{
+				eval($pay_php);
+				eval($str);
+				$url = $pay_class->get_code($order_pr,$pay,$this);
+				$url_format = $url;
+				$this->set('pay_message',$url);
+			}		
+			$result['type'] = 0;
+
+		}
+	   if(!isset($_POST['is_ajax'])){
+			$this->page_init();
+			$this->pageTitle = $result['msg'];
+			$flash_url = $this->server_host.$this->user_webroot."balances";					
+			$this->flash($url_format,$flash_url,10);		
+		}
+		
+		$this->set('result',$result);
+   		$this->layout="ajax";
+	}
+	
+	
+	
 	
 	
 

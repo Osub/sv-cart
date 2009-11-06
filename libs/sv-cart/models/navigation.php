@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: navigation.php 2261 2009-06-22 11:06:14Z zhengli $
+ * $Id: navigation.php 3987 2009-09-02 09:28:48Z huangbo $
 *****************************************************************************/
 class Navigation extends AppModel
 {
@@ -52,8 +52,18 @@ class Navigation extends AppModel
 			$navigations=$this->findAll($condition,'','orderby asc');
 			if(is_array($navigations))
 				foreach($navigations as $k=>$v){
-					$navigations_array[$v['Navigation']['type']][]=$v;
+					if($v['Navigation']['parent_id'] == 0){
+				//		$navigations_array[$v['Navigation']['type']][$v['Navigation']['parent_id']]['SubMenu'][] = $v;
+				//	}else{
+						$navigations_array[$v['Navigation']['type']][$v['Navigation']['id']] = $v;
+					}
 				}
+				foreach($navigations as $k=>$v){
+					if($v['Navigation']['parent_id'] > 0){
+						$navigations_array[$v['Navigation']['type']][$v['Navigation']['parent_id']]['SubMenu'][] = $v;
+					}
+				}
+			//	pr($navigations_array);
 			cache::write($cache_key,$navigations_array);
 			return $navigations_array;
 		}

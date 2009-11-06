@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: setting_ui.ctp 3113 2009-07-20 11:14:34Z huangbo $
+ * $Id: setting_ui.ctp 4433 2009-09-22 10:08:09Z huangbo $
 *****************************************************************************/
 ?>
 <?php //echo $minify->js(array('/../js/yui/yahoo-dom-event.js','/../js/yui/container_core-min.js','/../js/yui/connection-min.js'));?>
@@ -128,6 +128,208 @@
     	<input type="radio" class="radio" name="use_mod_rewrite" id="use_mod_rewrite1" value="1" <?php if($use_mod_rewrite){?>checked="checked"<?php }?> /><?php echo $lang['yes']?>&nbsp;
     	<input type="radio" class="radio" name="use_mod_rewrite" id="use_mod_rewrite2" value="0" <?php if(!$use_mod_rewrite){?>checked="checked"<?php }?>/><?php echo $lang['no']?></td>
 	</tr>
+	<tr>
+    <td width="28%" align="left"><?php echo $lang['set_timezone']?>：</td>
+    <td width="72%" align="left">
+    <?php if($local_lang=="eng"){?>
+		<select name="time_zone_set" id="time_zone_set">
+
+		  <option value="+12">GMT+12 Eniwetok, Kwajalein</option>
+
+
+		  <option value="+11">GMT+11 Midway Island, Samoa</option>
+
+
+		  <option value="+10">GMT+10 Hawaii</option>
+
+
+		  <option value="+9">GMT+9 Alaska</option>
+
+
+		  <option value="+8">GMT+8 Pacific Time (US &amp; Canada), Tijuana</option>
+
+
+		  <option value="+7">GMT+7 Mountain Time (US &amp; Canada), Arizona</option>
+
+
+		  <option value="+6">GMT+6 Central Time (US &amp; Canada), Mexico City</option>
+
+
+		  <option value="+5">GMT+5 Eastern Time (US &amp; Canada), Bogota, Lima, Quito</option>
+
+
+		  <option value="+4">GMT+4 Atlantic Time (Canada), Caracas, La Paz</option>
+
+
+		  <option value="+3.5">GMT+3.5 Newfoundland</option>
+
+
+		  <option value="+3">GMT+3 Brassila, Buenos Aires, Georgetown, Falkland Is</option>
+
+
+		  <option value="+2">GMT+2 Mid-Atlantic, Ascension Is., St. Helen, St. Helena</option>
+
+
+		  <option value="+1">GMT+1 Azores, Cape Verde Islands</option>
+
+
+		  <option value="+0" selected="selected">GMT+0 Casablanca, Dublin, Edinburgh, London, Lisbon, Monrovia</option>
+
+
+		  <option value="-1">GMT-1 Amsterdam, Berlin, Brussels, Madrid, Paris, Rome</option>
+
+
+		  <option value="-2">GMT-2 Cairo, Helsinki, Kaliningrad, South Africa</option>
+
+
+		  <option value="-3">GMT-3 Baghdad, Riyadh, Moscow, Nairobi</option>
+
+
+		  <option value="-3.5">GMT-3.5 Tehran</option>
+
+
+		  <option value="-4">GMT-4 Abu Dhabi, Baku, Muscat, Tbilisi</option>
+
+
+		  <option value="-4.5">GMT-4.5 Kabul</option>
+
+
+		  <option value="-5">GMT-5 Ekaterinburg, Islamabad, Karachi, Tashkent</option>
+
+
+		  <option value="-5.5">GMT-5.5 Bombay, Calcutta, Madras, New Delhi</option>
+
+
+		  <option value="-5.75">GMT-5.75 Katmandu</option>
+
+
+		  <option value="-6">GMT-6 Almaty, Colombo, Dhaka, Novosibirsk</option>
+
+
+		  <option value="-6.5">GMT-6.5 Rangoon</option>
+
+
+		  <option value="-7">GMT-7 Bangkok, Hanoi, Jakarta</option>
+
+
+		  <option value="-8">GMT-8 Beijing, Hong Kong, Perth, Singapore, Taipei</option>
+
+
+		  <option value="-9">GMT-9 Osaka, Sapporo, Seoul, Tokyo, Yakutsk</option>
+
+
+		  <option value="-9.5">GMT-9.5 Adelaide, Darwin</option>
+
+
+		  <option value="-10">GMT-10 Canberra, Guam, Melbourne, Sydney, Vladivostok</option>
+
+
+		  <option value="-11">GMT-11 Magadan, New Caledonia, Solomon Islands</option>
+
+
+		  <option value="-12">GMT-12 Auckland, Wellington, Fiji, Marshall Island</option>
+		 </select>
+	<?php }else{?>
+		<select name="time_zone_set" id="time_zone_set">
+		  <option value="+12">GMT+12 埃尼威托克岛，夸贾林</option>
+
+
+		  <option value="+11">GMT+11 中途岛，萨摩亚群岛</option>
+
+
+		  <option value="+10">GMT+10 夏威夷</option>
+
+
+		  <option value="+9">GMT+9 阿拉斯加</option>
+
+
+		  <option value="+8">GMT+8 太平洋时间（美国和加拿大），蒂华纳</option>
+
+
+		  <option value="+7">GMT+7 山地时间（美国和加拿大），亚利桑那州</option>
+
+
+		  <option value="+6">GMT+6 中央时间（美国和加拿大），墨西哥城</option>
+
+
+		  <option value="+5">GMT+5 东部时间（美国和加拿大），波哥大，利马，基多</option>
+
+
+		  <option value="+4">GMT+4 大西洋时间（加拿大），加拉加斯，拉巴斯</option>
+
+
+		  <option value="+3.5">GMT+3.5 纽芬兰</option>
+
+
+		  <option value="+3">GMT+3 布宜诺斯艾利斯，乔治敦，福克兰群岛</option>
+
+
+		  <option value="+2">GMT+2 大西洋中部，阿森松岛，圣海伦，圣赫勒拿</option>
+
+
+		  <option value="+1">GMT+1 亚速尔群岛，佛得角群岛</option>
+
+
+		  <option value="+0">GMT+0 卡萨布兰卡，都柏林，爱丁堡，伦敦，里斯本，蒙罗维亚</option>
+
+
+		  <option value="-1">GMT-1 阿姆斯特丹，柏林，布鲁塞尔，马德里，巴黎，罗马</option>
+
+
+		  <option value="-2">GMT-2 开罗，赫尔辛基，加里宁格勒，南非</option>
+
+
+		  <option value="-3">GMT-3 巴格达，利雅得，莫斯科，内罗毕</option>
+
+
+		  <option value="-3.5">GMT-3.5 德黑兰</option>
+
+
+		  <option value="-4">GMT-4 阿布扎比，巴库，马斯喀特，第比利斯</option>
+
+
+		  <option value="-4.5">GMT-4.5 喀布尔</option>
+
+
+		  <option value="-5">GMT-5 叶卡特琳堡，伊斯兰堡，卡拉奇，塔什干</option>
+
+
+		  <option value="-5.5">GMT-5.5 孟买，加尔各答，马德拉斯，新德里</option>
+
+
+		  <option value="-5.75">GMT-5.75 加德满都</option>
+
+
+		  <option value="-6">GMT-6 阿拉木图，科伦坡，达卡，新西伯利亚</option>
+
+
+		  <option value="-6.5">GMT-6.5 仰光</option>
+
+
+		  <option value="-7">GMT-7 曼谷，河内，雅加达</option>
+
+
+		  <option value="-8" selected="selected">GMT-8 北京，香港，珀斯，新加坡，台北</option>
+
+
+		  <option value="-9">GMT-9 大阪，札幌，汉城，东京，雅库茨克</option>
+
+
+		  <option value="-9.5">GMT-9.5 阿德莱德，达尔文</option>
+
+
+		  <option value="-10">GMT-10 堪培拉，关岛，墨尔本，悉尼，符拉迪沃斯托克</option>
+
+
+		  <option value="-11">GMT-11 马加丹，新喀里多尼亚所罗门群岛</option>
+
+
+		  <option value="-12">GMT-12 奥克兰，惠灵顿，斐济，马绍尔群岛</option>
+
+		 </select>
+	<?php }?>
+	</tr>
+	<tr>
 </table>
 <h3><?php echo $html->image("/tools/img/".$local_lang."/3_05.gif")?></h3>
 <table align="center" width="645" cellpadding="0" cellspacing="0" id='template_table'>

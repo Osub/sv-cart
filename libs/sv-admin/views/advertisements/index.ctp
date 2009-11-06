@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 2649 2009-07-07 09:07:22Z wuchao $
+ * $Id: index.ctp 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 ?>
 <?php //pr($advertisements);?>
@@ -18,23 +18,24 @@
 <br />
 <!--Main Start-->
 <p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."新增广告","add/",'',false,false);?></strong></p>
-<div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
+<div class="home_main" style="padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auro' ); ">
+<div id="listDiv">
 <table cellpadding="0" cellspacing="0" width="100%" class="list_data">
 <tr class="thead">
-	<th>广告名称</th>
-	<th>广告位置</th>
-	<th>媒介类型</th>
-	<th>开始日期</th>
-	<th>结束日期</th>
-	<th>点击次数</th>
-	<th>排序</th>
-	<th>操作</th>
+	<th >广告名称</th>
+	<th width="8%">广告位置</th>
+	<th width="8%">媒介类型</th>
+	<th width="12%">开始日期</th>
+	<th width="12%">结束日期</th>
+	<th width="8%">点击次数</th>
+	<th width="8%">排序</th>
+	<th width="8%">操作</th>
 </tr>
 <!--Advertisement List-->
 
 <?php if(isset($advertisements) && sizeof($advertisements)>0){?>
-<?php foreach($advertisements as $advertisement){?>
-<tr>
+<?php foreach($advertisements as $k=>$advertisement){?>
+<tr <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >
 	<td><?php echo $advertisement['AdvertisementI18n']['name'];?></td>
 	<td><?php echo $advertisement['AdvertisementPosition']['name'];?></td>
 	<td align="center">
@@ -48,12 +49,12 @@
 	<td align="center"><?php echo $advertisement['Advertisement']['click_count'];?></td>
 	<td align="center"><?php echo $advertisement['Advertisement']['orderby'];?></td>
 	<td align="center">
-	<?php echo $html->link("编辑","/advertisements/edit/{$advertisement['Advertisement']['id']}");?>|<?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$this->webroot}advertisements/remove/{$advertisement['Advertisement']['id']}')"));?>
+	<?php echo $html->link("编辑","/advertisements/edit/{$advertisement['Advertisement']['id']}");?>|<?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$admin_webroot}advertisements/remove/{$advertisement['Advertisement']['id']}')"));?>
 	</td>
 </tr>
 <?php }?>
 <?php }?>
-</table>
+</table></div>
 <div class="pagers" style="position:relative"><?php echo $this->element('pagers',array('cache'=>'+0 hour'));?></div>
 </div>
 <!--Main Start End-->

@@ -9,16 +9,14 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: edit.ctp 2544 2009-07-03 05:55:59Z zhengli $
+ * $Id: edit.ctp 4372 2009-09-18 10:38:17Z huangbo $
 *****************************************************************************/
 ?>
  
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
-<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."角色列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
-
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."角色列表","/".(empty($_SESSION['cart_back_url'])?$this->params['controller']:$_SESSION['cart_back_url']),'',false,false);?></strong></p>
 <!--Main Start-->
-
 <?php echo $form->create('Role',array('action'=>'edit/'.$operatorrole['OperatorRole']['id'],'onsubmit'=>'return roles_check();'));?>
 <div class="home_main">
 <table width="100%" cellpadding="0" cellspacing="0" class="">
@@ -31,54 +29,43 @@
 	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  编辑角色</h1></div>
 	  <div class="box">
-	  <br />
 	  <input type="hidden" name="data[OperatorRole][id]" value="<?php echo $operatorrole['OperatorRole']['id']?>" />
 	  <h2>角色名称：</h2>
-	
-
 <?php if(isset($languages) && sizeof($languages)>0){
 	 foreach ($languages as $k => $v){?>
 		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input type="text" style="width:195px;" id="name<?php echo $v['Language']['locale']?>" name="data[OperatorRoleI18n][<?php echo $k;?>][name]" <?php if(@isset($this->data['OperatorRoleI18n'][$v['Language']['locale']])){?>value="<?php echo @$this->data['OperatorRoleI18n'][$v['Language']['locale']]['name'];?>"<?php }else{?>value=""<?php }?>/> <font color="#F90046">*</font></span></p>
-		
 <?php }} ?>
-	
-	
-<?php if(isset($languages) && sizeof($languages)>0){
-		foreach ($languages as $k => $v){?>
-	<input name="data[OperatorRoleI18n][<?php echo $k;?>][locale]" type="hidden" value="<?php echo  $v['Language']['locale'];?>">
+<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+		<input name="data[OperatorRoleI18n][<?php echo $k;?>][locale]" type="hidden" value="<?php echo  $v['Language']['locale'];?>">
 		<input id="OperatorRoleI18n<?php echo $k;?>Id" name="data[OperatorRoleI18n][<?php echo $k;?>][id]" type="hidden" value="<?php echo @$this->data['OperatorRoleI18n'][$v['Language']['locale']]['id'];?>">
-	<input id="OperatorRoleI18n<?php echo $k;?>OperatorRoleId" name="data[OperatorRoleI18n][<?php echo $k;?>][operator_role_id]" type="hidden" value="<?php echo  $this->data['OperatorRole']['id'];?>">
-<?php 
-	}
-}?>
-		<br />
+		<input id="OperatorRoleI18n<?php echo $k;?>OperatorRoleId" name="data[OperatorRoleI18n][<?php echo $k;?>][operator_role_id]" type="hidden" value="<?php echo  $this->data['OperatorRole']['id'];?>">
+<?php }}?>
 	  </div>
 	</div>
 <!--Communication Stat End-->
 </td>
 <td valign="top" width="50%" style="padding-left:5px;padding-top:25px;">
 <!--Other Stat-->
-	<div class="order_stat athe_infos tongxun">
-	  
-	  <div class="box">
-		
-		<br />
-		<dl style="margin-bottom:5px;padding-top:8px;"><dt>角色编号：</dt>
-			<dd>&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $operatorrole['OperatorRole']['id']?><input type="hidden" class="text_inputs" style="width:190px;" name="data[OperatorRole][id]" value="<?php echo $operatorrole['OperatorRole']['id']?>" /> <font color="#F94671">*</font></dd></dl>
-					<dl style="margin-bottom:5px;padding-top:8px;"><dt>角色排序：</dt>
-			<dd>&nbsp;&nbsp;&nbsp;&nbsp;<input class="text_inputs" style="width:190px;" name="data[OperatorRole][orderby]" value="<?php echo $operatorrole['OperatorRole']['orderby']?>"  onkeyup="check_input_num(this)" /><br /> 如果您不输入排序号，系统将默认为50</dd></dl>
+	<div class="order_stat athe_infos">
+	  <div class="box"  style="padding-top:20px;" >
+		<dl><dt>角色编号：</dt>
+			<dd><?php echo $operatorrole['OperatorRole']['id']?><input type="hidden" class="text_inputs" style="width:190px;" name="data[OperatorRole][id]" value="<?php echo $operatorrole['OperatorRole']['id']?>" /></dd></dl>
+			<dl><dt>角色排序：</dt>
+			<dd><input class="text_inputs" style="width:190px;" name="data[OperatorRole][orderby]" value="<?php echo $operatorrole['OperatorRole']['orderby']?>"  onkeyup="check_input_num(this)" /><br /> 如果您不输入排序号，系统将默认为50</dd></dl>
 		<dl><dt>是否有效：</dt>
-			<dd>&nbsp;&nbsp;<input type="radio" name="data[OperatorRole][status]" value="1" <?php if($operatorrole['OperatorRole']['status']==1){echo "checked";} ?> /> 是 <input type="radio" name="data[OperatorRole][status]" value="0" <?php if($operatorrole['OperatorRole']['status']==0){echo "checked";} ?> /> 否</dd></dl>
-		
-		
-		<br />
-	  </div>
+			<dd><input type="radio" name="data[OperatorRole][status]" value="1" <?php if($operatorrole['OperatorRole']['status']==1){echo "checked";} ?> /> <label>是</label> <input type="radio" name="data[OperatorRole][status]" value="0" <?php if($operatorrole['OperatorRole']['status']==0){echo "checked";} ?> /><label>否</label></dd></dl>
+		</div>
 	</div>
 <!--Other Stat End-->
 </td>
 </tr>
-
 </table>
+<style>
+label{vertical-align:middle}
+.inputcheckboxradio{vertical-align:middle;}
+body{font-family:tahoma;font-size:12px;}
+</style>
+
 <script language="javascript">
 	function show_intro(pre,pree, n, select_n,css) {
 		for (i = 1; i <= n; i++) {
@@ -124,24 +111,43 @@
   		</div>
 	<div class="order_stat operators properies">
 	<div class="box" id="hdblock3_c21" style="display:block;">
-  	    <p class="select_operators" style="margin-top:-30px;"></p>
-  	    	<?php if(isset($operatoraction) && sizeof($operatoraction)>0){?>
-			<?php  foreach($operatoraction as $k=>$v){ ?>
-				<div class="purview_set" >
-					<p>
-						<label>
-							<input type="checkbox" name="checkbox" value="checkbox" onclick="javascript:check('<?php if(isset($v['SubAction']))foreach($v['SubAction'] as $vv){ echo $vv['Operator_action']['id'].',';}?>',this,'competence')" /><?php echo $v['Operator_action']['name'];?>
-						</label>
-					</p>
-					<ul>
-					<?php  if(isset($v['SubAction'])){foreach($v['SubAction'] as $kk=>$vv){  ?>
-						<li>
-						<label><input type="checkbox" name="competence[]" value="<?php echo $vv['Operator_action']['id'];?>" <?php if( in_array($vv['Operator_action']['id'],$actions_arr) ){echo "checked";}?> /><?php echo $vv['Operator_action']['name'];?></label>
-						</li>
-					<?php }} ?>
-					</ul>
-				</div>
-				<?php }} ?>		
+		<table id="list-table" width="100%" cellpadding="0" cellspacing="0" class="" border="1" style="border-collapse: collapse;border-color:#C4F9A4;">
+
+
+		<?php if(isset($operatoraction) && sizeof($operatoraction)>0){?>
+		<?php foreach($operatoraction as $k=>$v){?>
+		<tr class="1">
+			<td width="9%" valign="top" > &nbsp&nbsp <?php echo $html->image('minus.gif',array("onclick"=>"rowClicked(this)")); ?> <?php echo $v['Operator_action']['name']?></td>
+			<td width="91%"></td>
+		</tr>
+		<tr class="2">
+			<td width="9%"></td><td  width="91%">
+			<table width="100%" cellpadding="0" cellspacing="0" class="" border=1 style="border: medium none ;padding-left: 30px; border-collapse: collapse; font-family: 宋体;border-color:#C4F9A4;">
+				<?php if(isset($v['SubAction']) && sizeof($v['SubAction'])>0)foreach($v['SubAction'] as $vv){?>
+				<tr>
+				<td width="13%" valign="top" ><input type="checkbox"  value="<?php echo $vv['Operator_action']['id']?>" onclick="javascript:check('<?php if(isset($vv['SubAction']))foreach($vv['SubAction'] as $vvv){ echo $vvv['Operator_action']['id'].',';}?>',this,'competence')" /><?php echo $vv['Operator_action']['name']?></td>
+				<td width="87%">
+				<table width="100%" cellpadding="0" cellspacing="0" class=""  >
+					<?php if(isset($vv['SubAction']) && sizeof($vv['SubAction'])>0){$trnum=1;foreach($vv['SubAction'] as $vvv){?>
+					<?php if( $trnum == 1){?><tr><?php }?>
+					<td width="20%">
+					<input type="checkbox" name="competence[]" value="<?php echo $vvv['Operator_action']['id']?>" <?php if(in_array($vvv['Operator_action']['id'],$actions_arr)) echo 'checked';?> /><?php echo $vvv['Operator_action']['name']?>
+					</td>
+					<?php if($trnum == count($vv['SubAction'])){for($i=1;$i<5-count($vv['SubAction']);$i++){?>
+					<td width="20%"></td>
+					<?php }}?>
+					<?php $trnum++;if( $trnum == 5){?></tr><?php $trnum=1;}?><?php }?>
+					<?php }?>
+				</table>
+				</td>
+			</tr>
+				<?php }?>
+			</table>
+			</td>
+
+	 	</tr>
+		<?php }}?>
+		</table>
 	</div>
 <!--Order Stat End-->
 <!--Categories List End-->
@@ -198,3 +204,53 @@
 <!--Main Start End-->
 <?php echo $html->image('content_left.gif',array('class'=>'content_left'))?><?php echo $html->image('content_right.gif',array('class'=>'content_right'))?>
 </div>
+<script type="text/javascript">
+/**
+ * 折叠菜单列表
+ */
+function rowClicked(obj){
+	if(obj.src.indexOf("minus.gif") != -1){	
+		obj.src = server_host+"/sv-admin/img/menu_plus.gif";
+	}
+	else{
+		obj.src = server_host+"/sv-admin/img/minus.gif";
+	}
+	obj = obj.parentNode.parentNode;
+	
+  	var tbl = document.getElementById("list-table");
+  	var lvl = parseInt(obj.className);
+  	var fnd = false;
+  	
+  	for (i = 0; i < tbl.rows.length; i++){
+		var row = tbl.rows[i];
+		if (tbl.rows[i] == obj){
+			fnd = true;
+		}
+		else{
+			if (fnd == true){
+				var cur = parseInt(row.className);
+				if (cur > lvl){
+					row.style.display = (row.style.display != 'none') ? 'none' : (BrowserisIE()) ? 'block' : 'table-row';
+				}
+				else{
+					fnd = false;
+					break;
+				}
+			}
+		}
+  	}
+
+	
+}
+function BrowserisIE(){
+	if(navigator.userAgent.search("Opera")>-1){
+		return false;
+	}
+	if(navigator.userAgent.indexOf("Mozilla/5.")>-1){
+        return false;
+    }
+    if(navigator.userAgent.search("MSIE")>0){
+        return true;
+    }
+}
+</script>

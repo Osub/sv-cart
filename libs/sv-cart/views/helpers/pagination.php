@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: pagination.php 888 2009-04-22 10:46:50Z shenyunfeng $
+ * $Id: pagination.php 4078 2009-09-04 11:42:15Z huangbo $
 *****************************************************************************/
 class PaginationHelper extends Helper  
 { 
@@ -59,7 +59,7 @@ class PaginationHelper extends Helper
                 { 
                     if($OriginalValue == $value) 
                     { 
-                        $t .= '<em>'.$value.'</em>'.$separator; 
+                        $t .= '<strong>'.$value.'</strong>'.$separator; 
                     } 
                     else 
                     { 
@@ -164,7 +164,7 @@ class PaginationHelper extends Helper
         { 
              if($i == $this->_pageDetails['page']) 
              { 
-                $text = '<em>'.$i.'</em>'; 
+                $text = '<strong>'.$i.'</strong>'; 
              } 
              else 
              { 
@@ -364,6 +364,7 @@ class PaginationHelper extends Helper
 
     function _generateUrl ($page=NULL,$pageDetails=NULL)  
     { 
+   		
         $pageDetails = $pageDetails?$pageDetails:$this->_pageDetails; 
         $getParams = $this->getParams; // Import any other pre-existing get parameters 
         if ($this->_pageDetails['paramStyle']=="pretty") 
@@ -401,6 +402,7 @@ class PaginationHelper extends Helper
                 }             
             } 
         } 
+        $page_value = '1';
         foreach($getParams as $key => $value) 
         { 
             if ($pageDetails['paramStyle']=="get") 
@@ -410,16 +412,25 @@ class PaginationHelper extends Helper
                     if (up($pageDetails['Defaults'][$key])<>up($value)) 
                     { 
                         $getString[] = "$key=$value"; 
+                        if($key == "page"){
+                        	$page_value = $value;
+                        }
                     } 
                 } 
                 else 
                 { 
                     $getString[] = "$key=$value"; 
+                    if($key == "page"){
+                      	$page_value = $value;
+                    }                    
                 } 
             } 
             else 
             { 
                 $getString[] = "$key=$value"; 
+                if($key == "page"){
+                   	$page_value = $value;
+                }                
             }             
         } 
         $url = $this->url; 
@@ -433,6 +444,43 @@ class PaginationHelper extends Helper
             $getString = implode ("&", $getString); 
             $url .= "?".$getString; 
         } 
+        
+        if($this->params['controller'] == 'category_articles'){
+        	$display_mode_url = "/category_articles/".$this->data['to_page_id']."/".$page_value;
+        }elseif($this->params['controller'] == 'articles' && $this->params['action'] == 'search'){
+			$display_mode_url="/".$this->params['controller']."/".$this->params['action']."/".$this->data['to_page_id']."/".$page_value."/";
+        }elseif($this->params['controller'] == 'articles' && $this->params['action'] == 'category'){
+			$display_mode_url="/".$this->params['controller']."/".$this->params['action']."/".$this->data['to_page_id']."/".$this->data['this_locale']."/".$page_value."/";
+        }elseif($this->params['controller'] == 'products' && $this->params['action'] == 'user_gallery'){
+        	$display_mode_url = "/products/user_gallery/".$page_value;
+        }elseif($this->params['controller'] == 'comments'){
+        	$display_mode_url = "/comments/index/".$page_value;
+        }elseif($this->params['controller'] == 'topics'){
+        	$display_mode_url = "/topics/index/".$page_value."/".$this->data['orderby']."/".$this->data['rownum'];
+        }elseif($this->params['controller'] == 'promotions'){
+        	$display_mode_url = "/promotions/index/".$page_value."/".$this->data['orderby']."/".$this->data['rownum'];
+        }elseif($this->params['controller'] == 'exchanges'){
+        	$display_mode_url = "/exchanges/".$page_value."/".$this->data['orderby']."/".$this->data['rownum']."/".$this->data['showtype'];
+        }elseif($this->params['controller'] == 'products'){
+        	$display_mode_url = "/products/advancedsearch/SAD/".$this->data['to_page_id']."/".$this->data['pagination_category']."/".$this->data['pagination_brand']."/".$this->data['price_min']."/".$this->data['price_max']."/".$page_value."/".$this->data['orderby']."/".$this->data['rownum']."/".$this->data['showtype'];
+        }elseif($this->params['controller'] == 'categories'){
+			if($this->data['configs']['use_sku'] == 1){
+				if(isset($this->data['parent'])){ 
+					$display_mode_url="/".$this->params['controller']."/".$this->data['to_page_id']."/".$this->data['page_parent']."/".$this->data['page_category_name']."/".$page_value."/".$this->data['orderby']."/".$this->data['rownum']."/".$this->data['showtype']."/".$this->data['pagination_brand']."/".$this->data['price_min']."/".$this->data['price_max']."/".$this->data['page_filters']."/";
+				}else{
+					$display_mode_url="/".$this->params['controller']."/".$this->data['to_page_id']."/".$this->data['page_category_name']."/0/".$page_value."/".$this->data['orderby']."/".$this->data['rownum']."/".$this->data['showtype']."/".$this->data['pagination_brand']."/".$this->data['price_min']."/".$this->data['price_max']."/".$this->data['page_filters']."/";
+				}
+			}else{
+				$display_mode_url="/".$this->params['controller']."/".$this->data['to_page_id']."/0/0/".$page_value."/".$this->data['orderby']."/".$this->data['rownum']."/".$this->data['showtype']."/".$this->data['pagination_brand']."/".$this->data['price_min']."/".$this->data['price_max']."/".$this->data['page_filters']."/";
+			}
+		}else{
+			$display_mode_url="/".$this->params['controller']."/".$this->params['action']."/".$this->data['to_page_id']."/".$page_value."/".$this->data['orderby']."/".$this->data['rownum']."/".$this->data['showtype']."/";
+	    }           
+	    
+        $url = $display_mode_url;        
+        
+   //     pr($display_mode_url."--");
+        
         return $url; 
     } 
 } 

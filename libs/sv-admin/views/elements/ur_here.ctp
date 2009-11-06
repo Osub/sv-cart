@@ -9,17 +9,18 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: ur_here.ctp 2485 2009-06-30 11:33:00Z huangbo $
+ * $Id: ur_here.ctp 4366 2009-09-18 09:49:37Z huangbo $
 *****************************************************************************/
 ?>
 <div id="ur_here">当前位置：
 <?php 
 if(isset($navigations) && sizeof($navigations)>0){
-	foreach($navigations as $v){
+	foreach($navigations as $k=>$v){
+		$nav = $k==count($navigations)-1?"":" -> ";
 	 	if(!isset($v['url']) || $v['url']==''){
-				echo $v['name'].' -> ';
+			echo $v['name'].$nav;
 	 	}else{
-	 	 echo $html->link($v['name'],$v['url']).' -> ';
+	 	 	echo $html->link($v['name'],$v['url']).$nav;
 		}
 	}
 }else{

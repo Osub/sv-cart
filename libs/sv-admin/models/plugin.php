@@ -9,11 +9,12 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: plugin.php 2703 2009-07-08 11:54:52Z huangbo $
+ * $Id: plugin.php 5158 2009-10-16 10:23:11Z huangbo $
 *****************************************************************************/
 class Plugin extends AppModel
 {
 	var $name = 'Plugin';
+	var $hasOne = array();
 
 	function find_union(){
 		$plugin_arr = $this->cache_find('all',array('conditions'=>array('Plugin.status'=>1,'Plugin.code'=>'union')),$this->name);

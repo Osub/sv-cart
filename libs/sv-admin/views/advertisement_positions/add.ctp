@@ -9,14 +9,14 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 2703 2009-07-08 11:54:52Z huangbo $
+ * $Id: add.ctp 4372 2009-09-18 10:38:17Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 <!-- Main Start-->
 <br />
-<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."广告位列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."广告位列表","/".(empty($_SESSION['cart_back_url'])?$this->params['controller']:$_SESSION['cart_back_url']),'',false,false);?></strong></p>
 
 <div class="home_main">
 <?php echo $form->create('',array('action'=>'add/','onsubmit'=>'return advertisement_positions_check();'));?>
@@ -40,7 +40,6 @@
 		<dd></dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" name="data[AdvertisementPosition][position_desc]" /></dl>
 		<dl><dt style="width:105px;">排序：</dt>
 		<dd></dd><input type="text" style="width:50px;*width:180px;border:1px solid #649776" name="data[AdvertisementPosition][orderby]" value="50" id="orderby"/></dl>
-		<br />
 		</div>
 <!--Mailtemplates_Config End-->
 	  </div>

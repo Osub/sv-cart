@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: order.php 1789 2009-05-26 10:32:35Z shenyunfeng $
+ * $Id: order.php 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 class Order extends AppModel
 {
@@ -47,6 +47,13 @@ class Order extends AppModel
 			$orders=$this->findCount($condition);
 			return $orders;
     }
+    
+    function new_orders($start_time,$end_time){
+			$condition="Order.user_id=".$_SESSION['User']['User']['id'];
+			$orders=$this->find('all',array('conditions'=>$condition,'order'=>'Order.created DESC','recursive' => -1,'fields'=>array('Order.id','Order.order_code','Order.status','Order.payment_status','Order.shipping_status'),'limit'=>4));
+			return $orders;
+    }
+    
      function findassoc($orders_id){
 		$condition = array("Order.id"=>$orders_id);
 		

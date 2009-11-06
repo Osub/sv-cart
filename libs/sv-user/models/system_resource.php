@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: system_resource.php 3053 2009-07-17 11:59:14Z huangbo $
+ * $Id: system_resource.php 3428 2009-07-31 11:48:18Z huangbo $
 *****************************************************************************/
 class SystemResource extends AppModel
 {
@@ -106,7 +106,7 @@ function find_tree($condition){
 	}
 //leo20090626
 function resource_formated($mystatus=true,$locale){
-	$conditions="";
+	$conditions="1=1";
 //	$actions=$this->findAll($conditions,'','SystemResource.orderby asc');
 	$actions = $this->cache_find('all',array('orderby'=>'SystemResource.orderby asc',
 	'fields'=>array('SystemResource.id','SystemResource.parent_id','SystemResource.code','SystemResource.resource_value','SystemResourceI18n.system_resource_id','SystemResourceI18n.name'),

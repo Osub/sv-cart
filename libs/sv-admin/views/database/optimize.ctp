@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: optimize.ctp 2703 2009-07-08 11:54:52Z huangbo $
+ * $Id: optimize.ctp 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 ?>
 
@@ -23,12 +23,12 @@
 
 .list-div th {
   line-height: 24px;
-  background: url(../img/product.gif) repeat-x;
+
   white-space: nowrap;
 }
 
 .list-div td {
-  background: #FFF;
+
   line-height: 22px;
 }
 
@@ -46,10 +46,11 @@
 <?php echo $form->end();?>
 </div>
 <!-- end form -->
-	
-<div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' );">
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."数据库备份","index/",'',false,false);?></strong></p>
+
+<div class="home_main" style="padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' );">
 <div class="list-div" id="listDiv">
-<table cellspacing='1' cellpadding='3' id='listTable'>
+<table cellspacing='1' cellpadding='3' id='listTable'  class="list_data" >
   <tr>
     <th>数据表</th>
     <th>数据表类型</th>
@@ -59,8 +60,8 @@
     <th>字符集</th>
     <th>状态</th>
   </tr>
-  <?php foreach($list as $v){ ?>
-    <tr>
+  <?php foreach($list as $k=>$v){ ?>
+    <tr <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >
       <td class="first-cell"><?php echo $v['table'];?></td>
       <td align ="left"><?php echo $v['type'];?></td>
       <td align ="right"><?php echo $v['rec_num'];?></td>

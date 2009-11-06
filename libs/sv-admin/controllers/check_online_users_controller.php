@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: check_online_users_controller.php 2961 2009-07-16 10:19:12Z huangbo $
+ * $Id: check_online_users_controller.php 4366 2009-09-18 09:49:37Z huangbo $
 *****************************************************************************/
 class CheckOnlineUsersController extends AppController
 {
@@ -35,9 +35,9 @@ class CheckOnlineUsersController extends AppController
 	function index()
 	{
 		$this->operator_privilege('online_user_cart');
-		$this->pageTitle='在线用户统计管理'." - ".$this->configs['shop_name'];		 
-			$this->navigations[]=array('name'=>'在线用户统计','url'=>'./');
-		$this->navigations[] = array('name'=>'列表','url'=>'');			
+		$this->pageTitle='在线用户统计管理'." - ".$this->configs['shop_name'];		
+		$this->navigations[] = array('name'=>'客户管理','url'=>''); 
+			$this->navigations[]=array('name'=>'在线用户统计','url'=>'./');	
 		$this->set('navigations',$this->navigations);	
 		$tem = $this->OnlineSession->findAll();
 		$cart=array();
@@ -50,14 +50,14 @@ class CheckOnlineUsersController extends AppController
 		$online_info = array();
 		foreach($info as $k=>$v){
 			if(isset($v['User'])){
-				$online_info[$k]['User']['name']=$v['User']['User']['name'];
-				$online_info[$k]['User']['login_time']=$v['User']['User']['last_login_time'];
-				$online_info[$k]['User']['register']=$v['User']['User']['created'];
+				$online_info[$k]['User']['name']=@$v['User']['User']['name'];
+				$online_info[$k]['User']['login_time']=@$v['User']['User']['last_login_time'];
+				$online_info[$k]['User']['register']=@$v['User']['User']['created'];
 				$online_info[$k]['User']['latest_modify'] = '';
 				if(isset($v['svcart']['products'])){
 					$cart = $this->Cart->find('all',
 						                               array(
-						                                       'conditions' => array('session_id'=>$v['session_id'],'user_id'=>$v['User']['User']['id'],'1 order by modified DESC LIMIT 1'),//Where的条件
+						                                       'conditions' => array('session_id'=>$v['session_id'],'user_id'=>@$v['User']['User']['id'],'1 order by modified DESC LIMIT 1'),//Where的条件
 						                                       'fields' => array('modified'),//显示的字段
 						                                       'joins' => array(), //关联的表
 						                                       'offset' => null,//移动的条数
@@ -86,7 +86,7 @@ class CheckOnlineUsersController extends AppController
 					$online_info[$k]['product_list'][$kk]['price'] = $vv['Product']['shop_price'];
 					$online_info[$k]['product_list'][$kk]['attributes'] = isset($vv['attributes'])?$vv['attributes']:'';
 					if(isset($v['User'])){
-						$cart = $this->Cart->find(array('session_id'=>$v['session_id'],'user_id'=>$v['User']['User']['id'],'product_id'=>$vv['Product']['id']));
+						$cart = $this->Cart->find(array('session_id'=>$v['session_id'],'user_id'=>@$v['User']['User']['id'],'product_id'=>$vv['Product']['id']));
 					//	if(!empty($cart)){pr($cart);echo 'in';exit;}
 						$online_info[$k]['product_list'][$kk]['add_time'] = $cart['Cart']['created'];
 					}else{
@@ -158,7 +158,8 @@ class CheckOnlineUsersController extends AppController
 		/*判断权限*/
 		$this->operator_privilege('online_user_cart');		
 		/*end*/
-		$this->pageTitle='在线用户统计管理'." - ".$this->configs['shop_name'];		
+		$this->pageTitle='在线用户统计管理'." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'客户管理','url'=>'');		
 		$this->navigations[]=array('name'=>'在线用户统计','url'=>'./');
 		$this->navigations[] = array('name'=>'详情','url'=>'');		
 		$this->set('navigations',$this->navigations);		

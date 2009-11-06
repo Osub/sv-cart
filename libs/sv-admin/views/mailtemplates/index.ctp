@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 2516 2009-07-01 10:29:18Z shenyunfeng $
+ * $Id: index.ctp 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -18,27 +18,30 @@
 <!--Main Start-->
 <p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."新增邮件模板","add/",'',false,false);?></strong></p>
 
-<div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' );height:auto!important;">
+<div class="home_main" style="padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' );height:auto!important;">
+<div id="listDiv">
 <table cellpadding="0" cellspacing="0" width="100%" class="list_data">
 <tr class="thead">
-	<th>代码</th>
-	<th>邮件模板名称</th>
-	<th>是否启用</th>
-	<th>操作</th>
+	<th width="12%">代码</th>
+	<th width="32%">邮件模板名称</th>
+	<th width="40%">说明</th>
+	<th width="8%">是否启用</th>
+	<th width="8%">操作</th>
 </tr>
 <!--Competence List-->
 <?php if(isset($MailTemplate_list) && sizeof($MailTemplate_list)>0){?>
 <?php foreach( $MailTemplate_list as $k=>$v ){ ?>
-<tr>
+<tr <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >
 	<td><?php echo $v["MailTemplate"]["code"]?></td>
 	<td><?php echo $v["MailTemplateI18n"]["title"]?></td>
+	<td><?php echo $v["MailTemplateI18n"]["description"]?></td>
 	<td align="center"><?php if ($v['MailTemplate']['status'] == 1){?><?php echo $html->image('yes.gif',array('align'=>'absmiddle','onclick'=>'')) ?><?php }elseif($v['MailTemplate']['status'] == 0){?><?php echo $html->image('no.gif',array('align'=>'absmiddle','onclick'=>''))?><?php }?></td>
 	<td align="center">
-		<?php echo $html->link("编辑","/mailtemplates/edit/{$v['MailTemplate']['id']}");?>|<?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$this->webroot}mailtemplates/remove/{$v['MailTemplate']['id']}')"));?>
+		<?php echo $html->link("编辑","/mailtemplates/edit/{$v['MailTemplate']['id']}");?>|<?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$admin_webroot}mailtemplates/remove/{$v['MailTemplate']['id']}')"));?>
 	</td>
 </tr>
 <?php } }?>
-</table>
+</table></div>
 <!--Competence List End-->	
 
 <br />

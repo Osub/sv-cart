@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: flashes_controller.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: flashes_controller.php 5382 2009-10-23 03:59:18Z huangbo $
 *****************************************************************************/
 class FlashesController extends AppController {
 	var $name = 'Flashes';
@@ -24,8 +24,9 @@ class FlashesController extends AppController {
 		/*判断权限*/
 		$this->operator_privilege('flash_play_view');
 		/*end*/
-		$this->pageTitle = 'Flash轮播管理'." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'Flash轮播管理','url'=>'/flashes/');
+		$this->pageTitle = '轮播管理'." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'界面管理','url'=>'');
+		$this->navigations[] = array('name'=>'轮播管理','url'=>'/flashes/');
 		$this->set('navigations',$this->navigations);
 		if($this->RequestHandler->isPost()){
 			$this->Flashe->hasMany=array();
@@ -114,10 +115,11 @@ class FlashesController extends AppController {
 	}
 	
 	function edit( $id ){
-		$this->pageTitle = "Flash轮播管理 - Flash轮播管理"." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'Flash轮播管理','url'=>'/flashes/');
-		$this->navigations[] = array('name'=>'编辑Flash轮播管理','url'=>'');
-		$this->set('navigations',$this->navigations);
+		$this->pageTitle = "轮播管理 - 轮播管理"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'界面管理','url'=>'');
+		$this->navigations[] = array('name'=>'轮播管理','url'=>'/flashes/');
+		$this->navigations[] = array('name'=>'编辑轮播管理','url'=>'');
+
 		//	$dataflasheimg = $this->FlashImage->findall();
 		//	pr($dataflasheimg);
 		if($this->RequestHandler->isPost()){
@@ -147,7 +149,7 @@ class FlashesController extends AppController {
 					if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	            $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑Flash','operation');
     	            }
-					$this->flash("Flash编辑成功。点击继续编辑该flash",'/flashes/edit/'.$id,10);
+					$this->flash("Flash编辑成功。点击这里继续编辑该flash",'/flashes/edit/'.$id,10);
 				}else{
 					$this->FlashImage->belongsTo = array();
 					$this->data['FlashImage']['flash_id'] = $values['Flashe']['id'];
@@ -156,7 +158,7 @@ class FlashesController extends AppController {
 					if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	            $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑Flash','operation');
     	            }
-					$this->flash("Flash编辑成功。点击继续编辑该flash",'/flashes/edit/'.$id,10);
+					$this->flash("Flash编辑成功。点击这里继续编辑该flash",'/flashes/edit/'.$id,10);
 
 				}
 			}else{
@@ -181,6 +183,9 @@ class FlashesController extends AppController {
 		//pr($flashimage);
 		$this->set('flashimage',$flashimage);
 		$this->set('flashtypes',$flashtypes);
+
+		$this->navigations[] = array('name'=>@$flashtypes[$flashimages['Flashe']['type']],'url'=>'');
+		$this->set('navigations',$this->navigations);
 		$this->set('flashimages',$flashimages);
 		$this->set('b',$b);
 		$this->set('ac',$ac);
@@ -199,9 +204,10 @@ class FlashesController extends AppController {
 	}
 	
 	function add(){
-		$this->pageTitle = "Flash轮播管理 - Flash轮播管理"." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'Flash轮播管理','url'=>'/flashes/');
-		$this->navigations[] = array('name'=>'编辑Flash轮播管理','url'=>'');
+		$this->pageTitle = "轮播管理 - 轮播管理"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'界面管理','url'=>'');
+		$this->navigations[] = array('name'=>'轮播管理','url'=>'/flashes/');
+		$this->navigations[] = array('name'=>'新增轮播管理','url'=>'');
 		$this->set('navigations',$this->navigations);
 		if($this->RequestHandler->isPost()){
 			$this->data["FlashImage"]["orderby"] = !empty($this->data["FlashImage"]["orderby"])?$this->data["FlashImage"]["orderby"]:50;
@@ -222,7 +228,7 @@ class FlashesController extends AppController {
 			if(empty( $values )){
 				$this->FlashImage->saveAll($this->data);
 				
-					$this->flash("Flash添加成功。点击继续编辑该flash",'/flashes/edit/'.$this->FlashImage->getLastInsertId(),10);
+					$this->flash("Flash添加成功。点击这里继续编辑该flash",'/flashes/edit/'.$this->FlashImage->getLastInsertId(),10);
 			}else{
 				
 				if(empty($flasheimg)){
@@ -234,7 +240,7 @@ class FlashesController extends AppController {
 					if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	            $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加Flash','operation');
     	             }
-					$this->flash("Flash添加成功。点击继续编辑该flash",'/flashes/edit/'.$this->FlashImage->getLastInsertId(),10);
+					$this->flash("Flash添加成功。点击这里继续编辑该flash",'/flashes/edit/'.$this->FlashImage->getLastInsertId(),10);
 				}else{
 					$this->FlashImage->belongsTo = array();
 					$this->data['FlashImage']['flash_id'] = $flasheimg['FlashImage']['flash_id'];
@@ -243,7 +249,7 @@ class FlashesController extends AppController {
 					if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	            $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加Flash','operation');
     	             }
-					$this->flash("Flash添加成功。点击继续编辑该flash",'/flashes/edit/'.$this->FlashImage->getLastInsertId(),10);
+					$this->flash("Flash添加成功。点击这里继续编辑该flash",'/flashes/edit/'.$this->FlashImage->getLastInsertId(),10);
 				}
 			}
 		}

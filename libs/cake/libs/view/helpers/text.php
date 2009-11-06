@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: text.php 2703 2009-07-08 11:54:52Z huangbo $ */
+/* SVN FILE: $Id: text.php 4366 2009-09-18 09:49:37Z huangbo $ */
 /**
  * Text Helper
  *
@@ -19,9 +19,9 @@
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
  * @since         CakePHP(tm) v 0.10.0.1076
- * @version       $Revision: 7945 $
- * @modifiedby    $LastChangedBy: gwoo $
- * @lastmodified  $Date: 2008-12-18 18:16:01 -0800 (Thu, 18 Dec 2008) $
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
@@ -277,17 +277,20 @@ class TextHelper extends AppHelper {
 		}
 
 		$pos = strpos(strtolower($text), strtolower($phrase));
+
 		$startPos = 0;
 		if ($pos > $radius) {
 			$startPos = $pos - $radius;
 		}
+
 		$textLen = strlen($text);
+
 		$endPos = $pos + $phraseLen + $radius;
 		if ($endPos >= $textLen) {
 			$endPos = $textLen;
 		}
-		$excerpt = substr($text, $startPos, $endPos - $startPos);
 
+		$excerpt = substr($text, $startPos, $endPos - $startPos);
 		if ($startPos != 0) {
 			$excerpt = substr_replace($excerpt, $ending, 0, $phraseLen);
 		}

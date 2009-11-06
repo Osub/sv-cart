@@ -9,13 +9,13 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: addresses_controller.php 2829 2009-07-14 03:47:34Z shenyunfeng $
+ * $Id: addresses_controller.php 4887 2009-10-11 09:05:21Z huangbo $
 *****************************************************************************/
 uses('sanitize');		
 class AddressesController extends AppController {
 	var $name = 'Addresses';
 	var $helpers = array('Html');
-	var $uses = array("UserAddress","Region");
+	var $uses = array("UserAddress","Region","User");
 	var $components = array('RequestHandler');
 		
 /*------------------------------------------------------ */
@@ -72,11 +72,11 @@ class AddressesController extends AppController {
 	    //获得我的收获地址
 	    $user_id=$_SESSION['User']['User']['id'];
 	    //pr($_SESSION['User']['User']);
-	    $this->data=$this->UserAddress->findAll("user_id= '".$user_id."'");
-        foreach($this->data as $k=>$v){
+	    $this->data['user_address']=$this->UserAddress->findAll("user_id= '".$user_id."'");
+        foreach($this->data['user_address'] as $k=>$v){
         //	  $arr = explode("-",$this->data[$k]['UserAddress']['telephone']);
         //	  if(isset($arr[2]) && !empty($arr[2])){
-        	         $this->data[$k]['UserAddress']['telephone_all'] = $this->data[$k]['UserAddress']['telephone'];
+        	         $this->data['user_address'][$k]['UserAddress']['telephone_all'] = $this->data['user_address'][$k]['UserAddress']['telephone'];
         //	  }else{
         //	  	  	if(isset($arr[1])){
         //	         $this->data[$k]['UserAddress']['telephone_all'] = $arr[0]."-".$arr[1];
@@ -84,11 +84,11 @@ class AddressesController extends AppController {
        	  //    		 $this->data[$k]['UserAddress']['telephone_all'] = $arr[0];
        	  //    		}
        	   //   }
-       	      $this->data[$k]['UserAddress']['telephone']=split("-",$v['UserAddress']['telephone']);
+       	      $this->data['user_address'][$k]['UserAddress']['telephone']=split("-",$v['UserAddress']['telephone']);
         			$this->Region->set_locale($this->locale);
 					$region_array = explode(" ",trim($v['UserAddress']['regions']));
-					$this->data[$k]['UserAddress']['regions_id'] = $this->data[$k]['UserAddress']['regions'];
-					$this->data[$k]['UserAddress']['regions'] = "";
+					$this->data['user_address'][$k]['UserAddress']['regions_id'] = $this->data['user_address'][$k]['UserAddress']['regions'];
+					$this->data['user_address'][$k]['UserAddress']['regions'] = "";
 					if(is_array($region_array) && sizeof($region_array)>0){
 						foreach($region_array as $a=>$b){
 							if($b == $this->languages['please_choose']){
@@ -101,7 +101,7 @@ class AddressesController extends AppController {
 					$region_name_arr = $this->Region->find('all',array('conditions'=>array('Region.id'=>$region_array)));
 					if(is_array($region_name_arr) && sizeof($region_name_arr)>0){
 						foreach($region_name_arr as $kk=>$vv){
-							$this->data[$k]['UserAddress']['regions'].= isset($vv['RegionI18n']['name'])?$vv['RegionI18n']['name']." ":"";
+							$this->data['user_address'][$k]['UserAddress']['regions'].= isset($vv['RegionI18n']['name'])?$vv['RegionI18n']['name']." ":"";
 						}
 					}					
 					
@@ -253,9 +253,18 @@ class AddressesController extends AppController {
 				}
 				if($no_error == 1){
 					$this->UserAddress->save($address);
+					if(isset($address['is_default']) && $address['is_default'] == 1){
+						$address_id = $this->UserAddress->id;
+						$update_user = array('id'=>$_SESSION['User']['User']['id'],'address_id'=>$address_id);
+						$this->User->save($update_user);
+					}
 				}
 				$result['type']=0;
-				$result['msg']=$this->languages['edit'].$this->languages['successfully'];
+				if(isset($_POST['is_add'])){
+					$result['msg']=$this->languages['add'].$this->languages['successfully'];
+				}else{
+					$result['msg']=$this->languages['edit'].$this->languages['successfully'];
+				}
 				$result['id']=$this->UserAddress->id;
 				if(!isset($_POST['is_ajax']) && $no_error == 1){
 					$this->pageTitle = "".$this->languages['edit'].$this->languages['successfully']."";
@@ -297,6 +306,51 @@ class AddressesController extends AppController {
 		}
 		$this->set('result',$result);
 		$this->layout = 'ajax';
+	}
+
+	//added by zhaojingna@seevia.cn 20090817 
+	function show_edit_2kbuy($id,$user_id){
+	  	$this->page_init();
+		    //当前位置  
+		$this->navigations[] = array('name'=>$this->languages['edit'].$this->languages['address'],'url'=>"");
+		$this->set('locations',$this->navigations);		
+		$this->pageTitle = $this->languages['edit'].$this->languages['address']."- ".$this->configs['shop_title'];
+ 		if(!isset($_SESSION['User'])){
+			$this->redirect('/pages/login');
+		}				
+		if($this->RequestHandler->isPost() ){
+	//	$address = $this->UserAddress->findbyid($_POST['id']);
+	//	$telephone_arr = explode("-",$address['UserAddress']['telephone']);
+	//	$address['UserAddress']['telephone'] = $telephone_arr;
+	//	$result['type']=0;
+	//	$result['regions']=$address['UserAddress']['regions'];
+	//	$result['address']= $address;
+	//	pr($address);exit;
+		}
+		$address = $this->UserAddress->findbyid($id);
+		$user = $this->User->findbyid($user_id);
+       	$js_languages = array("page_number_expand_max" => $this->languages['page_number'].$this->languages['not_exist'],
+       						"address_label_not_empty" => $this->languages['address'].$this->languages['label'].$this->languages['can_not_empty'],
+				       		"invalid_email" => $this->languages['email'].$this->languages['format'].$this->languages['not_correct'],
+				       		"zip_code_not_empty" => $this->languages['post_code'].$this->languages['can_not_empty'],
+				       		"invalid_tel_number" => $this->languages['telephone'].$this->languages['format'].$this->languages['not_correct'],
+				       		"tel_number_not_empty" => $this->languages['telephone'].$this->languages['can_not_empty'],
+				       		"invalid_mobile_number" => $this->languages['mobile'].$this->languages['format'].$this->languages['not_correct'],
+							"address_label_not_empty" => $this->languages['address'].$this->languages['label'].$this->languages['can_not_empty'],
+				       		"mobile_phone_not_empty" => $this->languages['mobile'].$this->languages['can_not_empty'],
+				       		"address_detail_not_empty" => $this->languages['address'].$this->languages['can_not_empty'],
+				       		"consignee_name_not_empty" => $this->languages['consignee'].$this->languages['can_not_empty'],
+							"fill_one_contact" => $this->languages['please_enter'].$this->languages['one_contact'],
+							"please_choose" => $this->languages['please_choose'],
+							"not_less_eight_characters" => $this->languages['not_less_eight_characters'],
+							"telephone_or_mobile" => $this->languages['telephone_or_mobile'],
+							"choose_area" => $this->languages['please_choose'].$this->languages['region']
+       		);
+		$this->set('js_languages',$js_languages);
+	
+	
+		$this->set('address',$address);
+		$this->set('user_address_id',$user['User']['address_id']);
 	}
 
 }

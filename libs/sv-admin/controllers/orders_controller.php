@@ -9,92 +9,20 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: orders_controller.php 3238 2009-07-22 12:49:40Z huangbo $
+ * $Id: orders_controller.php 5229 2009-10-21 02:04:57Z huangbo $
  *****************************************************************************/
 class OrdersController extends AppController{
     var $name='Orders';
     var $components=array('Pagination','RequestHandler','Email');
     var $helpers=array('Pagination');
-    var $uses=array('SystemResource','SystemResourceI18n','ProductRank','UserRank','OrderCard','OrderPackaging','Operator','RegionI18n','Region','VirtualCard','Shipping','Order','OrderProduct','UserAddress','Payment','Shipping','OrderProduct','User','Product','OrderAction','Category','Brand','ProductAttribute','ProductTypeAttribute','UserBalanceLog','ShippingArea','MailTemplate','UserConfig','UserPointLog','UserBalanceLog','CouponType','Coupon','PaymentApiLog');
-    function search($export=0){
-        $this->operator_privilege('order_undeal_view');
-        $this->pageTitle='待处理订单'." - ".$this->configs['shop_name'];
-        $this->navigations[]=array('name' => '待处理订单','url' => '/orders/search/processing');
-        $this->set('navigations',$this->navigations);
-        if($_SESSION['Operator_Info']['Operator']['actions']=='all'){
-            $condition="Order.status not in(2,3) and (Order.payment_status<>'2' or Order.shipping_status<>'2')";
-        }
-        else{
-            $condition="Order.status not in(2,3) and (Order.payment_status<>'2' or Order.shipping_status<>'2') and (Order.operator_id=".$_SESSION['Operator_Info']['Operator']['id']." or Order.operator_id='0') ";
-        }
-        $total=$this->Order->findCount($condition,0);
-        $sortClass='Order';
-        $page=1;
-        $rownum=isset($this->configs['show_count']) ? $this->configs['show_count']: ((!empty($rownum)) ? $rownum : 20);
-        $parameters=Array($rownum,$page);
-        $options=Array();
-        $page=$this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass);
-        $orders_list=$this->Order->findAll($condition,'',"created desc",$rownum,$page);
-        foreach($orders_list as $k => $v){
-            $orders_list[$k]['Order']['should_pay']=sprintf($this->configs['price_format'],sprintf("%01.2f",$v['Order']['subtotal']-$v['Order']['money_paid']));
-            $orders_list[$k]['Order']['subtotal']=sprintf($this->configs['price_format'],$v['Order']['subtotal']);
-        }
-        //资源库信息
-        $this->SystemResource->set_locale($this->locale);
-        $systemresource_info = $this->SystemResource->resource_formated();
-       	//
-       	$this->set('orders_list',$orders_list);
-       	$this->set('systemresource_info',$systemresource_info);//资源库信息
-       	
-        if(isset($_REQUEST['page']) && !empty($_REQUEST['page'])){
-            $this->set('ex_page',$this->params['url']['page']);
-        }
-        /*CSV导出*/
-        if(isset($_REQUEST['export']) && $_REQUEST['export']==="export"){
-            $filename='待处理订单导出'.date('Ymd').'.csv';
-            $ex_data="待处理订单统计报表,";
-            $ex_data.="日期,";
-            $ex_data.=date('Y-m-d')."\n";
-            $ex_data.="订单号,";
-            $ex_data.="下单时间,";
-            $ex_data.="收货人,";
-            $ex_data.="费用,";
-            $ex_data.="支付方式,";
-            $ex_data.="配送方式,";
-            $ex_data.="订单状态,";
-            $ex_data.="\n";
-            foreach($orders_list as $k => $v){
-                $ex_data.=$v['Order']['order_code'].",";
-                $ex_data.=$v['Order']['created'].",";
-                $ex_data.=$v['Order']['consignee']." ";
-                if(!empty($v['Order']['telephone'])){
-                    $ex_data.="[".$v['Order']['telephone']."]  ";
-                }
-                $ex_data.=$v['Order']['address'].",";
-                $ex_data.='总金额:'.$v['Order']['subtotal']." ";
-                $ex_data.='应付金额:'.$v['Order']['should_pay'].",";
-                $ex_data.=$v['Order']['payment_name'].",";
-                $ex_data.=$v['Order']['shipping_name'].",";
-				$ex_data.= 	$systemresource_info["order_status"][$v['Order']['status']]." ".
-							$systemresource_info["payment_status"][$v['Order']['payment_status']]." ".
-							$systemresource_info["shipping_status"][$v['Order']['shipping_status']]."\n";
-
-            }
-            Configure::write('debug',0);
-            header("Content-type: text/csv; charset=gb2312");
-            header("Content-Disposition: attachment; filename=".iconv('utf-8','gb2312',$filename));
-            header('Cache-Control:   must-revalidate,   post-check=0,   pre-check=0');
-            header('Expires:   0');
-            header('Pragma:   public');
-            echo iconv('utf-8','gb2312',$ex_data."\n");
-            exit;
-        }
-    }
-    function index($export=0){
+    var $uses=array("LanguageDictionary",'MailSendQueue',"InformationResource",'SystemResource','SystemResourceI18n','ProductRank','UserRank','OrderCard','InvoiceType','ProductAlsobought','OrderPackaging','Operator','RegionI18n','Region','VirtualCard','Shipping','Order','OrderProduct','UserAddress','Payment','Shipping','OrderProduct','User','Product','OrderAction','Category','Brand','ProductAttribute','ProductTypeAttribute','UserBalanceLog','ShippingArea','MailTemplate','UserConfig','UserPointLog','UserBalanceLog','CouponType','Coupon','PaymentApiLog');
+    function index($export=0,$csv_export_code="gbk"){
         $this->operator_privilege('order_view');
-        $this->pageTitle="订单管理"." - ".$this->configs['shop_name'];
-        $this->navigations[]=array('name' => '订单管理','url' => '/orders/');
+        $this->pageTitle="订单查询"." - ".$this->configs['shop_name'];
+        $this->navigations[] = array('name'=>'订单管理','url'=>'');
+        $this->navigations[]=array('name' => '订单查询','url' => '/orders/');
         $this->set('navigations',$this->navigations);
+		$this->Order->belongsTo=array();
 
         if($_SESSION['Operator_Info']['Operator']['actions']=='all'){
             $condition="";
@@ -133,7 +61,12 @@ class OrdersController extends AppController{
             $condition["and"]["Order.created <="]="".$this->params['url']['date2']." 23:59:59";
             $this->set("end_time",$this->params['url']['date2']);
         }
-        
+        if(isset($this->params['url']['no_payment_status']) && $this->params['url']['no_payment_status']!=''){
+            $condition["and"]["Order.payment_status !="]="2";
+        }
+		if(isset($this->params['url']['search']) && $this->params['url']['search']!=''){
+			$condition="Order.status not in(2,3) and Order.payment_status<>'2' and Order.shipping_status<>'2'and Order.shipping_status<>'1'";
+		}
         //dam
         if(isset($this->configs['mlti_currency_module']) && $this->configs['mlti_currency_module']==1){
             if(isset($_REQUEST["order_locale"]) && !empty($_REQUEST["order_locale"]) && $_REQUEST["order_locale"]!="all"){
@@ -159,7 +92,8 @@ class OrdersController extends AppController{
         	$orders_list=$this->Order->findAll($condition,'',"Order.created DESC");
         }else{
         	$orders_list=$this->Order->findAll($condition,'',"Order.created DESC",$rownum,$page);
-        }       
+        }   
+        $user_id = array();    
         foreach($orders_list as $k => $v){
             $price_format=$this->configs['price_format'];
             //DAM
@@ -171,10 +105,20 @@ class OrdersController extends AppController{
                     $price_format=$this->configs['price_format'];
                 }
             }
-            //
-            $orders_list[$k]['Order']['should_pay']=sprintf($price_format,sprintf("%01.2f",$v['Order']['total']-$v['Order']['money_paid']-$v['Order']['point_fee']));
+            $coupon_info=$this->Coupon->findById($v["Order"]["coupon_id"]);
+            $coupon_types_info=$this->CouponType->findById($coupon_info["Coupon"]["coupon_type_id"]);
+            $orders_list[$k]['Order']['should_pay']=sprintf($price_format,sprintf("%01.2f",$v['Order']['total']-$v['Order']['money_paid']-$v['Order']['point_fee']-$v['Order']['discount']-$coupon_types_info["CouponType"]["money"]));
             $orders_list[$k]['Order']['subtotal']=sprintf($price_format,$v['Order']['subtotal']);
             $orders_list[$k]['Order']['total']=sprintf($price_format,$v['Order']['total']);
+            if(!in_array($v['Order']['user_id'],$user_id)){
+            	$user_id[] = $v['Order']['user_id'];
+        	}
+        }
+        
+        $user_data = $this->User->find("all",array("conditions"=>array("id"=>$user_id)));
+        $user_info = array();
+        foreach( $user_data as $k=>$v ){
+        	$user_info[$v["User"]["id"]] = $v["User"]["name"];
         }
         $order_status=isset($this->params['url']['order_status']) ? $this->params['url']['order_status']: -1;
         $payment_status=isset($this->params['url']['payment_status']) ? $this->params['url']['payment_status']: -1;
@@ -183,7 +127,7 @@ class OrdersController extends AppController{
         $consignee=isset($this->params['url']['consignee']) ? $this->params['url']['consignee']: '';
         $start_date=isset($this->params['url']['start_date']) ? $this->params['url']['start_date']: '';
         $end_date=isset($this->params['url']['end_date']) ? $this->params['url']['end_date']: '';
-        $this->navigations[]=array('name' => '订单管理','url' => '/orders/');
+       
         $this->Shipping->set_locale($this->locale);
         $shipping_list=$this->Shipping->shipping_list();
         //资源库信息
@@ -220,31 +164,43 @@ class OrdersController extends AppController{
         $this->set('navigations',$this->navigations);
         $this->set('locale',$order_locale);
         $this->set('systemresource_info',$systemresource_info);
-        
-    /*    if(isset($_REQUEST['page']) && !empty($_REQUEST['page'])){
-            $this->set('ex_page',$this->params['url']['page']);
-        }
-        if(isset($_REQUEST['date'])){
-            $ex_url="date=".$this->params['url']['date']."&date2=".$this->params['url']['date2']."&consignee=".$this->params['url']['consignee']."&order_id=".$this->params['url']['order_id']."&order_status=".$this->params['url']['order_status']."&shipping_status=".$this->params['url']['shipping_status']."&payment_status=".$this->params['url']['payment_status']."&order_locale=".$order_locale;
-        }
-        else{
-            $ex_url="date=&date2=&consignee=&order_id=&order_status=-1&shipping_status=-1&payment_status=-1&order_locale=all";
-        }
-        $this->set('ex_url',$ex_url);
-        /*CSV导出*/
-      //  if(isset($_REQUEST['export']) && $_REQUEST['export']==="export"){
+        $this->set('user_info',$user_info);
+        $this->set('csv_export_code',$csv_export_code);
+
       	if(isset($export) && $export==="export"){
-            $filename='订单导出'.date('Ymd').'.csv';
-            $ex_data="订单统计报表,";
-            $ex_data.="日期,";
-            $ex_data.=date('Y-m-d')."\n";
-            $ex_data.="订单号,";
-            $ex_data.="下单时间,";
-            $ex_data.="收货人,";
-            $ex_data.="费用,";
-            $ex_data.="支付方式,";
-            $ex_data.="配送方式,";
-            $ex_data.="订单状态,";
+      		$condition = "";
+      		$languagedictionary[] = "back_order_code";
+      		$languagedictionary[] = "back_order_time";
+      		$languagedictionary[] = "back_consignee";
+      		$languagedictionary[] = "back_username";
+      		$languagedictionary[] = "back_fees";
+      		$languagedictionary[] = "back_payment";
+      		$languagedictionary[] = "back_delivery_mode";
+      		$languagedictionary[] = "back_order_status";
+      		$languagedictionary[] = "back_operation";
+      		$languagedictionary[] = "back_export_orders";
+      		$languagedictionary[] = "back_total_amount";
+      		$languagedictionary[] = "back_cope_amount ";
+      		$condition["name"] = $languagedictionary;
+			$csv_systemResource = $this->SystemResource->findbyresource_value($csv_export_code);
+			$condition["locale"] = $csv_systemResource["SystemResource"]["code"];
+      		$languagedictionary_info = $this->LanguageDictionary->find("all",array("conditions"=>$condition));
+      		$csv_str = array();
+      		foreach( $languagedictionary_info as $csv_k=>$csv_v ){
+      			$csv_str[$csv_v["LanguageDictionary"]["name"]] = $csv_v["LanguageDictionary"]["value"];
+      		}
+	        //资源库信息
+	        $this->SystemResource->set_locale($csv_systemResource["SystemResource"]["code"]);
+	        $systemresource_info = $this->SystemResource->resource_formated();
+            $filename=$csv_str["back_export_orders"].date('Ymd').'.csv';
+            $ex_data=date('Y-m-d')."\n";
+            $ex_data.=$csv_str["back_order_code"].",";
+            $ex_data.=$csv_str["back_order_time"].",";
+            $ex_data.=$csv_str["back_consignee"].",";
+            $ex_data.=$csv_str["back_fees"].",";
+            $ex_data.=$csv_str["back_payment"].",";
+            $ex_data.=$csv_str["back_delivery_mode"].",";
+            $ex_data.=$csv_str["back_order_status"].",";
             $ex_data.="\n";
             foreach($orders_list as $k => $v){
                 $ex_data.=$v['Order']['order_code'].",";
@@ -254,8 +210,8 @@ class OrdersController extends AppController{
                     $ex_data.="[".$v['Order']['telephone']."]  ";
                 }
                 $ex_data.=$v['Order']['address'].",";
-                $ex_data.='总金额:'.$v['Order']['subtotal']." ";
-                $ex_data.='应付金额:'.$v['Order']['should_pay'].",";
+                $ex_data.=$csv_str["back_total_amount"].':'.$v['Order']['subtotal']." ";
+                $ex_data.=$csv_str["back_cope_amount"].':'.$v['Order']['should_pay'].",";
                 $ex_data.=$v['Order']['payment_name'].",";
                 $ex_data.=$v['Order']['shipping_name'].",";
 				$ex_data.= 	$systemresource_info["order_status"][$v['Order']['status']]." ".
@@ -263,12 +219,12 @@ class OrdersController extends AppController{
 							$systemresource_info["shipping_status"][$v['Order']['shipping_status']]."\n";
             }
             Configure::write('debug',0);
-            header("Content-type: text/csv; charset=gb2312");
-            header("Content-Disposition: attachment; filename=".iconv('utf-8','gb2312',$filename));
+            header("Content-type: text/csv; charset=".$csv_export_code);
+            header("Content-Disposition: attachment; filename=".iconv('utf-8',$csv_export_code,$filename));
             header('Cache-Control:   must-revalidate,   post-check=0,   pre-check=0');
             header('Expires:   0');
             header('Pragma:   public');
-            echo iconv('utf-8','gb2312',$ex_data."\n");
+            echo iconv('utf-8',$csv_export_code,$ex_data."\n");
             exit;
         }
     }
@@ -277,8 +233,9 @@ class OrdersController extends AppController{
         
         $order_info=$this->Order->findbyid($id);//订单信息
         
-        $this->pageTitle="查看订单-订单管理"." - ".$this->configs['shop_name'];
-        $this->navigations[]=array('name' => '订单管理','url' => '/orders/');
+        $this->pageTitle="查看订单-订单查询"." - ".$this->configs['shop_name'];
+        $this->navigations[] = array('name'=>'订单管理','url'=>'');
+        $this->navigations[]=array('name' => '订单查询','url' => '/orders/');
         $this->navigations[]=array('name' => '查看订单','url' => '');
         $this->navigations[]=array('name' => $order_info["Order"]["order_code"],'url' => '');
         $this->set('navigations',$this->navigations);
@@ -340,12 +297,12 @@ class OrdersController extends AppController{
         $this->CouponType->set_locale($this->locale);
         $coupon_info=$this->Coupon->findById($order_info["Order"]["coupon_id"]);
         $coupon_types_info=$this->CouponType->findById($coupon_info["Coupon"]["coupon_type_id"]);
-        $order_info['Order']['coupon_fee']=sprintf($this->configs['price_format'],sprintf("%01.2f",$coupon_info["Coupon"]["order_amount_discount"]));
+        $order_info['Order']['coupon_fee']=sprintf($this->configs['price_format'],sprintf("%01.2f",$coupon_types_info["CouponType"]["money"]));
         $order_info['Order']['coupon_type_name']=$coupon_types_info["CouponTypeI18n"]["name"];
-        $coupon_types_list=$this->CouponType->findall();
-        //应付款金额
+        $coupon_types_info=$this->CouponType->find("first",array("conditions"=>array("Coupon.id"=>$order_info["Order"]["coupon_id"])));
+        //应付款金额$coupon_info
         $Order_total=$order_info['Order']['subtotal']-$order_info['Order']['discount']+$order_info['Order']['tax']+$order_info['Order']['shipping_fee']+$order_info['Order']['insure_fee']+$order_info['Order']['payment_fee']+$order_info['Order']['pack_fee']+$order_info['Order']['card_fee'];
-        $maney_fee=round($Order_total-$order_info['Order']['money_paid']+$balance_log["UserBalanceLog"]["amount"]-$order_info['Order']['point_fee']-$coupon_info["Coupon"]["order_amount_discount"],2);
+        $maney_fee=round($Order_total-$order_info['Order']['money_paid']+$balance_log["UserBalanceLog"]["amount"]-$order_info['Order']['point_fee']-$coupon_types_info["CouponType"]["money"],2);
         $order_info['Order']['amount_payable']=sprintf($this->configs['price_format'],sprintf("%01.2f",$maney_fee));
         //操作信息列表
         $action_list=$this->OrderAction->findAll("OrderAction.order_id = '".$id."'",'','OrderAction.created desc');
@@ -367,16 +324,59 @@ class OrdersController extends AppController{
     	$this->set('price_format',$this->configs['price_format']);
     	$this->set('action_list',$action_list);
     }
+    function add(){
+        $this->pageTitle="编辑订单-订单查询"." - ".$this->configs['shop_name'];
+        $this->navigations[] = array('name'=>'订单管理','url'=>'');
+        $this->navigations[]=array('name' => '订单查询','url' => '/orders/');
+        $this->navigations[]=array('name' => '新增订单','url' => '');
+       	$this->set("navigations",$this->navigations);
+       	if($this->RequestHandler->isPost()){
+       		$this->data["Order"]["payment_name"] = $this->data["Order"]["payment_name"][$this->data["Order"]["payment_id"]];
+       		$this->data["Order"]["shipping_name"] = $this->data["Order"]["shipping_name"][$this->data["Order"]["shipping_id"]];
+       		$this->data["Order"]["regions"] = implode(" ",$this->data["Address"]["Region"]);
+       		$this->data["Order"]["order_code"] = $this->get_order_code();
+       		$this->data["Order"]["operator_id"] = $_SESSION["Operator_Info"]["Operator"]["id"];
+       		$this->data["Order"]["subtotal"] = 0;
+       		$this->data["Order"]["total"] = 0;
+       		$this->Order->saveAll(array("Order"=>$this->data["Order"]));
+       	
+			$this->flash("订单 ".$this->data["Order"]["order_code"]." 新增成功 ，点击这里继续编辑该订单!",'/orders/edit/'.$this->Order->getLastInsertId(),10);
+       	}
+       	
+       	
+    	//付款方式
+    	$this->Payment->set_locale($this->locale);
+    	$payment_list=$this->Payment->findAll(array("Payment.status" => 1));
+    	//配送方式
+    	$this->Shipping->set_locale($this->locale);
+    	$shipping_list=$this->Shipping->shipping_list();
+       	//信息库
+       	$this->InformationResource->set_locale($this->locale);
+       	$InformationResource = $this->InformationResource->information_formated(false,$this->locale);
+       	//发票
+       	$this->InvoiceType->set_locale($this->locale);
+       	$InvoiceType = $this->InvoiceType->find("all",array("cinditions"=>array("InvoiceType.status"=>1)));
+       	$this->set("InvoiceType",$InvoiceType);
+    	$this->set("payment_list",$payment_list);//付款方式
+    	$this->set("shipping_list",$shipping_list);//配送方式
+    	$this->set("thisurl",$this->AbsoluteUrl());//当前URL
+       	$this->set('InformationResource',$InformationResource);
+    }
     function edit($id){
         $this->operator_privilege('order_edit');
         $order_info=$this->Order->findbyid($id);
         
-        $this->pageTitle="编辑订单-订单管理"." - ".$this->configs['shop_name'];
-        $this->navigations[]=array('name' => '订单管理','url' => '/orders/');
+        $this->pageTitle="编辑订单-订单查询"." - ".$this->configs['shop_name'];
+        $this->navigations[] = array('name'=>'订单管理','url'=>'');
+        $this->navigations[]=array('name' => '订单查询','url' => '/orders/');
         $this->navigations[]=array('name' => '编辑订单','url' => '');
         $this->navigations[]=array('name' => $order_info["Order"]["order_code"],'url' => '');
         $this->set('navigations',$this->navigations);
-        
+       	//发票
+       	$this->InvoiceType->set_locale($this->locale);
+       	$InvoiceType = $this->InvoiceType->find("all",array("cinditions"=>array("InvoiceType.status"=>1)));
+       	$this->set("InvoiceType",$InvoiceType);
+
         //DAM
         $price_format=$this->configs['price_format'];
         if(isset($this->configs["mlti_currency_module"]) && $this->configs["mlti_currency_module"]==1){
@@ -388,20 +388,21 @@ class OrdersController extends AppController{
             }
         }
         $this->configs['price_format']=$price_format;
-        $coupon_info=$this->Coupon->findById($order_info["Order"]["coupon_id"]);
         //是否使用余额
         $balance_log_filter="1=1";
         $balance_log_filter .= " and UserBalanceLog.type_id = ".$id." and UserBalanceLog.user_id = ".$order_info["Order"]["user_id"]." and UserBalanceLog.log_type = 'O'";
         $balance_log=$this->UserBalanceLog->find($balance_log_filter);
         $balance_log["UserBalanceLog"]["amount"]=!empty($balance_log["UserBalanceLog"]["amount"]) ? $balance_log["UserBalanceLog"]["amount"]: "0";
         $this->CouponType->set_locale($this->locale);
-        $coupon_types_info=$this->CouponType->findById($coupon_info["Coupon"]["coupon_type_id"]);
-        $order_info['Order']['coupon_fee']=sprintf($this->configs['price_format'],sprintf("%01.2f",$coupon_info["Coupon"]["order_amount_discount"]));
+        $coupon_types_info=$this->CouponType->find("first",array("conditions"=>array("Coupon.id"=>$order_info["Order"]["coupon_id"])));
+        
+        $order_info['Order']['coupon_fee']=sprintf($this->configs['price_format'],sprintf("%01.2f",$coupon_types_info["CouponType"]["money"]));
+        $order_info['Order']['coupon_sn_code']=empty($coupon_types_info["Coupon"]["sn_code"])?"":$coupon_types_info["Coupon"]["sn_code"];
         $order_info['Order']['coupon_type_name']=$coupon_types_info["CouponTypeI18n"]["name"];
-        $coupon_types_list=$this->CouponType->findall();
-        //应付款金额
+        
+        //应付款金额$coupon_info
         $Order_total=$order_info['Order']['subtotal']-$order_info['Order']['discount']+$order_info['Order']['tax']+$order_info['Order']['shipping_fee']+$order_info['Order']['insure_fee']+$order_info['Order']['payment_fee']+$order_info['Order']['pack_fee']+$order_info['Order']['card_fee'];
-        $maney_fee=round($Order_total-$order_info['Order']['money_paid']+$balance_log["UserBalanceLog"]["amount"]-$order_info['Order']['point_fee']-$coupon_info["Coupon"]["order_amount_discount"],2);
+        $maney_fee=round($Order_total-$order_info['Order']['money_paid']+$balance_log["UserBalanceLog"]["amount"]-$order_info['Order']['point_fee']-$coupon_types_info["CouponType"]["money"],2);
         $order_info['Order']['amount_payable']=sprintf($this->configs['price_format'],sprintf("%01.2f",$maney_fee));
         //$order_info['Order']['subtotal']=sprintf($this->configs['price_format'],sprintf("%01.2f",$order_info['Order']['subtotal']));
         $pay_log=$this->PaymentApiLog->find(" PaymentApiLog.type = '0' and PaymentApiLog.type_id =".$id);
@@ -515,7 +516,19 @@ class OrdersController extends AppController{
        			$new_regions_info[$regions[3]][$k] = $v;
        		}
        	}
+       	$condition = "";
+       	$condition["Coupon.user_id"] = $order_info["Order"]["user_id"];
+       	$condition["Coupon.order_id"] = 0;
+		$coupon_types_list=$this->CouponType->find("all",array("conditions"=>$condition));
+
+	
+       	//信息库
+       	$this->InformationResource->set_locale($this->locale);
+       	$InformationResource = $this->InformationResource->information_formated(false,$this->locale);
        	
+		
+		$this->set('InformationResource',$InformationResource);
+		$this->set('coupon_types_list',$coupon_types_list);
        	$this->set('new_regions_info',$new_regions_info);
        	$this->set('regions',$regions);
         $this->set('balance_log',$balance_log); //是否使用余额
@@ -523,7 +536,7 @@ class OrdersController extends AppController{
         $this->set('systemresource_info',$systemresource_info);
         $this->set('order_card_list',$order_card_list);
         $this->set('conversion_ratio_point',$conversion_ratio_point);
-        $this->set('coupon_info',$coupon_info);
+        $this->set('coupon_types_info',$coupon_types_info);
         $this->set('price_format',$this->configs['price_format']);
         $this->set('write_order_unpay_remark',$this->configs['write_order_unpay_remark']);
         $this->set('write_order_ship_remark',$this->configs['write_order_ship_remark']);
@@ -547,11 +560,17 @@ class OrdersController extends AppController{
     }
     function ajax_edit($id){
         $this->operator_privilege('order_edit');
-        $this->pageTitle="编辑订单-订单管理"." - ".$this->configs['shop_name'];
-        $this->navigations[]=array('name' => '订单管理','url' => '/orders/');
+        $this->pageTitle="编辑订单-订单查询"." - ".$this->configs['shop_name'];
+        $this->navigations[] = array('name'=>'订单管理','url'=>'');
+        $this->navigations[]=array('name' => '订单查询','url' => '/orders/');
         $this->navigations[]=array('name' => '编辑订单','url' => '');
         $this->set('navigations',$this->navigations);
         $order_info=$this->Order->findbyid($id);
+       	//发票
+       	$this->InvoiceType->set_locale($this->locale);
+       	$InvoiceType = $this->InvoiceType->find("all",array("cinditions"=>array("InvoiceType.status"=>1)));
+       	$this->set("InvoiceType",$InvoiceType);
+
         //DAM
         $price_format=$this->configs['price_format'];
         if(isset($this->configs["mlti_currency_module"]) && $this->configs["mlti_currency_module"]==1){
@@ -563,20 +582,21 @@ class OrdersController extends AppController{
             }
         }
         $this->configs['price_format']=$price_format;
-        $coupon_info=$this->Coupon->findById($order_info["Order"]["coupon_id"]);
         //是否使用余额
         $balance_log_filter="1=1";
         $balance_log_filter .= " and UserBalanceLog.type_id = ".$id." and UserBalanceLog.user_id = ".$order_info["Order"]["user_id"]." and UserBalanceLog.log_type = 'O'";
         $balance_log=$this->UserBalanceLog->find($balance_log_filter);
         $balance_log["UserBalanceLog"]["amount"]=!empty($balance_log["UserBalanceLog"]["amount"]) ? $balance_log["UserBalanceLog"]["amount"]: "0";
         $this->CouponType->set_locale($this->locale);
-        $coupon_types_info=$this->CouponType->findById($coupon_info["Coupon"]["coupon_type_id"]);
-        $order_info['Order']['coupon_fee']=sprintf($this->configs['price_format'],sprintf("%01.2f",$coupon_info["Coupon"]["order_amount_discount"]));
+        $coupon_types_info=$this->CouponType->find("first",array("conditions"=>array("Coupon.id"=>$order_info["Order"]["coupon_id"])));
+        
+        $order_info['Order']['coupon_fee']=sprintf($this->configs['price_format'],sprintf("%01.2f",$coupon_types_info["CouponType"]["money"]));
+        $order_info['Order']['coupon_sn_code']=empty($coupon_types_info["Coupon"]["sn_code"])?"":$coupon_types_info["Coupon"]["sn_code"];
         $order_info['Order']['coupon_type_name']=$coupon_types_info["CouponTypeI18n"]["name"];
-        $coupon_types_list=$this->CouponType->findall();
-        //应付款金额
+        
+        //应付款金额$coupon_info
         $Order_total=$order_info['Order']['subtotal']-$order_info['Order']['discount']+$order_info['Order']['tax']+$order_info['Order']['shipping_fee']+$order_info['Order']['insure_fee']+$order_info['Order']['payment_fee']+$order_info['Order']['pack_fee']+$order_info['Order']['card_fee'];
-        $maney_fee=round($Order_total-$order_info['Order']['money_paid']+$balance_log["UserBalanceLog"]["amount"]-$order_info['Order']['point_fee']-$coupon_info["Coupon"]["order_amount_discount"],2);
+        $maney_fee=round($Order_total-$order_info['Order']['money_paid']+$balance_log["UserBalanceLog"]["amount"]-$order_info['Order']['point_fee']-$coupon_types_info["CouponType"]["money"],2);
         $order_info['Order']['amount_payable']=sprintf($this->configs['price_format'],sprintf("%01.2f",$maney_fee));
         //$order_info['Order']['subtotal']=sprintf($this->configs['price_format'],sprintf("%01.2f",$order_info['Order']['subtotal']));
         $pay_log=$this->PaymentApiLog->find(" PaymentApiLog.type = '0' and PaymentApiLog.type_id =".$id);
@@ -690,7 +710,19 @@ class OrdersController extends AppController{
        			$new_regions_info[$regions[3]][$k] = $v;
        		}
        	}
+       	$condition = "";
+       	$condition["Coupon.user_id"] = $order_info["Order"]["user_id"];
+       	$condition["Coupon.order_id"] = 0;
+		$coupon_types_list=$this->CouponType->find("all",array("conditions"=>$condition));
+
+	
+       	//信息库
+       	$this->InformationResource->set_locale($this->locale);
+       	$InformationResource = $this->InformationResource->information_formated(false,$this->locale);
        	
+		
+		$this->set('InformationResource',$InformationResource);
+		$this->set('coupon_types_list',$coupon_types_list);
        	$this->set('new_regions_info',$new_regions_info);
        	$this->set('regions',$regions);
         $this->set('balance_log',$balance_log); //是否使用余额
@@ -698,7 +730,7 @@ class OrdersController extends AppController{
         $this->set('systemresource_info',$systemresource_info);
         $this->set('order_card_list',$order_card_list);
         $this->set('conversion_ratio_point',$conversion_ratio_point);
-        $this->set('coupon_info',$coupon_info);
+        $this->set('coupon_types_info',$coupon_types_info);
         $this->set('price_format',$this->configs['price_format']);
         $this->set('write_order_unpay_remark',$this->configs['write_order_unpay_remark']);
         $this->set('write_order_ship_remark',$this->configs['write_order_ship_remark']);
@@ -876,6 +908,9 @@ class OrdersController extends AppController{
             }
             $order_info=$this->Order->findbyid($this->params['form']['order_id']);
             $subtotal=$order_info['Order']['subtotal']+$this->params['form']['product_number']*$this->params['form']['shop_price']+$pro_price;
+            $total=$subtotal-$order_info['Order']['discount']+$order_info['Order']['tax']+$order_info['Order']['shipping_fee']+$order_info['Order']['insure_fee']+$order_info['Order']['payment_fee']+$order_info['Order']['pack_fee']+$order_info['Order']['card_fee'];
+            $this->Order->updateAll(array('Order.total' => $total),array('Order.id' => $_REQUEST['order_id']));
+
             $this->Order->updateAll(array('Order.subtotal' => $subtotal),array('Order.id' => $this->params['form']['order_id']));
             if(!empty($this->params['form']['product_name'])){
                 //操作员日志
@@ -896,17 +931,44 @@ class OrdersController extends AppController{
             $total=$this->params['form']['subtotal']+$this->params['form']['tax']+$this->params['form']['shipping_fee']+$this->params['form']['insure_fee']+$this->params['form']['payment_fee']+$this->params['form']['pack_fee']+$this->params['form']['card_fee'];
             //			商品总金额					-			折扣				+			发票税额		+			配送费用					+		保价费用				+			支付费用					+			包装费用			+			贺卡费用
             $order_info=$this->Order->findById($this->params['form']['order_id']);
-            $money_info=array('id' => $this->params['form']['order_id'],'tax' => $this->params['form']['tax'], //发票税额
-            'shipping_fee' => $this->params['form']['shipping_fee'], //配送费用
-            'insure_fee' => $this->params['form']['insure_fee'], //保价费用
-            'payment_fee' => $this->params['form']['payment_fee'], //支付费用
-            'pack_fee' => $this->params['form']['pack_fee'], //包装费用
-            'card_fee' => $this->params['form']['card_fee'], //贺卡费用
-            'discount' => $this->params['form']['discount'], //折扣
-            'total' => $total, //订单总额
-            'coupon_id' => $this->params['form']['coupon_fee_id'], //红包ID
-            ''
-            );
+            //$coupon_types_info=$this->CouponType->findById($this->params['form']['coupon_fee_id']);
+            
+            $cp_info = $this->Coupon->findBysn_code($this->params['form']['coupon_sn_code']);
+            if(!empty($cp_info)){
+	            $money_info=array('id' => $this->params['form']['order_id'],'tax' => $this->params['form']['tax'], //发票税额
+		            'shipping_fee' => $this->params['form']['shipping_fee'], //配送费用
+		            'insure_fee' => $this->params['form']['insure_fee'], //保价费用
+		            'payment_fee' => $this->params['form']['payment_fee'], //支付费用
+		            'pack_fee' => $this->params['form']['pack_fee'], //包装费用
+		            'card_fee' => $this->params['form']['card_fee'], //贺卡费用
+		            'discount' => $this->params['form']['discount'], //折扣
+		            'total' => $total, //订单总额
+		            'coupon_id' => $cp_info["Coupon"]["id"], //红包ID
+	            );
+	            
+	            $coupon_arr_order = array(
+	            	"id"=>$order_info["Order"]["coupon_id"],
+	            	"order_id"=>"0"
+	            );
+	            $this->Coupon->save(array("Coupon"=>$coupon_arr_order));
+	            $coupon_arr_coupon = array(
+	            	"id"=>$cp_info["Coupon"]["id"],
+	            	"order_id"=>$this->params['form']['order_id']
+	            );
+	            $this->Coupon->save(array("Coupon"=>$coupon_arr_coupon));
+            }
+            else{
+	            $money_info=array('id' => $this->params['form']['order_id'],'tax' => $this->params['form']['tax'], //发票税额
+		            'shipping_fee' => $this->params['form']['shipping_fee'], //配送费用
+		            'insure_fee' => $this->params['form']['insure_fee'], //保价费用
+		            'payment_fee' => $this->params['form']['payment_fee'], //支付费用
+		            'pack_fee' => $this->params['form']['pack_fee'], //包装费用
+		            'card_fee' => $this->params['form']['card_fee'], //贺卡费用
+		            'discount' => $this->params['form']['discount'], //折扣
+		            'total' => $total, //订单总额
+	            );
+            
+            }
             $this->Order->save(array('Order' => $money_info));
             //操作员日志
             if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log']==1){
@@ -963,8 +1025,9 @@ class OrdersController extends AppController{
             $msg="订单已经确认";
         }
         elseif($_REQUEST['action_type']=='pay'){
-
+			Configure::write('debug',0);
             $this->orderpay($order_info,$id,$operator_id,$operator_user_id,$action_note);
+         
             $msg="订单已经付款";
         }
         elseif($_REQUEST['action_type']=='unpay'){
@@ -1038,10 +1101,12 @@ class OrdersController extends AppController{
             $user_filter="  UserConfig.user_id = ".$operator_user_id." and UserConfig.code = 'email_ship_order'";
             $user_config=$this->UserConfig->find($user_filter);
             if($this->configs['enable_auto_send_mail']==1 || $this->configs['enable_send_ship_email']==1 || $user_config['UserConfig']['value']==1){
-                $products=array();
-                foreach($order_info['OrderProduct']as $k => $v){
-                    $products[$k]=$this->OrderProduct->find("OrderProduct.product_id = ".$v['product_id']."");
-                }
+                
+                $consignee=$order_info['Order']['consignee'];//template
+                $formated_add_time=$order_info['Order']['created'];//template
+                $products=array();//template
+                $products=$this->OrderProduct->findAll("OrderProduct.order_id = ".$id."");
+                
                 $products_info="";
                 foreach($products as $k => $v){
                     $products_info.="------------------------------------- <br />";
@@ -1059,42 +1124,38 @@ class OrdersController extends AppController{
                         $this->Product->save($update_product);
                     }
                 }
-                $to_email=$order_info['Order']['email'];
-                $template='out_confirm';
-                $consignee=$order_info['Order']['consignee'];
-                $this->MailTemplate->set_locale($this->locale);
-                $template=$this->MailTemplate->find("code = '$template' and status = '1'");
-                $formated_add_time=$order_info['Order']['created'];
-                $id=$order_info['Order']['id'];
-                $shop_name=$this->configs['shop_name'];
-                $send_date=date('Y-m-d H:m:s');
-                $sent_date=date('Y-m-d H:m:s');
-                $url=$this->server_host.$this->user_webroot."order_received/".$order_info['Order']['id']."/received";
-                $shop_url=$this->server_host.$this->cart_webroot;
-                $fromName=$shop_name;
-                $subject=$template['MailTemplateI18n']['title'];
-                $this->Email->sendAs='html';
-                $this->Email->is_ssl=$this->configs['smtp_ssl'];
-                $this->Email->is_mail_smtp=$this->configs['mail_service'];
-                $this->Email->smtp_port=$this->configs['smtp_port'];
-                $this->Email->smtpHostNames="".$this->configs['smtp_host']."";
-                $this->Email->smtpUserName="".$this->configs['smtp_user']."";
-                $this->Email->smtpPassword="".$this->configs['smtp_pass']."";
-                $this->Email->fromName=$fromName;
-                eval("\$subject = \"$subject\";");
-                $this->Email->subject="=?utf-8?B?".base64_encode($subject)."?=";
-                $this->Email->from="".$this->configs['smtp_user']."";
-                $shop_url=$this->server_host.$this->cart_webroot;
-                $template_str=$template['MailTemplateI18n']['html_body'];
-                eval("\$template_str = \"$template_str\";");
-                $this->Email->html_body=$template_str;
+                $url=$this->server_host.$this->user_webroot."order_received/".$order_info['Order']['id']."/received";//template
+				
+				$shop_name=$this->configs['shop_name'];//template
+				$shop_url=$this->server_host.$this->cart_webroot;//template
+				$send_date=date('Y-m-d H:m:s');//template
+				//读模板
+				$template='out_confirm';
+				$this->MailTemplate->set_locale($this->locale);
+				$template=$this->MailTemplate->find("code = '$template' and status = '1'");
+				//模板赋值
+				$html_body=$template['MailTemplateI18n']['html_body'];
+				eval("\$html_body = \"$html_body\";");
                 $text_body=$template['MailTemplateI18n']['text_body'];
                 eval("\$text_body = \"$text_body\";");
-                $this->Email->text_body=$text_body;
-                $this->Email->to="".$to_email."";
-                if($this->Email->send()!=1){
-                	$msg.="邮件发送失败,";
-                }
+                //主题赋值
+                $title = $template['MailTemplateI18n']['title'];
+                eval("\$title = \"$title\";");
+		        $mailsendqueue = array(
+		       		"sender_name"=>$shop_name,//发送从姓名
+		       		"receiver_email"=>$consignee.";".$order_info['Order']['email'],//接收人姓名;接收人地址
+		         	"cc_email"=>";",//抄送人
+		         	"bcc_email"=>";",//暗送人
+		          	"title"=>$title,//主题 
+		           	"html_body"=>$html_body,//内容
+		          	"text_body"=>$text_body,//内容
+		         	"sendas"=>"html"
+		     	);
+
+            	$this->MailSendQueue->saveAll(array("MailSendQueue"=>$mailsendqueue));//保存邮件队列
+            	if(isset($this->configs['email_the_way'])&&$this->configs['email_the_way'] == 1){
+            		$this->requestAction('/mail_sends/?status=1'); 
+            	}
             }
             //操作员日志
             if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log']==1){
@@ -1198,11 +1259,11 @@ class OrdersController extends AppController{
                 }
             }
             if($this->configs['enable_auto_send_mail']==1 || $this->configs['enable_send_cancel_email']==1){
+            	$consignee=$order_info['Order']['consignee'];//template
+                $products_info="";//template
                 $products=array();
-                foreach($order_info['OrderProduct']as $k => $v){
-                    $products[$k]=$this->OrderProduct->find("OrderProduct.product_id = ".$v['product_id']."");
-                }
-                $products_info="";
+                $products =$this->OrderProduct->find("OrderProduct.order_id = ".$id."");
+                
                 if(isset($products) && count($products) > 0){
                     foreach($products as $k => $v){
                         $products_info.="------------------------------------- <br />";
@@ -1217,43 +1278,36 @@ class OrdersController extends AppController{
                 else{
                     $products_info.="无相关商品信息 <br />";
                 }
-                $to_email=$order_info['Order']['email'];
-                $template='order_cancel';
-                $consignee=$order_info['Order']['consignee'];
-                $this->MailTemplate->set_locale($this->locale);
-                $template=$this->MailTemplate->find("code = '$template' and status = '1'");
-                $formated_add_time=$order_info['Order']['created'];
-                $id=$order_info['Order']['id'];
-                $shop_name=$this->configs['shop_name'];
-                $send_date=date('Y-m-d H:m:s');
-                $sent_date=date('Y-m-d H:m:s');
-                $fromName=$shop_name;
-                $subject=$template['MailTemplateI18n']['title'];
-                $this->Email->sendAs='html';
-                $this->Email->is_ssl=$this->configs['smtp_ssl'];
-				$this->Email->is_mail_smtp=$this->configs['mail_service'];
-
-                $this->Email->smtp_port=$this->configs['smtp_port'];
-                $this->Email->is_ssl=$this->configs['smtp_ssl'];
-                $this->Email->smtp_port=$this->configs['smtp_port'];
-                $this->Email->smtpHostNames="".$this->configs['smtp_host']."";
-                $this->Email->smtpUserName="".$this->configs['smtp_user']."";
-                $this->Email->smtpPassword="".$this->configs['smtp_pass']."";
-                $this->Email->fromName=$fromName;
-                eval("\$subject = \"$subject\";");
-                $this->Email->subject="=?utf-8?B?".base64_encode($subject)."?=";
-                $this->Email->from="".$this->configs['smtp_user']."";
-                $shop_url=$this->server_host.$this->cart_webroot;
-                $template_str=$template['MailTemplateI18n']['html_body'];
-                eval("\$template_str = \"$template_str\";");
-                $this->Email->html_body=$template_str;
+				$shop_name=$this->configs['shop_name'];//template
+				$shop_url=$this->server_host.$this->cart_webroot;//template
+				$send_date=date('Y-m-d H:m:s');//template
+				//读模板
+				$template='order_cancel';
+				$this->MailTemplate->set_locale($this->locale);
+				$template=$this->MailTemplate->find("code = '$template' and status = '1'");
+				//模板赋值
+				$html_body=$template['MailTemplateI18n']['html_body'];
+				eval("\$html_body = \"$html_body\";");
                 $text_body=$template['MailTemplateI18n']['text_body'];
                 eval("\$text_body = \"$text_body\";");
-                $this->Email->text_body=$text_body;
-                $this->Email->to="".$to_email."";
-                if(@$this->Email->send()!=1){
-                	$msg.="邮件发送失败,";
-                }
+                //主题赋值
+                $title = $template['MailTemplateI18n']['title'];
+                eval("\$title = \"$title\";");
+		        $mailsendqueue = array(
+		       		"sender_name"=>$shop_name,//发送从姓名
+		       		"receiver_email"=>$consignee.";".$order_info['Order']['email'],//接收人姓名;接收人地址
+		         	"cc_email"=>";",//抄送人
+		         	"bcc_email"=>";",//暗送人
+		          	"title"=>$title,//主题 
+		           	"html_body"=>$html_body,//内容
+		          	"text_body"=>$text_body,//内容
+		         	"sendas"=>"html"
+		     	);
+
+            	$this->MailSendQueue->saveAll(array("MailSendQueue"=>$mailsendqueue));//保存邮件队列
+            	if(isset($this->configs['email_the_way'])&&$this->configs['email_the_way'] == 1){
+            		$this->requestAction('/mail_sends/?status=1'); 
+            	}
 
             }
             //操作员日志
@@ -1300,11 +1354,10 @@ class OrdersController extends AppController{
             }
             //Email
             if($this->configs['enable_auto_send_mail']==1 || $this->configs['enable_send_invalid_email']==1){
+            	$consignee=$order_info['Order']['consignee'];//template
+                $products_info="";//template
                 $products=array();
-                foreach($order_info['OrderProduct']as $k => $v){
-                    $products[$k]=$this->OrderProduct->find("OrderProduct.product_id = ".$v['product_id']."");
-                }
-                $products_info="";
+                $products=$this->OrderProduct->find("OrderProduct.order_id = ".$order_id."");
                 if(isset($products) && count($products) > 0){
                     foreach($products as $k => $v){
                         $products_info.="------------------------------------- <br />";
@@ -1319,42 +1372,36 @@ class OrdersController extends AppController{
                 else{
                     $products_info.="无相关商品信息 <br />";
                 }
-                $to_email=$order_info['Order']['email'];
-                $template='order_invalid';
-                $consignee=$order_info['Order']['consignee'];
-                $this->MailTemplate->set_locale($this->locale);
-                $template=$this->MailTemplate->find("code = '$template' and status = '1'");
-                $formated_add_time=$order_info['Order']['created'];
-                $id=$order_info['Order']['id'];
-                $shop_name=$this->configs['shop_name'];
-                $send_date=date('Y-m-d H:m:s');
-                $sent_date=date('Y-m-d H:m:s');
-                $fromName=$shop_name;
-                $subject=$template['MailTemplateI18n']['title'];
-                $this->Email->sendAs='html';
-                $this->Email->is_ssl=$this->configs['smtp_ssl'];
-    			$this->Email->is_mail_smtp=$this->configs['mail_service'];
-
-                $this->Email->smtp_port=$this->configs['smtp_port'];
-                $this->Email->smtpHostNames="".$this->configs['smtp_host']."";
-                $this->Email->smtpUserName="".$this->configs['smtp_user']."";
-                $this->Email->smtpPassword="".$this->configs['smtp_pass']."";
-                $this->Email->fromName=$fromName;
-                eval("\$subject = \"$subject\";");
-                $this->Email->subject="=?utf-8?B?".base64_encode($subject)."?=";
-                $this->Email->from="".$this->configs['smtp_user']."";
-                $shop_url=$this->server_host.$this->cart_webroot;
-                $template_str=$template['MailTemplateI18n']['html_body'];
-                eval("\$template_str = \"$template_str\";");
-                $this->Email->html_body=$template_str;
+				$shop_name=$this->configs['shop_name'];//template
+				$shop_url=$this->server_host.$this->cart_webroot;//template
+				$sent_date=date('Y-m-d H:m:s');//template
+				//读模板
+				$template='order_invalid';
+				$this->MailTemplate->set_locale($this->locale);
+				$template=$this->MailTemplate->find("code = '$template' and status = '1'");
+				//模板赋值
+				$html_body=$template['MailTemplateI18n']['html_body'];
+				eval("\$html_body = \"$html_body\";");
                 $text_body=$template['MailTemplateI18n']['text_body'];
                 eval("\$text_body = \"$text_body\";");
-                $this->Email->text_body=$text_body;
-                $this->Email->to="".$to_email."";
-                if(@$this->Email->send()!=1){
-                	$msg.="邮件发送失败,";
-                }
+                //主题赋值
+                $title = $template['MailTemplateI18n']['title'];
+                eval("\$title = \"$title\";");
+		        $mailsendqueue = array(
+		       		"sender_name"=>$shop_name,//发送从姓名
+		       		"receiver_email"=>$consignee.";".$order_info['Order']['email'],//接收人姓名;接收人地址
+		         	"cc_email"=>";",//抄送人
+		         	"bcc_email"=>";",//暗送人
+		          	"title"=>$title,//主题 
+		           	"html_body"=>$html_body,//内容
+		          	"text_body"=>$text_body,//内容
+		         	"sendas"=>"html"
+		     	);
 
+            	$this->MailSendQueue->saveAll(array("MailSendQueue"=>$mailsendqueue));//保存邮件队列
+            	if(isset($this->configs['email_the_way'])&&$this->configs['email_the_way'] == 1){
+            		$this->requestAction('/mail_sends/?status=1'); 
+            	}
             }
             //操作员日志
             if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log']==1){
@@ -1497,7 +1544,9 @@ class OrdersController extends AppController{
         foreach($update_arr_id as $k => $v){
             $this->OrderProduct->updateAll(array('OrderProduct.send_quntity' => $product['OrderProduct']['num']),array('OrderProduct.id' => $v));
         }
-        $virtualcards_info="";
+        
+        
+        $virtualcards_info="";//template
         foreach($cards as $k => $v){
             $virtualcards_info.="------------------------------------- <br />";
             $virtualcards_info.="卡号：".$v['VirtualCard']['card_sn']."<br />";
@@ -1505,55 +1554,53 @@ class OrdersController extends AppController{
             $virtualcards_info.="截至日期：".$v['VirtualCard']['end_date']."<br />";
             $virtualcards_info.="------------------------------------- <br />";
         }
-        $consignee=$order_info['Order']['consignee'];
-        $order_sn=$order_info['Order']['order_code'];
-        $product_name=$product['OrderProduct']['product_name'];
-        $shop_name=$this->configs['shop_name'];
-        $send_date=date('Y-m-d H:m:s');
-        $to_email=$order_info['Order']['email'];
-        $template='virtual_vard';
-        $this->MailTemplate->set_locale($this->locale);
-        $template=$this->MailTemplate->find("code = '$template' and status = '1'");
-        $fromName=$shop_name;
-        $subject=$template['MailTemplateI18n']['title'];
-        $this->Email->sendAs='html';
-        $this->Email->is_ssl=$this->configs['smtp_ssl'];
-		$this->Email->is_mail_smtp=$this->configs['mail_service'];
-
-        $this->Email->smtp_port=$this->configs['smtp_port'];
-        $this->Email->smtpHostNames="".$this->configs['smtp_host']."";
-        $this->Email->smtpUserName="".$this->configs['smtp_user']."";
-        $this->Email->smtpPassword="".$this->configs['smtp_pass']."";
-        $this->Email->fromName=$fromName;
-        eval("\$subject = \"$subject\";");
-        $this->Email->subject="=?utf-8?B?".base64_encode($subject)."?=";
-        $this->Email->from="".$this->configs['smtp_user']."";
-        $shop_url=$this->server_host.$this->cart_webroot;
-        $template_str=$template['MailTemplateI18n']['html_body'];
-        eval("\$template_str = \"$template_str\";");
-        $this->Email->html_body=$template_str;
+        $consignee=$order_info['Order']['consignee'];//template
+        $order_sn=$order_info['Order']['order_code'];//template
+        $product_name=$product['OrderProduct']['product_name'];//template
+        $shop_name=$this->configs['shop_name'];//template
+        $shop_url=$this->server_host.$this->cart_webroot;//template
+        $send_date=date('Y-m-d H:m:s');//template
+		//读模板
+		$template='virtual_vard';
+		$this->MailTemplate->set_locale($this->locale);
+		$template=$this->MailTemplate->find("code = '$template' and status = '1'");
+		//模板赋值
+		$html_body=$template['MailTemplateI18n']['html_body'];
+		eval("\$html_body = \"$html_body\";");
         $text_body=$template['MailTemplateI18n']['text_body'];
         eval("\$text_body = \"$text_body\";");
-        $this->Email->text_body=$text_body;
-        $this->Email->to="".$to_email."";
-        $this->Email->send();
+        //主题赋值
+        $title = $template['MailTemplateI18n']['title'];
+        eval("\$title = \"$title\";");
+        $mailsendqueue = array(
+       		"sender_name"=>$shop_name,//发送从姓名
+       		"receiver_email"=>$consignee.";".$order_info['Order']['email'],//接收人姓名;接收人地址
+         	"cc_email"=>";",//抄送人
+         	"bcc_email"=>";",//暗送人
+          	"title"=>$title,//主题 
+           	"html_body"=>$html_body,//内容
+          	"text_body"=>$text_body,//内容
+         	"sendas"=>"html"
+     	);
+
+    	$this->MailSendQueue->saveAll(array("MailSendQueue"=>$mailsendqueue));//保存邮件队列
+      	if(isset($this->configs['email_the_way'])&&$this->configs['email_the_way'] == 1){
+        	$this->requestAction('/mail_sends/?status=1'); 
+     	}
         return true;
     }
     function virtual_card_result($order_id,$products){
     }
     function order_confim_email($order_id,$order_info){
         $order_info_now=$this->Order->findbyid($order_id);
-        $order_code=$order_info_now['Order']['order_code'];
+        $order_code=$order_info_now['Order']['order_code'];//template
         if($order_info['Order']['status']!=0 && $order_info_now['Order']['status']==1){
-            if($this->configs['enable_auto_send_mail']==1 && $this->configs['enable_send_confirm_email']==1 || $user_config['UserConfig']['value']==1){
-                $to_email=$order_info['Order']['email'];
-                $template='order_confirm';
-                $consignee=$order_info['Order']['consignee'];
+            if($this->configs['enable_auto_send_mail']==1 && $this->configs['enable_send_confirm_email']==1 ){
+            	$consignee=$order_info['Order']['consignee'];//template
+            	$formated_add_time=$order_info['Order']['created'];//template
+                $products_info="";//template
                 $products=array();
-                foreach($order_info['OrderProduct']as $k => $v){
-                    $products[$k]=$this->OrderProduct->find("OrderProduct.product_id = ".$v['product_id']."");
-                }
-                $products_info="";
+                $products=$this->OrderProduct->findAll("OrderProduct.order_id = ".$order_id."");
                 foreach($products as $k => $v){
                     $products_info.="------------------------------------- <br />";
                     $products_info.="商品ID：".$v['OrderProduct']['product_id']."<br />";
@@ -1563,40 +1610,44 @@ class OrdersController extends AppController{
                     $products_info.="购买数量：".$v['OrderProduct']['product_quntity']."<br />";
                     $products_info.="------------------------------------- <br />";
                 }
-                $this->MailTemplate->set_locale($this->locale);
-                $template=$this->MailTemplate->find("code = '$template' and status = '1'");
-                $formated_add_time=$order_info['Order']['created'];
-                $id=$order_info['Order']['id'];
-                $shop_name=$this->configs['shop_name'];
-                $sent_date=date('Y-m-d H:m:s');
-                $fromName=$shop_name;
-                $subject=$template['MailTemplateI18n']['title'];
-                $this->Email->sendAs='html';
-                $this->Email->is_ssl=$this->configs['smtp_ssl'];
-				$this->Email->is_mail_smtp=$this->configs['mail_service'];
-
-                $this->Email->smtp_port=$this->configs['smtp_port'];
-                $this->Email->smtpHostNames="".$this->configs['smtp_host']."";
-                $this->Email->smtpUserName="".$this->configs['smtp_user']."";
-                $this->Email->smtpPassword="".$this->configs['smtp_pass']."";
-                $this->Email->fromName=$fromName;
-                eval("\$subject = \"$subject\";");
-                $this->Email->subject="=?utf-8?B?".base64_encode($subject)."?=";
-                $this->Email->from="".$this->configs['smtp_user']."";
-                $template_str=$template['MailTemplateI18n']['html_body'];
-                $shop_url=$this->server_host.$this->cart_webroot;
-                eval("\$template_str = \"$template_str\";");
-                $this->Email->html_body=$template_str;
+				$shop_name=$this->configs['shop_name'];//template
+				$shop_url=$this->server_host.$this->cart_webroot;//template
+				$sent_date=date('Y-m-d H:m:s');
+				$to_email=$order_info['Order']['email'];
+				//读模板
+				$template='order_confirm';
+				$this->MailTemplate->set_locale($this->locale);
+				$template=$this->MailTemplate->find("code = '$template' and status = '1'");
+				//模板赋值
+				$html_body=$template['MailTemplateI18n']['html_body'];
+				eval("\$html_body = \"$html_body\";");
                 $text_body=$template['MailTemplateI18n']['text_body'];
                 eval("\$text_body = \"$text_body\";");
-                $this->Email->text_body=$text_body;
-                $this->Email->to="".$to_email."";
-                $this->Email->send();
+                //主题赋值
+				$subject=$template['MailTemplateI18n']['title'];//template
+				eval("\$subject = \"$subject\";");
+            	$mailsendqueue = array(
+            		"sender_name"=>$shop_name,//发送从姓名
+            		"receiver_email"=>$consignee.";".$to_email,//接收人姓名;接收人地址
+            		"cc_email"=>";",//抄送人
+            		"bcc_email"=>";",//暗送人
+            		"title"=>$subject,//主题 
+            		"html_body"=>$html_body,//内容
+            		"text_body"=>$text_body,//内容
+            		"sendas"=>"html"
+            	);
+
+
+            	$this->MailSendQueue->saveAll(array("MailSendQueue"=>$mailsendqueue));//保存邮件队列
+            	if(isset($this->configs['email_the_way'])&&$this->configs['email_the_way'] == 1){
+            		$this->requestAction('/mail_sends/?status=1'); 
+            	}
             }
         }
     }
     //批量打印配送单
     function batch_shipping_print($id=''){
+    	$this->Order->belongsTo = array();
         $this->pageTitle='配送单打印'." - ".$this->configs['shop_name'];
         $pro_ids='';
         if(empty($id)){
@@ -1617,6 +1668,11 @@ class OrdersController extends AppController{
                 $order_info=array();
                 //取得订单及订单商品信息
                 $order_info=$this->Order->findById($vid);
+                if( $order_info["Order"]["express_status"] !=1){
+                	$order_info["Order"]["express_status"] = 1;
+                	$order_info["Order"]["express_date"] = date("Y-m-d h:i:s");
+                	$this->Order->save(array("Order"=>$order_info["Order"]));
+                }
                 $this->Shipping->set_locale($this->locale);
                 $shippings_list=$this->Shipping->shipping_list();
                 //支持货到付款的配送方式
@@ -1654,6 +1710,12 @@ class OrdersController extends AppController{
                     	$novsub += ($vv['product_price']*$vv['product_quntity']);
                     }
                 }
+		        $coupon_info=$this->Coupon->findById($order_info["Order"]["coupon_id"]);
+		       
+		        $this->CouponType->set_locale($this->locale);
+		        $coupon_types_info=$this->CouponType->findById($coupon_info["Coupon"]["coupon_type_id"]);
+		        $order_info['Order']['coupon_fee']=sprintf($this->configs['price_format'],sprintf("%01.2f",$coupon_types_info["CouponType"]["money"]));
+		        $order_info['Order']['coupon_fees']=$coupon_types_info["CouponType"]["money"];
                 $order_info['Order']['allvirtual']=(count($order_info['OrderProduct'])==$virtualnum)?1:0;
                 $order_info['Order']['novirtual_subtotal']=$order_info['Order']['subtotal']-$novsub;
                 //格式化价格数据
@@ -1667,11 +1729,11 @@ class OrdersController extends AppController{
                 $order_info['Order']['format_insure_fee'] = sprintf($this->configs['price_format'],sprintf("%01.2f",$order_info['Order']['insure_fee']));
                 $order_info['Order']['format_pack_fee'] = sprintf($this->configs['price_format'],sprintf("%01.2f",$order_info['Order']['pack_fee']));
                 $order_info['Order']['format_card_fee'] = sprintf($this->configs['price_format'],sprintf("%01.2f",$order_info['Order']['card_fee']));
-                $order_info['Order']['format_should_pay'] = sprintf($this->configs['price_format'],sprintf("%01.2f",$order_info['Order']['total']-$order_info['Order']['money_paid']-$order_info['Order']['point_fee']));
+                
+                $order_info['Order']['format_should_pay'] = sprintf($this->configs['price_format'],sprintf("%01.2f",$order_info['Order']['total']-$order_info['Order']['money_paid']-$order_info['Order']['point_fee']-$order_info['Order']['discount']-$order_info['Order']['coupon_fees']));
                 
                 $all_order_info[]=$order_info;
             }
-            //pr($all_order_info);exit();
             $this->set('all_order_info',$all_order_info);
             $this->layout='shipping_print';
         }
@@ -1685,30 +1747,42 @@ class OrdersController extends AppController{
                 $order['confirm_time']=$modified;
             }
             $payment=$this->Payment->find("Payment.id = ".$order_info['Order']['payment_id']." and Payment.status = '1'");
-            if($payment['Payment']['is_cod']){
+            /*if($payment['Payment']['is_cod']){
                 $order['shipping_status']='2';
                 $order_info['Order']['shipping_status']='2';
-            }
+            }*/
+          
             $order['id']=$id;
             $order['payment_status']='2';
             $order['payment_time']=$modified;
             $coupon_info=$this->Coupon->findById($order_info["Order"]["coupon_id"]);
-            $amount_payables=$order_info['Order']['total']-$order_info['Order']['money_paid']-$order_info['Order']['discount']-$order_info['Order']['point_fee']-$coupon_info["Coupon"]["order_amount_discount"]+0;
+            $coupon_types_info=$this->CouponType->findById($coupon_info["Coupon"]["coupon_type_id"]);
+            $amount_payables=$order_info['Order']['total']-$order_info['Order']['money_paid']-$order_info['Order']['discount']-$order_info['Order']['point_fee']-$coupon_types_info["CouponType"]["money"]+0;
             $order['money_paid']=$amount_payables;
             $condition_v['OrderProduct.order_id']=$order['id'];
             $total1=$this->OrderProduct->findCount($condition_v,0);
             $condition_v['OrderProduct.extension_code']='virtual_card';
             $total2=$this->OrderProduct->findCount($condition_v,0);
             if($total1==$total2){
-                $virtual_card_status="yes";
-                $order['shipping_status']='1';
-                $order_info['Order']['shipping_status']='1';
-                $this->OrderAction->update_order_action(array('order_id' => $id,'from_operator_id' => $operator_id,'user_id' => $operator_user_id,'order_status' => '1','payment_status' => '2','shipping_status' => '1','action_note' => $action_note));
+	            $virtual_products=$this->OrderProduct->get_virtual_products($id);
+	           
+	                if($this->virtual_products_ship($virtual_products,$id)){
+						$this->Order->updateAll(array('Order.shipping_time' => "'".$this->today."'"),array('Order.id' => $id));
+		                $virtual_card_status="yes";
+		                $order['shipping_status']='1';
+		                $order_info['Order']['shipping_status']='1';
+		                $this->OrderAction->update_order_action(array('order_id' => $id,'from_operator_id' => $operator_id,'user_id' => $operator_user_id,'order_status' => '1','payment_status' => '2','shipping_status' => '1','action_note' => $action_note));
+            		}
+            		else{
+		                $virtual_card_status="no";
+		                $this->OrderAction->update_order_action(array('order_id' => $id,'from_operator_id' => $operator_id,'user_id' => $operator_user_id,'order_status' => '1','payment_status' => '2','shipping_status' => $order_info['Order']['shipping_status'],'action_note' => $action_note));
+					}
+            
             }
             else{
                 $virtual_card_status="no";
                 $this->OrderAction->update_order_action(array('order_id' => $id,'from_operator_id' => $operator_id,'user_id' => $operator_user_id,'order_status' => '1','payment_status' => '2','shipping_status' => $order_info['Order']['shipping_status'],'action_note' => $action_note));
-            }
+            }  
             $this->Order->update_order($order);
             $order=$this->Order->findbyid($order['id']);
             if($this->configs['order_smallest'] <= $order['Order']['subtotal'] && $this->configs['out_order_gift_points']==1 && $this->configs['out_order_points'] > 0){
@@ -1729,10 +1803,24 @@ class OrdersController extends AppController{
             }
             $product_point=array();
             $product_ids=$this->OrderProduct->findallbyorder_id($order['Order']['id']);
+			$mun = 0;
+			$product_alsobought = array();
+			$product_size = sizeof($product_ids);
             foreach($product_ids as $k => $v){
+				//ProductAlsobought
+				if($product_size >0 && $mun > 0){
+					$product_alsobought[$mun] = array('id'=>'','product_id'=>$product_ids[$also]['OrderProduct']['product_id'],'alsobought_product_id'=>$v['OrderProduct']['product_id']);
+				}else{
+					$also = $k;
+				}
+				$mun++;            	
+            	
                 $product=$this->Product->findbyid($v['OrderProduct']['product_id']);
                 $product_point[$k]=array('point' => $product['Product']['point']*$v['OrderProduct']['product_quntity'],'name' => $product['ProductI18n']['name']);
             }
+            if(isset($product_alsobought) && sizeof($product_alsobought)>0){
+					$this->ProductAlsobought->saveall($product_alsobought);
+			}
             if(is_array($product_point) && sizeof($product_point) > 0){
                 foreach($product_point as $k => $v){
                     if($v['point'] > 0){
@@ -1768,7 +1856,7 @@ class OrdersController extends AppController{
                             $this->Coupon->save($order_coupon);
                         }
                     }
-                }
+                } 
                 foreach($order['OrderProduct']as $k => $v){
                     $products[$k]=$this->OrderProduct->find("OrderProduct.product_id = ".$v['product_id']."");
                 }
@@ -1798,9 +1886,7 @@ class OrdersController extends AppController{
                     }
                 }
             }
-            $virtual_products=$this->OrderProduct->get_virtual_products($id);
-            $this->virtual_products_ship($virtual_products,$id);
-            $this->Order->updateAll(array('Order.shipping_time' => "'".$this->today."'"),array('Order.id' => $id));
+
             $this->order_confim_email($id,$order_info);
             if($order_info['Order']['user_id'] > 0 && $virtual_card_status=="yes"){
                 $user=$this->User->findbyid($order_info['Order']['user_id']);
@@ -1824,7 +1910,7 @@ class OrdersController extends AppController{
 			if(isset($plugin_union['Plugin']) && !empty($order_info['Order']['union_user_id'])){
 				$this->requestAction('/union/union_orders/add_union_refferer_orders/'.$id);
 			}
-    	return true;
+    	//return true;
     }
     function order_status($status){
     	
@@ -1883,9 +1969,91 @@ class OrdersController extends AppController{
     		}
     		
     	}
-        $this->flash("修改订单状态成功，点击返回列表页。",'/orders/',10);
+        $this->flash("修改订单状态成功，点击这里返回列表页。",'/orders/',10);
     
     }
+    function delete_order($id){
+    	$this->operator_privilege('order_edit');
+    	$this->Order->hasMany = array();
+		$this->Order->hasOne = array();
+    	$this->OrderProduct->hasMany = array();
+		$this->OrderProduct->hasOne = array();		
+    	$this->Order->del($id);
+ 		$this->OrderProduct->deleteAll(array('OrderProduct.order_id'=>$id));
+        if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log']==1){
+           $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'删除订单'.$id,'operation');
+        }		
+    	$this->flash("订单已删除，点击这里返回列表页。",'/orders/',10);
+    }
+    
+    function batch_delete(){
+    	$this->operator_privilege('order_edit');
+    	$this->Order->hasMany = array();
+		$this->Order->hasOne = array();
+    	$this->OrderProduct->hasMany = array();
+		$this->OrderProduct->hasOne = array();
+		if($this->RequestHandler->isPost()){ 
+			foreach( $_REQUEST["checkboxes"] as $k=>$v ){
+	    		$this->Order->del($v);
+ 				$this->OrderProduct->deleteAll(array('OrderProduct.order_id'=>$v));
+		        if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log']==1){
+		           $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'删除订单'.$v,'operation');
+		        } 						
+			}
+			$this->flash("订单已删除，点击这里返回列表页。",'/orders/',10);
+		}
+    }
+    
+	//获取网址站点信息，将信息传给模板处理
+	function AbsoluteUrl() {
+	    GLOBAL $HTTP_SERVER_VARS;
+	    $HTTPS      =@$HTTP_SERVER_VARS["HTTPS"];
+	    $HTTP_HOST  =@$HTTP_SERVER_VARS["HTTP_HOST"];
+	    $SCRIPT_URL =@$HTTP_SERVER_VARS["SCRIPT_URL"];
+	    $PATH_INFO  =@$HTTP_SERVER_VARS["PATH_INFO"];
+	    $REQUEST_URI=@$HTTP_SERVER_VARS["REQUEST_URI"];
+	    $SCRIPT_NAME=@$HTTP_SERVER_VARS["SCRIPT_NAME"];
+
+	    $QUERY_STRING=$HTTP_SERVER_VARS["QUERY_STRING"];
+	    if (get_magic_quotes_gpc()==1) $QUERY_STRING=stripslashes($QUERY_STRING);
+	    if ($QUERY_STRING!="") $QUERY_STRING="?".$QUERY_STRING;
+
+	    $uri_http=(((strtolower($HTTPS)=="off")or($HTTPS==0)) ? 'http' : 'https') . '://' . $HTTP_HOST ;
+	    
+	    if (isset($SCRIPT_URL))
+	         $url=$SCRIPT_URL;
+
+	    else if (isset($PATH_INFO))
+	            $url = $PATH_INFO;
+
+	         else if (isset($REQUEST_URI))
+	                 $url = $REQUEST_URI;
+
+	              else if (isset($SCRIPT_NAME))
+	                     $url = $SCRIPT_NAME;
+
+	    $url=$uri_http.$url;
+
+	    return $url;
+	}
+    function get_order_code()
+	{
+	    mt_srand((double) microtime() * 1000000);
+		$sn=date('Ymd') . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+		$a = 0;
+		$b = 0;
+		$c = 0;
+		for($i=1;$i<=12;$i++){
+			if($i%2){
+				$b += substr($sn,$i-1,1);
+			}else{
+				$a += substr($sn,$i-1,1);
+			}
+		}
+		$c = (10-($a*3+$b)%10)%10;
+	    return $sn.$c;
+	}
+
 }
 
 ?>

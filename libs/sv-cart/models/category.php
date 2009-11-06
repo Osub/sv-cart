@@ -1,15 +1,15 @@
 <?php
 /*****************************************************************************
- * SV-Cart ·ÖÀà
+ * SV-Cart åˆ†ç±»
  * ===========================================================================
- * °æÈ¨ËùÓÐ  ÉÏº£ÊµçâÍøÂç¿Æ¼¼ÓÐÏÞ¹«Ë¾£¬²¢±£ÁôËùÓÐÈ¨Àû¡£
- * ÍøÕ¾µØÖ·: http://www.seevia.cn
+ * ç‰ˆæƒæ‰€æœ‰  ä¸Šæµ·å®žçŽ®ç½‘ç»œç§‘æŠ€æœ‰é™å…¬å¸ï¼Œå¹¶ä¿ç•™æ‰€æœ‰æƒåˆ©ã€‚
+ * ç½‘ç«™åœ°å€: http://www.seevia.cn
  * ---------------------------------------------------------------------------
- * Õâ²»ÊÇÒ»¸ö×ÔÓÉÈí¼þ£¡ÄúÖ»ÄÜÔÚ²»ÓÃÓÚÉÌÒµÄ¿µÄµÄÇ°ÌáÏÂ¶Ô³ÌÐò´úÂë½øÐÐÐÞ¸ÄºÍÊ¹ÓÃ£»
- * ²»ÔÊÐí¶Ô³ÌÐò´úÂëÒÔÈÎºÎÐÎÊ½ÈÎºÎÄ¿µÄµÄÔÙ·¢²¼¡£
+ * è¿™ä¸æ˜¯ä¸€ä¸ªè‡ªç”±è½¯ä»¶ï¼æ‚¨åªèƒ½åœ¨ä¸ç”¨äºŽå•†ä¸šç›®çš„çš„å‰æä¸‹å¯¹ç¨‹åºä»£ç è¿›è¡Œä¿®æ”¹å’Œä½¿ç”¨ï¼›
+ * ä¸å…è®¸å¯¹ç¨‹åºä»£ç ä»¥ä»»ä½•å½¢å¼ä»»ä½•ç›®çš„çš„å†å‘å¸ƒã€‚
  * ===========================================================================
- * $¿ª·¢: ÉÏº£Êµçâ$
- * $Id: category.php 2952 2009-07-16 09:56:25Z huangbo $
+ * $å¼€å‘: ä¸Šæµ·å®žçŽ®$
+ * $Id: category.php 5238 2009-10-21 03:19:28Z huangbo $
 *****************************************************************************/
 class Category extends AppModel
 {
@@ -35,7 +35,7 @@ class Category extends AppModel
     	$this->hasOne['CategoryI18n']['conditions'] = $conditions;
     }
 
-	function tree($type='P',$category_id = 0,$locale=''){
+	function tree($type='P',$category_id = 0,$locale='',$db = ''){
 		
 		$cache_key = md5($this->name.'_'.$type.'_'.$category_id.'_'.$locale);
 		$this->allinfo = cache::read($cache_key);	
@@ -48,27 +48,52 @@ class Category extends AppModel
 			$this->allinfo =array();
 		//	$lists=$this->findall("status ='1' AND type='".$type."' ",'','orderby asc');
 			$lists=$this->find('all',array('order'=>'orderby asc',
-			'fields' =>	array('Category.id','Category.parent_id','Category.type','Category.img01','CategoryI18n.name',
-																		'Category.link','Category.modified','Category.created'
+			'fields' =>	array('Category.id','Category.parent_id','Category.type','Category.img01','Category.img02','CategoryI18n.name','CategoryI18n.img01',
+																		'Category.link','Category.modified','Category.created','Category.new_show'
 																					),			
 				'conditions'=>array("status ='1' AND type='".$type."' ")));
 			
 		//	pr($lists);
+       		$week_ago = date("Y-m-d H:i:s",strtotime ("-1 week"));
+       		
 			$lists_formated = array();
-		//	pr($lists);  È«²¿µÄ·ÖÀà
+		//	pr($lists);  å…¨éƒ¨çš„åˆ†ç±»
 			if(is_array($lists)){
 				foreach($lists as $k => $v){
+					$this->allinfo['all_ids'][] = $v['Category']['id'];
+					if($v['Category']['created'] >= $week_ago && $v['Category']['new_show'] == '1'){
+						$v['Category']['is_new'] = 1;
+					}
 					$lists_formated[$v['Category']['id']]=$v;
 				}
-			//	pr($lists_formated); ¸ñÊ½»¯ÎªIDÎªÐò
+				
+			//	pr($lists_formated); æ ¼å¼åŒ–ä¸ºIDä¸ºåº
 				$this->allinfo['assoc']=$lists_formated;
 				
 				foreach($lists as $k=>$v){
+					if($v['Category']['created'] >= $week_ago && $v['Category']['new_show'] == '1'){
+						$v['Category']['is_new'] = 1;
+					}										
 					$this->categories_parent_format[$v['Category']['parent_id']][]=$v;
 				}
-			//	pr($this->categories_parent_format); //¸ñÊ½»¯ÎªÒÔparent_idÎªÐò
+			//	pr($this->categories_parent_format); //æ ¼å¼åŒ–ä¸ºä»¥parent_idä¸ºåº
 				$this->allinfo['tree']=$this->subcat_get(0);
 				$this->allinfo['subids']=$this->all_subcat;
+				$this->categories_parent_format = array();
+				if(is_array($lists)){
+					foreach($lists as $k => $v){
+						if($type == 'P' && $db != ""){
+							if(isset($this->allinfo['subids'][$v['Category']['id']])){
+								$cat_ids = $this->allinfo['subids'][$v['Category']['id']];
+							}else{
+								$cat_ids = $v['Category']['id'];
+							}
+						//	$db->Product->set_locale($locale);
+						//	$v['Category']['products_number'] = $db->Product->cache_find('count',array('conditions'=>array('Product.status'=>1,'Product.forsale'=>1,'Product.category_id'=>$cat_ids)),'products_number_'.$locale."_".$v['Category']['id']);
+							$this->categories_parent_format[$v['Category']['parent_id']][]= $v;
+						}
+					}
+				}
 				
 				cache::write($cache_key,$this->allinfo);
 				return $this->allinfo;
@@ -78,17 +103,17 @@ class Category extends AppModel
 	
 	function subcat_get($category_id){
 		$subcat=array();
-		if(isset($this->categories_parent_format[$category_id]) && is_array($this->categories_parent_format[$category_id])) //ÅÐ¶Ïparent_id = 0 µÄÊý¾Ý
+		if(isset($this->categories_parent_format[$category_id]) && is_array($this->categories_parent_format[$category_id])) //åˆ¤æ–­parent_id = 0 çš„æ•°æ®
 			foreach($this->categories_parent_format[$category_id] as $k=>$v)
 			{
-				$category=$v; //parent_id Îª 0 µÄÊý¾Ý
+				$category=$v; //parent_id ä¸º 0 çš„æ•°æ®
 				if(isset($this->categories_parent_format[$v['Category']['id']]) && is_array($this->categories_parent_format[$v['Category']['id']]))
 				{
 					$category['SubCategory']=$this->subcat_get($v['Category']['id']);
 				}
 				
 				$subcat[$k]=$category;
-			//	pr($subcat); //parent_id Îª 0 µÄÊý¾Ý
+			//	pr($subcat); //parent_id ä¸º 0 çš„æ•°æ®
 								
 				$this->all_subcat[$v['Category']['id']][]=$v['Category']['id'];
 				
@@ -120,7 +145,7 @@ class Category extends AppModel
 	}
 	
 //class_end
-	//hobby 20081117 È¡µÃid=>nameµÄÊý×é
+	//hobby 20081117 å–å¾—id=>nameçš„æ•°ç»„
 	function findassoc($locale =''){
 		$condition=" Category.status ='1' ";
 		$orderby = " orderby asc ";

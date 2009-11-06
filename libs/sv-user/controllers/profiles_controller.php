@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: profiles_controller.php 3053 2009-07-17 11:59:14Z huangbo $
+ * $Id: profiles_controller.php 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 uses('sanitize');		
 class ProfilesController extends AppController {
@@ -27,8 +27,8 @@ class ProfilesController extends AppController {
 		  if(!isset($_SESSION['User'])){
 			   $this->redirect('/login/');
 		  }
+		 $this->page_init();
 	     if($this->RequestHandler->isPost()){
-   	     	    $this->page_init();
    	     	    $birthday = trim($this->params['form']['date']);
     			$telephone = trim($this->params['form']['Utel0']) .'-'. trim($this->params['form']['Utel1']) .'-'.
     			trim($this->params['form']['Utel2']);
@@ -54,21 +54,18 @@ class ProfilesController extends AppController {
 		 		$this->pageTitle = $this->languages['edit'].$this->languages['successfully']." - ".$this->configs['shop_title'];
     			$this->flash($this->languages['edit'].$this->languages['successfully'],'/profiles/','');
    	     }
-   	     
-	     $this->page_init();
-	 	 
-		 //当前位置
+   		 //当前位置
 		 $this->navigations[] = array('name'=>__($this->languages['my_information'],true),'url'=>"");
 		 $this->set('locations',$this->navigations);
 		 
 	     $user_id=$_SESSION['User']['User']['id'];
 	     //取得个人信息
 	     $user_info=$this->User->find(" User.id = '".$user_id."'");
-	     $this->data=$user_info;
+	     $this->data['profiles']=$user_info;
 	     //用户默认地址
 	     $default_address=$this->UserAddress->find(" UserAddress.user_id = '".$user_id."'");
 	     if(!empty($default_address)){
-	          $this->data['UserAddress']=$default_address['UserAddress'];
+	          $this->data['profiles']['UserAddress']=$default_address['UserAddress'];
 	     }
 	     //用户项目信息
 		   $condition=" UserInfoValue.user_id=".$user_id;
@@ -106,6 +103,8 @@ class ProfilesController extends AppController {
 		 $this->set('js_languages',$js_languages);		 
 	     $this->set('user_infoarr',array_values($user_infoarr));
 	     $this->set('default_address',$default_address);
+	     $this->layout = 'default';
+	     
 	}
 	
 	function edit_profiles(){

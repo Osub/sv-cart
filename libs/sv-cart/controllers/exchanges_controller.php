@@ -9,51 +9,72 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: exchanges_controller.php 2918 2009-07-16 03:26:36Z shenyunfeng $
+ * $Id: exchanges_controller.php 5028 2009-10-14 07:51:28Z huangbo $
 *****************************************************************************/
 class ExchangesController extends AppController {
 	var $name = 'Exchanges';
     var $components = array ('Pagination','Cookie');
-	var $helpers = array('Html');
+    var $helpers = array('Html','Pagination');
 	var $uses = array('Product','ProductRank','UserRank','ProductsCategory','ProductLocalePrice','ProductI18n');
+	var $cacheQueries = true;
+	var $cacheAction = "1 hour";
 	
-	function index($orderby="",$rownum='',$showtype=""){
+	function index($page=1,$orderby="",$rownum='',$showtype=""){
 		$this->pageTitle = $this->languages['integral_shopping_mall']." - ".$this->configs['shop_title'];
 		$this->navigations[] = array('name'=>$this->languages['integral_shopping_mall'],'url'=>"/exchange/");
 		$this->page_init();
 		$orderby = UrlDecode($orderby);
 		$rownum = UrlDecode($rownum);
 		$showtype = UrlDecode($showtype);
-		if(empty($rownum)){
+		if(empty($rownum) && $rownum == 0){
 			$rownum=isset($this->configs['products_list_num']) ? $this->configs['products_list_num']:((!empty($rownum)) ?$rownum:20);
 		}
-		if(empty($showtype)){
+		if(empty($showtype) && $showtype == 0){
 			$showtype=isset($this->configs['products_list_showtype']) ? $this->configs['products_list_showtype']:((!empty($showtype)) ?$showtype:'L');
 		}
-		if(empty($orderby)){
+		if(empty($orderby) && $orderby == 0){
 		 	$orderby=isset($this->configs['products_category_page_orderby_type'])? $this->configs['products_category_page_orderby_type']." ". $this->configs['products_category_page_orderby_method'] :((!empty($orderby)) ?$orderby:'created '.$this->configs['products_category_page_orderby_method']);
 		}
+		if(!isset($_GET['page'])){
+			$_GET['page'] = $page;
+		}else{
+			$page = $_GET['page'];
+		}
+		
+		if($rownum == 'all'){
+			$rownum_sql = 99999;
+		}else{
+			$rownum_sql = $rownum;
+		}		
+		$this->data['get_page'] = $page;
+		$this->data['orderby'] = $orderby;
+		$this->data['rownum'] = $rownum;
+		$this->data['showtype'] = $showtype;		
+		
 		// 查找可用积分购买的商品
 		$sortClass='Product';
 		$page=1;
-		$parameters=Array($orderby,$rownum,$page);
+		$parameters=Array($orderby,$rownum_sql,$page);
 		$options=Array();
 		$condition = "Product.point_fee > '0' and Product.status = '1' and Product.forsale = '1'";
+		$total = $this->Product->cache_find('count',array('fields' => 'DISTINCT Product.id','recursive' => -1,'conditions'=>array($condition)),"Product_find_total_exchanges_".$this->locale);
+		$this->data['page_total'] = $total;
+	  	list($page) = $this->Pagination->init($condition,$parameters,$options,$total,$rownum_sql,$sortClass); // Added 
 	//	$products=$this->Product->findAll($condition,'',"Product.$orderby","$rownum",$page);
 			$products=$this->Product->find('all',array(
 															'recursive' => -1,
 																'fields' =>	array('Product.id','Product.recommand_flag','Product.status','Product.img_thumb'
 																				,'Product.market_price'
-																				,'Product.shop_price'
+																				,'Product.shop_price','Product.brand_id'
 																				,'Product.promotion_price'
 																				,'Product.promotion_start'
 																				,'Product.promotion_end'
 																				,'Product.promotion_status'
 																				,'Product.code','Product.point','Product.point_fee'
 																				,'Product.product_rank_id'
-																				,'Product.quantity'
+																				,'Product.quantity','Product.category_id'
 																				),			
-			'conditions'=>array($condition),'order'=>array("Product.$orderby"),'limit'=>$rownum,'page'=>$page));		
+			'conditions'=>array($condition),'order'=>array("Product.$orderby"),'limit'=>$rownum_sql,'page'=>$page));		
 		
 			$products_ids_list = array();
 			  if(is_array($products) && sizeof($products)>0){
@@ -88,20 +109,33 @@ class ExchangesController extends AppController {
 		
 		
 		
-		$total = count($products);
+	//	$total = count($products);
 		$product_ranks = $this->ProductRank->findall_ranks();
-		if(isset($_SESSION['User']['User'])){
-			$user_rank_list=$this->UserRank->findrank();		
-		}
-		$page = $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass); // Added 
+		$user_rank_list=$this->UserRank->findrank();		
+		
+		    if(isset($product_ranks) && sizeof($product_ranks)>0){
+				  foreach($product_ranks as $k=>$v){
+				  	  if(isset($v) && sizeof($v)>0){
+				  	  	 foreach($v as $kk=>$vv){
+				  	  	 	 if($vv['ProductRank']['is_default_rank'] == 1){
+				  	  	 	 	$product_ranks[$k][$kk]['ProductRank']['discount'] = ($user_rank_list[$vv['ProductRank']['rank_id']]['UserRank']['discount']/100);	
+				  	  	 	 }			  	  	 
+				  	  	 }
+				  	  }
+				  }
+			}		
+		
 		  $products_ids_list = array();
 		  if(is_array($products) && sizeof($products)>0){
 		  		foreach($products as $k=>$v){
 		  			$products_ids_list[] = $v['Product']['id'];
 		  		}
 		  }		
+	    
 	    $this->Category->set_locale($this->locale);						
 		$category_lists = $this->Category->find_all($this->locale);
+		
+		
 		$this->set('categories',$category_lists);
  	    $product_category_infos = $this->ProductsCategory->find('all',array("conditions"=>array('ProductsCategory.product_id'=>$products_ids_list)));
 	    $product_category_lists = array();
@@ -118,7 +152,11 @@ class ExchangesController extends AppController {
 					$products[$k]['ProductI18n']['name'] = "";
 				}					
 				
-				
+				 if(isset($this->configs['products_name_length']) && $this->configs['products_name_length'] >0){
+					$products[$k]['ProductI18n']['sub_name'] = $this->Product->sub_str($products[$k]['ProductI18n']['name'], $this->configs['products_name_length']);
+		 		 }else{
+		 		 	$products[$k]['ProductI18n']['sub_name'] = $products[$k]['ProductI18n']['name'];
+		 		 }					
 				if(isset($product_ranks[$v['Product']['id']]) && isset($_SESSION['User']['User']['rank']) && isset($product_ranks[$v['Product']['id']][$_SESSION['User']['User']['rank']])){
 					if(isset($product_ranks[$v['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['is_default_rank']) && $product_ranks[$v['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['is_default_rank'] == 0){
 					  $product_ranks[$k]['Product']['user_price']= $product_ranks[$v['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['product_price'];			  
@@ -145,7 +183,7 @@ class ExchangesController extends AppController {
 					$products[$k]['Product']['shop_price'] = $v['Product']['promotion_price'];
 				}
 				
-				if($this->configs['use_sku'] == 1){
+				if($this->configs['category_link_type'] == 1){
 					$this->Category->set_locale($this->locale);						
 				//	$info = $this->Category->findbyid($v['Product']['category_id']);
 					if(isset($category_lists[$v['Product']['category_id']])){
@@ -181,10 +219,17 @@ class ExchangesController extends AppController {
 		$this->navigations[] = array('name'=>$this->languages['integral_shopping_mall'],'url'=>"/exchanges");
 
 		$this->set('locations',$this->navigations);
+		
+    	$this->data['pages_url_1'] = $this->server_host.$this->cart_webroot."exchanges/";
+    	$this->data['pages_url_2'] = "/".$this->data['orderby']."/".$this->data['rownum']."/".$this->data['showtype'];
+		
+		
 		//排序方式,显示方式,分页数量限制
 		$this->set('orderby',$orderby);
 		$this->set('rownum',$rownum);
 		$this->set('showtype',$showtype);
+		$this->data['product_ranks'] = $product_ranks;
+		$this->data['products'] = $products;	  
 		$this->set('products',$products);		
 		$this->set('locations',$this->navigations);
 		

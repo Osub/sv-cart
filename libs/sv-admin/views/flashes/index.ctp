@@ -9,17 +9,10 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 2504 2009-07-01 08:24:22Z huangbo $
+ * $Id: index.ctp 3949 2009-08-31 07:34:05Z huangbo $
 *****************************************************************************/
 ?>
-<style type='text/css'>
-table.table td{
-	padding:2px 0;
-}
-table.table td.paddings{
-	padding-left:5px;
-}
-</style>
+
 
 <?php echo $javascript->link('flashes');?>
 <div class="content">
@@ -162,20 +155,21 @@ function typechange(){
 <!--Main Start-->
 <p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."添加图片","add/",'',false,false);?></strong></p>
 
-<div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
+<div class="home_main" style="padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' ); ">
 					
-	<table cellpadding="0" cellspacing="0" width="100%" class="list_data">
+<div id="listDiv">
+<table cellpadding="0" cellspacing="0" width="100%" class="list_data">
 	<tr class="thead">
-		<th>类型</th>
-		<th>语言</th>
+		<th width="8%">类型</th>
+		<th width="8%">语言</th>
 		<th>轮播图片链接</th>
-		<th>排序</th>
-		<th>是否有效</th>
-		<th class="no_border">操作</th>
+		<th width="8%">排序</th>
+		<th width="8%">是否有效</th>
+		<th width="8%">操作</th>
 	</tr>
 <!--User List-->
-<?php if(isset($flashes) && sizeof($flashes)>0){foreach($flashes as $flash){?>
-	<tr>
+<?php if(isset($flashes) && sizeof($flashes)>0){foreach($flashes as $k=>$flash){?>
+	<tr <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >
 		<td align="center"><?php echo $flash['Flash']['typename'];?></td>
 		<td align="center"><?php echo $flash['FlashImage']['locale'];?></td>
 		<td><?php echo $html->link("{$flash['FlashImage']['image']}","{$flash['FlashImage']['image']}",'',false,false);?></td>
@@ -183,11 +177,11 @@ function typechange(){
 		<td align="center"><?php if($flash['FlashImage']['status']) echo $html->image('yes.gif');else echo $html->image('no.gif');?></td>
 		<td align="center">
 		<?php echo $html->link("编辑","/flashes/edit/{$flash['FlashImage']['id']}");?> |
-		<?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$this->webroot}flashes/remove/{$flash['FlashImage']['id']}')"));?>
+		<?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$admin_webroot}flashes/remove/{$flash['FlashImage']['id']}')"));?>
 		</td>
 	</tr>
 <?php }?>
-	</table>
+	</table></div>
 
 <!--User List End-->	
 

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 2961 2009-07-16 10:19:12Z huangbo $
+ * $Id: index.ctp 3795 2009-08-19 11:25:53Z huangbo $
 *****************************************************************************/
 ?>
 
@@ -26,7 +26,7 @@
 			<?php if(isset($SVConfigs["mlti_currency_module"]) && $SVConfigs["mlti_currency_module"]==1){?>
 	<?php }?>
 	</p></dd>
-	<dt class="curement"><input type="button" value="查询" onclick="sub_action()"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="导出"  onclick="export_action()"/> </dt>
+	<dt class="small_search"><input  class="search_article" type="button" value="查询" onclick="sub_action()"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="导出"  onclick="export_action()"/> </dt>
 	</dl>
 <?php $form->end()?>
 
@@ -37,19 +37,20 @@
 <br />
 <!--Search End-->
 <!--Main Start-->
-<div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
+<div class="home_main" style="padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' ); ">
+<div id="listDiv">
 <table cellpadding="0" cellspacing="0" width="100%" class="list_data">
 <tr class="thead">
 	<th>用户名</th>
-	<th>注册时间</th>
-	<th>登录时间</th>
-	<th>商品数量</th>
-	<th>价格</th>
-	<th>最后更新时间</th>
-	<th>操作</th></tr>
+	<th width="12%">注册时间</th>
+	<th width="12%">登录时间</th>
+	<th width="8%">商品数量</th>
+	<th width="8%">价格</th>
+	<th width="12%">最后更新时间</th>
+	<th width="8%">操作</th></tr>
 	<?php if(isset($cart) && sizeof($cart)>0){?>
 	<?php foreach( $cart as $k=>$v ){if(!empty($v)){?>
-	<tr id="<?php echo 'row'.$k?>">
+	<tr id="<?php echo 'row'.$k?>" <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >
 		<td><?php echo $v['User']['name'];if(isset($v['User']['session_id'])){echo '<br/>';echo $v['User']['session_id'];}?></td>
 		<td><?php echo $v['User']['register']?></td>
 		<td><?php echo $v['User']['login_time']?></td>
@@ -90,27 +91,10 @@
 	</tr><?php }?>
 	</tbody>
 	<?php }} }?>
-</table>
+</table></div>
 </div>
 <!--Main Start End-->
-</div><!--时间控件层start-->
-	<div id="container_cal" class="calender_2">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal2" class="calender_2">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal2"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal3" class="calender_2">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal3"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal4" class="calender_2">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal4"></div><div style="clear:both;"></div></div>
-	</div>
-<!--end-->
+</div>
 
 <!--重新计算冻结数弹出层--> 
 <!--对话框start-->

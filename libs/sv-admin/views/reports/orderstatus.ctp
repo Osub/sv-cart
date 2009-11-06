@@ -9,146 +9,14 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: orderstatus.ctp 2989 2009-07-17 02:03:04Z huangbo $
+ * $Id: orderstatus.ctp 4718 2009-09-29 03:01:55Z huangbo $
 *****************************************************************************/
 ?>
-
-
+<p class="none"><span id="show3">&nbsp;eee</span><span id="show4">&nbsp;</span></p>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));//pr($order_status);pr($shipping_status);pr($payment_status);pr($payment);?>
 <!--Search-->
-
-	
-<?php  $num=count($payment)+2; ?>
-<div class="search_box">
-<?php echo $form->create('Report',array('action'=>'orderstatus/','name'=>"OrderStatusForm"));?>
-	<dl>
-	<dt style="padding-top:0;"><?php echo $html->image('serach_icon.gif',array('align'=>'left'))?></dt>
-	<dd><p class="reg_time article">下单日期：<input type="text" class="time" name="start_time" value="<?php echo $start_time?>"id="date" readonly="readonly"/><?php echo $html->image("calendar.gif",array('width'=>'18','height'=>'18','alt'=>'Calendar',"id"=>"show","class"=>"calendar"))?>－<input type="text" class="time" name="end_time" id="date2" readonly="readonly"value="<?php echo $end_time?>"/><?php echo $html->image("calendar.gif",array('width'=>'18','height'=>'18','alt'=>'Calendar',"id"=>"show2","class"=>"calendar"))?>
-		<?php if(isset($SVConfigs["mlti_currency_module"]) && $SVConfigs["mlti_currency_module"]==1){?>
-	语言:	<select name="order_locale">
-		<?php if(isset($languages) && sizeof($languages)>0){
-			foreach ($languages as $k => $v){?>
-			<option value="<?php echo $v['Language']['locale']?>" <?php if($v['Language']['locale']==$locale){echo "selected";}?>><?php echo $v['Language']['name']?></option>
-		<?php }}?>
-	</select>
-	<?php }?>
-	</p></dd>
-	<dt class="curement"><input type="submit" value="查询" onclick="sub_action()"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="导出"  onclick="export_action()"/></dt>
-	</dl>
-<?php $form->end()?>
-</div>
-<br /><br />
-<!--Search End-->
-<!--Main Start-->
-<div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
-<style type="text/css">
-	table.second_box tr.second_title{background:none;}
-	table.second_box tr.second_title th{border-bottom:1px solid #ABABAB;border-right:1px solid #E1E1E1;}
-</style>
-<table cellpadding="0" cellspacing="0" border="0" width="100%" class="orderfees">
-	<tr class="orderfee_headers">
-		<th width="8%" valign="bottom" style="border-right:1px solid #ABABAB">支付方式</th>
-		<th width="33%" height="33" colspan="5" style="border-right:0">订单状态</th>
-		<th width="32%" colspan="4" style="border-left:1px solid #ABABAB;border-right:0">配送状态</th>
-		<th width="26%" colspan="3" style="border-left:1px solid #ABABAB">支付状态</th>
-	</tr>
-	<tr>
-	  <th width="8%" height="28" bgcolor="#E1E1E1" style="border-right:1px solid #ABABAB">&nbsp;</th>
-<!--订单状态标题-->
-	  <th height="30" width="33%" colspan="5" rowspan="<?php echo $num?>" style="border-right:0;">
-	  	<table cellpadding="0" cellspacing="0" border="0" width="100%" class="second_box">
-		<tr class="second_title">
-			<th style="height:28px;*height:27px;width:20%">未确认</th>
-			<th style="width:20%">已确认</th>
-			<th style="width:20%">已取消</th>
-			<th style="width:20%">无效</th>
-			<th style="border-right:0;width:19%">退货</th>
-		</tr>
-	<!--	pr($order_status);pr($shipping_status);pr($payment_status);pr($payment);-->
-		<?php if(isset($payment) && sizeof($payment)>0){?>
-		<?php foreach($payment as $k=>$v){?>
-		<tr>
-			<td height="30" style="vertical-align:middle;"><?php echo $html->link(isset($order_status[0][$k])?$order_status[0][$k]:0,"/orders/?payment_id=".$k."&order_status=0",array("target"=>"_blank"),false,false);?></td>
-			<td style="vertical-align:middle;"><?php echo $html->link(isset($order_status[1][$k])?$order_status[1][$k]:0,"/orders/?payment_id=".$k."&order_status=1",array("target"=>"_blank"),false,false);?></td>
-			<td style="vertical-align:middle;"><?php echo $html->link(isset($order_status[2][$k])?$order_status[2][$k]:0,"/orders/?payment_id=".$k."&order_status=2",array("target"=>"_blank"),false,false);?></td>
-			<td style="vertical-align:middle;"><?php echo $html->link(isset($order_status[3][$k])?$order_status[3][$k]:0,"/orders/?payment_id=".$k."&order_status=3",array("target"=>"_blank"),false,false);?></td>
-			<td style="vertical-align:middle;"><?php echo $html->link(isset($order_status[4][$k])?$order_status[4][$k]:0,"/orders/?payment_id=".$k."&order_status=4",array("target"=>"_blank"),false,false);?></td>
-		</tr>
-		<?php }}?>
-		<tr class="orderfee_headers title_sum">
-		<td height="31" valign="middle"><?php if(isset($order_status[0])) echo array_sum($order_status[0]);else echo 0;?></td>
-		<td style="vertical-align:middle;"><?php if(isset($order_status[1])) echo array_sum($order_status[1]);else echo 0;?></td>
-		<td style="vertical-align:middle;"><?php if(isset($order_status[2])) echo array_sum($order_status[2]);else echo 0;?></td>
-		<td style="vertical-align:middle;"><?php if(isset($order_status[3])) echo array_sum($order_status[3]);else echo 0;?></td>
-		<td style="vertical-align:middle;"><?php if(isset($order_status[4])) echo array_sum($order_status[4]);else echo 0;?></td>
-		</tr>
-		</table>
-		</th>
-<!--订单状态标题 End-->
-<!--配送状态标题-->
-      <th width="32%" colspan="4" rowspan="<?php echo $num?>" style="border-right:0;">
-	  <table cellpadding="0" cellspacing="0" border="0" width="100%" class="second_box">
-		
-		<tr class="second_title">
-		<th style="border-left:1px solid #ABABAB;height:28px;*height:27px;width:25%">未发货</th>
-		<th style="width:25%">已发货</th>
-		<th style="width:25%">已收货</th>
-		<th style="border-right:0;width:24%">备货中</th>
-		</tr>
-			<?php if(isset($payment) && sizeof($payment)>0){?>
-		<?php foreach($payment as $k=>$v){?>
-		<tr>
-		<td style="vertical-align:middle;" height="30"><?php echo $html->link(isset($shipping_status[0][$k])?$shipping_status[0][$k]:0,"/orders/?payment_id=".$k."&shipping_status=0",array("target"=>"_blank"),false,false);?></td>
-		<td style="vertical-align:middle;"><?php echo $html->link(isset($shipping_status[1][$k])?$shipping_status[1][$k]:0,"/orders/?payment_id=".$k."&shipping_status=1",array("target"=>"_blank"),false,false);?></td>
-		<td style="vertical-align:middle;"><?php echo $html->link(isset($shipping_status[2][$k])?$shipping_status[2][$k]:0,"/orders/?payment_id=".$k."&shipping_status=2",array("target"=>"_blank"),false,false);?></td>
-		<td style="vertical-align:middle;"><?php echo $html->link(isset($shipping_status[3][$k])?$shipping_status[3][$k]:0,"/orders/?payment_id=".$k."&shipping_status=3",array("target"=>"_blank"),false,false);?></td>
-		</tr>
-		<?php }}?>
-		<tr class="orderfee_headers title_sum"><td height="31"><?php if(isset($shipping_status[0])) echo array_sum($shipping_status[0]);else echo 0;?></td><td><?php if(isset($shipping_status[1])) echo array_sum($shipping_status[1]);else echo 0;?></td><td><?php if(isset($shipping_status[2])) echo array_sum($shipping_status[2]);else echo 0;?></td><td><?php if(isset($shipping_status[3])) echo array_sum($shipping_status[3]);else echo 0;?></td></tr>
-		</table></th>
-<!--配送状态标题 End-->
-<!--支付状态标题-->
-	  <th width="26%" colspan="3" rowspan="<?php echo $num?>">
-	  <table cellpadding="0" cellspacing="0" border="0" width="100%" class="second_box">
-		
-		<tr class="second_title">
-		<th style="border-left:1px solid #ABABAB;height:28px;*height:27px;">未付款</th>
-		<th>付款中</th>
-		<th style="border-right:0;">已付款</th>
-		</tr>
-			<?php if(isset($payment) && sizeof($payment)>0){?>
-		<?php foreach($payment as $k=>$v){?>
-		<tr>
-		<td height="30" style="vertical-align:middle;"><?php echo $html->link(isset($payment_status[0][$k])?$payment_status[0][$k]:0,"/orders/?payment_id=".$k."&payment_status=0",array("target"=>"_blank"),false,false);?></td>
-		<td style="vertical-align:middle;"><?php echo $html->link(isset($payment_status[1][$k])?$payment_status[1][$k]:0,"/orders/?payment_id=".$k."&payment_status=1",array("target"=>"_blank"),false,false);?></td>
-		<td style="vertical-align:middle;"><?php echo $html->link(isset($payment_status[2][$k])?$payment_status[2][$k]:0,"/orders/?payment_id=".$k."&payment_status=2",array("target"=>"_blank"),false,false);?></td></tr>
-		<?php }}?>
-		<tr class="orderfee_headers title_sum">
-		<td height="31"><?php if(isset($payment_status[0])) echo array_sum($payment_status[0]);else echo 0;?></td>
-		<td><?php if(isset($payment_status[1])) echo array_sum($payment_status[1]);else echo 0;?></td>
-		<td><?php if(isset($payment_status[2])) echo array_sum($payment_status[2]);else echo 0;?></td>
-		</tr>
-		</table>
-		</th>
-<!--支付状态标题 End-->
-	</tr>
-		<?php if(isset($payment) && sizeof($payment)>0){?>
-	<?php foreach($payment as $k=>$v){?>
-	<tr class="list">
-		<td height="30" style="vertical-align:middle;" align="center"><strong><?php echo $v?></strong></td>
-	</tr>
-	<?php }}?>
-	<tr class="orderfee_headers title_sum">
-		<th height="30" align="center"><strong>合计</strong></th>
-	</tr>
-</table>
-	
-	
-
-</div>
-<!--Main Start End-->
-</div><!--时间控件层start-->
+<!--时间控件层start-->
 	<div id="container_cal" class="calender_2">
 		<div class="hd">日历</div>
 		<div class="bd"><div id="cal"></div><div style="clear:both;"></div></div>
@@ -166,6 +34,100 @@
 		<div class="bd"><div id="cal4"></div><div style="clear:both;"></div></div>
 	</div>
 <!--end-->
+	
+<?php  $num=count($payment)+2; ?>
+<div class="search_box">
+<?php echo $form->create('Report',array('action'=>'orderstatus/','name'=>"OrderStatusForm"));?>
+	<dl>
+	<dt style="padding-top:0;"><?php echo $html->image('serach_icon.gif',array('align'=>'left'))?></dt>
+	<dd><p class="reg_time article">下单日期：<input type="text" style="border:1px solid #649776" name="start_time" value="<?php echo $start_time?>"id="date" readonly="readonly"/><?php echo $html->image("calendar.gif",array('width'=>'18','height'=>'18','alt'=>'Calendar',"id"=>"show","class"=>"calendar"))?>－<input type="text" style="border:1px solid #649776" name="end_time" id="date2" readonly="readonly"value="<?php echo $end_time?>"/><?php echo $html->image("calendar.gif",array('width'=>'18','height'=>'18','alt'=>'Calendar',"id"=>"show2","class"=>"calendar"))?>
+		<?php if(isset($SVConfigs["mlti_currency_module"]) && $SVConfigs["mlti_currency_module"]==1){?>
+	语言:	<select name="order_locale">
+		<?php if(isset($languages) && sizeof($languages)>0){
+			foreach ($languages as $k => $v){?>
+			<option value="<?php echo $v['Language']['locale']?>" <?php if($v['Language']['locale']==$locale){echo "selected";}?>><?php echo $v['Language']['name']?></option>
+		<?php }}?>
+	</select>
+	<?php }?>
+	</p></dd>
+	<dt class="small_search"><input type="submit" value="查询" onclick="sub_action()" class="search_article" />
+				CSV导出编码:
+			<select id="csv_export_code">
+			<?php if(isset($systemresource_info["csv_export_code"]) && sizeof($systemresource_info["csv_export_code"])>0){
+			foreach ($systemresource_info["csv_export_code"] as $k => $v){if($k!=""){?>
+			<option value="<?php echo $k;?>" <?php if($k==$csv_export_code){echo "selected";}?>><?php echo $v;?></option>
+			<?php }}}?>
+			</select>
+			<input type="button" value="导出" class="search_article" onclick="export_action()"  class="search_article" /></dt>
+	</dl>
+<?php $form->end()?>
+</div>
+<br /><br />
+<!--Search End-->
+<!--Main Start-->
+<?php  $num=count($payment)+2; ?>
+<div class="home_main" style="padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' ); ">
+<div id="listDiv">
+<table cellpadding="0" cellspacing="0" width="100%" class="list_data" >
+	<tr>
+		<th width="8%">支付方式</th>
+		<th colspan="5">订单状态</th>
+		<th colspan="4">配送状态</th>
+		<th colspan="3">支付状态</th>
+	</tr>
+	<tr class="tr_bgcolor" >
+		<td></td>
+		<td align="center">未确认</td>
+		<td align="center">已确认</td>
+		<td align="center">已取消</td>
+		<td align="center">无效</td>
+		<td align="center">退货</td>
+		<td align="center">未发货</td>
+		<td align="center">已发货</td>
+		<td align="center">已收货</td>
+		<td align="center">备货中</td>
+		<td align="center">未付款</td>
+		<td align="center">付款中</td>
+		<td align="center">已付款</td>
+	</tr>
+<?php $i=0;if(isset($payment) && sizeof($payment)>0){foreach($payment as $k=>$v){?>
+	<tr <?php if((abs($i)+2)%2==1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }$i++;?> >
+		<td align="center"><strong><?php echo $v?></strong></td>
+		<td align="center"><?php echo !empty($order_statistics[$k]["status"]["0"]["order_id_count"])?$html->link($order_statistics[$k]["status"]["0"]["order_id_count"],"/orders/?payment_id=".$k."&order_status=0",array("target"=>"_blank"),false,false):0;?></td>
+		<td align="center"><?php echo !empty($order_statistics[$k]["status"]["1"]["order_id_count"])?$html->link($order_statistics[$k]["status"]["1"]["order_id_count"],"/orders/?payment_id=".$k."&order_status=1",array("target"=>"_blank"),false,false):0;?></td>
+		<td align="center"><?php echo !empty($order_statistics[$k]["status"]["2"]["order_id_count"])?$html->link($order_statistics[$k]["status"]["2"]["order_id_count"],"/orders/?payment_id=".$k."&order_status=2",array("target"=>"_blank"),false,false):0;?></td>
+		<td align="center"><?php echo !empty($order_statistics[$k]["status"]["3"]["order_id_count"])?$html->link($order_statistics[$k]["status"]["3"]["order_id_count"],"/orders/?payment_id=".$k."&order_status=3",array("target"=>"_blank"),false,false):0;?></td>
+		<td align="center"><?php echo !empty($order_statistics[$k]["status"]["4"]["order_id_count"])?$html->link($order_statistics[$k]["status"]["4"]["order_id_count"],"/orders/?payment_id=".$k."&order_status=4",array("target"=>"_blank"),false,false):0;?></td>
+		<td align="center"><?php echo !empty($order_statistics[$k]["shipping_status"]["0"]["order_id_count"])?$html->link($order_statistics[$k]["shipping_status"]["0"]["order_id_count"],"/orders/?payment_id=".$k."&shipping_status=0",array("target"=>"_blank"),false,false):0;?></td>
+		<td align="center"><?php echo !empty($order_statistics[$k]["shipping_status"]["1"]["order_id_count"])?$html->link($order_statistics[$k]["shipping_status"]["1"]["order_id_count"],"/orders/?payment_id=".$k."&shipping_status=1",array("target"=>"_blank"),false,false):0;?></td>
+		<td align="center"><?php echo !empty($order_statistics[$k]["shipping_status"]["2"]["order_id_count"])?$html->link($order_statistics[$k]["shipping_status"]["2"]["order_id_count"],"/orders/?payment_id=".$k."&shipping_status=2",array("target"=>"_blank"),false,false):0;?></td>
+		<td align="center"><?php echo !empty($order_statistics[$k]["shipping_status"]["3"]["order_id_count"])?$html->link($order_statistics[$k]["shipping_status"]["3"]["order_id_count"],"/orders/?payment_id=".$k."&shipping_status=3",array("target"=>"_blank"),false,false):0;?></td>
+		<td align="center"><?php echo !empty($order_statistics[$k]["payment_status"]["0"]["order_id_count"])?$html->link($order_statistics[$k]["payment_status"]["0"]["order_id_count"],"/orders/?payment_id=".$k."&payment_status=0",array("target"=>"_blank"),false,false):0;?></td>
+		<td align="center"><?php echo !empty($order_statistics[$k]["payment_status"]["1"]["order_id_count"])?$html->link($order_statistics[$k]["payment_status"]["1"]["order_id_count"],"/orders/?payment_id=".$k."&payment_status=1",array("target"=>"_blank"),false,false):0;?></td>
+		<td align="center"><?php echo !empty($order_statistics[$k]["payment_status"]["2"]["order_id_count"])?$html->link($order_statistics[$k]["payment_status"]["2"]["order_id_count"],"/orders/?payment_id=".$k."&payment_status=2",array("target"=>"_blank"),false,false):0;?></td></tr>
+	</tr>
+	<?php }}?>
+	<tr>
+		<th><strong>合计</strong></th>
+		<th><?php echo !empty($order_statistics_sum["status"]["0"]["order_id_count_sum"])?$order_statistics_sum["status"]["0"]["order_id_count_sum"]:0;?></th>
+		<th><?php echo !empty($order_statistics_sum["status"]["1"]["order_id_count_sum"])?$order_statistics_sum["status"]["1"]["order_id_count_sum"]:0;?></th>
+		<th><?php echo !empty($order_statistics_sum["status"]["2"]["order_id_count_sum"])?$order_statistics_sum["status"]["2"]["order_id_count_sum"]:0;?></th>
+		<th><?php echo !empty($order_statistics_sum["status"]["3"]["order_id_count_sum"])?$order_statistics_sum["status"]["3"]["order_id_count_sum"]:0;?></th>
+		<th><?php echo !empty($order_statistics_sum["status"]["4"]["order_id_count_sum"])?$order_statistics_sum["status"]["4"]["order_id_count_sum"]:0;?></th>
+		<th><?php echo !empty($order_statistics_sum["shipping_status"]["0"]["order_id_count_sum"])?$order_statistics_sum["shipping_status"]["0"]["order_id_count_sum"]:0;?></th>
+		<th><?php echo !empty($order_statistics_sum["shipping_status"]["1"]["order_id_count_sum"])?$order_statistics_sum["shipping_status"]["1"]["order_id_count_sum"]:0;?></th>
+		<th><?php echo !empty($order_statistics_sum["shipping_status"]["2"]["order_id_count_sum"])?$order_statistics_sum["shipping_status"]["2"]["order_id_count_sum"]:0;?></th>
+		<th><?php echo !empty($order_statistics_sum["shipping_status"]["3"]["order_id_count_sum"])?$order_statistics_sum["shipping_status"]["3"]["order_id_count_sum"]:0;?></th>
+		<th><?php echo !empty($order_statistics_sum["payment_status"]["0"]["order_id_count_sum"])?$order_statistics_sum["payment_status"]["0"]["order_id_count_sum"]:0;?></th>
+		<th><?php echo !empty($order_statistics_sum["payment_status"]["1"]["order_id_count_sum"])?$order_statistics_sum["payment_status"]["1"]["order_id_count_sum"]:0;?></th>
+		<th><?php echo !empty($order_statistics_sum["payment_status"]["2"]["order_id_count_sum"])?$order_statistics_sum["payment_status"]["2"]["order_id_count_sum"]:0;?></th>
+	</tr>
+
+</table>
+</div>
+</div>
+<!--Main Start End-->
+</div>
 <script type="text/javascript">
 function sub_action() 
 { 
@@ -174,8 +136,8 @@ function sub_action()
 	document.OrderStatusForm.submit(); 
 }
 function export_action() 
-{ 
-	document.OrderStatusForm.action=webroot_dir+"reports/orderstatus/export";
+{   var csv_export_code = GetId("csv_export_code");
+	document.OrderStatusForm.action=webroot_dir+"reports/orderstatus/export/"+csv_export_code.value;
 	document.OrderStatusForm.onsubmit= "";
 	document.OrderStatusForm.submit(); 
 }

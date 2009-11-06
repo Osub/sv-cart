@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: extract.php 2703 2009-07-08 11:54:52Z huangbo $ */
+/* SVN FILE: $Id: extract.php 4366 2009-09-18 09:49:37Z huangbo $ */
 /**
  * Short description for file.
  *
@@ -19,9 +19,9 @@
  * @package       cake
  * @subpackage    cake.cake.console.libs
  * @since         CakePHP(tm) v 1.2.0.5012
- * @version       $Revision: 8120 $
- * @modifiedby    $LastChangedBy: gwoo $
- * @lastmodified  $Date: 2009-03-19 13:25:10 -0700 (Thu, 19 Mar 2009) $
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**

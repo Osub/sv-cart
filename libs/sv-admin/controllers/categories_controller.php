@@ -1,6 +1,6 @@
 <?php
 /*****************************************************************************
- * SV-Cart 文章和商品分类管理
+ * SV-Cart 文章和分类管理
  * ===========================================================================
  * 版权所有  上海实玮网络科技有限公司，并保留所有权利。
  * 网站地址: http://www.seevia.cn
@@ -9,15 +9,15 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: categories_controller.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: categories_controller.php 5265 2009-10-21 08:50:11Z huangbo $
 *****************************************************************************/
 class CategoriesController extends AppController {
 
 	var $name = 'Categories';
 
-	var $helpers = array('Html','Javascript', 'Fck');
+	var $helpers = array('Html','Javascript', 'Tinymce','fck');
 
-	var $uses = array('Article','Category','Product','ProductsCategory','CategoryI18n','ArticleCategory','ProductType','ProductTypeI18n','ProductTypeAttribute','ProductTypeAttributeI18n','CategoryFilter');
+	var $uses = array('Article','Category','Product','ProductsCategory','SeoKeyword','CategoryI18n','ArticleCategory','ProductType','SystemResource','ProductTypeI18n','ProductTypeAttribute','ProductTypeAttributeI18n','CategoryFilter');
 
 	var $components = array('RequestHandler');
  
@@ -31,7 +31,8 @@ class CategoriesController extends AppController {
 		    /*判断权限*/
 			$this->operator_privilege('goods_category_view');
 			/*end*/
-	    	$this->navigations[] = array('name'=>'商品分类管理','url'=>'/categories/index/P');
+			$this->navigations[] = array('name'=>'产品管理','url'=>'');
+	    	$this->navigations[] = array('name'=>'分类管理','url'=>'/categories/index/P');
 			$this->set('navigations',$this->navigations);
 			
 			$product_count=$this->Product->product_count();
@@ -47,7 +48,8 @@ class CategoriesController extends AppController {
 		    /*判断权限*/
 			$this->operator_privilege('article_category_view');
 			/*end*/
-	   		$this->navigations[] = array('name'=>'文章分类管理','url'=>'/categories/index/A');
+			$this->navigations[] = array('name'=>'文章管理','url'=>'');
+	   		$this->navigations[] = array('name'=>'分类管理','url'=>'/categories/index/A');
 	   		$this->set('navigations',$this->navigations);
 		    $categories_articles_count = $this->ArticleCategory->findcountassoc();
 		    $article_count = $this->Article->article_counts();
@@ -62,7 +64,12 @@ class CategoriesController extends AppController {
 		
 	//	pr($categories_tree);
 	 	$this->set('type',$type);
-		
+			//资源库信息
+	        $this->SystemResource->set_locale($this->locale);
+	        $systemresource_info = $this->SystemResource->resource_formated(false);
+			$this->set("systemresource_info",$systemresource_info);
+
+
 	}
 
 	function edit($type='P',$id){
@@ -73,8 +80,9 @@ class CategoriesController extends AppController {
 		    /*判断权限*/
 			$this->operator_privilege('goods_category_edit');
 			/*end*/
-			$this->pageTitle = "编辑商品分类 - 商品分类管理" ." - ".$this->configs['shop_name'];
-			$this->navigations[] = array('name'=>'商品分类管理','url'=>'/categories/index/P');
+			$this->pageTitle = "编辑商品分类 - 分类管理" ." - ".$this->configs['shop_name'];
+			$this->navigations[] = array('name'=>'产品管理','url'=>'');
+			$this->navigations[] = array('name'=>'分类管理','url'=>'/categories/index/P');
 			$this->navigations[] = array('name'=>'编辑商品分类','url'=>'');
 			$first_price=array();//第一组价格
 			$clone_price=array();//多组价格
@@ -166,7 +174,9 @@ class CategoriesController extends AppController {
 		                           'meta_description'=>$v['meta_description'],
 		                        	'detail'=>$v['detail'],
 		                           'img01'=>	$v['img01'],
-		                           'img02'=>	$v['img02']
+		                           'img01_link'=>	$v['img01_link'],
+		                           'img02'=>	$v['img02'],
+		                           'img02_link'=>	$v['img02_link']
 		                     );
 		                 $this->CategoryI18n->saveall(array('CategoryI18n'=>$categoryI18n_info));//更新多语言
               	     	 if( $this->locale==$v['locale'] ){
@@ -210,15 +220,19 @@ class CategoriesController extends AppController {
 				}else{
 					$this->data['CategoryFilter']['filter_price']="";
 				}
-				$this->data['CategoryFilter']['id']=$category_filter['CategoryFilter']['id'];
+				if($category_filter){
+					$this->data['CategoryFilter']['id']=$category_filter['CategoryFilter']['id'];
+				}else{
+					$this->data['CategoryFilter']['category_id']=$id;
+				}
 				$this->data['CategoryFilter']['status']=!empty($this->data['CategoryFilter']['status']) ? $this->data['CategoryFilter']['status']: "0";									
 				$this->CategoryFilter->save(array("CategoryFilter"=>$this->data['CategoryFilter']));
-			//	pr($this->data['CategoryFilter']);
+
                 //操作员日志
         		if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
         	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑商品分类:'.$userinformation_name ,'operation');
         		}
-				$this->flash("商品分类  ".$userinformation_name." 编辑成功。点击继续编辑该商品分类。",'/categories/edit/P/'.$id,10);
+				$this->flash("商品分类  ".$userinformation_name." 编辑成功。点击这里继续编辑该商品分类。",'/categories/edit/P/'.$id,10);
 
 
 				
@@ -229,8 +243,9 @@ class CategoriesController extends AppController {
 		    /*判断权限*/
 			$this->operator_privilege('article_category_edit');
 			/*end*/
-			$this->pageTitle = "编辑文章分类 - 文章分类管理" ." - ".$this->configs['shop_name'];
-			$this->navigations[] = array('name'=>'文章分类管理','url'=>'/categories/index/A');
+			$this->pageTitle = "编辑文章分类 - 分类管理" ." - ".$this->configs['shop_name'];
+			$this->navigations[] = array('name'=>'文章管理','url'=>'');
+			$this->navigations[] = array('name'=>'分类管理','url'=>'/categories/index/A');
 			$this->navigations[] = array('name'=>'编辑文章分类','url'=>'');
 			
 			if($this->RequestHandler->isPost()){
@@ -246,7 +261,9 @@ class CategoriesController extends AppController {
 		                           'meta_description'=>$v['meta_description'],
 		                        	'detail'=>$v['detail'],
 		                           'img01'=>	$v['img01'],
-		                           'img02'=>	$v['img02']
+		                           'img01_link'=>	$v['img01_link'],
+		                           'img02'=>	$v['img02'],
+		                           'img02_link'=>	$v['img02_link']
 		                     );
 							if( $this->locale==$v['locale'] ){
               	     	 		$category_name = $v['name'];
@@ -266,7 +283,7 @@ class CategoriesController extends AppController {
         		if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
         	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑文章分类:'.$userinformation_name ,'operation');
         		}
-				$this->flash("文章分类  ".$userinformation_name." 编辑成功。点击继续编辑该文章分类。",'/categories/edit/A/'.$id,10);
+				$this->flash("文章分类  ".$userinformation_name." 编辑成功。点击这里继续编辑该文章分类。",'/categories/edit/A/'.$id,10);
 				
 			}
 		}	
@@ -279,6 +296,14 @@ class CategoriesController extends AppController {
 			//leo20090722导航显示
 			$this->navigations[] = array('name'=>$this->data["CategoryI18n"][$this->locale]["name"],'url'=>'');
 		    $this->set('navigations',$this->navigations);
+			//资源库信息
+	        $this->SystemResource->set_locale($this->locale);
+	        $systemresource_info = $this->SystemResource->resource_formated(false);
+			$this->set("systemresource_info",$systemresource_info);
+			//关键字
+			$seokeyword_data = $this->SeoKeyword->find("all",array("conditions"=>array("status"=>1)));
+			$this->set("seokeyword_data",$seokeyword_data);
+
 
 	}
 	
@@ -286,7 +311,7 @@ class CategoriesController extends AppController {
 		//图片ID
 		$this->set('categories_id',"temp");
 		$category_info = $this->Category->find("","","Category.id desc"); 
-	$this->Category->hasOne = array('CategoryI18n' =>   
+		$this->Category->hasOne = array('CategoryI18n' =>   
                         array('className'    => 'CategoryI18n',   
                               'order'        => '',   
                               'dependent'    =>  true,
@@ -318,8 +343,9 @@ class CategoriesController extends AppController {
 		    /*判断权限*/
 			$this->operator_privilege('goods_category_add');
 			/*end*/
-			$this->pageTitle = "新增商品分类 - 商品分类管理"." - ".$this->configs['shop_name'];
-			$this->navigations[] = array('name'=>'商品分类管理','url'=>'/categories/index/P');
+			$this->pageTitle = "新增商品分类 - 分类管理"." - ".$this->configs['shop_name'];
+			$this->navigations[] = array('name'=>'产品管理','url'=>'');
+			$this->navigations[] = array('name'=>'分类管理','url'=>'/categories/index/P');
 			$this->navigations[] = array('name'=>'新增商品分类','url'=>'');
 			$this->set('navigations',$this->navigations);
 		
@@ -373,7 +399,7 @@ class CategoriesController extends AppController {
 					$img01 = $v['img01'];
 					if(!strpos($img01, "temp")){
 				 	
-				 		$pos = "..".substr($img01,0,strpos($img01, "new_id")-2-strlen($img01)).$new_id."/";
+				 		$pos = "../img/product_categories/".$new_id."/";
 						@rename("../img/product_categories/temp/",$pos);
 					}
 					eval("\$img01 = \"$img01\";");
@@ -381,7 +407,7 @@ class CategoriesController extends AppController {
 					$v['img01'] = $img01;
 					$img02 = $v['img02'];
 					if(!strpos($img02, "temp")){
-				 		$pos = "..".substr($img02,0,strpos($img02, "new_id")-2-strlen($img02)).$new_id."/";
+				 		$pos = "../img/product_categories/".$new_id."/";
 						@rename("../img/product_categories/temp/",$pos);
 					}
 					eval("\$img02 = \"$img02\";");
@@ -403,7 +429,7 @@ class CategoriesController extends AppController {
         		if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
         	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'增加商品分类:'.$userinformation_name ,'operation');
         		}
-				$this->flash("商品分类  ".$userinformation_name." 添加成功。点击继续编辑该商品分类。",'/categories/edit/P/'.$id,10);
+				$this->flash("商品分类  ".$userinformation_name." 添加成功。点击这里继续编辑该商品分类。",'/categories/edit/P/'.$id,10);
 
 			}		
 			//取树形结构
@@ -415,8 +441,9 @@ class CategoriesController extends AppController {
 			    /*判断权限*/
 				$this->operator_privilege('article_category_add');
 				/*end*/
-				$this->pageTitle = "新增文章分类 - 文章分类管理"." - ".$this->configs['shop_name'];
-				$this->navigations[] = array('name'=>'文章分类管理','url'=>'/categories/index/A');
+				$this->pageTitle = "新增文章分类 - 分类管理"." - ".$this->configs['shop_name'];
+				$this->navigations[] = array('name'=>'文章管理','url'=>'');
+				$this->navigations[] = array('name'=>'分类管理','url'=>'/categories/index/A');
 				$this->navigations[] = array('name'=>'新增文章分类','url'=>'');
 				$this->set('navigations',$this->navigations);
 				if($this->RequestHandler->isPost()){
@@ -434,7 +461,7 @@ class CategoriesController extends AppController {
 						$img01 = $v['img01'];
 					
 						if(!strpos($img01, "temp")){
-				 			$pos = "..".substr($img01,0,strpos($img01, "new_id")-2-strlen($img01)).$new_id."/";
+				 			$pos = "../img/article_categories/".$new_id."/";
 							@rename("../img/article_categories/temp/",$pos);
 						}
 						
@@ -443,7 +470,7 @@ class CategoriesController extends AppController {
 						$v['img01'] = $img01;
 						$img02 = $v['img02'];
 						if(!strpos($img02, "temp")){
-				 			$pos = "..".substr($img02,0,strpos($img02, "new_id")-2-strlen($img02)).$new_id."/";
+				 			$pos = "../img/article_categories/".$new_id."/";
 							@rename("../img/article_categories/temp/",$pos);
 						}
 						eval("\$img02 = \"$img02\";");
@@ -467,13 +494,21 @@ class CategoriesController extends AppController {
         		if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
         	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'增加文章分类:'.$userinformation_name ,'operation');
         		}
-				$this->flash("文章分类  ".$userinformation_name." 编辑成功。点击继续编辑该文章分类。",'/categories/edit/A/'.$id,10);
+				$this->flash("文章分类  ".$userinformation_name." 编辑成功。点击这里继续编辑该文章分类。",'/categories/edit/A/'.$id,10);
 
 				}
 			$categories_tree=$this->Category->tree('A',$this->locale);
 			$this->set('categories_tree',$categories_tree);
 			}
 			$this->set('type',$type);
+			//资源库信息
+	        $this->SystemResource->set_locale($this->locale);
+	        $systemresource_info = $this->SystemResource->resource_formated(false);
+			$this->set("systemresource_info",$systemresource_info);
+			//关键字
+			$seokeyword_data = $this->SeoKeyword->find("all",array("conditions"=>array("status"=>1)));
+			$this->set("seokeyword_data",$seokeyword_data);
+
 
 	}
 

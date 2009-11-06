@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 2701 2009-07-08 11:14:14Z wuchao $
+ * $Id: index.ctp 3949 2009-08-31 07:34:05Z huangbo $
 *****************************************************************************/
 ?>
 
@@ -23,12 +23,12 @@
 
 .list-div th {
   line-height: 24px;
-  background: url(../img/product.gif) repeat-x;
+
   white-space: nowrap;
 }
 
 .list-div td {
-  background: #FFF;
+
   line-height: 22px;
 }
 
@@ -37,16 +37,16 @@
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 
 <!--Main Start-->
-<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."恢复备份","restore/",'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."恢复备份","restore/",'',false,false);?>&nbsp&nbsp<?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."数据库优化","optimize",'',false,false);?></strong></p>
 	
-<div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' );">
+<div class="home_main" style="padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' );">
 <?php echo $form->create('',array('action'=>'/dumpsql/',"name"=>"theForm"));?>
 <div class="list-div" id="listDiv">
-<table cellspacing='1' cellpadding='3' >
+<table cellspacing='1' cellpadding='3' class="list_data" >
   <tr>
     <th colspan="2">备份类型</th>
   </tr>
-  <tr>
+  <tr class="tr_bgcolor" >
     <td><input type="radio" name="type" value="full" class="radio" onclick="findobj('showtables').style.display='none'">全部备份</td>
     <td>备份数据库所有表</td>
   </tr>
@@ -54,11 +54,11 @@
     <td><input type="radio" name="type" value="stand" class="radio" checked="checked" onclick="findobj('showtables').style.display='none'">标准备份(推荐)</td>
     <td>备份常用的数据表</td>
   </tr>
-  <tr>
+  <tr class="tr_bgcolor"  >
     <td><input type="radio" name="type" value="min" class="radio" onclick="findobj('showtables').style.display='none'">最小备份</td>
     <td>仅包括商品表，订单表，用户表</td>
   </tr>
-  <tr>
+  <tr >
     <td><input type="radio" name="type" value="custom" class="radio" onclick="findobj('showtables').style.display=''">自定义备份</td>
     <td>根据自行选择备份数据表</td>
   </tr>
@@ -83,11 +83,11 @@
   </tbody>
 </table>
 
-<table cellspacing='1' cellpadding='3' >
+<table cellspacing='1' cellpadding='3' class="list_data" >
   <tr>
-    <th colspan="2">其他选项</th>
+    <th colspan="2" >其他选项</th>
   </tr>
-  <tr>
+  <tr class="tr_bgcolor" >
     <td>使用扩展插入(Extended Insert)方式</td>
     <td><input type="radio" name="ext_insert" class="radio" value='1'>是&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="ext_insert" class="radio" value='0' checked="checked">否</td>
   </tr>
@@ -95,7 +95,7 @@
     <td>分卷备份 - 文件长度限制(kb)</td>
     <td><input type="text" name="vol_size" value="<?php echo $vol_size;?>" readonly></td>
   </tr>
-  <tr>
+  <tr class="tr_bgcolor" >
     <td>备份文件名</td>
     <td><input type="text" name="sql_file_name" value="<?php echo $sql_name;?>"></td>
   </tr>

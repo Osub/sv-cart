@@ -9,11 +9,14 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: orderfee.ctp 2806 2009-07-13 09:44:42Z zhengli $
+ * $Id: orderfee.ctp 4893 2009-10-11 10:07:01Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));//pr($monthes)?>
+<!--Search-->
+
+	
 <!--Search-->
 
 	
@@ -22,11 +25,7 @@
 <?php echo $form->create('Report',array('action'=>'orderfee/','name'=>"OrderfeeForm"));?>
 	<dl>
 	<dt style="padding-top:0;"><?php echo $html->image('serach_icon.gif',array('align'=>'left'))?></dt>
-	<dd><p class="reg_time article">选择日期：<!--<select name="month">
-	<?php foreach($monthes as $k=>$v){?>
-	<option value='<?php echo $v?>'<?php if($v==$month) echo 'selected';?>><?php echo $k?></option>
-	<?php }?>
-	</select>-->
+	<dd><p class="reg_time article">选择日期：
 	<select name="year">
 	<?php foreach($now_year_arr as $k=>$v){?>
 	<option value='<?php echo $v?>'<?php if($v==$month) echo 'selected';?>><?php echo $k?></option>
@@ -45,79 +44,80 @@
 		<?php }}?>
 	</select>
 		<?php }?>
+
 	</p></dd>
-	<dt class="curement"><input type="button" value="查询"  onclick="sub_action()"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="导出"  onclick="export_action()"/> </dt>
+	<dt class="small_search"><input type="button" value="查询"  onclick="sub_action()" class="search_article" />
+				CSV导出编码:
+			<select id="csv_export_code">
+			<?php if(isset($systemresource_info["csv_export_code"]) && sizeof($systemresource_info["csv_export_code"])>0){
+			foreach ($systemresource_info["csv_export_code"] as $k => $v){if($k!=""){?>
+			<option value="<?php echo $k;?>"  ><?php echo $v;?></option>
+			<?php }}}?>
+			</select>
+
+			<input type="button" class="search_article" value="导出" class="search_article" onclick="export_action()"/> </dt>
 	</dl>
 <?php $form->end()?>
 </div>
 <br />
 <!--Search End-->
+
+
 <!--Main Start-->
-<div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
-<style type="text/css">
-	table.second_headers tr.headers th{border-bottom:1px solid #ABABAB;border-right:1px solid #E1E1E1;font-weight:normal;}
-</style>
-<table border="0" cellpadding="0" cellspacing="0" width="100%" class="orderfees">
+<div class="home_main" style="padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' ); ">
+
+<div id="listDiv">
+<table cellpadding="0" cellspacing="0" width="100%" class="list_data" >
 	<tr class="orderfee_headers">
-		<th height="31" width="16%" style="border-right:1px solid #ABABAB;">时间</th>
-		<th height="31" width="47%" colspan="5" style="border-right:0;">订单状态</th>
-		<th rowspan="2" width="12%" style="border-left:1px solid #ABABAB">订单数量</th>
-		<th rowspan="2" width="12%">数量小计</th>
-		<th rowspan="2" width="12%">金额小计</th>
+		<th width="16%">时间</th>
+		<th width="47%"  colspan="8"  >订单状态</th>
+		<th width="12%" rowspan="2">订单数量</th>
+		<th width="12%" rowspan="2">数量小计</th>
+		<th width="12%" rowspan="2">金额小计</th>
 	</tr>
 	<tr>
-	  <td height="33" align="center" style="border-right:1px solid #ABABAB;vertical-align:middle;"><strong><?php $temp=explode('-',$month);echo $temp[0].'年'.$temp[1].'月' ?></strong></td>
-<!--状态标题 循环时请注意这个th跨行-->
-	  <th colspan="5" rowspan="<?php echo $n+2?>" style="border-right:0;">
-	  	<table width="100%" cellpadding="0" cellspacing="0" border="0" class="second_headers">
-		<tr class="headers"><th width="14%" height="30">未确认</th>
-		<th width="14%">已确认</th><th width="14%">已取消</th>
-		<th width="14%">无效</th>
-		<th width="14%" >退货</th>
-		<th width="14%" >已付款</th>
-		<th width="14%" style="border-right:0;">已发货</th>
-		</tr>
-		<?php if(isset($order_status) && sizeof($order_status)>0){?>
-		<?php foreach($order_status as $k=>$v){?>
-		<tr><td width="14%" height="31" style="vertical-align:middle;"><?php if(isset($v[0]))echo $v[0];else echo 0;?></td>
-			<td width="14%" style="vertical-align:middle;"><?php if(isset($v[1]))echo $v[1];else echo 0;?></td>
-			<td width="14%" style="vertical-align:middle;"><?php if(isset($v[2]))echo $v[2];else echo 0;?></td>
-			<td width="14%" style="vertical-align:middle;"><?php if(isset($v[3]))echo $v[3];else echo 0;?></td>
-			<td width="14%" style="vertical-align:middle;"><?php if(isset($v[4]))echo $v[4];else echo 0;?></td>
-			<td width="14%" style="vertical-align:middle;"><?php if(isset($v["payments"]))echo $v["payments"];else echo 0;?></td>
-			<td width="14%" style="vertical-align:middle;"><?php if(isset($v["shipping"]))echo $v["shipping"];else echo 0;?></td>
+	<td align="center"><?php echo $Y;?>年<?php echo $now_month;?>月</td>
+	<td align="center">未确认</td>
+	<td align="center">已确认</td>
+	<td align="center">已取消</td>
+	<td align="center">无效</td>
+	<td align="center">退货</td>
+	<td align="center">已付款</td>
+	<td align="center">已发货</td>
+	<td align="center">已收货</td>
+	</tr>
+	<?php $ij=1;if(isset($n) && sizeof($n)>0){$sum_order_count = 0;$sum_product_quntity = 0;$sum_sumtotal_all = 0;for($i=1;$i<=$n;$i++){$d = $i<10?"0".$i:$i;$this_data = $Y."-".$m."-".$d?>
+		<tr <?php if((abs($ij)+2)%2==1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }$ij++;?> ><td align="center"><strong><?php echo $i?>日</strong></td>
+			<td align="center"><?php echo empty($order_statistics[$this_data]["status"][0]["order_id_count"])?0:$html->link($order_statistics[$this_data]["status"][0]["order_id_count"],"/orders/?date=".$this_data."00:00:00&date2=".$this_data."23:59:59&order_status=0",array("target"=>"_blank"),false,false);?></td>
+			<td align="center"><?php echo empty($order_statistics[$this_data]["status"][1]["order_id_count"])?0:$html->link($order_statistics[$this_data]["status"][1]["order_id_count"],"/orders/?date=".$this_data." 00:00:00&date2=".$this_data." 23:59:59&order_status=1",array("target"=>"_blank"),false,false);?></td>
+			<td align="center"><?php echo empty($order_statistics[$this_data]["status"][2]["order_id_count"])?0:$html->link($order_statistics[$this_data]["status"][2]["order_id_count"],"/orders/?date=".$this_data." 00:00:00&date2=".$this_data." 23:59:59&order_status=2",array("target"=>"_blank"),false,false);?></td>
+			<td align="center"><?php echo empty($order_statistics[$this_data]["status"][3]["order_id_count"])?0:$html->link($order_statistics[$this_data]["status"][3]["order_id_count"],"/orders/?date=".$this_data." 00:00:00&date2=".$this_data." 23:59:59&order_status=3",array("target"=>"_blank"),false,false);?></td>
+			<td align="center"><?php echo empty($order_statistics[$this_data]["status"][4]["order_id_count"])?0:$html->link($order_statistics[$this_data]["status"][4]["order_id_count"],"/orders/?date=".$this_data." 00:00:00&date2=".$this_data." 23:59:59&order_status=4",array("target"=>"_blank"),false,false);?></td>
+			<td align="center"><?php echo empty($order_statistics[$this_data]["payment_status"][2]["order_id_count"])?0:$html->link($order_statistics[$this_data]["payment_status"][2]["order_id_count"],"/orders/?date=".$this_data." 00:00:00&date2=".$this_data." 23:59:59&payment_status=2",array("target"=>"_blank"),false,false);?></td>
+			<td align="center"><?php echo empty($order_statistics[$this_data]["shipping_status"][1]["order_id_count"])?0:$html->link($order_statistics[$this_data]["shipping_status"][1]["order_id_count"],"/orders/?date=".$this_data." 00:00:00&date2=".$this_data." 23:59:59&shipping_status=1",array("target"=>"_blank"),false,false);?></td>
+			<td align="center"><?php echo empty($order_statistics[$this_data]["shipping_status"][2]["order_id_count"])?0:$html->link($order_statistics[$this_data]["shipping_status"][2]["order_id_count"],"/orders/?date=".$this_data." 00:00:00&date2=".$this_data." 23:59:59&shipping_status=2",array("target"=>"_blank"),false,false);?></td>
 			
+			<td align="center"><?php $sum_order_count+= empty($order_statistics[$this_data]["order_count"])?0:$order_statistics[$this_data]["order_count"];echo empty($order_statistics[$this_data]["order_count"])?0:$order_statistics[$this_data]["order_count"];?></td>
+			<td align="center"><?php $sum_product_quntity+= empty($order_statistics[$this_data]["product_quntity"])?0:$order_statistics[$this_data]["product_quntity"];echo empty($order_statistics[$this_data]["product_quntity"])?0:$order_statistics[$this_data]["product_quntity"];?></td>
+			<td><?php $sum_sumtotal_all+= empty($order_statistics[$this_data]["sumtotal_all"])?0:$order_statistics[$this_data]["sumtotal_all"];echo sprintf($price_format,sprintf("%01.2f",empty($order_statistics[$this_data]["sumtotal_all"])?0:$order_statistics[$this_data]["sumtotal_all"]));?></td>
 		</tr>
-		<?php }}?>
-		<tr class="orderfee_headers">
-			<th width="14%" height="31" style="vertical-align:middle;"><?php if(isset($all_order_status[0])) echo $all_order_status[0];else echo 0;?></th>
-			<th width="14%" style="vertical-align:middle;"><?php if(isset($all_order_status[1])) echo $all_order_status[1];else echo 0;?></th>
-			<th width="14%" style="vertical-align:middle;"><?php if(isset($all_order_status[2])) echo $all_order_status[2];else echo 0;?></th>
-			<th width="14%" style="vertical-align:middle;"><?php if(isset($all_order_status[3])) echo $all_order_status[3];else echo 0;?></th>
-			<th width="14%" style="vertical-align:middle;"><?php if(isset($all_order_status[4])) echo $all_order_status[4];else echo 0;?></th>
-			<th width="14%" style="vertical-align:middle;"><?php if(isset($all_order_status["payments"])) echo $all_order_status["payments"];else echo 0;?></th>
-			<th width="14%" style="vertical-align:middle;"><?php if(isset($all_order_status["shipping"])) echo $all_order_status["shipping"];else echo 0;?></th>
-	  </tr>
-	  </table>
-	  </th>
-<!--状态标题 End-->	
-    </tr>
-    <?php if(isset($order_status) && sizeof($order_status)>0){?>
-    <?php foreach($order_status as $k=>$v){?>
-	<tr>
-		<td align="center" width="16%" height="31" style="vertical-align:middle;"><strong><?php echo $k?>日</strong></td>
-		<td align="center" width="12%" style="vertical-align:middle;"><?php echo $v['count_order']?></td>
-		<td align="center" width="12%" style="vertical-align:middle;"><?php echo $v['count_product']?></td>
-		<td align="center" width="12%" style="vertical-align:middle;"><?php echo $v['sum_total']?></td>
-	</tr>
 	<?php }}?>
-	<tr class="orderfee_headers">
-		<th height="31" width="16%">总计</th>
-		<th rowspan="2" width="12%"><?php echo $all_order['order']?></th>
-		<th rowspan="2" width="12%"><?php echo $all_order['product']?></th>
-		<th rowspan="2" width="12%"><?php echo $all_order['total']?></th>
+	<tr>
+			<th>总计</th>
+			<th><?php echo empty($statussum_all["status"][0]["statussum_all"])?0:$statussum_all["status"][0]["statussum_all"];?></th>
+			<th><?php echo empty($statussum_all["status"][1]["statussum_all"])?0:$statussum_all["status"][1]["statussum_all"];?></th>
+			<th><?php echo empty($statussum_all["status"][2]["statussum_all"])?0:$statussum_all["status"][2]["statussum_all"];?></th>
+			<th><?php echo empty($statussum_all["status"][3]["statussum_all"])?0:$statussum_all["status"][3]["statussum_all"];?></th>
+			<th><?php echo empty($statussum_all["status"][4]["statussum_all"])?0:$statussum_all["status"][4]["statussum_all"];?></th>
+			<th><?php echo empty($statussum_all["payment_status"][2]["statussum_all"])?0:$statussum_all["payment_status"][2]["statussum_all"];?></th>
+			<th><?php echo empty($statussum_all["shipping_status"][1]["statussum_all"])?0:$statussum_all["shipping_status"][1]["statussum_all"];?></th>
+			<th><?php echo empty($statussum_all["shipping_status"][2]["statussum_all"])?0:$statussum_all["shipping_status"][2]["statussum_all"];?></th>
+			<th><?php echo $sum_order_count;?></th>
+			<th><?php echo $sum_product_quntity;?></th>
+			<th><?php echo sprintf($price_format,sprintf("%01.2f",$sum_sumtotal_all));?></th>
 	</tr>
 </table>
+</div>
 </div>
 <!--Main Start End-->
 </div>
@@ -129,8 +129,8 @@ function sub_action()
 	document.OrderfeeForm.submit(); 
 }
 function export_action() 
-{ 
-	document.OrderfeeForm.action=webroot_dir+"reports/orderfee/export";
+{  var csv_export_code = GetId("csv_export_code");
+	document.OrderfeeForm.action=webroot_dir+"reports/orderfee/export/"+csv_export_code.value;
 	document.OrderfeeForm.onsubmit= "";
 	document.OrderfeeForm.submit(); 
 }

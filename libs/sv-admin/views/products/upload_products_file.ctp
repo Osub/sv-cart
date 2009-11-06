@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: upload_products_file.ctp 2516 2009-07-01 10:29:18Z shenyunfeng $
+ * $Id: upload_products_file.ctp 5165 2009-10-16 10:42:10Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
@@ -38,13 +38,25 @@
 	<?php }}}}}}?>
 	</select>
 	</td>
+
 </tr>
-<tr>
+<tr>	
+
 	<td>上传批量csv文件:</td>
 	<td><input name="file" size="40" type="file"/><td>
 </tr>
 <tr><td></td><td>注意：上传文件编码格式gb2312编码<br/>（CSV文件中一次上传商品数量最好不要超过1000，CSV文件大小最好不要超过500K.）<td></tr>
-<tr><td></td><td><strong class="green_3"><?php echo $html->link("下载批量csv文件","/products/download",'',false,false);?></strong></td></tr>
+<tr>
+	<td valign="middle">下载编码:</td>
+	<td valign="middle">
+			<select id="csv_export_code" name="csv_export_code">
+			<?php if(isset($systemresource_info["csv_export_code"]) && sizeof($systemresource_info["csv_export_code"])>0){
+			foreach ($systemresource_info["csv_export_code"] as $k => $v){if($k!=""){?>
+			<option value="<?php echo $k;?>" ><?php echo $v;?></option>
+			<?php }}}?>
+			</select>
+	</td></tr>
+<tr><td></td><td><strong class="green_3"><?php echo $html->link("下载批量csv文件","javascript:;",array("onclick"=>"product_dt()"),false,false);?> &nbsp&nbsp <?php echo $html->link("下载批量csv实例文件","/products/download_example",'',false,false);?></strong></td></tr>
 <tr>
 	<td></td>
 	<td><p class="submit_btn" style="text-align:left;"><input type="submit" name="submit" id="submit" value="确定" /></p></td>
@@ -54,3 +66,9 @@
 </div>
 </div>
 </div>
+<script>
+	function product_dt(){
+		var csv_export_code = GetId("csv_export_code");
+		window.location.href = webroot_dir+"/products/download/"+csv_export_code.value;
+	}
+</script>

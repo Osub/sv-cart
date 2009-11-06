@@ -9,139 +9,116 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: home.ctp 2485 2009-06-30 11:33:00Z huangbo $
+ * $Id: home.ctp 5382 2009-10-23 03:59:18Z huangbo $
 *****************************************************************************/
 ?>
+<?php echo $minify->css(array('/css/Charts'));?>
+<?php echo $javascript->link('FusionCharts');?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
-<div class="home_main">
-<table class="main_left" width="50%">
-<tr>
-<td align="left">
-<!--Order Stat-->
-	<div class="order_stat" style="width:97.5%">
-	  <div class="title">
-	  <h1>
-	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
-	  订单统计信息</h1></div>
-	  <div class="box" id="l">
-  	    <ul class="list">
-			<li><span class="number"><font color="red"><?php echo $wait_shipments_order_count?></font></span><?php echo $html->link("待发货订单:","/orders/?shipping_status=3",'',false,false);?>&nbsp;</li>
-			<li><span class="number"><font color="#192E32"><?php echo $wait_pay_order_count?></font></span><?php echo $html->link("待支付订单:","/orders/?payment_status=0",'',false,false);?>&nbsp;</li>
-			<li><span class="number"><font color="red"><?php echo $order_oos_count?></font></span><?php echo $html->link("订单缺货登记:","/products/search/wanted",'',false,false);?>&nbsp;</li>
-			<li><span class="number"><font color="#192E32"><?php echo $not_confirm_order_count?></font></span><?php echo $html->link("未确认订单:","/orders/?order_status=0",'',false,false);?>&nbsp;</li>
-			<li><span class="number"><font color="#192E32"><?php echo $order_complete_count?></font></span><?php echo $html->link("已成交订单数:","/orders/?shipping_status=2",'',false,false);?>&nbsp;</li>
-		<!--	<li><span class="number"><font color="red">没做</font></span><a class="" href="#" title="" target="_blank">退款申请:</a>&nbsp;</li>
-		-->
-		</ul>
-	  </div>
-	</div>
-<!--Order Stat End-->
-</td>
-<td>
-<!--product Stat-->
-	<div class="order_stat">
-	  <div class="title"><h1>
-	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
-	  实体商品统计信息
-	  </h1></div>
-	  <div class="box" id="m">
-  	    <ul class="list">
-			<li><span class="number"><font color="#192E32"><?php echo $product_count?></font></span><?php echo $html->link("商品总数:","/products",'',false,false);?>&nbsp;</li>
-			<li><span class="number"><font color="#192E32"><?php echo $product_recommend_count?></font></span><?php echo $html->link("商品推荐数:","/products/?is_recommond=1",'',false,false);?>&nbsp;</li>
-		<!--	<li><span class="number"><font color="#192E32">没做</font></span><a class="" href="#" title="" target="_blank">热销商品数:</a>&nbsp;</li>-->
-			<li><span class="number"><font color="#192E32"><?php echo $product_quantity_count?></font></span><?php echo $html->link("库存警告商品数:","/products/?quantity=3",'',false,false);?>&nbsp;</li>
-		<!--	<li><span class="number"><font color="#192E32">没做</font></span><a class="" href="#" title="" target="_blank">精品推荐数:</a>&nbsp;</li>
-		--> <li><span class="number"><font color="#192E32"><?php echo $product_promotion_count?></font></span><?php echo $html->link("促销商品数:","/products/?promotion_status=1",'',false,false);?>&nbsp;</li>
-		</ul>
-	  </div>
-	</div>
-<!--product Stat End-->
-</td>
-</tr>
-<tr>
-<td>
-<!--Order Stat-->
-	<!--<div class="order_stat">
-	  <div class="title"><h1>
-	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
-	  虚拟卡商品统计</h1></div>
-	  <div class="box">
-  	    <ul class="list">
-			<li><span class="number"><font color="#192E32">0</font></span><a class="" href="#" title="" target="_blank">商品总数:</a>&nbsp;</li>
-			<li><span class="number"><font color="#192E32">0</font></span><a class="" href="#" title="" target="_blank">新品推荐数:</a>&nbsp;</li>
-			<li><span class="number"><font color="#192E32">0</font></span><a class="" href="#" title="" target="_blank">热销商品数:</a>&nbsp;</li>
-			<li><span class="number"><font color="#192E32">0</font></span><a class="" href="#" title="" target="_blank">库存警告商品数:</a>&nbsp;</li>
-			<li><span class="number"><font color="#192E32">0</font></span><a class="" href="#" title="" target="_blank">精品推荐数:</a>&nbsp;</li>
-			<li><span class="number"><font color="#192E32">0</font></span><a class="" href="#" title="" target="_blank">促销商品数:</a>&nbsp;</li>
-		</ul>
-	  </div>
-	</div>-->
-<!--Order Stat End-->
-<!--</td>
-<td>-->
-<!--product Stat-->
-	<!--<div class="order_stat">
-	  <div class="title"><h1>
-	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
-	  访问统计</h1></div>
-	  <div class="box">
-  	    <ul class="list">
-			<li><span class="number"><font color="red">0</font></span><a class="" href="#" title="" target="_blank">今日访问:</a>&nbsp;</li>
-			<li><span class="number"><font color="red">0</font></span><a class="" href="#" title="" target="_blank">在线人数:</a>&nbsp;</li>
-			<li><span class="number"><font color="red">0</font></span><a class="" href="#" title="" target="_blank">今日访问:</a>&nbsp;</li>
-			<li><span class="number"><font color="red">0</font></span><a class="" href="#" title="" target="_blank">在线人数:</a>&nbsp;</li>
-			<li><span class="number"><font color="red">0</font></span><a class="" href="#" title="" target="_blank">今日点击:</a>&nbsp;</li>
-			<li><span class="number"><font color="red">0</font></span><a class="" href="#" title="" target="_blank">浏览量:</a>&nbsp;</li>
-		</ul>
-	  </div>
-	</div>-->
-<!--product Stat End-->
-</td>
-</tr>
-</table>
-<table class="main_right" width="50%">
-	<tr>
-		<td>
-
+<div class="home_main" style="padding:1px;">
+	<div class="home_box">
+	<div class="main_left order_stat">
+	<h1>七日成交额统计</h1>
+    	<span id="chartdiv" style="overflow-y:auto;"></span>
+      	<script type="text/javascript">
+		   var chart = new FusionCharts(admin_webroot+"capability/Charts/FCF_Column2D.swf", "ChartId", "400", "250","10");
+		   chart.setDataURL(admin_webroot+"capability/Data/Column2D.xml");
+		   chart.addParam("wmode","Opaque");
+		   chart.render("chartdiv");
+		</script>
 <!--Aticle List-->
+		<h1>官方信息</h1>
 		<div class="article_list">
-	      <div class="box">
-	        <ul>
-	        <li class="hdblock3_on">
-			  官方信息</li>
-			  <!--
-	          <li class="hdblock3_on" id="hdblock3_t21" onmouseover="show_intro('hdblock3_c2','hdblock3_t2',2,1,'hdblock3')">
-			  文章列表</li>
-		      <li class="hdblock3_off" id="hdblock3_t22" onmouseover="show_intro('hdblock3_c2','hdblock3_t2',2,2,'hdblock3')">
-			  <a href="#">未知</a></li>
-			  -->
-	        </ul>
-	      </div>
-	      		
-	      <div class="article_box" id="r">
+	      <div class="article_box">
 		    <div class="hdblock3_c" id="hdblock3_c21" style="display:block;">
-	        <ul class="list">
+	        <ul class="list" style='border:none'>
 	          <span id="rss_load"></span>
-			</ul>
-		    </div>
-			
-			<div class="hdblock3_c" id="hdblock3_c22" style="display:none;">
-	        <ul class="list">
-					<li><span class="title"></span><span class="number"></span></li>
-		
 			</ul>
 		    </div>
 		  </div>
 	    </div>
 <!--Aticle List End-->
-		</td>
-	</tr>
-</table>
+	</div>
+	
+	<div class="main_right">
+<!--Order Stat-->
+	<div class="order_stat">
+	<h1>待处理事务</h1>
+	  <div class="box">
+  	    <ul class="list">
+			<li><span class="number"><strong><u><font color="red"><?php echo $wait_shipments_order_count?></font></u></strong>条</span><?php echo $html->link("待发货订单","/reports/shipments",array("target"=>"_blank"),false,false);?></li>
+			<li><span class="number"><font color="#192E32"><?php echo $wait_pay_order_count?></font>条</span><?php echo $html->link("待支付订单","/orders/index?no_payment_status=1",array("target"=>"_blank"),false,false);?></li>
+			<li><span class="number"><font color="#192E32"><?php echo $order_oos_count?></font>条</span><?php echo $html->link("订单缺货登记","/products/search/wanted",array("target"=>"_blank"),false,false);?></li>
+			<li><span class="number"><font color="#192E32"><?php echo $not_confirm_order_count?></font>条</span><?php echo $html->link("未确认订单","/orders/index?order_status=0",array("target"=>"_blank"),false,false);?></li>
+			<li><span class="number"><font color="#192E32"><?php echo $order_complete_count?></font>条</span><?php echo $html->link("已成交订单数","/orders/index?payment_status=2",array("target"=>"_blank"),false,false);?></li>
+		</ul>
+  	    <ul class="list list_2">
+			<li><span class="number"><font color="#192E32"><?php echo $usermessage_complete_count?></font></span><?php echo $html->link("未回复商品咨询","/messages",array("target"=>"_blank"),false,false);?></li>
+			<li><span class="number"><font color="#192E32"><?php echo $usermessage_order_complete_count?></font></span><?php echo $html->link("未查看订单留言","/messages",array("target"=>"_blank"),false,false);?></li>
+			<li><span class="number"><font color="#192E32"><?php echo $usermessage_all_complete_count?></font></span><?php echo $html->link("未回复客户留言","/messages",array("target"=>"_blank"),false,false);?></li>
+			<li><span class="number"><font color="#192E32"><?php echo $users_did_not_view_the_album?></font></span><?php echo $html->link("未查看用户相册","/user_product_galleries",array("target"=>"_blank"),false,false);?></li>
+		</ul>
+	  </div>
+	  	
+	</div>
+<!--Order Stat End-->
+<!--Order Stat-->
+	<div class="order_stat">
+	<h1>近两日业务量</h1>
+	  <div class="box">
+  	    <ul class="list">
+			<li><span class="number"><strong><font color="red"><?php echo $this_order_complete_count?></font></strong>条</span><?php echo $html->link("今日成交订单","/orders/index?date=".date("Y-m-d")."&payment_status=2",array("target"=>"_blank"),false,false);?></li>
+			<li><span class="number"><strong><font color="red"><?php echo sprintf("%01.2f",$this_order_total);?></font></strong></span><?php echo $html->link("今日订单金额","/orders/index?date=".date("Y-m-d"),array("target"=>"_blank"),false,false);?></li>
+			<li><span class="number"><strong><font color="red"><?php echo sprintf("%01.2f",$orderproduct_info);?></font></strong></span><?php echo $html->link("今日销售利润","/orders/index?date=".date("Y-m-d"),array("target"=>"_blank"),false,false);?></li>
+			<li><span class="number"><strong><font color="red"><?php echo $this_user_count?></font></strong>位</span><?php echo $html->link("今日新增会员","/users/index?date=".date("Y-m-d"),array("target"=>"_blank"),false,false);?></li>
+		</ul>
+  	    <ul class="list list_2">
+  	    	<li><span class="number"><font color="#192E32"><?php echo sprintf("%01.2f",$orderproduct_info1);?></font></span><?php echo $html->link("昨日销售利润","/orders/index?date=".date("Y-m-d",time()-24*60*60),array("target"=>"_blank"),false,false);?></li>
+			<li><span class="number"><font color="#192E32"><?php echo $this_order_complete_count1?></font>条</span><?php echo $html->link("昨日成交订单","/orders/index?date=".date("Y-m-d",time()-24*60*60)."&payment_status=2",array("target"=>"_blank"),false,false);?></li>
+			<li><span class="number"><font color="#192E32"><?php echo sprintf("%01.2f",$this_order_total1);?></font></span><?php echo $html->link("昨日订单金额","/orders/index?date=".date("Y-m-d",time()-24*60*60),array("target"=>"_blank"),false,false);?></li>
+
+		</ul>
+	  </div>
+	  	
+	</div>
+<!--Order Stat End-->
+
+<!--product Stat-->
+	<div class="order_stat">
+	  <h1>实体商品统计信息</h1>
+	  <div class="box">
+  	    <ul class="list">
+			<li><span class="number"><font color="#192E32"><?php echo $product_count?></font></span><?php echo $html->link("商品总数","/products/",array("target"=>"_blank"),false,false);?></li>
+			<li><span class="number"><font color="#192E32"><?php echo $product_and_product_count?></font></span><?php echo $html->link("商品","/products/",array("target"=>"_blank"),false,false);?></li>
+			<li><span class="number"><font color="#192E32"><?php echo $product_and_download_product_count?></font></span><?php echo $html->link("下载","/product_downloads/",array("target"=>"_blank"),false,false);?></li>
+			<li><span class="number"><font color="#192E32"><?php echo $product_and_services_product_count?></font></span><?php echo $html->link("服务","/product_services/",array("target"=>"_blank"),false,false);?></li>
+			<li><span class="number"><font color="#192E32"><?php echo $product_and_virtual_card_count?></font></span><?php echo $html->link("虚拟卡","/virtual_cards/",array("target"=>"_blank"),false,false);?></li>
+			<li><span class="number"><font color="#192E32"><?php echo $product_and_recommend_count?></font></span><?php echo $html->link("商品推荐数","/products/index?is_recommond=1",array("target"=>"_blank"),false,false);?></li>
+		</ul>
+  	    <ul class="list list_2">
+			<li><span class="number"><font color="#192E32"><?php echo $product_and_warn_quantity_count?></font></span><?php echo $html->link("库存警告商品数","/warn_quantity_products/",array("target"=>"_blank"),false,false);?></li>
+			<li><span class="number"><font color="#192E32"><?php echo $product_and_forsale_count?></font></span><?php echo $html->link("促销商品数","/products/?promotion_status=1",array("target"=>"_blank"),false,false);?></li>
+			<li><span class="number"><font color="red"><strong><?php echo $product_count_forsale?></strong></font>件</span><?php echo $html->link("出售中的商品","/products/",array("target"=>"_blank"),false,false);?></li>
+			<li><span class="number"><font color="red"><strong><?php echo $product_and_trash_count?></strong></font>件</span><?php echo $html->link("回收站商品","/trash/",array("target"=>"_blank"),false,false);?></li>
+			<li><span class="number"><font color="#6DCD6C"><strong><?php echo $SVConfigs['version']?></strong></font></span>当前版本</li>
+		</ul>
+	  </div>
+	</div>
+<!--product Stat End-->
+	</div>
+	<p class="clear">&nbsp;</p>
+		<h1>官方推荐文章</h1>
+		<div class="article_list recommend" style="width:836px;padding-right:8px;">
+	      <div class="article_box">
+		    <div class="hdblock3_c" id="hdblock3_c21" style="display:block;">
+	        <ul class="list listLeft" style='border:none;' id="rss_recommend_article_load">
+			</ul>
+		    </div>
+		  </div>
+	    </div>
+	<p class="clear">&nbsp;</p>&nbsp;
+	</div>
 </div>
 </div>
 <script type="text/javascript">
@@ -155,7 +132,11 @@ var rss_load_img_Success = function(oResponse){
 	rss_load.innerHTML = "";
 	var url_str = "";
 	for( var i=0;i<oResults.length;i++){
-		url_str+="<li><span>."+oResults[i]+"</span></li>";
+		if(oResults.length-1==i){
+			url_str+="<li style='border:none'><span>"+oResults[i]+"</span></li>";
+		}else{
+			url_str+="<li><span>"+oResults[i]+"</span></li>";
+		}
 	}
 	rss_load.innerHTML = url_str;
 	//alert(oResponse.responseText);
@@ -171,8 +152,28 @@ var rss_load_callback ={
 	timeout : 3000000,
 	argument: {}
 };		
-				
 rss_load();
+
+function rss_recommend_article_load(){
+	var urlimg = webroot_dir+"pages/rss_recommend_article/";
+	YAHOO.util.Connect.asyncRequest('POST', urlimg, rss_recommend_article_load_callback);
+}
+var rss_recommend_article_load_img_Success = function(oResponse){
+	var rss_recommend_article_load = document.getElementById('rss_recommend_article_load'); 
+	rss_recommend_article_load.innerHTML = oResponse.responseText;
+}
+
+var rss_recommend_article_load_img_Failure = function(o){
+	//alert("异步请求失败");
+}
+
+var rss_recommend_article_load_callback ={
+	success:rss_recommend_article_load_img_Success,
+	failure:rss_recommend_article_load_img_Failure,
+	timeout : 3000000,
+	argument: {}
+};		
+rss_recommend_article_load();
 
 /*文章列表的切换Tab
 	function show_intro(pre,pree, n, select_n,css) {
@@ -188,29 +189,6 @@ rss_load();
 	}
 	}
 */
-//三栏自动等高
-    function autoHeight() {
-     if (arguments.length > 1) {
-      var x = arguments.length;
-      var elements=[];
-      for (i=0; i<x; i++) {
-       elements.push(document.getElementById(arguments[i]).offsetHeight);
-      }
-      var max = elements[0];
-      for(i=0; i<x; i++) {
-       if(max < elements[i]) {
-        max = elements[i];
-       }
-      }
-      for (i=0; i<x; i++) {
-       document.getElementById(arguments[i]).style.height = max+"px";
-      }
-     }
-    }
-window.onload = function() {
-autoHeight("r","m","l");//alert(document.getElementById("l").offsetHeight);
-
-}
 
 </script>
 

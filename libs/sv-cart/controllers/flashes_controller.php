@@ -9,40 +9,60 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: flashes_controller.php 2626 2009-07-06 07:02:59Z tangyu $
+ * $Id: flashes_controller.php 3949 2009-08-31 07:34:05Z huangbo $
 *****************************************************************************/
 App::import('Core', 'xml');
 
 class FlashesController extends AppController {
 	var $name = 'Flashes';
 	var $helpers = array('Xml');
-    var $uses = array('Flash'); 
+    var $uses = array('Flash','ProductGallery'); 
+	var $cacheQueries = true;
+	var $cacheAction = "1 hour";
 
  	function index($type,$type_id=0){
  	  $this->page_init();
  	  $this->Flash->set_locale($this->locale);
- 	  $flash_info=$this->Flash->find("type = '$type' and type_id = $type_id ");
+ 	  if($type == "P"){
+ 		  $flash_info=$this->Flash->find("type = '$type'");
+ 	  }else{
+ 		  $flash_info=$this->Flash->find("type = '$type' and type_id = $type_id ");
+ 	  }
 	  $flash_info['Flash']['titlebgcolor']=hexdec($flash_info['Flash']['titlebgcolor']);
 	  $flash_info['Flash']['titletextcolor']=hexdec($flash_info['Flash']['titletextcolor']);
 	  $flash_info['Flash']['btntextcolor']=hexdec($flash_info['Flash']['btntextcolor']);
 	  $flash_info['Flash']['btndefaultcolor']=hexdec($flash_info['Flash']['btndefaultcolor']);
 	  $flash_info['Flash']['btnhovercolor']=hexdec($flash_info['Flash']['btnhovercolor']);
 	  $flash_info['Flash']['btnfocuscolor']=hexdec($flash_info['Flash']['btnfocuscolor']);
-//	  pr($flash_info);
  	  $config = $flash_info['Flash'];
 
-		
- 	  if($flash_info['FlashImage'])
- 	  foreach($flash_info['FlashImage'] as $k => $v){
- 	  	  $flash_info['FlashImage'][$k]['image'] = $this->url($v['image'],false);
- 	  	  if(Configure::read('App.baseUrl'))
- 	  	  	  $flash_info['FlashImage'][$k]['image'] = str_replace('index.php/','',$flash_info['FlashImage'][$k]['image']);
- 	  	  if(isset($v['url']) && $v['url'] !=""){
- 	  	  	$flash_info['FlashImage'][$k]['link'] = $this->url($v['url'],false);
- 	  	  	unset($flash_info['FlashImage'][$k]['url']);
- 	  	  }else{
- 	  	  	  $flash_info['FlashImage'][$k]['link']="#";
- 	  	  }
+	
+	  if($type == "P"){
+			$this->ProductGallery->set_locale($this->locale);
+		    $galleries = $this->ProductGallery->findall("ProductGallery.product_id = '$type_id'",null,"orderby");
+		    if(isset($galleries) && sizeof($galleries)>0){
+		    	foreach($galleries as $k=>$v){
+			 	  	  $flash_info['FlashImage'][$k]['image'] = $this->url($v['ProductGallery']['img_detail'],false);
+			 	  	  if(Configure::read('App.baseUrl')){
+			 	  	  	  $flash_info['FlashImage'][$k]['image'] = str_replace('index.php/','',$flash_info['FlashImage'][$k]['image']);
+			 	  	  }
+			 	  	  $flash_info['FlashImage'][$k]['flash_id']=1;
+			 	  	  $flash_info['FlashImage'][$k]['link']="#";
+			 	  	  $flash_info['FlashImage'][$k]['title']="";
+		    	}
+		    }
+	  }elseif($flash_info['FlashImage']){
+		 	  foreach($flash_info['FlashImage'] as $k => $v){
+		 	  	  $flash_info['FlashImage'][$k]['image'] = $this->url($v['image'],false);
+		 	  	  if(Configure::read('App.baseUrl'))
+		 	  	  	  $flash_info['FlashImage'][$k]['image'] = str_replace('index.php/','',$flash_info['FlashImage'][$k]['image']);
+		 	  	  if(isset($v['url']) && $v['url'] !=""){
+		 	  	  	$flash_info['FlashImage'][$k]['link'] = $this->url($v['url'],false);
+		 	  	  	unset($flash_info['FlashImage'][$k]['url']);
+		 	  	  }else{
+		 	  	  	  $flash_info['FlashImage'][$k]['link']="#";
+		 	  	  }
+		 	  }
  	  }
  	  
  	  $channel = $flash_info['FlashImage'];

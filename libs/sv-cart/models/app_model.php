@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: app_model.php 2699 2009-07-08 11:07:31Z huangbo $ */
+/* SVN FILE: $Id: app_model.php 3673 2009-08-17 09:57:45Z huangbo $ */
 /**
  * Application model for Cake.
  *
@@ -36,6 +36,7 @@
  * @subpackage    cake.cake.libs.model
  */
 class AppModel extends Model {
+	
 	function cacheFind($model_name ,$method , $params = array()) {
 		$cache_key = md5($model_name.$method.serialize($params));
 		

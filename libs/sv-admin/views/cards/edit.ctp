@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: edit.ctp 2485 2009-06-30 11:33:00Z huangbo $
+ * $Id: edit.ctp 3743 2009-08-19 06:43:32Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -62,34 +62,24 @@
 	</div>
 <!--Communication Stat End-->
 </td>
-<style type="text/css">
-.tongxun dl{
-	margin:3px 0;*margin:1px 0 0;
-}
-</style>
+
 <td valign="top" width="50%" style="padding-left:5px;padding-top:25px;">
 <!--Other Stat-->
-	<div class="order_stat athe_infos tongxun">
+	<div class="order_stat athe_infos">
 	  
-	  <div class="box">
-	  <br />
+	  <div class="box"><br />
 		<dl><dt>上传图片1：</dt><dd><input type="text" size="35" style="font-size:12px;" id="upload_img_text_1" name="data[Card][img01]" value="<?php echo $card['Card']['img01']?>" /><br /><br /><?php echo $html->image("/..{$card['Card']['img01']}",array('id'=>'logo_thumb_img_1','height'=>'150','style'=>!empty($card['Card']['img01'])?"display:block":"display:none"))?></dd><dd><?php echo $html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(1,'cards')",'',false,false)?></dd></dl>
 		
 		<dl><dt>上传图片2：</dt><dd><input type="text" size="35" style="font-size:12px;" id="upload_img_text_2" name="data[Card][img02]" value="<?php echo $card['Card']['img02']?>" /><br /><br /><?php echo $html->image("/..{$card['Card']['img02']}",array('id'=>'logo_thumb_img_1','height'=>'150','style'=>!empty($card['Card']['img02'])?"display:block":"display:none"))?></dd><dd><?php echo $html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(2,'cards')",'',false,false)?></dd></dl>
 		
-		
-		
 		<dl><dt>费用：</dt><dd><input type="text" class="text_inputs" style="width:120px;" name="data[Card][fee]" value="<?php echo $card['Card']['fee']?>" /></dd></dl>
 		<dl><dt>免费额度：</dt><dd><input type="text" class="text_inputs" style="width:120px;" name="data[Card][free_money]" value="<?php echo $card['Card']['free_money']?>" /></dd></dl>
-		<dl><dt>排序：</dt><dd><input type="text" class="text_inputs" style="width:120px;" name="data[Card][orderby]" value="<?php echo $card['Card']['orderby']?>" onkeyup="check_input_num(this)" /><font color="#646464"><br />如果您不输入排序号，系统将默认为50</font></dd></dl>
-		
-		
+		<dl><dt>排序：</dt><dd><input type="text" class="text_inputs" style="width:120px;" name="data[Card][orderby]" value="<?php echo $card['Card']['orderby']?>" onkeyup="check_input_num(this)" /><font color="#646464"><p class="msg">如果您不输入排序号，系统将默认为50</p></font></dd></dl>
 		
 		<dl style="padding:3px 0;*padding:4px 0;">
 		<dt style="padding-top:1px">是否有效：</dt>
 		<dd class="best_input"><label><input type="radio" name="data[Card][status]" value="1" <?php if($card['Card']['status'] == 1){echo "checked";} ?> />是</label><label><input type="radio" name="data[Card][status]" value="0" <?php if($card['Card']['status'] == 0){echo "checked";} ?> />否</label></dd></dl>
-		
-		<br /><br /><br /><br />
+
 	  </div>
 	</div>
 <!--Other Stat End-->

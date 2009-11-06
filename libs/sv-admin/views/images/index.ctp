@@ -9,9 +9,10 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 2761 2009-07-10 09:06:59Z shenyunfeng $
+ * $Id: index.ctp 5493 2009-11-03 10:47:49Z huangbo $
 *****************************************************************************/
 ?>
+<?php echo $javascript->link('utils');?>	
 <?php echo $javascript->link('/../js/yui/treeview-min.js');?>
 <?php echo $javascript->link('treeview/treeview1.js');?>
 <?php echo $javascript->link('treeview/prototype.js');?>
@@ -25,40 +26,64 @@
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 <?php }else{echo "<br /><br />";}?>
 <!--Main Start-->
-<style>
-
-td{font-family:verdana;font-size:11px;color:000000}
-.bold{font:900}
-<!--
-.box{ 
-		
-		*display: block;
-		*font-size: 85px;
-		*font-family:Arial;
+<style type="text/css">
+/* ---------- 郑20090821 ----------------------- */
+.gallery {
+	list-style: none;
+	margin: 0;
+	padding: 0;
 }
-.box img{ padding:4px; border:1px #E3E3DF solid; vertical-align:middle;
-width:120px;height:100px;
+.gallery li {
+	width: 186px;
+	height: 153px;
+	margin: 10px 10px 5px;
+	float: left;
+	position: relative;
 }
--->
+.gallery .bg {
+	width: 186px;
+	height: 153px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
+}
+.gallery img {
+	border: none;
+	position: absolute;
+	top: 8px;
+	left: 8px;
+	padding:4px; border:1px #E3E3DF solid; vertical-align:middle;
+width:160px;height:110px;
+	z-index: 2;
+}
+.gallery p {
+	display: block;
+	padding: 4px 0 0;
+	text-align: center;
+	color: #333;
+	width: 186px;
+	position: absolute;
+	bottom: 8px;
+	right: 0;
+	z-index: 3;
+}
 </style>
 
+<br />
+<!--<p class="add_categories"><?php echo $html->link("显示图片","javascript:img_is_show(this);",array("style"=>"display:none","id"=>"img_show"),false,false);?><?php echo $html->link("隐藏图片","javascript:img_is_show(this);",array("id"=>"img_hide"),false,false);?></p>-->
+<div class="home_main" style="background-color: #FFFFFF;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' ); ">
 
-<p class="add_categories"><?php echo $html->link("显示图片","javascript:img_is_show(this);",array("style"=>"display:none","id"=>"img_show"),false,false);?><?php echo $html->link("隐藏图片","javascript:img_is_show(this);",array("id"=>"img_hide"),false,false);?></p>
-<div class="home_main" style="width:96%;background-color: #FFFFFF;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
-
-
-	<ul class="product_llist departments_headers" style="background-color: #FFFFFF;">
-		<li class="name"><p>菜单</p></li>
-		<li class="hadle">图片</li>
-	</ul>
-	<ul class="product_llist departments_headers departments_list" style='height:100%;'>
-		<li class="name" style="overflow:auto;line-height:14pt;letter-spacing:0.2em; HEIGHT:400px;TEXT-ALIGN:left"><strong ><div id="treeDiv1" style="overflow:auto;width:140px;line-height:14pt;letter-spacing:0.2em; " ></div></strong></li>
-		<li class="hadle" style="width:85.5%;"><ul class="hotGroup">
-		<span id="preServerData"></span>
-			
-	</ul></li>
-	</ul>
-
+<table cellpadding="0" cellspacing="0" width="100%" class="list_data">
+<tr class="thead">
+	<th width="13.5%">菜单</th>
+	<th width="86.5%">图片</th>
+</tr>
+<tr>
+	<td id="treeDiv1" valign="top" ></td>
+	<td valign="top" ><span class="gallery" id="preServerData"></span></td>
+</tr>
+</table>
 <br />
 </div>
 <!--upload--->
@@ -97,7 +122,7 @@ width:120px;height:100px;
 </div>
 <!--upload--->
 <?php echo $javascript->link('swfupload/swfupload.js'); ?>
-<?php echo $javascript->link('swfupload/swfupload.swfobject.js'); ?>
+				
 <?php echo $javascript->link('swfupload/swfupload.queue.js'); ?>
 <?php echo $javascript->link('swfupload/fileprogress.js'); ?>
 <?php echo $javascript->link('swfupload/handlers.js'); ?>
@@ -130,7 +155,7 @@ function swfuploadimg() {
 				
 		
 		file_size_limit : "100 MB",
-		file_types : "*.*",
+		file_types : "*.jpg;*.jpeg;*.gif;*.png;*.bmp;*.swf",
 		file_types_description : "All Files",
 		file_upload_limit : 100,
 		file_queue_limit : 0,
@@ -183,8 +208,6 @@ function swf_upload_addr(){
 			"img_addr":img_addr,
 			".what" : "OKAY"
 		});
-		
-	
 }
 ////////////////////
 
@@ -220,6 +243,88 @@ function initPage2(){
 							); 
 			big_panel.render();
 		}
+document.onmousemove=function(e)
+{
+  var obj = Utils.srcElement(e);
+  if (typeof(obj.onclick) == 'function' && obj.onclick.toString().indexOf('listTable.edit') != -1)
+  {
+    obj.title = '点击修改内容';
+    obj.style.cssText = 'background: #21964D;';
+    obj.onmouseout = function(e)
+    {
+      this.style.cssText = '';
+    }
+  }
+  else if (typeof(obj.href) != 'undefined' && obj.href.indexOf('listTable.sort') != -1)
+  {
+    obj.title = '点击对列表排序';
+  }
+}
+/* $Id: index.ctp 5493 2009-11-03 10:47:49Z huangbo $ */
+var listTable = new Object;
+
+listTable.query = "query";
+listTable.filter = new Object;
+listTable.url = location.href.lastIndexOf("?") == -1 ? location.href.substring((location.href.lastIndexOf("/")) + 1) : location.href.substring((location.href.lastIndexOf("/")) + 1, location.href.lastIndexOf("?"));
+listTable.url += "?is_ajax=1";
+
+/**
+ * 创建一个可编辑区
+ */
+listTable.edit = function(obj,func,id,mydir)
+{
+  var tag = obj.firstChild.tagName;
+
+  if (typeof(tag) != "undefined" && tag.toLowerCase() == "input")
+  {
+    return;
+  }
+
+  /* 保存原始的内容 */
+  var org = obj.innerHTML;
+  var val = Browser.isIE ? obj.innerText : obj.textContent;
+
+  /* 创建一个输入框 */
+  var txt = document.createElement("INPUT");
+  txt.value = (val == 'N/A') ? '' : val;
+  txt.style.width = (obj.offsetWidth + 12) + "px" ;
+
+  /* 隐藏对象中的内容，并将输入框加入到对象中 */
+  obj.innerHTML = "";
+  obj.appendChild(txt);
+  txt.focus();
+
+  /* 编辑区输入事件处理函数 */
+  txt.onkeypress = function(e)
+  {
+    var evt = Utils.fixEvent(e);
+    var obj = Utils.srcElement(e);
+
+    if (evt.keyCode == 13)
+    {
+      obj.blur();
+
+      return false;
+    }
+
+    if (evt.keyCode == 27)
+    {
+      obj.parentNode.innerHTML = org;
+    }
+  }
+
+  /* 编辑区失去焦点的处理函数 */
+  txt.onblur = function(e){
+    if (Utils.trim(txt.value).length > 0){ 
+	  res = YAHOO.util.Connect.asyncRequest('POST', webroot_dir+func, null,"&new_name=" + mydir+Utils.trim(txt.value) + "&old_name=" +mydir+id);
+      obj.innerHTML = Utils.trim(txt.value);
+      
+    }
+    else{
+      obj.innerHTML = org;
+    }
+  }
+}
 </script>
 
 <div id="img_dir">

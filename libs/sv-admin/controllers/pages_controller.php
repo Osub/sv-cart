@@ -9,14 +9,58 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: pages_controller.php 3175 2009-07-22 03:12:51Z huangbo $
+ * $Id: pages_controller.php 5382 2009-10-23 03:59:18Z huangbo $
 *****************************************************************************/
 class PagesController extends AppController {
 	var $name = 'Pages';
 	var $helpers = array('Html','Javascript');
-	var $uses = array('ConfigI18n','Article','Operator','Operator_action','Operator_menu','Order','BookingProduct','Product','MailTemplate','Operator_log','Config','Language');
+	var $uses = array("UserAccount","UserMessage","Store","User",'ConfigI18n','Article','Operator','Operator_action','Operator_menu','Order','BookingProduct',"UserProductGallery",'Product','MailTemplate','Operator_log','Config','Language','OrderProduct');
 	var $components = array('Captcha','Email','RequestHandler','Cookie');
-		
+	
+	//Google快捷窗口
+	function back_gears(){
+		Configure::write('debug', 0);
+	}
+	//Google快捷窗口
+	function google_shortcut(){
+		Configure::write('debug', 0);
+	}
+	
+	//清除缓存
+	function clear_cache_bt(){
+    	/* app模块 */
+    	$app_model = array();
+    	$app_model[] = array('name'=>'前台','dir_name'=>'sv-cart');
+    	$app_model[] = array('name'=>'用户中心','dir_name'=>'sv-user');
+    	$app_model[] = array('name'=>'后台','dir_name'=>'sv-admin');
+    	$plugins = $this->Plugin->find("all",array("fields"=>array("name","app_contents")));
+    	if(!empty($plugins)){
+    		foreach($plugins as $k=>$v){
+    			if(!empty($v['Plugin']['app_contents']))
+    				$app_model[] = array('name'=>$v['Plugin']['name'],'dir_name'=>$v['Plugin']['app_contents']);
+    		}
+    	}
+    	$this->set('app_model',$app_model);
+		Configure::write('debug', 0);
+	}
+	//插件搜索
+	function plugin_search(){
+		Configure::write('debug', 0);
+	}
+	//在线帮助
+	function online_help_div(){
+		Configure::write('debug', 0);
+	}
+	//账户设置
+	function account_settings(){
+		Configure::write('debug', 0);
+	}
+	//关于SV-Cart
+	function sys_about(){
+		Configure::write('debug', 0);
+	}
+	
+	
 	function display(){
 		//pr($this);
 		//exit;
@@ -60,26 +104,26 @@ class PagesController extends AppController {
 			$this->redirect("/login");
 			exit;
 		}
-		
+		$this->Order->belongsTo=array();
 		$this->Product->hasOne = array();
 		//pr($_COOKIE);
-		$this->Config->set_locale($this->locale);
-		$shop_name = $this->Config->findbycode("shop_name");
 		$this->locale = $_SESSION['Admin_Locale'];
-		$this->pageTitle = "管理中心"." - ".$shop_name['ConfigI18n']['value'];
+		$this->pageTitle = "管理中心"." - ".$this->configs['shop_name'];
 		//print_r($_SESSION);
 		$this->navigations[] = array('name'=>'管理中心','url'=>'/pages/home/');
 		$this->set('navigations',$this->navigations);
 		
+		//》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》1左
 		//待发货订单
 		$condition 						= 		"";
 		$condition['status']			=		'1';
 		$condition['shipping_status']	=		'3';
 		$wait_shipments_order_count  	= 		$this->Order->findCount($condition,0);
-
+		
 		//等待支付订单
 		$condition 						= 		"";
 		$condition['payment_status !=']	=		'2';
+		$condition['status  =']			=		'1';
 		$wait_pay_order_count 			= 		$this->Order->findCount($condition,0);
 
 		//订单缺货登记
@@ -90,51 +134,206 @@ class PagesController extends AppController {
 		$condition 						= 		"";
 		$condition['status']			=		0;
 		$not_confirm_order_count 		= 		$this->Order->findCount($condition,0);
-
+		
 		//已成交订单数
 		$condition 						= 		"";
-		$condition['shipping_status']	=		'1';
+		$condition['payment_status']	=		'2';
 		$order_complete_count 			= 		$this->Order->findCount($condition,0);
+
 		$this->set("wait_shipments_order_count",$wait_shipments_order_count );//待发货订单
-		$this->set("wait_pay_order_count",$wait_pay_order_count );//待发货订单
-		$this->set("order_oos_count",$order_oos_count );//订单缺货登记
-		$this->set("not_confirm_order_count",$not_confirm_order_count );//未确认订单
-		$this->set("order_complete_count",$order_complete_count );//已成交订单数
+		$this->set("wait_pay_order_count",$wait_pay_order_count);//等待支付订单
+		$this->set("order_oos_count",$order_oos_count);//订单缺货登记
+		$this->set("not_confirm_order_count",$not_confirm_order_count);//未确认订单
+		$this->set("order_complete_count",$order_complete_count);//已成交订单数
 			
 			
 			
+		//未处理充值申请
+		$condition 						= 		"";
+		$condition['status']			=		'0';
+		$user_accounts_top 				= 		$this->UserAccount->findCount($condition,0);
+
+		//库存警告商品数
+		$condition 										= 		"";
+		$condition										=		"Product.quantity<=Product.warn_quantity";
+		$product_quantity_count 						= 		$this->Product->findCount($condition,0);
+
+
+		
+		
+		//》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》1右
+		//未回复商品咨询
+		$condition 						= 		"";
+		$condition['status']			=		'0';
+		$condition['type']				=		'P';
+		$usermessage_complete_count 	= 		$this->UserMessage->findCount($condition,0);
+		
+		//未查看订单留言
+		$condition 						= 		"";
+		$condition['status']			=		'0';
+		$condition['type']				=		'O';
+		$usermessage_order_complete_count 	= 		$this->UserMessage->findCount($condition,0);
+		
+		//未回复客户留言
+		$condition 						= 		"";
+		$condition['status']			=		'0';
+		$condition['msg_type']			=		'2';
+		$usermessage_all_complete_count = 		$this->UserMessage->findCount($condition,0);
+
+		//未查看用户相册
+		$condition 						= 		"";
+		$condition["status"]			= 		"1";
+		$this->UserProductGallery->hasOne = array();
+		$this->UserProductGallery->hasMany = array();
+		$this->UserProductGallery->belongsTo = array();
+		$users_did_not_view_the_album 	= 		$this->UserProductGallery->findCount($condition,0);
+		
+		
+		$this->set("usermessage_complete_count",$usermessage_complete_count);//库存警告商品数
+		$this->set("usermessage_order_complete_count",$usermessage_order_complete_count);//库存警告商品数
+		$this->set("usermessage_all_complete_count",$usermessage_all_complete_count);//未回复客户留言
+		$this->set("users_did_not_view_the_album",$users_did_not_view_the_album);//未查看用户相册
+		
+		
+		
+		
+		//》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》2左
+		//今日成交订单
+		$condition 						= 		"";
+		$condition['payment_status']	=		'2';
+		$condition['payment_time =']	=		date("Y-m-d")." 00:00:00";
+		$this_order_complete_count 			= 		$this->Order->findCount($condition,0);
+		
+		//今日订单金额
+		$condition 						= 		"";
+		$condition['created >']			=		date("Y-m-d")." 00:00:00";
+		$this_order_total 				= 		$this->Order->find("all",array("conditions"=>$condition,"group"=>"SUBSTR(Order.created,1,10)","fields"=>"sum(Order.total) as total"));
+		$this_order_total = empty($this_order_total)?0:$this_order_total[0][0]["total"];
+		
+		//今日销售利润 
+		$condition 						= 		"";
+		$condition['created >']			=		date("Y-m-d")." 00:00:00";
+		$this_order_id_info				= 		$this->Order->find("all",array("conditions"=>$condition,"fields"=>"Order.id"));
+		$this_order_id_arr[] 			= 		0;
+		foreach( $this_order_id_info as $k=>$v ){
+			$this_order_id_arr[] = $v["Order"]["id"];
+		}
+		$orderproduct_info = $this->OrderProduct->find("all",array("conditions"=>array("OrderProduct.order_id"=>$this_order_id_arr),"fields"=>"sum(Product.purchase_price) as purchase_price"));
+		$orderproduct_info = $this_order_total-empty($orderproduct_info[0][0]["purchase_price"])?0:$orderproduct_info[0][0]["purchase_price"];
+		//今日新增会员
+		$condition 						= 		"";
+		$condition['created >']			=		date("Y-m-d")." 00:00:00";
+		$this_user_count				= 		$this->User->find("all",array("conditions"=>$condition,"group"=>"SUBSTR(User.created,1,10)","fields"=>"count(User.id) as num"));
+		$this_user_count 				=		empty($this_user_count)?0:$this_user_count[0][0]["num"];
+
+		$this->set("this_order_complete_count",$this_order_complete_count);//今日成交订单
+		$this->set("this_order_total",$this_order_total);//今日订单金额
+		$this->set("orderproduct_info",$orderproduct_info);//今日销售利润
+		$this->set("this_user_count",$this_user_count);//今日新增会员
+		
+		
+		
+		//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>2右
+		//昨日成交订单
+		$condition 						= 		"";
+		$condition['payment_status']	=		'2';
+		$condition['payment_time >']	=		date("Y-m-d",time()-24*60*60)." 00:00:00";
+		$condition['payment_time <']	=		date("Y-m-d",time()-24*60*60)." 23:59:59";
+		$this_order_complete_count1 	= 		$this->Order->findCount($condition,0);
+		//昨日订单金额
+		$condition 						= 		"";
+		$condition['created >']			=		date("Y-m-d",time()-24*60*60)." 00:00:00";
+		$condition['created <']			=		date("Y-m-d",time()-24*60*60)." 23:59:59";
+		$this_order_total1 				= 		$this->Order->find("all",array("conditions"=>$condition,"group"=>"SUBSTR(Order.created,1,10)","fields"=>"sum(Order.total) as total"));
+		$this_order_total1 = empty($this_order_tota1l[0][0]["total"])?0:$this_order_tota1l[0][0]["total"] ;
+		
+		///昨日销售利润 
+		$condition 						= 		"";
+		$condition['created >']			=		date("Y-m-d",time()-24*60*60)." 00:00:00";
+		$this_order_id_info1			= 		$this->Order->find("all",array("conditions"=>$condition,"fields"=>"Order.id"));
+		$this_order_id_arr1[] 			= 		0;
+		foreach( $this_order_id_info1 as $k=>$v ){
+			$this_order_id_arr1[] = $v["Order"]["id"];
+		}
+		$orderproduct_info1 = $this->OrderProduct->find("all",array("conditions"=>array("OrderProduct.order_id"=>$this_order_id_arr),"fields"=>"sum(Product.purchase_price) as purchase_price"));
+		$orderproduct_info1 = $this_order_total1-empty($orderproduct_info1[0][0]["purchase_price"])?0:$orderproduct_info1[0][0]["purchase_price"];
+	
+		$this->set("orderproduct_info1",$orderproduct_info1);//昨日销售利润
+		$this->set("this_order_complete_count1",$this_order_complete_count1);//昨日成交订单
+		$this->set("this_order_total1",$this_order_total1);//昨日订单金额
+		
+		//》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》3左
+		$this->Product->hasOne=array();
+		$this->Product->hasMany=array();
 		//商品总数
 		$condition 										= 		"";
 		$product_count 									= 		$this->Product->findCount($condition,0);
-		//商品推荐数
+		
+		//商品 
 		$condition 										= 		"";
-		$condition['Product.recommand_flag =']			=		"1";
-		$condition['Product.status']					=		"1";
-		$product_recommend_count 						= 		$this->Product->findCount($condition,0);
+		$condition["extension_code"] 					= 		"";
+		$condition["forsale"] 							= 		"1";
+		$condition["status"] 							= 		"1";
+		$product_and_product_count 						= 		$this->Product->findCount($condition,0);
+		
+		//下载 
+		$condition 										= 		"";
+		$condition["extension_code"] 					= 		"download_product";
+		$product_and_download_product_count 	 		= 		$this->Product->findCount($condition,0);
+		
+		//服务 
+		$condition 										= 		"";
+		$condition["extension_code"] 					= 		"services_product";
+		$product_and_services_product_count 		 	= 		$this->Product->findCount($condition,0);
+		
+		//虚拟卡 
+		$condition 										= 		"";
+		$condition["extension_code"] 					= 		"virtual_card";
+		$product_and_virtual_card_count 		 	= 		$this->Product->findCount($condition,0);
+		
+		//商品推荐数 
+		$condition 										= 		"";
+		$condition["recommand_flag"] 					= 		"1";
+		$condition["status"] 							= 		"1";
+		$product_and_recommend_count 		 			= 		$this->Product->findCount($condition,0);
+		
+		$this->set("product_count",$product_count);//商品总数
+		$this->set("product_and_product_count",$product_and_product_count);//商品
+		$this->set("product_and_download_product_count",$product_and_download_product_count);//下载
+		$this->set("product_and_services_product_count",$product_and_services_product_count);//服务
+		$this->set("product_and_virtual_card_count",$product_and_virtual_card_count);//虚拟卡
+		$this->set("product_and_recommend_count",$product_and_recommend_count);//商品推荐数
+		
+		///>>>>>>>>>>>>>>>>>>>>>>>>>>》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》3右
 		//库存警告商品数
 		$condition 										= 		"";
-		$condition['Product.quantity <=']				=		"3";
-		$product_quantity_count 						= 		$this->Product->findCount($condition,0);
+		$condition["status"]  							= 		"1";
+		$condition["extension_code"]  					= 		"";
+		$condition["quantity <="]  						= 		"warn_quantity";
+		$product_and_warn_quantity_count 		 		= 		$this->Product->findCount($condition,0);
+		
 		//促销商品数
 		$condition 										= 		"";
-		$condition['Product.status']					=		"1";
-		$condition['Product.promotion_status !=']		=		"0";
-		$product_promotion_count 						= 		$this->Product->findCount($condition,0);
+		$condition["promotion_status"]  				= 		"1";
+		$condition["status"]  							= 		"1";
+		$product_and_forsale_count 		 				= 		$this->Product->findCount($condition,0);
+		//回收站商品数
+		$condition 										= 		"";
+		$condition["status"]  							= 		"2";
+		$product_and_trash_count 		 				= 		$this->Product->findCount($condition,0);
 		
-		$this->set("product_count",$product_count );//商品总数
-		$this->set("product_recommend_count",$product_recommend_count );//商品推荐数
-		$this->set("product_quantity_count",$product_quantity_count );//库存警告商品数
-		$this->set("product_promotion_count",$product_promotion_count );//促销商品数
-			
-			
-		//文章列表 
-		$this->Article->set_locale($this->locale);
-		$condition_article['title !='] = "";
-		$article = $this->Article->findAll($condition_article,'',"Article.modified desc",'8');
-		$this->Config->set_locale($_SESSION['Admin_Locale']);
-		$ss = $this->Config->getformatcode();
-	
-		if(@$ss['is_guides']==1){
+		//出售中的商品
+		$condition 										= 		"";
+		$condition["status"]  							= 		"1";
+		$product_count_forsale 		 				= 		$this->Product->findCount($condition,0);
+		
+		$this->set("product_and_warn_quantity_count",$product_and_warn_quantity_count);//库存警告商品数
+		$this->set("product_and_forsale_count",$product_and_forsale_count);//促销商品数
+		$this->set("product_and_trash_count",$product_and_trash_count);//回收站商品数
+		$this->set("product_count_forsale",$product_count_forsale);//出售中的商品
+
+
+		if(@$this->configs['is_guides']==1){
 			$is_guides_id=$this->Config->find(array('Config.code'=>'is_guides'),'DISTINCT Config.id');
 			$this->ConfigI18n->updateAll(
 			              array('ConfigI18n.value' => 0),
@@ -142,10 +341,66 @@ class PagesController extends AppController {
 			           );
 			$this->redirect("/guides/");
     	}
-    	$this->set("article",$article );//文章列表
-		//$this->set("rss_str",$this->rss_str() );
-	//	$g_languages = $this->Language->findall();//google快捷窗口需要的语言
-    //	$this->set('g_languages',$g_languages);
+    	
+    	
+    	
+    		
+		$this_data = date("Y-m-d",time()+24*60*60)." 23:59:59";
+		$day_num = 7;
+		$old_data_arr = array();
+		for($i=$day_num;$i>=1;$i--){
+			$old_data_arr[] = date("Y-m-d",strtotime($this_data)-24*60*60*$i);
+			
+		}
+		
+		$old_data = date("Y-m-d",time()-24*60*60*7)." 00:00:00";
+		$this->Order->belongsTo=array();
+		$this->Order->hasone=array();
+		$this->Order->hasMany=array();
+		$condition = "";
+		$condition["and"]["payment_time >="] = date("Y-m-d",strtotime($this_data)-24*60*60*$day_num)." 00:00:00";
+		$condition["and"]["payment_time <="] = $this_data;
+		
+		
+		//已成交订单数payment_time
+		$condition["and"]['payment_status']		= '2';
+		$condition["and"]['payment_time <=']	= $this_data;
+		$condition["and"]['payment_time >=']	= $old_data;
+		
+		$order_info = $this->Order->find("all",array("conditions"=>$condition,"group"=>"SUBSTR(Order.payment_time,1,10)","fields"=>array("count(id) as countorder","SUBSTR(Order.payment_time,1,10) as payment_time")));
+
+		$odi = 0;
+		foreach( $order_info as $k=>$v ){
+			$order_data[$v[0]["payment_time"]] = $v[0]["countorder"];
+			
+		}
+		$locale_arr[] = "AFD8F8";
+		$locale_arr[] = "F6BD0F";
+		$locale_arr[] = "8BBA00";
+		$locale_arr[] = "FF8E46";
+		$locale_arr[] = "008E8E";
+		$locale_arr[] = "D64646";
+		$locale_arr[] = "8E468E";
+		foreach( $old_data_arr as $k=>$v ){
+			$myvalue = empty($order_data[$v])?0:$order_data[$v];
+			if($odi<$myvalue){
+				$odi=$myvalue;
+			}
+		}
+		if($odi > 4 ){
+			$xmldata = "<graph caption='Monthly Unit Sales' xAxisName='Month' yAxisName='Units' decimalPrecision='0' formatNumberScale='0' >";
+		}else{
+			$xmldata = "<graph caption='Monthly Unit Sales' xAxisName='Month' yAxisName='Units' decimalPrecision='0' formatNumberScale='0' yaxismaxvalue='5'>";
+		}
+		
+		foreach( $old_data_arr as $k=>$v ){
+			$myvalue = empty($order_data[$v])?0:$order_data[$v];
+			$xmldata.="<set name='".date("m-d",strtotime($v))."' value='".$myvalue."' color='".$locale_arr[$k]."' />";
+		}
+		$xmldata.= "</graph>";
+		$fp = fopen('../sv-admin/capability/Data/Column2D.xml', 'wb+');
+		fwrite($fp, $xmldata);
+		
 	    $this->layout = 'default';
 	}
 	
@@ -206,11 +461,13 @@ class PagesController extends AppController {
 		    			$operator_info['Operator']['last_login_time'] = date("Y-m-d H:i:s");
 		    			$operator_info['Operator']['last_login_ip'] = $_SERVER["REMOTE_ADDR"];
 		    			$this->Operator->save($operator_info);
+		    			$language_info = $this->Language->findbylocale($_REQUEST['locale']);
 		    			$_SESSION['Operator_Info']['Operator']['Operator_Ip'] = $_SERVER["REMOTE_ADDR"];
 		    			$_SESSION['Operator_Info']['Operator']['Operator_Longin_Date'] = date("Y-m-d H:i:s");
 		    			//管理员管理权限
 		    			$_SESSION['Action_List']=$operator_info['Operator']['actions'];
 		    			$_SESSION['Admin_Locale'] = $_REQUEST['locale'];
+		    			$_SESSION['Admin_Locale_Name'] = $language_info["Language"]["name"];
 		    			$result['type'] = 0;
 		    			//pr($_POST['cookie']);
 		    				if(isset($_POST['cookie']) && $_POST['cookie'] != ""){
@@ -281,7 +538,7 @@ class PagesController extends AppController {
 			$email = trim($_REQUEST['email']);
 			$conditions = "  Operator.name = '$name' and Operator.email = '$email'";
 			$operator = $this->Operator->find($conditions,"");
-			if(is_array($operator) && count($operator)>0 && $name != "" && $email != ""){	 	 
+			if(is_array($operator) && count($operator)>0 && $name != "" && $email != ""){
 				  $this->Config->set_locale($this->locale);
 				  $configs = $this->Config->getformatcode();
 				  $send_date=date('Y-m-d');
@@ -419,7 +676,7 @@ class PagesController extends AppController {
 					$is_item = 1;
 				}else if ($tag == "item" && $type == "close") {
 					//构造输出字符串
-					$rss_str[]= "<a href='".$link."' target=_blank style='color:#337E4B'>".date("Y-m-d",strtotime($pubdate))." ".$title." </a><br />";
+					$rss_str[]= "<a href='".$link."' target=_blank >".date("Y-m-d",strtotime($pubdate))." ".$title." </a><br />";
 					$is_item = 0;
 				}
 				//仅读取item标签中的内容
@@ -433,6 +690,61 @@ class PagesController extends AppController {
 		//pr($rss_str);
 		Configure::write('debug', 0);
 		die(json_encode($rss_str));
+	}
+	//官网文章推荐列表
+	function rss_recommend_article(){
+		$this->layout = "ajax";
+		$article_list = array();
+		$rssfeed = array("http://www.seevia.cn/articles/recommend_rss/14");
+		for($i=0;$i<sizeof($rssfeed);$i++ ){//分解开始
+			$buff = "";
+			$rss_str="";
+			//打开rss地址，并读取，读取失败则中止
+			if(!@get_headers($rssfeed[$i])){
+				return array();
+			}
+			$fp = fopen($rssfeed[$i],"r") or die("can not open $rssfeed");
+			while ( !feof($fp) ) {
+				$buff .= fgets($fp,4096);
+			}
+			//关闭文件打开
+			fclose($fp);
+
+			//建立一个 XML 解析器
+			$parser = xml_parser_create();
+			//xml_parser_set_option -- 为指定 XML 解析进行选项设置
+			xml_parser_set_option($parser,XML_OPTION_SKIP_WHITE,1);
+			//xml_parse_into_struct -- 将 XML 数据解析到数组$values中
+			xml_parse_into_struct($parser,$buff,$values,$idx);
+			//xml_parser_free -- 释放指定的 XML 解析器
+			xml_parser_free($parser);
+			
+			foreach ($values as $val) {
+				$tag = @$val["tag"];
+				$type = @$val["type"];
+				$value = @$val["value"];
+				//标签统一转为小写
+				$tag = strtolower($tag);
+				
+				if ($tag == "item" && $type == "open"){
+					$is_item = 1;
+				}else if ($tag == "item" && $type == "close") {
+					
+					$article_list[]= array("href"=>$link,"date"=>date("Y-m-d",strtotime($pubdate)),"title"=>$title);
+					$is_item = 0;
+				}
+				//仅读取item标签中的内容
+				if(@$is_item==1){
+					if ($tag == "title") {$title = $value;}
+					if ($tag == "link") {$link = $value;}
+					if ($tag == "pubdate") {$pubdate = $value;}
+				}
+			}
+		}
+		//pr($article_list);
+		
+		$this->set("article_list",$article_list);
+		Configure::write('debug', 0);
 	}
 	    //后台分页数Cookie记录
     function pagers_num($number){

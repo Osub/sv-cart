@@ -9,14 +9,14 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: edit.ctp 2791 2009-07-13 07:07:02Z wuchao $
+ * $Id: edit.ctp 4372 2009-09-18 10:38:17Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 <!-- Main Start-->
 <br />
-<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."广告位列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."广告位列表","/".(empty($_SESSION['cart_back_url'])?$this->params['controller']:$_SESSION['cart_back_url']),'',false,false);?></strong></p>
 
 <div class="home_main">
 <?php echo $form->create('',array('action'=>'edit/'.$advertisement_position['AdvertisementPosition']['id'],'onsubmit'=>'return advertisement_positions_check();'));?>
@@ -41,8 +41,7 @@
 		<dl><dt style="width:105px;">排序：</dt>
 		<dd><input type="text" style="width:50px;*width:180px;border:1px solid #649776" name="data[AdvertisementPosition][orderby]" value="<?php echo $advertisement_position['AdvertisementPosition']['orderby'];?>" id="orderby"/></dd></dl>
 		<dl><dt style="width:105px;">广告js：</dt>
-		<dd><textarea name="ads_js" cols="55" rows="3"><?php echo $js_code;?></textarea></dd></dl>
-		<br />
+		<dd><textarea name="ads_js" cols="55" rows="3" style="border:1px solid #649776"><?php echo $js_code;?></textarea> <?php echo $html->link("预览",$server_host."/advertisements/show/".$advertisement_position['AdvertisementPosition']['id'],array("target"=>"_blank"),false,false);?></dd></dl>
 		</div>
 <!--Mailtemplates_Config End-->
 	  </div>

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 3214 2009-07-22 09:06:32Z huangbo $
+ * $Id: index.ctp 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 ?>
 
@@ -18,21 +18,22 @@
 <br />
 <!--Main Start-->
 <p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle')).'新增插件','/plugins/add',array(),false,false);?></strong></p>
-<div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
+<div class="home_main" style="padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' ); ">
+<div id="listDiv">
 <table cellpadding="0" cellspacing="0" width="100%" class="list_data">
 <tr class="thead">
 	<th>插件名称</th>
 	<th>插件描述</th>
-	<th>作者</th>
+	<th width="8%">作者</th>
 	<th>插件版本</th>
 	<th>版权信息</th>
-	<th>是否有效</th>
-	<th>操作</th>
+	<th width="8%">是否有效</th>
+	<th width="12%">操作</th>
 </tr>
 <!--Products Processing List-->
 <?php if(isset($plugin_list) && sizeof($plugin_list)>0){?>
-<?php foreach($plugin_list as $v){?>
-<tr>
+<?php foreach($plugin_list as $k=>$v){?>
+<tr <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >
 	<td><?php echo $v["name"]?></td>
 	<td><?php echo $v["directory"]?></td>
 	<td><?php echo $v["author"]?></td>
@@ -52,7 +53,7 @@
 	
 	</td></tr>
 <?php }}?>
-</table>
+</table></div>
 <!--Products Processing List End-->
 <div class="pagers" style="position:relative">
 <?php //echo $this->element('pagers',array('cache'=>'+0 hour'));?>

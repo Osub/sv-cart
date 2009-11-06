@@ -9,13 +9,10 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: category.php 2918 2009-07-16 03:26:36Z shenyunfeng $
+ * $Id: category.php 5382 2009-10-23 03:59:18Z huangbo $
  *****************************************************************************/
 class Category extends AppModel{
     var $name='Category';
-    var $cacheQueries=true;
-    var $cacheAction="1 day";
-
     var $hasOne=array('CategoryI18n' => array('className' => 'CategoryI18n',
         'order' => '','dependent' => true,'foreignKey' => 'category_id'
     ));
@@ -30,13 +27,6 @@ class Category extends AppModel{
     }
 
     function tree_p($type='P',$category_id=0,$locale=''){
-
-        $cache_key=md5($this->name.'_'.$type.'_'.$category_id.'_'.$locale);
-        $this->allinfo=cache::read($cache_key);
-        if($this->allinfo){
-            return $this->allinfo;
-        }
-        else{
             $this->categories_parent_format=array();
             $this->cat_navigate_format=array();
             $this->all_subcat=array();
@@ -44,49 +34,39 @@ class Category extends AppModel{
             $lists=$this->findall("status ='1' AND type='".$type."' ",'','orderby asc');
             $lists=$this->find('all',array('order' => 'orderby asc','fields' => array('Category.id','Category.parent_id'),'conditions' => array("status ='1' AND type='".$type."' ")));
 
-            //	pr($lists);
             $lists_formated=array();
-            //	pr($lists);  全部的分类
             if(is_array($lists)){
                 foreach($lists as $k => $v){
                     $lists_formated[$v['Category']['id']]=$v;
                 }
-                //	pr($lists_formated); 格式化为ID为序
                 $this->allinfo['assoc']=$lists_formated;
-
                 foreach($lists as $k => $v){
                     $this->categories_parent_format[$v['Category']['parent_id']][]=$v;
                 }
-                //	pr($this->categories_parent_format); //格式化为以parent_id为序
                 $this->allinfo['tree']=$this->subcat_get(0);
                 $this->allinfo['subids']=$this->all_subcat;
 
-                cache::write($cache_key,$this->allinfo);
                 return $this->allinfo;
-            }
-        }
+			}
     }
 
-
-
-
     function tree($type,$locale,$id="all"){
-        $this->categories_parent_format=array();
-        $this->cat_navigate_format=array();
-        $this->all_subcat=array();
-        $this->allinfo=array();
-        $this->set_locale($locale);
-        $conditions['type =']=$type;
-        if($id!="all"){
-            $conditions['Category.id !=']=$id;
-        }
-        $categories=$this->findAll($conditions,'','Category.parent_id,Category.orderby,Category.id');
-        //pr($categories);
-        if(is_array($categories))
-        foreach($categories as $k => $v){
-            $this->categories_parent_format[$v['Category']['parent_id']][]=$v;
-        }
-        return $this->subcat_get(0);
+	        $this->categories_parent_format=array();
+	        $this->cat_navigate_format=array();
+	        $this->all_subcat=array();
+	        $this->allinfo=array();
+	        $this->set_locale($locale);
+	        $conditions['type =']=$type;
+	        if($id!="all"){
+	            $conditions['Category.id !=']=$id;
+	        }
+	        $categories=$this->find("all",array("conditions"=>$conditions,"fields"=>array("Category.id,Category.parent_id,Category.orderby,Category.sub_type,Category.status,CategoryI18n.name"))); 
+	        //pr($categories);
+	        if(is_array($categories))
+	        foreach($categories as $k => $v){
+	            $this->categories_parent_format[$v['Category']['parent_id']][]=$v;
+	        }
+	        return $this->subcat_get(0);
     }
 
 
@@ -119,7 +99,7 @@ class Category extends AppModel{
 
 
     function localeformat($id){
-        $lists=$this->findAll("Category.id = '".$id."'");
+        $lists=$this->find("all",array("conditions"=>array("Category.id"=>$id)));
         //	pr($lists);
         foreach($lists as $k => $v){
             $lists_formated['Category']=$v['Category'];
@@ -137,7 +117,7 @@ class Category extends AppModel{
     function findAssocs($type){
 
         $conditions=" type='".$type."'";
-        $categories=$this->findAll($conditions,'','Category.parent_id,Category.orderby,Category.id');
+        $categories=$this->find("all",array("conditions"=>$conditions,"fields"=>array("Category.id,Category.parent_id,CategoryI18n.name")));
         if(is_array($categories)){
             $data=array();
             foreach($categories as $k => $v){
@@ -154,7 +134,7 @@ class Category extends AppModel{
     function findAssoc($type){
         $data="";
         $conditions=" type='".$type."'";
-        $categories=$this->findAll($conditions,'','Category.parent_id,Category.orderby,Category.id');
+        $categories=$this->find("all",array("conditions"=>$conditions,"fields"=>array("Category.id,Category.parent_id,CategoryI18n.name")));
 
         if(is_array($categories)){
             foreach($categories as $k => $v){
@@ -166,10 +146,10 @@ class Category extends AppModel{
 
                     //}
                 }
-
-                $data[$v['Category']['id']]="|--".$categoryname;
+				$str = $v['Category']['parent_id']>0?"|----":"|--";
+                $data[$v['Category']['id']]=$str.$categoryname;
                 for($i=0;$i <= $v['Category']['parent_id']-1;$i++){
-                    $data[$v['Category']['id']]="&nbsp&nbsp&nbsp".$data[$v['Category']['id']];
+                    $data[$v['Category']['id']]=$data[$v['Category']['id']];
                 }
             }
         }
@@ -177,7 +157,7 @@ class Category extends AppModel{
     }
     function getbrandformat(){
         $condition=" Category.type = 'A'";
-        $lists=$this->findAll($condition);
+        $lists=$this->find("all",array("conditions"=>$condition,"fields"=>array("Category.id,Category.parent_id,CategoryI18n.name")));
         $lists_formated=array();
         if(is_array($lists))
         foreach($lists as $k => $v){
@@ -188,7 +168,18 @@ class Category extends AppModel{
 
 
 
-
+	//leo20090929
+	function get_categories_tree($type,$locale){
+	        $this->categories_parent_format=array();
+	        $this->set_locale($locale);
+	        $condition['type =']=$type;
+	        $categories=$this->find("all",array("conditions"=>$condition,"fields"=>array("Category.id,Category.parent_id,CategoryI18n.name")));
+	        if(is_array($categories))
+	        foreach($categories as $k => $v){
+	            $this->categories_parent_format[$v['Category']['parent_id']][]=$v;
+	        }
+	        return $this->subcat_get(0);
+	}
 }
 
 ?>

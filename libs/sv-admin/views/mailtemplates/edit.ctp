@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: edit.ctp 2485 2009-06-30 11:33:00Z huangbo $
+ * $Id: edit.ctp 4708 2009-09-28 13:45:35Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -45,43 +45,92 @@
 	  	<dl><dt style="width:105px;">编号: </dt>
 		<dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" id="data_mailtemplate_code" name="data[MailTemplate][code]" value="<?php echo $this->data['MailTemplate']['code'];?>" /></dd></dl>
 		
-		<h2>邮件主题：</h2>
-<?php if(isset($languages) && sizeof($languages)>0){
-	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input type="text" style="width:360px;" id="title<?php echo $v['Language']['locale']?>" name="data[MailTemplateI18n][<?php echo $k;?>][title]" value="<?php echo @$this->data['MailTemplateI18n'][$k]['title'];?>" /> <font color="#ff0000">*</font></span></p>
-		
-<?php 	}
-   } ?>		
-		<h2>纯文本邮件内容：</h2>
-<?php if(isset($languages) && sizeof($languages)>0){
-	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><textarea style="width:590px;height:165px;" name="data[MailTemplateI18n][<?php echo $k;?>][text_body]" ><?php echo @$this->data['MailTemplateI18n'][$k]['text_body'];?></textarea></span></p>
-<?php 	}
-   } ?>		
-		<h2>HTML邮件内容：</h2>
-<?php if(isset($languages) && sizeof($languages)>0){
-	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><textarea style="width:590px;height:165px;" name="data[MailTemplateI18n][<?php echo $k;?>][html_body]"><?php echo @$this->data['MailTemplateI18n'][$k]['html_body'];?></textarea></span></p>
-<?php 	}
-   } ?>		
-		
-		
+		<dl><dt style="width:105px;">邮件主题: </dt><dd></dd></dl>
+		<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+			<dl><dt style="width:105px;"><?php echo $html->image($v['Language']['img01'])?></dt><dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" id="title<?php echo $v['Language']['locale']?>" name="data[MailTemplateI18n][<?php echo $k;?>][title]" value="<?php echo @$this->data['MailTemplateI18n'][$k]['title'];?>" /> <font color="#ff0000">*</font></dd></dl>
+		<?php }}?>		
+		<dl><dt style="width:105px;">邮件说明: </dt><dd></dd></dl>
+		<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+			<dl><dt style="width:105px;"><?php echo $html->image($v['Language']['img01'])?></dt><dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" id="title<?php echo $v['Language']['locale']?>" name="data[MailTemplateI18n][<?php echo $k;?>][description]" value="<?php echo @$this->data['MailTemplateI18n'][$k]['description'];?>" /></dd></dl>
+		<?php }} ?>		
 		<dl><dt style="width:105px;">是否显示：</dt>
 			<dd><input id="BrandStatus" name="data[MailTemplate][status]" type="radio" value="1" <?php if($this->data['MailTemplate']['status']){?>checked<?php }?> >是<input id="BrandStatus" name="data[MailTemplate][status]" type="radio" value="0" <?php if($this->data['MailTemplate']['status']==0){?>checked<?php }?> >否</dd></dl>
-		
-		<br />
-		
 		</div>
 <!--Mailtemplates_Config End-->
 		
 		
 		
-	  </div>
+	  </div><br />
+	<div class="order_stat properies">
+	  <div class="title"><h1>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
+	  纯文本邮件内容</h1></div>
+	  <div class="box">
+	  	  <?php if($SVConfigs["select_editor"]=="2"||empty($SVConfigs["select_editor"])){?>
+	  	<?php echo $javascript->link('tinymce/tiny_mce/tiny_mce'); ?>
+	  	<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+		<table><tr><td valign="top">
+	  	<?php echo $html->image($v['Language']['img01'])?></td><td valign="top">
+		<textarea id="11elm<?php echo $v['Language']['locale'];?>" name="data[MailTemplateI18n][<?php echo $k;?>][text_body]" rows="15" cols="80" style="width: 80%"><?php echo $this->data['MailTemplateI18n'][$k]['text_body'];?></textarea>
+		<?php  echo $tinymce->load("11elm".$v['Language']['locale'],$now_locale); ?><br /></td></tr>
+		</table>
+    	<?php }?></p>
+		<?php }?><?php }?>
+		<?php if($SVConfigs["select_editor"]=="1"){?>
+			<?php echo $javascript->link('fckeditor/fckeditor'); ?>
+		  	<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+		  	<?php echo $html->image($v['Language']['img01'])?><br />
+			<p class="profiles">
+			<?php  if(isset($article['BrandI18n'][$k]['description'])){?>
+	        <?php echo $form->textarea('ArticleI18n/content', array("cols" => "60","rows" => "20",'value'=>"{$this->data['MailTemplateI18n'][$k]['text_body']}","name"=>"data[MailTemplateI18n][{$k}][text_body]","id"=>"ArticleI18n{$k}Content"));?>
+	        <?php echo $fck->load("ArticleI18n{$k}/content"); ?>
+	        
+	    	<?php }else{?>
+	       	<?php echo $form->textarea('ArticleI18n/content', array('cols' => '60', 'rows' => '20','value'=>"{$this->data['MailTemplateI18n'][$k]['text_body']}","name"=>"data[MailTemplateI18n][{$k}][text_body]","id"=>"ArticleI18n{$k}Content"));?> 
+	       	<?php echo $fck->load("ArticleI18n{$k}/content"); ?>
+	    	<?php }?>
+		    </p>
+			<br /><br />
+			<?php }}?>
+		<?php }?></div><br />
+	<div class="order_stat properies">
+	  <div class="title"><h1>
+	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
+	  HTML邮件内容</h1></div>
+	  <div class="box">
+	     <?php if($SVConfigs["select_editor"]=="2"||empty($SVConfigs["select_editor"])){?>
+	  	<?php echo $javascript->link('tinymce/tiny_mce/tiny_mce'); ?>
+	  	<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+		<table><tr><td valign="top">
+	  	<?php echo $html->image($v['Language']['img01'])?></td><td valign="top">
+		<textarea id="1elm<?php echo $v['Language']['locale'];?>" name="data[MailTemplateI18n][<?php echo $k;?>][html_body]" rows="15" cols="80" style="width: 80%"><?php echo $this->data['MailTemplateI18n'][$k]['html_body'];?></textarea>
+		<?php  echo $tinymce->load("1elm".$v['Language']['locale'],$now_locale); ?><br /></td></tr>
+		</table>
+    	<?php }?></p>
+		<?php }?><?php }?>
+		<?php if($SVConfigs["select_editor"]=="1"){?>
+			<?php echo $javascript->link('fckeditor/fckeditor'); ?>
+		  	<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+		  	<?php echo $html->image($v['Language']['img01'])?><br />
+			<p class="profiles">
+			<?php  if(isset($article['BrandI18n'][$k]['description'])){?>
+	        <?php echo $form->textarea('ArticleI18n/content', array("cols" => "60","rows" => "20",'value'=>"{$this->data['MailTemplateI18n'][$k]['html_body']}","name"=>"data[MailTemplateI18n][{$k}][html_body]","id"=>"ArticleI118n{$k}Content"));?>
+	        <?php echo $fck->load("ArticleI118n{$k}/content"); ?>
+	        
+	    	<?php }else{?>
+	       	<?php echo $form->textarea('ArticleI18n/content', array('cols' => '60', 'rows' => '20','value'=>"{$this->data['MailTemplateI18n'][$k]['html_body']}","name"=>"data[MailTemplateI18n][{$k}][html_body]","id"=>"ArticleI118n{$k}Content"));?> 
+	       	<?php echo $fck->load("ArticleI118n{$k}/content"); ?>
+	    	<?php }?>
+		    </p>
+			<br /><br />
+			<?php }}?>
+		<?php }?>
+		</div></div>
 	  <p class="submit_btn"><input type="submit" value="确定" /><input type="reset" value="重置" /></p>
 	</div>
 <?php echo $form->end();?>
-
-
 </div>
 <!--Main End-->
 </div>

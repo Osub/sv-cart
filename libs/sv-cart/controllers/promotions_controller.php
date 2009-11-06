@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: promotions_controller.php 2907 2009-07-15 11:04:21Z shenyunfeng $
+ * $Id: promotions_controller.php 4433 2009-09-22 10:08:09Z huangbo $
 *****************************************************************************/
 class PromotionsController extends AppController {
 
@@ -17,27 +17,29 @@ class PromotionsController extends AppController {
     var $components = array ('Pagination','Cookie');
     var $helpers = array('html','Pagination','Flash');
     var $uses = array('Category','Product','Flash','Promotion','PromotionI18n','PromotionProduct','Brand');
-
-    function index($orderby="orderby",$rownum=''){
+	var $cacheQueries = true;
+	var $cacheAction = "1 hour";
+	
+    function index($page=0,$orderby='orderby',$rownum=0){
 	 	  if(isset($this->configs['promotions_page_list_number'])){
 	 	  	  $rownum=$this->configs['promotions_page_list_number'];
-	 	  }
-	 	  else{
+	 	  }else{
 	 	  	  $rownum=10;
 	 	  }
 	 	 if(isset($this->configs['promotions_list_orderby'])){
 	 	 	 $orderby=$this->configs['promotions_list_orderby'];
-	 	 }elseif(!empty($orderby)){
-	 	  	 $orderby=$orderby;
-	 	 }
-	 	 else{
+	 	 }else{
 	 	  	 $orderby='created';
 	 	 }
-	 	 if(isset($_REQUEST['page'])){
-	 	 	$page = $_REQUEST['page'];
+	 	 if(isset($_GET['page'])){
+	 	 	$page = $_GET['page'];
 	 	 }else{
-	 	 	$page = 1;
+	 		 $_GET['page'] = $page;
 	 	 }
+		$this->data['get_page'] = $page;	 	 
+		$this->data['orderby'] = $orderby;
+		$this->data['rownum'] = $rownum;
+    	
     	$this->page_init();
      	$this->Promotion->set_locale($this->locale);
     	$promotions = $this->Promotion->findall();
@@ -56,11 +58,12 @@ class PromotionsController extends AppController {
        	$options=Array();
        	
        //	$promotions = $this->Promotion->findAll($condition,''," Promotion.$orderby asc ","$rownum",$page);
-       	
-       	$promotions = $this->Promotion->find('all',array('conditions'=>array($condition),'fields'=>array('Promotion.id','Promotion.start_time','Promotion.end_time','PromotionI18n.title'),'order'=>"Promotion.$orderby asc",'limit'=>$rownum,'page'=>$page));
        	$page = $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass);
+       	$promotions = $this->Promotion->find('all',array('conditions'=>array($condition),'fields'=>array('Promotion.id','Promotion.start_time','Promotion.end_time','PromotionI18n.title'),'order'=>"Promotion.$orderby asc",'limit'=>$rownum,'page'=>$page));
        	$ur_heres[]	= array('name'=>$this->languages['home'],'url'=>"/");
     	$ur_heres[]	= array('name'=>$this->languages['promotion'].$this->languages['home'],'url'=>"");
+    	$this->data['pages_url_1'] = $this->server_host.$this->cart_webroot."promotions/index/";
+    	$this->data['pages_url_2'] = "/".$this->data['orderby']."/".$this->data['rownum'];
     	$this->set('promotions',$promotions);
     	$this->set('locations',$ur_heres);
       	$this->set('orderby',$orderby);
@@ -101,18 +104,36 @@ class PromotionsController extends AppController {
     //	$promotion_products = $this->PromotionProduct->findallbypromotion_id($id);
     	$promotion_products = $this->PromotionProduct->find('all',array('conditions'=>array('PromotionProduct.promotion_id'=>$id),'fields'=>array('PromotionProduct.product_id','PromotionProduct.price','PromotionProduct.id')));	
    // 	pr($promotion_products);
+   		$product_ids = array();
 		if(isset($promotion_products) && count($promotion_products) > 0){
 			foreach($promotion_products as $k=>$v){
-    			$products[$v['PromotionProduct']['product_id']] = $this->Product->findbyid($v['PromotionProduct']['product_id']);
-    			$products[$v['PromotionProduct']['product_id']]['Product']['shop_price'] = $v['PromotionProduct']['price'];
+				$product_ids[]  = $v['PromotionProduct']['product_id'];
+    			//$products[$v['PromotionProduct']['product_id']] = $this->Product->findbyid($v['PromotionProduct']['product_id']);
+    			//$products[$v['PromotionProduct']['product_id']]['Product']['shop_price'] = $v['PromotionProduct']['price'];
     		}
     	}
+    	if(!empty($product_ids)){
+    		$products_list = $this->Product->get_list(implode(',',$product_ids),$this->locale);
+    		$products = array();
+    		if(isset($products_list) && sizeof($products_list)>0){
+    			foreach($products_list as $k=>$v){
+    				$products[$v['Product']['id']] = $v;
+    			}
+    		}
+		}
+		if(isset($promotion_products) && count($promotion_products) > 0){
+			foreach($promotion_products as $k=>$v){
+				$products[$v['PromotionProduct']['product_id']]['Product']['shop_price'] = $v['PromotionProduct']['price'];
+    		}
+    	}    	
+    //	pr($products);
     	$ur_heres[]	= array('name'=>$this->languages['home'],'url'=>"/");
     	$ur_heres[]	= array('name'=>$this->languages['promotion'].$this->languages['home'],'url'=>"/promotions/");
     	$ur_heres[]=array('name'=>$promotion['PromotionI18n']['title'],'url'=>"");
     	$this->set('locations',$ur_heres);
     	$this->set('neighbours',$this->Promotion->findNeighbours('',array('id','PromotionI18n.title'),$id));
 		if(isset($products)){
+			$this->data['cache_products'] = $products;
 			$this->set('products',$products);
 		}
     	$this->set('promotion',$promotion);
@@ -121,8 +142,8 @@ class PromotionsController extends AppController {
  						);
 		$this->set('js_languages',$js_languages);
     	$this->pageTitle = $promotion['PromotionI18n']['title']." -".$this->languages['promotion'].$this->languages['home']." - ".$this->configs['shop_title'];
-    	$this->set('meta_description',$promotion['PromotionI18n']['meta_description']);
-	 	$this->set('meta_keywords',$promotion['PromotionI18n']['meta_keywords']);
+    	$this->set('meta_description',$promotion['PromotionI18n']['title']);
+	 	$this->set('meta_keywords',$promotion['PromotionI18n']['title']);
 	 	}
     }
 }    

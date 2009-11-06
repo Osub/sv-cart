@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: tags_controller.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: tags_controller.php 4691 2009-09-28 10:11:57Z huangbo $
 *****************************************************************************/
 class TagsController extends AppController {
 	var $name = 'Tags';
@@ -20,10 +20,54 @@ class TagsController extends AppController {
 	function index(){
 		$this->operator_privilege('tags_view');
 		$this->pageTitle = '标签管理'." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'产品管理','url'=>'');
 		$this->navigations[] = array('name'=>'标签管理','url'=>'/tags/');
 		$this->set('navigations',$this->navigations);
 		$this->Tag->set_locale($this->locale);
-		$tags = $this->Tag->findall();
+		
+		
+		
+   	   $condition='';
+        if(isset($this->params['url']['date']) && $this->params['url']['date']!=''){
+        	$condition["and"]["Tag.created >="] = $this->params['url']['date']." 00:00:00";
+            
+            $this->set('date',$this->params['url']['date']);
+        }
+        if(isset($this->params['url']['date2']) && $this->params['url']['date2']!=''){
+        	$condition["and"]["Tag.created <="] = $this->params['url']['date2']." 23:59:59";
+            
+            $this->set('date2',$this->params['url']['date2']);
+        }
+        if(isset($this->params['url']['searchtype']) && $this->params['url']['searchtype']!='all'){
+        	$condition["and"]["Tag.type <="] = $this->params['url']['searchtype'];
+            
+            $this->set('searchtype',$this->params['url']['searchtype']);
+        }
+        if(isset($this->params['url']['searchvalue']) && $this->params['url']['searchvalue']!=''){
+        	$condition["and"]["TagI18n.name like"] = "%".$this->params['url']['searchvalue']."%";
+            
+            $this->set('searchvalue',$this->params['url']['searchvalue']);
+        }
+        if(isset($this->params['url']['username']) && $this->params['url']['username']!=''){
+        	$user_info = $this->User->find("all",array("conditions"=>array("name like"=>"%".$this->params['url']['username']."%")));
+        	$user_id_arr[] = 0;
+        	foreach( $user_info as $k=>$v ){
+        		$user_id_arr[] = $v["User"]["id"];
+        	}
+        	$condition["and"]["Tag.user_id"] = $user_id_arr;
+            
+            $this->set('username',$this->params['url']['username']);
+        }
+	   $this->set('searchtype',@$this->params['url']['searchtype']);
+	   $total = $this->Tag->findCount($condition,0);
+	   $sortClass='Tag';
+	   $page=1;
+	   $rownum=isset($this->configs['show_count']) ? $this->configs['show_count']:((!empty($rownum)) ?$rownum:20);
+	   $parameters=Array($rownum,$page);
+	   $options=Array();
+	   $page = $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass);
+   	   $tags=$this->Tag->findAll($condition,'',"",$rownum,$page);
+
 		if(isset($tags) && sizeof($tags)>0){
 			$p_ids = array();
 			$a_ids = array();
@@ -88,6 +132,7 @@ class TagsController extends AppController {
 	function add(){
 		$this->operator_privilege('tags_view');
 		$this->pageTitle = '标签管理 - 新增标签'." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'产品管理','url'=>'');
 		$this->navigations[] = array('name'=>'标签管理','url'=>'/tags/');
 		$this->navigations[] = array('name'=>'新增标签','url'=>'/tags/add');
 		$this->set('navigations',$this->navigations);
@@ -120,13 +165,14 @@ class TagsController extends AppController {
     	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加标签:'.$_POST['tag_name_'.$this->locale] ,'operation');
             }
-			$this->flash("标签  ".$_POST['tag_name_'.$this->locale]." 添加成功。点击继续编辑该标签。",'/tags/'.$id,10);
+			$this->flash("标签  ".$_POST['tag_name_'.$this->locale]." 添加成功。点击这里继续编辑该标签。",'/tags/'.$id,10);
 		}
 	}
 	
 	function view($id){
 		$this->operator_privilege('tags_view');
 		$this->pageTitle = '标签管理 - 编辑标签'." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'产品管理','url'=>'');
 		$this->navigations[] = array('name'=>'标签管理','url'=>'/tags/');
 		$this->navigations[] = array('name'=>'新增标签','url'=>'/tags/add');
 		$tag = $this->Tag->localeformat($id);
@@ -145,7 +191,7 @@ class TagsController extends AppController {
 		$this->set('tag',$tag);
 		
 		//leo20090722导航显示
-		$this->navigations[] = array('name'=>$tag["TagI18n"][$this->locale]["name"],'url'=>'');
+		$this->navigations[] = array('name'=>@$tag["TagI18n"][$this->locale]["name"],'url'=>'');
 	    $this->set('navigations',$this->navigations);
 
 	}
@@ -179,7 +225,7 @@ class TagsController extends AppController {
     	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑标签:'.$_POST['tag_name_'.$this->locale] ,'operation');
             }
-			$this->flash("标签  ".$_POST['tag_name_'.$this->locale]." 编辑成功。点击继续编辑该标签。",'/tags/'.$id,10);
+			$this->flash("标签  ".$_POST['tag_name_'.$this->locale]." 编辑成功。点击这里继续编辑该标签。",'/tags/'.$id,10);
 		}	
 	
 	}

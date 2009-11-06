@@ -9,24 +9,22 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: pages_controller.php 3151 2009-07-21 08:46:39Z huangbo $
+ * $Id: pages_controller.php 5527 2009-11-05 02:07:24Z huangbo $
 *****************************************************************************/
 uses('sanitize');
 class PagesController extends AppController {
 	var $name = 'Pages';
-	var $helpers = array('Html','Javascript');
-	var $uses = array("SystemResource","Plugin","Order","User","Config","ConfigI18n","UserInfo","UserRank","MailTemplate","ProductRank","UserAddress","UserInfoValue","UserPointLog","UserFavorite","CouponType","Coupon","Article","Product","Cart");//,"UserRank"
-	var $components = array('RequestHandler','Captcha','Email');
-	var $cacheQueries = true;
-	var $cacheAction = "1 day";
+	var $helpers = array('Html','Javascript','Cache');
+	var $uses = array("Plugin","Order","UserMessage","ProductAttribute","Promotion","Packaging","PromotionProduct","ProductTypeAttribute","Card","ProductRelation","Comment","User","Config","ConfigI18n","UserInfo","UserRank","MailTemplate","ProductRank","UserAddress","UserInfoValue","UserPointLog","UserFavorite","CouponType","Coupon","Article","Product","Cart","NewsletterList","UserProductGallery","ProdcutVolume","ProductI18n");//,"UserRank"
+	var $components = array('RequestHandler','Captcha','Email','Cookie');
+//	var $cacheQueries = true;
+//	var $cacheAction = "1 day";
 	
 	function display() {
 		$this->layout = 'default_full';
 	}
 	
 	function home(){
-        $this->SystemResource->set_locale($this->locale);
-        $systemresource_info = $this->SystemResource->resource_formated(true,$this->locale);
   	    if(!isset($_SESSION['User'])){//	echo "111111111111";exit;
 				$this->redirect('/login/');
 		     }
@@ -35,6 +33,12 @@ class PagesController extends AppController {
 		    $this->navigations[] = array('name'=>$this->languages['user_center'],'url'=>"");
 		    $this->set('locations',$this->navigations);
 		    $user_info=$this->User->findbyid($_SESSION['User']['User']['id']);
+		    //add by zhaojingna@seevia.cn 20090814
+		    $user_address = $this->UserAddress->findbyid($user_info['User']['address_id']);
+		    $user_product_gallary = $this->UserProductGallery->findAll(array("user_id"=>$user_info['User']['id']));
+		    $this->set("user_address",$user_address);
+		    $this->set("user_product_gallary",$user_product_gallary);
+		   // pr($user_product_gallary);exit;		    
 		    $coupons = $this->Coupon->findallbyuser_id($_SESSION['User']['User']['id']);
 		    $this->CouponType->set_locale($this->locale);
 		    $coupon_num = 0;
@@ -81,7 +85,143 @@ class PagesController extends AppController {
 			$middle_time=(strtotime($start_time))-(30*24*60*60);
 			$end_time=date("Y-m-d",$middle_time).' 00:00:00';
 			
-			$my_orders30=$this->Order->time_orders($start_time,$end_time);
+			$my_orders30 = $this->Order->time_orders($start_time,$end_time);
+			// 最新订单
+			$new_orders = $this->Order->new_orders($start_time,$end_time);
+		//	pr($new_orders);
+			//最新评论
+			$new_comments = $this->Comment->find('all',array('conditions'=>array('Comment.user_id'=>$_SESSION['User']['User']['id']),'fields'=>array('Comment.id','Comment.type','Comment.rank','Comment.type_id','Comment.content'),'order'=>array('Comment.created DESC'),'limit'=>4));
+		    $p_ids = array();
+		    $a_ids = array();
+		    $my_comments_id = array();
+			foreach($new_comments as $k=>$v){
+				$new_comments[$k]['Comment']['content'] = $this->sub_str($v['Comment']['content'],10);
+		     	if($v['Comment']['type'] == "P"){
+		   			$p_ids[] = $v['Comment']['type_id'];
+		   		}else if($v['Comment']['type'] == "A"){
+		 			$a_ids[] = $v['Comment']['type_id'];
+		   		}
+		   		$my_comments_id[] = $v['Comment']['id'];
+		    }			
+		    	
+		    	
+			 $my_comments_replies = $this->Comment->find('all',array('conditions'=>array('Comment.parent_id'=>$my_comments_id)));
+			  $replies_list =array();
+			  if(is_array($my_comments_replies) && sizeof($my_comments_replies)>0){
+			  		foreach($my_comments_replies as $kk=>$vv){
+			  			$replies_list[$vv['Comment']['parent_id']][] = $vv;
+			  		}
+			  }
+		    
+		   foreach($new_comments as $k=>$v){
+		   	  if(isset($replies_list[$v['Comment']['id']])){
+		   	   $new_comments[$k]['Reply']=$replies_list[$v['Comment']['id']];
+		   	  }
+		   }
+		    
+		   // pr($new_comments);
+		    
+		   $products_list = array();
+		   $articles_list = array();
+			if(!empty($p_ids)){
+  	   			$this->Product->set_locale($this->locale);
+			   $product_infos = $this->Product->find("all",array("conditions"=>array("Product.id"=>$p_ids),'fields'=>array('ProductI18n.name','Product.id')));
+			   if(is_array($product_infos) && sizeof($product_infos) > 0){
+			   		foreach($product_infos as $k=>$v){
+			   			$v['ProductI18n']['name'] = $this->sub_str($v['ProductI18n']['name'],4);
+			   			$products_list[$v['Product']['id']] = $v;
+			   		}
+			   }
+			}
+			
+			if(!empty($a_ids)){
+  	  			 $this->Article->set_locale($this->locale);
+			   $article_infos = $this->Article->find("all",array("conditions"=>array("Article.id"=>$a_ids),'fields'=>array('ArticleI18n.title','Article.id')));
+			   if(is_array($article_infos) && sizeof($article_infos) > 0){
+			   		foreach($article_infos as $k=>$v){
+			   			$v['ArticleI18n']['title'] = $this->sub_str($v['ArticleI18n']['title'],10);
+			   			$articles_list[$v['Article']['id']] = $v;
+			   		}
+			  	}
+			}
+			
+			$this->set('new_comments',$new_comments);
+			$this->set('articles_list',$articles_list);
+			$this->set('products_list',$products_list);
+			//最新留言
+			$new_messages = $this->UserMessage->find('all',array('conditions'=>array('UserMessage.user_id'=>$_SESSION['User']['User']['id']),'order'=>'UserMessage.created ','limit'=>4));
+			
+		   $my_messages_parent_id[] = 0;
+		   $p_ids = array();
+		   $o_ids = array();
+		   if(isset($new_messages) && sizeof($new_messages)>0){
+			   foreach($new_messages as $k=>$v){
+			   	   $my_messages_parent_id[] = $v['UserMessage']['id'];		   	   
+			   	   if($v['UserMessage']['type'] == "P" && $v['UserMessage']['value_id'] > 0){
+			   	   		$p_ids[] = $v['UserMessage']['value_id'];
+			   	   }
+			   	   if($v['UserMessage']['type'] == "O" && $v['UserMessage']['value_id'] > 0){
+			   	   		$o_ids[] = $v['UserMessage']['value_id'];
+			   	   }	   	   
+			   }			
+		   }
+		   if(!empty($p_ids)){
+		   	  $this->Product->set_locale($this->locale);
+		   	  $products = $this->Product->find('all',array(
+				'fields' =>	array('Product.id','ProductI18n.name'),			   	  
+		   	  'conditions'=>array('Product.id'=>$p_ids)));
+		   }
+		   if(!empty($o_ids)){
+		   	  $orders = $this->Order->find('all',array(
+				'fields' =>	array('Order.id','Order.order_code'),			   	  
+		   	  'conditions'=>array('Order.id'=>$o_ids)));
+		   }	   
+		   $order_list = array();
+		   $product_list = array();
+		   
+		   if(isset($products) && sizeof($products)>0){
+		   		foreach($products as $k=>$v){
+			   		$v['ProductI18n']['name'] = $this->sub_str($v['ProductI18n']['name'],4);
+		   			$product_list[$v['Product']['id']] = $v;
+		   		}
+		   }
+		   if(isset($orders) && sizeof($orders)>0){
+		   		foreach($orders as $k=>$v){
+		   			$order_list[$v['Order']['id']] = $v;
+		   		}
+		   }	   
+		   
+		   
+		   $replies_list = $this->UserMessage->find('all',array('conditions'=>array('UserMessage.parent_id'=>$my_messages_parent_id)));
+		   
+		   $replies_list_format = array();
+		   if(is_array($replies_list) && sizeof($replies_list)>0){
+		   		foreach($replies_list as $k=>$v){
+		   			$replies_list_format[$v['UserMessage']['parent_id']][] = $v;
+		   		}
+		   }
+		   if(isset($new_messages) && sizeof($new_messages)>0){
+			   foreach($new_messages as $k=>$v){
+			   	   	//UserMessage
+			   	   	$new_messages[$k]['UserMessage']['msg_title'] = $this->sub_str($v['UserMessage']['msg_title'],10);
+			   	     if(isset($replies_list_format[$v['UserMessage']['id']])){
+			   			 $new_messages[$k]['Reply']= $replies_list_format[$v['UserMessage']['id']];
+			   		 }
+			   		 
+			   		if($v['UserMessage']['type'] == 'O' && isset($order_list[$v['UserMessage']['value_id']])){
+			   			$new_messages[$k]['Order']= $order_list[$v['UserMessage']['value_id']];
+			   		}
+			   		if($v['UserMessage']['type'] == 'P' && isset($product_list[$v['UserMessage']['value_id']])){
+			   			 $new_messages[$k]['Product']= $product_list[$v['UserMessage']['value_id']];
+			   		}	   		 
+			   }
+			}
+			
+			$new_litter = $this->NewsletterList->findByEmail($_SESSION['User']['User']['email']);
+			$this->set('new_litter',$new_litter);
+			
+			$this->set('new_messages',$new_messages);
+			$this->set('new_orders',$new_orders);
 			$this->set("my_orders30",$my_orders30);
 			$this->pageTitle = $this->languages['user_center']." - ".$this->configs['shop_title'];
 			$this->set("user_rank",$user_rank);
@@ -89,12 +229,27 @@ class PagesController extends AppController {
 	}
 	
 	function login(){
+	//			pr($_SERVER['HTTP_REFERER']);exit;
 	//			pr($_SESSION['securimage_code_value']);
 				$this->navigations[] = array('name'=>$this->languages['home'],'url'=>$this->server_host.$this->cart_webroot );
 				$this->navigations[] = array('name'=>$this->languages['user'].$this->languages['login'],'url'=>$this->server_host.$this->user_webroot."login");
 				$this->set('locations',$this->navigations);
 				$mrClean = new Sanitize();		
 			    $this->page_init();
+				$js_languages = array("name_can_not_be_blank" => $this->languages['name'].$this->languages['can_not_empty'],
+		 	 						"password_can_not_be_blank" => $this->languages['password'].$this->languages['can_not_empty'],
+		 	 						"retype_password_not_blank" => $this->languages['password'].$this->languages['affirm'].$this->languages['can_not_empty'],
+		 	 						"password_length_short" => $this->languages['password_length_short'],
+		 	 						"Passwords_are_not_consistent" => $this->languages['Passwords_are_not_consistent'],
+		 	 						"incorrect_email_format" => $this->languages['email'].$this->languages['format'].$this->languages['not_correct'],
+		 	 						"can_be_registered" => $this->languages['can_be_registered'],
+		 	 						"email_not_empity" => $this->languages['email'].$this->languages['can_not_empty'],
+						 	 		"first_name_empty" => $this->languages['first_name_empty'],
+						 	 		"last_name_empty" => $this->languages['last_name_empty'],
+ 	 								"login"=> $this->languages['login']
+		 	 						);
+				$this->set('js_languages',$js_languages);				    
+			    
 		        if($this->RequestHandler->isPost()){
 		        //	pr($_POST);exit;
 					 $flash_url = $this->server_host.$this->user_webroot;			   	   
@@ -129,7 +284,7 @@ class PagesController extends AppController {
 							    $this->flash($this->languages['verify_code'].$this->languages['not_correct'],$flash_url,'');
 					         }
 							 if(isset($_POST['is_ajax'])){
-					         die(json_encode($result));
+					         	die(json_encode($result));
 					         }
 				       }
 			 	    }
@@ -184,12 +339,37 @@ class PagesController extends AppController {
 						   	 	die(json_encode($result));
 						    }
 						    if(isset($_POST['is_ajax']) && $_POST['is_ajax']==1){
-							       $this->render('/pages/login_ajax_successful');
+								if(isset($_SESSION['back_url'])){
+									$this->set("back_url",$_SESSION['back_url']);
+									unset($_SESSION['back_url']);
+								}elseif(isset($this->configs['login_back_url'])){
+									if($this->configs['login_back_url'] == 1){
+										$this->set("back_url",$this->server_host.$this->cart_webroot);
+									}elseif($this->configs['login_back_url'] == 0){
+										$this->set("back_url",$this->server_host.$this->user_webroot."orders");
+									}else{
+										$this->set("back_url",isset($_SESSION['cart_back_url'])?$_SESSION['cart_back_url']:'');
+										unset($_SESSION['cart_back_url']);
+									}
+								}						    	
+							    $this->render('/pages/login_ajax_successful');
 						    }else{
-							if(isset($_SESSION['back_url'])){
-								$this->set("back_url",$_SESSION['back_url']);
-								unset($_SESSION['back_url']);
-							}
+					/*	    	if(isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER'] != $this->server_host.$this->cart_webroot."carts/"){
+									unset($_SESSION['back_url']);
+						    	}
+					*/	    	
+								if(isset($_SESSION['back_url'])){
+									$this->set("back_url",$_SESSION['back_url']);
+									unset($_SESSION['back_url']);
+								}elseif(isset($this->configs['login_back_url'])){
+									if($this->configs['login_back_url'] == 1){
+										$this->set("back_url",$this->server_host.$this->cart_webroot);
+									}elseif($this->configs['login_back_url'] == 0){
+										$this->set("back_url",$this->server_host.$this->user_webroot."orders");
+									}else{
+										$this->set("back_url",isset($_SESSION['cart_back_url'])?$_SESSION['cart_back_url']:'');
+									}
+								}
 								$this->render('/pages/user_login');
 						    }
 					    }
@@ -214,7 +394,8 @@ class PagesController extends AppController {
 		 
 		
 	}
-
+	
+	
 	function logout(){
 		unset($_SESSION['User']);
 		$this->layout = "ajax";
@@ -229,6 +410,8 @@ class PagesController extends AppController {
 	}
 
 	function register(){
+		$this->cacheQueries = true;
+		$this->cacheAction = "1 hour";
 		$this->navigations[] = array('name'=>$this->languages['home'],'url'=>$this->server_host.$this->cart_webroot );
 		$this->navigations[] = array('name'=>$this->languages['user'].$this->languages['register'],'url'=>$this->server_host.$this->user_webroot."register");
 		$this->set('locations',$this->navigations);
@@ -251,7 +434,11 @@ class PagesController extends AppController {
  	 						"can_be_registered" => $this->languages['can_be_registered'],
  	 						"email_not_empity" => $this->languages['email'].$this->languages['can_not_empty'],
  	 						"length_of_cell_phone_not_correct" => $this->languages['mobile'].$this->languages['not_correct'],
- 	 						"length_of_tel_not_correct" => $this->languages['telephone'].$this->languages['not_correct']
+ 	 						"length_of_tel_not_correct" => $this->languages['telephone'].$this->languages['not_correct'],
+  	 				 	 	"email_not_empity" => $this->languages['email'].$this->languages['can_not_empty'],
+						 	"first_name_empty" => $this->languages['first_name_empty'],
+						 	"last_name_empty" => $this->languages['last_name_empty'],
+ 	 						"login"=> $this->languages['login']	 		
  	 						);
 		$this->set('js_languages',$js_languages);
 		$this->Article->set_locale($this->locale);
@@ -282,12 +469,12 @@ class PagesController extends AppController {
 	           $this->pageTitle = $this->languages['user'].$this->languages['register']." - ".$this->configs['shop_title'];
 		       $this->set('user_infoarr', $user_infoarr);
                $this->set('register_question', $register_question);
-		       $this->layout = 'default_full';
 		}
 		else{
 			$this->pageTitle = $this->languages['register_functions_closed']." - ".$this->configs['shop_title'];
 			    $this->flash($this->languages['register_functions_closed'],$flash_url,'');
 		}
+	       $this->layout = 'default_full';
 	}
 /*	function newcomer() {
 			$this->layout = 'default_full';
@@ -355,23 +542,56 @@ class PagesController extends AppController {
 		   		$this->layout = "ajax";
 		   }
      } 
-     
- 	     //发送修改密码邮件
+	     //发送修改密码邮件
 
      function send_editpsw_email(){     	 
 		if($this->RequestHandler->isPost()){
-		//		if(isset($this->configs['use_ajax']) && $this->configs['use_ajax'] == 0){
-		//			$user_info=$this->User->findById($_POST['user_id']);
-		//			$answer = $_POST['answer'];
-		//			$old_answer = $_POST['old_answer'];
-		//		}else{
-					$user_info=$this->User->findById($this->params['form']['user_id']);
-					$answer = $this->params['form']['answer'];
-					$old_answer = $this->params['form']['old_answer'];
-		//		}
+			if(isset($_REQUEST['2kbuy'])&&$_REQUEST['2kbuy']=="2kbuy"){
+	    		$useremail=$this->User->findByEmail($_POST['email']);
+	    		if($useremail){
+	    			$user_info=$this->User->findByEmail($_POST['email']);
+					$user_name = $user_info['User']['name'];
+					$send_date=date('Y-m-d');
+					$reset_pwd=mt_rand(0, 100000000);
+					$data['id']=$user_info['User']['id'];
+					$data['password']=md5($reset_pwd);
+					$this->User->save($data);
+					  $this->MailTemplate->set_locale($this->locale);
+					  $template=$this->MailTemplate->find("code = 'forget_passeord' and status = '1'");
+					  $template_str=$template['MailTemplateI18n']['html_body'];
+					  /* 商店网址 */
+					  $shop_url = $this->server_host.$this->cart_webroot;
+					  $shop_name = $this->configs['shop_name'];
+					  eval("\$template_str = \"$template_str\";");
+					  $to_email = $user_info['User']['email'];
+				      $text_body = $template['MailTemplateI18n']['text_body'];
+				      eval("\$text_body = \"$text_body\";");
+					  $subject = $template['MailTemplateI18n']['title'];
+					  eval("\$subject = \"$subject\";");
+						$mailsendqueue = array(
+							"sender_name"=>$shop_name,//发送从姓名
+							"receiver_email"=>";".$to_email,//接收人姓名;接收人地址
+						 	"cc_email"=>";",//抄送人
+						 	"bcc_email"=>";",//暗送人
+						  	"title"=>$subject,//主题 
+						   	"html_body"=>$template_str,//内容
+						  	"text_body"=>$text_body,//内容
+						 	"sendas"=>"html"
+						);
+
+						
+			          $this->Email->send_mail($this->locale,1, $mailsendqueue);
+					  $this->flash($this->languages['reset_password_sent_please_view'],$this->server_host . $this->user_webroot."pages/login",10); 					
+	    		}else{
+	    			$this->flash("email不存在！",$this->server_host . $this->user_webroot."pages/login",10); 
+	    			return false;
+	    		}				
+			}else{
+				$user_info=$this->User->findById($this->params['form']['user_id']);
+				$answer = $this->params['form']['answer'];
+				$old_answer = $this->params['form']['old_answer'];
 				if($answer != $old_answer){
-				$this->pageTitle = $this->languages['security_answer'].$this->languages['not_correct']." - ".$this->configs['shop_title'];
-				//security_answer not_correct
+					$this->pageTitle = $this->languages['security_answer'].$this->languages['not_correct']." - ".$this->configs['shop_title'];
 					$this->flash($this->languages['security_answer'].$this->languages['not_correct'],'/forget_password','');
 				}else{
 					  $send_date=date('Y-m-d');
@@ -387,23 +607,26 @@ class PagesController extends AppController {
 					  /* 商店网址 */
 					  $shop_url = $this->server_host.$this->cart_webroot;
 		              eval("\$template_str = \"$template_str\";");
-		              //$template_str=str_replace(" ","",$template_str);
 					  $to_email = $user_info['User']['email'];
-					  $this->set_email_config();
-						$this->Email->is_ssl = $this->configs['smtp_ssl'];
-		$this->Email->is_mail_smtp = $this->configs['mail_service'];
-						$this->Email->smtp_port = $this->configs['smtp_port'];			
-						 $this->Email->fromName = "".$shop_name."";  //标题
-					  $this->Email->html_body = "".$template_str."";
 				      $text_body = $template['MailTemplateI18n']['text_body'];
 				      eval("\$text_body = \"$text_body\";");
-				  	  $this->Email->text_body = $text_body;
-					  $this->Email->to = "".$to_email."";
 					  //pr($template_str);
 					  $subject = $template['MailTemplateI18n']['title'];
 					  eval("\$subject = \"$subject\";");
-					  $this->Email->subject = "=?utf-8?B?" . base64_encode($subject) . "?=";
-			          if(@$this->Email->send()){
+					  
+						$mailsendqueue = array(
+							"sender_name"=>$shop_name,//发送从姓名
+							"receiver_email"=>";".$to_email,//接收人姓名;接收人地址
+						 	"cc_email"=>";",//抄送人
+						 	"bcc_email"=>";",//暗送人
+						  	"title"=>$subject,//主题 
+						   	"html_body"=>$template_str,//内容
+						  	"text_body"=>$text_body,//内容
+						 	"sendas"=>"html"
+						);
+
+						
+			          if(@$this->Email->send_mail($this->locale,1, $mailsendqueue)){
 							$this->pageTitle = $this->languages['reset_password_sent_please_view']." - ".$this->configs['shop_title'];
 			          		$this->flash($this->languages['reset_password_sent_please_view'],'/','');
 			          }else{
@@ -412,8 +635,9 @@ class PagesController extends AppController {
 			          		$this->flash($this->languages['send_mail'].$this->languages['failed'],'/','');
 			          }
 	   			}
-   			}
-     	}
+	   		}
+   		}
+     }
      	
 	     	 	//用户确认认证
 	 	function verifyemail($user_id,$code){
@@ -490,6 +714,23 @@ class PagesController extends AppController {
 	        }
 	 	}
  	
+ 	
+	     //修改密码页面
+	     function edit_user_password(){
+	 	     $this->page_init();
+	  	    if(!isset($_SESSION['User'])){
+				$this->redirect('/login/');
+		     }	 	     
+			 $user_info=$this->User->findById($_SESSION['User']['User']['id']);
+
+		     $js_languages = array("password_can_not_be_blank" => $this->languages['password'].$this->languages['can_not_empty'] ,
+		   						"retype_password_not_blank" => $this->languages['retype_password_not_blank'],
+		   						"Passwords_are_not_consistent" => $this->languages['Passwords_are_not_consistent']);
+		   	 $this->set('js_languages',$js_languages);
+	  	 	 $this->pageTitle = $this->languages['reset'].$this->languages['password']." - ".$this->configs['shop_title'];
+	 	     $this->set('id',$_SESSION['User']['User']['id']);
+	 	     $this->layout = 'default_full';
+	     } 	
 
 	     //修改密码页面
 	     function edit_password($id,$code){
@@ -498,7 +739,7 @@ class PagesController extends AppController {
 	 	     $code_confirm = md5($user_info['User']['id'] . $user_info['User']['password']);
 	 	     if($code <> $code_confirm){
 	 	     		$this->pageTitle = $this->languages['invalid_url']." - ".$this->configs['shop_title'];
-					$this->flash($this->languages['invalid_url'],'/','');
+					$this->flash($this->languages['invalid_url'],$this->server_host.$this->cart_webroot,'');
 	 	     }
 		     $js_languages = array("password_can_not_be_blank" => $this->languages['password'].$this->languages['can_not_empty'] ,
 		   						"retype_password_not_blank" => $this->languages['retype_password_not_blank'],
@@ -648,6 +889,15 @@ class PagesController extends AppController {
 					$error_type = "email";
 					$error_msg = "".$this->languages['email'].$this->languages['format'].$this->languages['not_correct']."";
 					break;
+				}else{
+					$condition = " User.".$column." = '".$value."'";
+					$result = $this->User->find($condition);
+					if(isset($result['User'])){
+						$error = 1;
+						$error_type = "email";
+						$error_msg = "".$this->languages['email_exists_reenter']."";
+					}
+					break;													
 				}
 			}
 			case 'question':{
@@ -750,6 +1000,14 @@ class PagesController extends AppController {
 					$error = 1;
 					$error_type = "email";
 					$error_msg = "".$this->languages['email'].$this->languages['format'].$this->languages['not_correct']."";
+				}else{
+					$condition = " User.email = '".$_POST['email']."'";
+					$result = $this->User->find($condition);
+					if(isset($result['User'])){
+						$error = 1;
+						$error_type = "email";
+						$error_msg = "".$this->languages['email_exists_reenter']."";
+					}				
 				}				
 				if(empty($_POST['answer'])){
 					$error = 1;
@@ -795,7 +1053,7 @@ class PagesController extends AppController {
 			  $question=isset($this->params['form']['other_question'])?$this->params['form']['other_question']:'';
 		}
 		//leo20090610ucenter
-		$username 	= 	isset($this->params['form']['name'])?$this->params['form']['name']:'';
+		$username 	= 	isset($this->params['form']['name'])?$this->params['form']['name']:$this->params['form']['email'];
 		$password 	= 	isset($this->params['form']['password'])?$this->params['form']['password']:'';
 		$email		=	isset($this->params['form']['email'])?$this->params['form']['email']:'';
 		$pwd_cfm	= 	isset($_POST['password_confirm'])?$_POST['password_confirm']:'';
@@ -860,6 +1118,11 @@ class PagesController extends AppController {
 						$error_msg = "".$this->languages['please_choose'].$this->languages['hint_question_to_password']."";
 			}*/				
 		}
+		if($this->Cookie->read('affiliate_uid')){
+			$affiliate_uid = $this->Cookie->read('affiliate_uid');
+		}
+		
+		
 		$user_infos = array(
 			'name'			=>	$username,
 			'password'		=>	md5($password),
@@ -874,8 +1137,11 @@ class PagesController extends AppController {
 			'rank'			=>	0,
 			'sex'			=>	isset($this->params['form']['prov'])?$this->params['form']['prov']:0,
 			'verify_status' => 0,
+			'parent_id'		=> isset($affiliate_uid)?$affiliate_uid:0,
 			'status'		=>	1
 			);
+//		$this->Cookie->write('affiliate_uid
+
 		//leo20090610ucenter
 		$plugin = $this->Plugin->find(array("code"=>"ucenter"));
 		if( !empty($plugin)&&isset($this->configs['integrate_code'])&&$this->configs['integrate_code']=="ucenter" ){
@@ -950,12 +1216,7 @@ class PagesController extends AppController {
 		        }
 		}
 			
-		$this->check_point();
 		//判断注册是否送积分 
-        $this->SystemResource->set_locale($this->locale);
-        $systemresource_info = $this->SystemResource->resource_formated(true,$this->locale);
-		
-		
 		
 		if(isset($this->configs['register_gift_points']) && $this->configs['register_gift_points'] == 1){
 			$user_info['User']['point'] += $this->configs['first_points'];
@@ -967,7 +1228,7 @@ class PagesController extends AppController {
 									"user_id" => $user_info['User']['id'],
 									"point" => $this->configs['first_points'],
 									"log_type" => "R",
-									"system_note" => $systemresource_info['point_log_type']['R'],
+									"system_note" => $this->systemresource_info['point_log_type']['R'],
 									"type_id"=> '0'
 									);
 			$this->UserPointLog->save($user_point_log);
@@ -1026,37 +1287,85 @@ class PagesController extends AppController {
 			  $shop_url = $this->server_host.$this->cart_webroot;
 			  eval("\$template_str = \"$template_str\";");
 			  $to_email = $user_info['User']['email'];
-			  $this->set_email_config();
-			  $this->Email->is_ssl = $this->configs['smtp_ssl'];
-		      $this->Email->is_mail_smtp = $this->configs['mail_service'];
-			  $this->Email->smtp_port = $this->configs['smtp_port'];
-			  $this->Email->fromName = "".$shop_name."";  //标题
-			  $this->Email->html_body = "".$template_str."";
 		      $text_body = $template['MailTemplateI18n']['text_body'];
 		      eval("\$text_body = \"$text_body\";");
-		  	  $this->Email->text_body = $text_body;
-			  $this->Email->to = "".$user_info['User']['email']."";
 			  $subject = $template['MailTemplateI18n']['title'];
 			  eval("\$subject = \"$subject\";");
 			  $this->Email->subject = "=?utf-8?B?" . base64_encode($subject) . "?=";
-			  @$this->Email->send();
+				$mailsendqueue = array(
+					"sender_name"=>$shop_name,//发送从姓名
+					"receiver_email"=>";".$to_email,//接收人姓名;接收人地址
+				 	"cc_email"=>";",//抄送人
+				 	"bcc_email"=>";",//暗送人
+				  	"title"=>$subject,//主题 
+				   	"html_body"=>$template_str,//内容
+				  	"text_body"=>$text_body,//内容
+				 	"sendas"=>"html"
+				);
+
+
+				$this->Email->send_mail($this->locale,$this->configs['email_the_way'], $mailsendqueue);
+		}
+		
+		// 是否订阅 
+		if(isset($_POST['newsletter'])){
+				$email = array(	
+		 				"id" => "",
+		 				"status" => 0,
+		 				"email" =>$this->params['form']['email']
+		 				);
+		 		$this->NewsletterList->save($email);
+		 		$id = $this->NewsletterList->id;
+		 		$result['email'] = $this->params['form']['email'];
+		 		$result['msg'] = $this->languages['subscribe'].$this->languages['successfully'];
+		 		/* 发送激活邮件 */
+		 		$shop_name=$this->configs['shop_name'];
+		 		$send_date=date('Y-m-d');
+		 		//生成 md5加密 code  == id + email
+		 		$code = md5($id . $_POST['email']);
+		 		$url = $this->server_host.$this->cart_webroot."newsletter/verify/".$id."/".$code."/";
+		 		//$url = "/$id/$code";
+		 		$this->MailTemplate->set_locale($this->locale);
+  	            $template=$this->MailTemplate->find("code = 'news_letter_lists' and status = 1");
+  	            $template_str=$template['MailTemplateI18n']['html_body'];
+				/* 商店网址 */
+				$shop_url = $this->server_host.$this->cart_webroot;
+  	            eval("\$template_str = \"$template_str\";");
+		        $text_body = $template['MailTemplateI18n']['text_body'];
+		     	eval("\$text_body = \"$text_body\";");
+				$subject = $template['MailTemplateI18n']['title'];
+				eval("\$subject = \"$subject\";");
+				$mailsendqueue = array(
+					"sender_name"=>$shop_name,//发送从姓名
+					"receiver_email"=>";".$to_email,//接收人姓名;接收人地址
+				 	"cc_email"=>";",//抄送人
+				 	"bcc_email"=>";",//暗送人
+				  	"title"=>$subject,//主题 
+				   	"html_body"=>$template_str,//内容
+				  	"text_body"=>$text_body,//内容
+				 	"sendas"=>"html"
+				);
+
+
+				$this->Email->send_mail($this->locale,$this->configs['email_the_way'], $mailsendqueue);	 		
 		}
 		
         //用户设置初始值
         unset($_SESSION['User']);
 		$_SESSION['User'] = $user_info;
-		
+		$this->check_point();
 	//	header("location:/user/");
 			$this->pageTitle = $this->languages['register'].$this->languages['successfully']." - ".$this->configs['shop_title'];
 		}
 
 			if(isset($_SESSION['back_url'])){
-				$url = $_SESSION['cart_back_url'] = $_SESSION['back_url'];
-				
+				$url = $_SESSION['back_url'];
+				unset($_SESSION['back_url']);
 			}else if(!isset($_SESSION['cart_back_url'])){
 				$url = $this->server_host.$this->user_webroot;
 			}else{
-				$url = "/";
+				$url = $_SESSION['cart_back_url'];
+				unset($_SESSION['cart_back_url']);
 	 		}
 	 		//echo $error;exit;
 	 		if($error == 0){
@@ -1088,20 +1397,24 @@ class PagesController extends AppController {
 		$shop_url = $this->server_host.$this->user_webroot;
 		eval("\$template_str = \"$template_str\";");
 		$to_email = $user_info['User']['email'];
-		$this->set_email_config();
-		$this->Email->fromName = "".$shop_name."";  //标题
-		$this->Email->html_body = "".$template_str."";
-		$this->Email->is_ssl = $this->configs['smtp_ssl'];
-		$this->Email->is_mail_smtp = $this->configs['mail_service'];
-		$this->Email->smtp_port = $this->configs['smtp_port'];
 		$text_body = $template['MailTemplateI18n']['text_body'];
      	eval("\$text_body = \"$text_body\";");
-  	    $this->Email->text_body = $text_body;
-		$this->Email->to = "".$to_email."";
 		$subject = $template['MailTemplateI18n']['title'];
 		eval("\$subject = \"$subject\";");
-		$this->Email->subject = "=?utf-8?B?" . base64_encode($subject) . "?=";
-		if(@$this->Email->send()){
+		$mailsendqueue = array(
+			"sender_name"=>$shop_name,//发送从姓名
+			"receiver_email"=>";".$to_email,//接收人姓名;接收人地址
+		 	"cc_email"=>";",//抄送人
+		 	"bcc_email"=>";",//暗送人
+		  	"title"=>$subject,//主题 
+		   	"html_body"=>$template_str,//内容
+		  	"text_body"=>$text_body,//内容
+		 	"sendas"=>"html"
+		);
+
+
+		
+		if(@$this->Email->send_mail($this->locale,$this->configs['email_the_way'], $mailsendqueue)){
 	    $message=array(
 	    'msg'=>"".$this->languages['send_confirm_mail'].$this->languages['send'].$this->languages['successfully']."",
 	    	'send_confirm_mail'=>"".$this->languages['send_confirm_mail']."",
@@ -1197,15 +1510,13 @@ class PagesController extends AppController {
 					//该商品差价
 					$_SESSION['svcart']['products'][$i]['discount_price'] = $p['Product']['market_price'] - $promotion_price;
 					//该商品折扣%?
-					if($promotion_price > 0){
+					if($promotion_price > 0 && $p['Product']['market_price']){
 					$_SESSION['svcart']['products'][$i]['discount_rate'] = round($promotion_price/$p['Product']['market_price'],2)*100 ;
 					}else{
 					$_SESSION['svcart']['products'][$i]['discount_rate'] = 100;
 					}
 				}
 			}			
-			
-			
 			
 			$point = round($_SESSION['svcart']['cart_info']['sum_subtotal']/100*$this->configs['proportion_point']);
 			if($point > $user_info['User']['point']){
@@ -1429,6 +1740,956 @@ function real_ip()
 		echo $this->uc_call("uc_user_synlogin", array($uid));
 		die();
 	}
+	
+	function sub_str($str, $length = 0, $append = true)
+	{
+	    $str = trim($str);
+	    $strlength = strlen($str);
+
+	    if ($length == 0 || $length >= $strlength)
+	    {
+	        return $str;
+	    }
+	    elseif ($length < 0)
+	    {
+	        $length = $strlength + $length;
+	        if ($length < 0)
+	        {
+	            $length = $strlength;
+	        }
+	    }
+
+	    if (function_exists('mb_substr'))
+	    {
+	        $newstr = mb_substr($str, 0, $length, 'utf-8');
+	    }
+	    elseif (function_exists('iconv_substr'))
+	    {
+	        $newstr = iconv_substr($str, 0, $length, 'utf-8');
+	    }
+	    else
+	    {
+	        //$newstr = trim_right(substr($str, 0, $length));
+	        $newstr = substr($str, 0, $length);
+	    }
+
+	    if ($append && $str != $newstr)
+	    {
+	        $newstr .= '...';
+	    }
+	    return $newstr;	
+
+	}	
+/*2kbuy更改密码*/
+	function change_password(){
+	  	$this->page_init();
+		    //当前位置  
+		$this->navigations[] = array('name'=>$this->languages['mmodify'].$this->languages['password'],'url'=>"");
+		$this->set('locations',$this->navigations);		
+		$this->pageTitle = $this->languages['mmodify'].$this->languages['password']."- ".$this->configs['shop_title'];
+ 		if(!isset($_SESSION['User'])){
+			$this->redirect('/pages/login');
+		}
+		$js_languages = array(
+ 	 						"password_can_not_be_blank" => $this->languages['password'].$this->languages['can_not_empty'],
+ 	 						"retype_password_not_blank" => $this->languages['password'].$this->languages['affirm'].$this->languages['can_not_empty'],
+ 	 						"password_length_short" => $this->languages['password_length_short'],
+ 	 						"Passwords_are_not_consistent" => $this->languages['Passwords_are_not_consistent'],
+ 	 						"oldpassword_can_not_be_blank" => $this->languages['old_password'].$this->languages['can_not_empty'],
+ 	 						"oldpassword_not_exist" => $this->languages['old_password'].$this->languages['not_exist'],
+ 	 		   				"up_password_successfully" => $this->languages['mmodify'].$this->languages['password'].$this->languages['successfully']
+ 	 						);
+		$this->set('js_languages',$js_languages);		
+			
+	}
+//更改密码 	
+	function check_pass($pass,$new_pass){
+		Configure::write('debug',0);
+		$password=md5($pass);		
+		$condition="User.id='".$_SESSION['User']['User']['id']."' and User.password='".$password."'";
+		$user=$this->User->find($condition);
+		if($user){					
+			$uppass['id']=$_SESSION['User']['User']['id'];
+			$uppass['password']=md5($new_pass);
+    		$this->User->save($uppass); //保存
+    		$msg="yes";		   				
+		}else{
+			$msg="no";
+		}
+		die($msg);
+	}	
+	
+ 	function cart(){
+	 		if(!isset($_SESSION['User'])){
+				$this->redirect('/pages/login');
+			}
+			if(isset($_SESSION['User']['User']['id'])){
+				//取cart 表数据 and Cart.session_id = '".session_id()."'
+				$cart_products =	$this->Cart->findall("Cart.user_id = ".$_SESSION['User']['User']['id']."");
+			}else{
+				$cart_products =	$this->Cart->findall("Cart.session_id = '".session_id()."'");
+			}
+
+			$p_ids =array();
+			$p_lists = array();
+		 	$this->Category->set_locale($this->locale);
+ 			$this->Category->tree('P',0,$this->locale);
+			if(isset($cart_products) && sizeof($cart_products)>0){
+				unset($_SESSION['svcart']['products']);
+				foreach($cart_products as $k=>$v){
+					if(!in_array($v['Cart']['product_id'],$p_ids)){
+						$p_ids[] = $v['Cart']['product_id'];
+					} 
+				}
+				if(empty($p_ids)){
+					$p_ids[] =0;
+				}
+				$product_attr = $this->ProductAttribute->find('all',array(
+				'fields' =>	array('ProductAttribute.id','ProductAttribute.product_id','ProductAttribute.product_type_attribute_id','ProductAttribute.product_type_attribute_value','ProductAttribute.product_type_attribute_price'),			
+				'conditions'=>array('ProductAttribute.product_id' => $p_ids)));
+				$this->Product->set_locale($this->locale);
+				$svcart_products = $this->Product->find('all',
+				array( 
+						'fields' =>	array('Product.id','Product.recommand_flag','Product.status','Product.img_thumb'
+									,'Product.market_price'
+									,'Product.shop_price','Product.promotion_price'
+									,'Product.promotion_start'
+									,'Product.promotion_end'
+									,'Product.promotion_status'
+									,'Product.code','Product.point','Product.point_fee'
+									,'Product.product_rank_id'
+									,'Product.quantity'
+									,'ProductI18n.name','Product.extension_code','Product.weight','Product.frozen_quantity','Product.product_type_id','Product.brand_id','Product.coupon_type_id','Product.category_id'
+									),				
+				'conditions'=>array('Product.id'=>$p_ids)));
+				
+				$svcart_products_list = array();
+				if(isset($svcart_products) && sizeof($svcart_products)>0){
+					foreach($svcart_products as $k=>$v){
+						$svcart_products_list[$v['Product']['id']] = $v;
+					}
+				}
+						//	pr($cart_products);exit;	
+				$product_attr_lists = array();
+				if(isset($product_attr) && sizeof($product_attr)>0){
+					foreach($product_attr as $k=>$v){
+						$product_attr_lists[$v['ProductAttribute']['product_id']][$v['ProductAttribute']['product_type_attribute_value']] = $v;
+					}
+				}
+				//pr($cart_products);exit;
+				foreach($cart_products as $k=>$v){
+					if(isset($svcart_products_list[$v['Cart']['product_id']])){
+						if($v['Cart']['product_attrbute'] == ""){
+							$new_id = $v['Cart']['product_id'];
+						}else{
+							$this_attr = explode('<br />',$v['Cart']['product_attrbute']);
+							$new_id = $v['Cart']['product_id'];
+							$attributes = $v['Cart']['product_attrbute'];
+							
+							foreach($this_attr as $val){
+								$val_arr = explode(':',$val);
+								if(isset($val_arr[1]) && trim($val) != "" &&  isset($product_attr_lists[$v['Cart']['product_id']][trim($val_arr[1])])){
+									$new_id.= '.'.$product_attr_lists[$v['Cart']['product_id']][trim($val_arr[1])]['ProductAttribute']['id'];
+							//		$attributes .= $val.",";
+								}
+							//	$attributes = substr($val,0,-1);
+							}
+							$_SESSION['svcart']['products'][$new_id]['attributes'] = $attributes;
+						}
+						$_SESSION['svcart']['products'][$new_id]['Product'] = array(
+						'id'=>$svcart_products_list[$v['Cart']['product_id']]['Product']['id'],'code'=>$svcart_products_list[$v['Cart']['product_id']]['Product']['code'],'weight'=>$svcart_products_list[$v['Cart']['product_id']]['Product']['weight'],'market_price'=>$svcart_products_list[$v['Cart']['product_id']]['Product']['market_price'],'shop_price'=>$svcart_products_list[$v['Cart']['product_id']]['Product']['shop_price'],'promotion_price'=>$svcart_products_list[$v['Cart']['product_id']]['Product']['promotion_price'],'promotion_start'=>$svcart_products_list[$v['Cart']['product_id']]['Product']['promotion_start'],'promotion_end'=>$svcart_products_list[$v['Cart']['product_id']]['Product']['promotion_end'],'promotion_status'=>$svcart_products_list[$v['Cart']['product_id']]['Product']['promotion_status'],'product_rank_id'=>$svcart_products_list[$v['Cart']['product_id']]['Product']['product_rank_id'],'extension_code'=>$svcart_products_list[$v['Cart']['product_id']]['Product']['extension_code'],'frozen_quantity'=>$svcart_products_list[$v['Cart']['product_id']]['Product']['frozen_quantity'],'product_type_id'=>$svcart_products_list[$v['Cart']['product_id']]['Product']['product_type_id'],'brand_id'=>$svcart_products_list[$v['Cart']['product_id']]['Product']['brand_id'],'coupon_type_id'=>$svcart_products_list[$v['Cart']['product_id']]['Product']['coupon_type_id'],'point'=>$svcart_products_list[$v['Cart']['product_id']]['Product']['point'],'img_thumb'=>$svcart_products_list[$v['Cart']['product_id']]['Product']['img_thumb'],'point_fee'=>$svcart_products_list[$v['Cart']['product_id']]['Product']['point_fee']
+						);
+			            $_SESSION['svcart']['products'][$new_id]['quantity'] = $v['Cart']['product_quantity'];
+			            $_SESSION['svcart']['products'][$new_id]['category_name'] = isset($this->Category->allinfo['assoc'][$svcart_products_list[$v['Cart']['product_id']]['Product']['category_id']])?$this->Category->allinfo['assoc'][$svcart_products_list[$v['Cart']['product_id']]['Product']['category_id']]['CategoryI18n']['name']:'';
+			            $_SESSION['svcart']['products'][$new_id]['category_id'] = $svcart_products_list[$v['Cart']['product_id']]['Product']['category_id'];
+	 					$_SESSION['svcart']['products'][$new_id]['use_point'] = 0;
+			            $_SESSION['svcart']['products'][$new_id]['save_cart'] = $v['Cart']['id'];
+						$_SESSION['svcart']['products'][$new_id]['ProductI18n'] = array('name'=>$svcart_products_list[$v['Cart']['product_id']]['ProductI18n']['name']);
+					}
+				}
+		    }
+			//pr($product_attr_lists);
+		$this->statistic_svcart(); 				//计算金额
+ 		//unset($_SESSION['svcart']['address']);
+ 		$this->Cookie->del('cart_cookie');
+ 	//	unset($_SESSION['svcart']['products']);
+		$this->page_init();
+ 		$this->Product->set_locale($this->locale);
+		if(!isset($_SESSION['svcart']['products']) && isset($_COOKIE['CakeCookie']['cart_cookie'])){
+			$_SESSION['svcart'] = @unserialize(StripSlashes($this->Cookie->read('cart_cookie')));
+		}
+		$product_ranks = $this->ProductRank->findall_ranks();
+		if(isset($_SESSION['User']['User'])){
+			$user_rank_list=$this->UserRank->findrank();		
+		}
+		$this->order_price();
+		
+ 		//取得促销商品
+ 		if(isset($this->configs['cart_promotion']) && $this->configs['cart_promotion'] == "1"){
+	 		$promotion_products = $this->Product->promotion($this->configs['promotion_count'],$this->locale);
+	 		
+	 		if(isset($promotion_products) && sizeof($promotion_products)>0){
+	 			$pid_array = array();
+	 			foreach($promotion_products as $k=>$v){
+	 				$pid_array[] = $v['Product']['id'];
+	 			}
+	 			
+			// 商品多语言
+				$productI18ns_list =array();
+					$productI18ns = $this->ProductI18n->find('all',array( 
+					'fields' =>	array('ProductI18n.id','ProductI18n.name','ProductI18n.product_id'),
+					'conditions'=>array('ProductI18n.product_id'=>$pid_array,'ProductI18n.locale'=>$this->locale)));
+				if(isset($productI18ns) && sizeof($productI18ns)>0){
+					foreach($productI18ns as $k=>$v){
+						$productI18ns_list[$v['ProductI18n']['product_id']] = $v;
+					}
+				}
+	 		}
+	 		
+	 		foreach($promotion_products as $k=>$v){
+				if(isset($productI18ns_list[$v['Product']['id']])){
+					$promotion_products[$k]['ProductI18n'] = $productI18ns_list[$v['Product']['id']]['ProductI18n'];
+				}else{
+					$promotion_products[$k]['ProductI18n']['name'] = "";
+				}	 			
+	 			
+	 	//		$promotion_products[$k]['Product']['user_price'] = $this->Product->user_price($k,$v,$this);
+				if(isset($product_ranks[$v['Product']['id']]) && isset($_SESSION['User']['User']['rank']) && isset($product_ranks[$v['Product']['id']][$_SESSION['User']['User']['rank']])){
+					if(isset($product_ranks[$v['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['is_default_rank']) && $product_ranks[$v['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['is_default_rank'] == 0){
+					  $promotion_products[$k]['Product']['user_price']= $product_ranks[$v['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['product_price'];			  
+					}else if(isset($user_rank_list[$_SESSION['User']['User']['rank']])){
+					  $promotion_products[$k]['Product']['user_price']=($user_rank_list[$_SESSION['User']['User']['rank']]['UserRank']['discount']/100)*($v['Product']['shop_price']);			  
+					}
+				} 			
+	 		}	
+			$this->set('promotion_products',$promotion_products);
+	 	}
+	 	
+		
+ 		$pack_card_num = 0;
+		if(isset($this->configs['enable_buy_packing']) && $this->configs['enable_buy_packing'] == 1){
+			//取得包装信息
+			$this->Packaging->set_locale($this->locale);
+			$packaging_lists = $this->Packaging->find('all',array(
+			'fields' =>array('Packaging.id','Packaging.img01','Packaging.fee','Packaging.free_money','PackagingI18n.name','PackagingI18n.description'),
+			'order'=>array("Packaging.created desc"),'conditions'=>array('Packaging.status'=>1)));
+		//	pr($packaging_lists);
+			//$this->Packaging->findAll("status = '1'","","Packaging.created desc","")
+			if(isset($packaging_lists) && sizeof($packaging_lists)>0){
+				$pack_card_num++;
+			}
+			$this->set('packages',$packaging_lists);
+		}
+		if(isset($this->configs['enable_buy_card']) && $this->configs['enable_buy_card'] == 1){
+			//取得贺卡信息
+			$this->Card->set_locale($this->locale);
+			$card_lists = $this->Card->find('all',
+			array(
+			'fields' =>array('Card.id','Card.img01','Card.fee','Card.free_money','CardI18n.name','CardI18n.description'),
+			'order'=>array("Card.created desc"),'conditions'=>array('Card.status'=>1)));
+			//$this->Card->findAll("status = '1'","","Card.created desc","")
+			if(isset($card_lists) && sizeof($card_lists)>0){
+				$pack_card_num++;
+			}			
+			$this->set('cards',$card_lists);
+		}
+		
+		$this->set('pack_card_num',$pack_card_num);
+		
+		//输出SV-Cart里的信息
+		if(isset($_SESSION['svcart']['products'])){
+			$this->statistic_svcart();
+			$this->set('all_virtual',$_SESSION['svcart']['cart_info']['all_virtual']);
+			if($this->configs['category_link_type'] == 1){
+				foreach($_SESSION['svcart']['products'] as $k=>$v){
+					$this->Category->set_locale($this->locale);						
+					$info = $this->Category->findbyid($v['category_id']);						
+					$_SESSION['svcart']['products'][$k]['use_sku'] = 1;
+					if($info['Category']['parent_id']>0){
+						$parent_info = $this->Category->findbyid($info['Category']['parent_id']);
+						if(isset($parent_info['Category'])){
+							$parent_info['CategoryI18n']['name'] = str_replace(" ","-",$parent_info['CategoryI18n']['name']);
+							$parent_info['CategoryI18n']['name'] = str_replace("/","-",$parent_info['CategoryI18n']['name']);
+							$_SESSION['svcart']['products'][$k]['parent'] = $parent_info['CategoryI18n']['name'];
+						}
+					}
+				}			
+			}
+			//已购买商品的相关商品显示
+			if(isset($this->configs['cart_product_relation']) && $this->configs['cart_product_relation'] == '1'){
+				$product_ids = array();
+				$product_ids_bak = array();
+				foreach($_SESSION['svcart']['products'] as $k=>$v){
+					$product_ids_bak[] = $v['Product']['id'];
+					$conditions = array(
+										'AND'=>array('Product.status'=>'1','Product.forsale'=>'1'),
+										'OR'=> array("ProductRelation.product_id "=> $v['Product']['id'],"ProductRelation.related_product_id "=> $v['Product']['id'])
+										);
+					
+					$relation_ids = $this->ProductRelation->find("all",array('fields'=>array('ProductRelation.product_id','ProductRelation.related_product_id'),'conditions'=>$conditions,'recursive'=>'1','order'=>'ProductRelation.orderby'));
+					$product_ids += $relation_ids;
+				}
+				if(sizeof($product_ids)>0){
+					$relation_ids_list = array();
+					foreach($relation_ids as $k=>$v){
+						if(!in_array($v['ProductRelation']['product_id'],$product_ids_bak)){
+						$relation_ids_list[] = $v['ProductRelation']['product_id'];
+						}
+						if(!in_array($v['ProductRelation']['related_product_id'],$product_ids_bak)){
+						$relation_ids_list[] = $v['ProductRelation']['related_product_id'];
+						}				
+					}
+					$relation_products = $this->Product->findall(array("Product.id"=>$relation_ids_list));
+					if(isset($this->configs['cart_product_relation_number']) && $this->configs['cart_product_relation_number'] > 0){
+						$relation_products = array_slice($relation_products,'0',$this->configs['cart_product_relation_number']);
+					}
+					foreach($relation_products as $k=>$v){
+						//$relation_products[$k]['Product']['shop_price'] =$this->Product->locale_price($v['Product']['id'],$v['Product']['shop_price'],$this);
+						if(isset($this->configs['mlti_currency_module']) && $this->configs['mlti_currency_module'] == 1 && isset($v['ProductLocalePrice']['product_price'])){
+							$relation_products[$k]['Product']['shop_price'] = $v['ProductLocalePrice']['product_price'];
+						}			
+					}
+					$this->data['relation_products'] = $relation_products;
+					$this->set("relation_products",$relation_products);
+				}				
+				
+			}
+			
+			$this->set('svcart',$_SESSION['svcart']);
+		}
+		$this->pageTitle = $this->languages['cart']." - ".$this->configs['shop_title'];
+		$this->navigations[] = array('name'=>$this->languages['cart'],'url'=>"/carts/");
+		
+		if(isset($_SESSION['svcart']['cart_info']['sum_subtotal'])){
+			$promotions = $this->findpromotions();
+			$this->set('promotions',$promotions);
+		}
+		if(isset($promotions) && sizeof($promotions)>0){
+			$promotions_product_id = array();
+			foreach($promotions as $k=>$v){
+				if($v['Promotion']['type'] == '2' && isset($v['products']) && sizeof($v['products'])>0){
+					foreach($v['products'] as $a=>$b){
+					
+						$promotions_product_id[] = $b['Product']['id'];
+					}
+				}
+			}
+			if(!empty($promotions_product_id)){
+				$promotion_product_attribute = $this->ProductAttribute->find('all',array('conditions'=>array('ProductAttribute.product_id'=>$promotions_product_id)));
+			}
+			$this->ProductTypeAttribute->set_locale($this->locale);
+			$product_type_atts = $this->ProductTypeAttribute->find_all_att($this->locale);
+			$format_product_attributes = array();
+			$product_attributes_name = array();
+			$format_product_attributes_id = array();
+			$promotion_product_attribute_lists = array();
+			if(isset($promotion_product_attribute) && sizeof($promotion_product_attribute)>0){
+				foreach($promotion_product_attribute as $k=>$v){
+					if(isset($promotion_product_attribute_lists[$v['ProductAttribute']['product_id']])){
+					$promotion_product_attribute_lists[$v['ProductAttribute']['product_id']][$product_type_atts[$v['ProductAttribute']['product_type_attribute_id']]['ProductTypeAttributeI18n']['name']][] = $v;
+					}
+				}
+			}
+			$this->set('promotion_product_attribute_lists',$promotion_product_attribute_lists);
+		}
+		if(isset($this->configs['enable_one_step_buy']) && $this->configs['enable_one_step_buy'] == 1){
+			$js_languages = array("enable_one_step_buy" => "1",'exceed_upper_limit_products'=>$this->languages['exceed_upper_limit_products']);
+			$this->set('js_languages',$js_languages);
+		}else{
+			$js_languages = array("enable_one_step_buy" => "0",'exceed_upper_limit_products'=>$this->languages['exceed_upper_limit_products']);
+			$this->set('js_languages',$js_languages);
+		}
+		$this->set('locations',$this->navigations);
+		$this->layout = 'default_full';
+	}
+	
+	function statistic_svcart($type = 'product'){
+		//总现合计
+		$_SESSION['svcart']['cart_info']['sum_subtotal'] = 0;
+		//总原合计
+		$_SESSION['svcart']['cart_info']['sum_market_subtotal'] = 0;
+		$_SESSION['svcart']['cart_info']['sum_weight'] = 0;
+		
+		//pr($_SESSION);
+		if($type == 'product'){
+			$product_ranks = $this->ProductRank->findall_ranks();
+			if(isset($_SESSION['User']['User'])){
+				$user_rank_list=$this->UserRank->findrank();		
+			}
+			$_SESSION['svcart']['cart_info']['product_subtotal'] = 0;
+			//是否全为虚拟商品
+			$_SESSION['svcart']['cart_info']['all_virtual'] = 1;
+
+			if(isset($_SESSION['svcart']['products'])){	
+				foreach($_SESSION['svcart']['products'] as $i=>$p){
+					if(isset($this->configs['volume_setting']) && $this->configs['volume_setting'] == 1){
+						$product_volume = $this->ProdcutVolume->find(array('ProdcutVolume.product_id'=>$p['Product']['id'],'ProdcutVolume.volume_number '=>$p['quantity']));
+						if(isset($product_volume['ProdcutVolume'])){
+								$volume_price = $product_volume['ProdcutVolume']['volume_price'];
+						}
+					}					
+					
+					$_SESSION['svcart']['cart_info']['sum_weight'] += $p['Product']['weight']*$p['quantity'];
+					if(empty($p['Product']['extension_code'])){
+						$_SESSION['svcart']['cart_info']['all_virtual'] = 0;
+					}
+					//获得是否有会员价
+					if(isset($_SESSION['User'])){
+						if(isset($product_ranks[$p['Product']['id']]) && isset($_SESSION['User']['User']['rank']) && isset($product_ranks[$p['Product']['id']][$_SESSION['User']['User']['rank']])){
+							if(isset($product_ranks[$p['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['is_default_rank']) && $product_ranks[$p['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['is_default_rank'] == 0){
+							
+									$p['Product']['product_rank_price'] = $product_ranks[$p['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['product_price'];
+							
+							}else if(isset($user_rank_list[$_SESSION['User']['User']['rank']])){
+							
+									$p['Product']['product_rank_price'] = ($user_rank_list[$_SESSION['User']['User']['rank']]['UserRank']['discount']/100)*($p['Product']['shop_price']);	
+							
+							}
+						}						
+						
+					//	$p['Product']['product_rank_price'] = 	$this->Product->user_price($i,$p,$this);
+					}else{
+					//如果会员未登录 删除SESSION中残留的product_rank_price
+						if(isset($p['Product']['product_rank_price']) || isset($_SESSION['svcart']['products'][$i]['product_rank_price'])){
+							unset($p['Product']['product_rank_price']);
+							unset($_SESSION['svcart']['products'][$i]['product_rank_price']);
+						}
+					}
+					
+					//有会员价
+					if(isset($volume_price)){
+						$promotion_price = $volume_price;
+						$_SESSION['svcart']['cart_info']['sum_subtotal'] += $volume_price*$p['quantity'];					
+					}elseif(isset($p['Product']['product_rank_price'])){
+						$promotion_price = $p['Product']['product_rank_price'];
+						$_SESSION['svcart']['products'][$i]['product_rank_price'] = $promotion_price;
+						
+						$_SESSION['svcart']['cart_info']['sum_subtotal'] += $p['Product']['product_rank_price']*$p['quantity'];
+						
+						
+					}else{
+						if($this->is_promotion($p)){
+							//该商品现价
+								$promotion_price = $p['Product']['promotion_price'];
+							//全部商品现价合计
+							//$_SESSION['svcart']['cart_info']['sum_subtotal'] += $p['Product']['promotion_price']*$p['quantity'];
+								$_SESSION['svcart']['cart_info']['sum_subtotal'] += $p['Product']['promotion_price']*$p['quantity'];
+							$_SESSION['svcart']['products'][$i]['is_promotion'] = 1;
+						}else{
+							
+							$promotion_price = $p['Product']['shop_price'];
+								$promotion_price = $p['Product']['shop_price'];
+							
+							//总现合计
+						
+								$_SESSION['svcart']['cart_info']['sum_subtotal'] += $p['Product']['shop_price']*$p['quantity'];
+							$_SESSION['svcart']['products'][$i]['is_promotion'] = 0;
+						}
+					}
+					//该商品原价
+						$_SESSION['svcart']['products'][$i]['market_subtotal'] = $p['Product']['market_price']*$p['quantity'];
+				
+					//该商品小计
+					$_SESSION['svcart']['products'][$i]['subtotal'] = $promotion_price*$p['quantity'];
+					$_SESSION['svcart']['cart_info']['product_subtotal'] += $promotion_price*$p['quantity'];
+					//全部商品原价合计
+					$_SESSION['svcart']['cart_info']['sum_market_subtotal'] += $_SESSION['svcart']['products'][$i]['market_subtotal'];
+					//该商品差价
+					
+					//$_SESSION['svcart']['products'][$i]['discount_price'] = $p['Product']['market_price'] - $promotion_price;
+					
+						$_SESSION['svcart']['products'][$i]['discount_price'] = $p['Product']['market_price'] - $promotion_price;
+					
+					//该商品折扣%?
+					if($promotion_price > 0 && $p['Product']['market_price'] >0){
+				//		$_SESSION['svcart']['products'][$i]['discount_rate'] = round($promotion_price/$p['Product']['market_price'],2)*100 ;
+						
+							$_SESSION['svcart']['products'][$i]['discount_rate'] = round($promotion_price/$p['Product']['market_price'],2)*100 ;
+						
+					}else{
+					$_SESSION['svcart']['products'][$i]['discount_rate'] = 100;
+					}
+				}
+			}
+			
+			if(isset($_SESSION['svcart']['cart_info']['all_virtual'])){
+					$save_cookie = $_SESSION['svcart'];unset($save_cookie['products']);unset($save_cookie['promotion']['products']);$this->Cookie->write('cart_cookie',serialize($save_cookie),false,3600 * 24);   
+
+			}
+			
+			//判断是否有贺卡和包装
+				if(isset($_SESSION['svcart']['packagings'])){
+					foreach($_SESSION['svcart']['packagings'] as $i=>$p){
+						//包装小计
+						// 免费额度的 多货币
+						
+						//$p['Packaging']['free_money'];
+						
+							$packaging_curr_free_money = $p['Packaging']['free_money'];
+						if(isset($_SESSION['svcart']['cart_info']['product_subtotal']) && ($p['Packaging']['free_money'] == 0 || $_SESSION['svcart']['cart_info']['product_subtotal'] < $packaging_curr_free_money)){
+						//	$_SESSION['svcart']['packagings'][$i]['subtotal'] = $p['Packaging']['fee']*$p['quantity'];
+							
+								$_SESSION['svcart']['packagings'][$i]['subtotal'] = $p['Packaging']['fee']*$p['quantity'];
+							//加上包装费的总价
+							$_SESSION['svcart']['cart_info']['sum_subtotal'] += $_SESSION['svcart']['packagings'][$i]['subtotal'];
+							$_SESSION['svcart']['cart_info']['sum_market_subtotal'] += $_SESSION['svcart']['packagings'][$i]['subtotal'];
+							unset($_SESSION['svcart']['packagings'][$i]['Packaging']['fee_free']);
+						}else{
+							$_SESSION['svcart']['packagings'][$i]['Packaging']['fee_free'] = 0;
+							$_SESSION['svcart']['packagings'][$i]['subtotal'] = 0;
+						}
+					}
+				}
+				if(isset($_SESSION['svcart']['cards'])){
+					foreach($_SESSION['svcart']['cards'] as $i=>$p){
+							$card_curr_free_money = $p['Card']['free_money'];
+						if(isset($_SESSION['svcart']['cart_info']['product_subtotal']) && ($p['Card']['free_money'] == 0 || $_SESSION['svcart']['cart_info']['product_subtotal'] < $card_curr_free_money)){
+							//贺卡小计
+							//$_SESSION['svcart']['cards'][$i]['subtotal'] = $p['Card']['fee']*$p['quantity'];
+								$_SESSION['svcart']['cards'][$i]['subtotal'] = $p['Card']['fee']*$p['quantity'];
+							
+							//加上贺卡费的总价
+							$_SESSION['svcart']['cart_info']['sum_subtotal'] += $_SESSION['svcart']['cards'][$i]['subtotal'];
+							$_SESSION['svcart']['cart_info']['sum_market_subtotal'] += $_SESSION['svcart']['cards'][$i]['subtotal'];
+							unset($_SESSION['svcart']['cards'][$i]['Card']['fee_free']);
+						}else{
+							$_SESSION['svcart']['cards'][$i]['Card']['fee_free'] = 0;
+							$_SESSION['svcart']['cards'][$i]['subtotal'] = 0;
+						}
+					}
+				}
+			if($_SESSION['svcart']['cart_info']['sum_subtotal'] == 0 || $_SESSION['svcart']['cart_info']['sum_market_subtotal'] == 0){
+				$_SESSION['svcart']['cart_info']['discount_rate'] = 0;
+			}else{
+				$_SESSION['svcart']['cart_info']['discount_rate'] = round($_SESSION['svcart']['cart_info']['sum_subtotal']/$_SESSION['svcart']['cart_info']['sum_market_subtotal'],2)*100 ;
+			}
+			$_SESSION['svcart']['cart_info']['discount_price'] = $_SESSION['svcart']['cart_info']['sum_market_subtotal'] - $_SESSION['svcart']['cart_info']['sum_subtotal'];
+		}
+		
+		if($type == 'packaging'){
+			if(isset($_SESSION['svcart']['packagings'])){
+				foreach($_SESSION['svcart']['packagings'] as $i=>$p){
+						$packaging_curr_free_money = $p['Packaging']['free_money'];
+					
+					if(isset($_SESSION['svcart']['cart_info']['product_subtotal']) && ($p['Packaging']['free_money'] == 0 || $_SESSION['svcart']['cart_info']['product_subtotal'] < $packaging_curr_free_money)){
+						//包装小计
+							$_SESSION['svcart']['packagings'][$i]['subtotal'] = $p['Packaging']['fee']*$p['quantity'];
+					
+						$_SESSION['svcart']['packagings'][$i]['is_promotion'] = 0;
+						//总现合计
+						$_SESSION['svcart']['cart_info']['sum_subtotal'] += $_SESSION['svcart']['packagings'][$i]['subtotal'];
+						//总原合计
+						$_SESSION['svcart']['cart_info']['sum_market_subtotal'] += $_SESSION['svcart']['packagings'][$i]['subtotal'];
+						unset($_SESSION['svcart']['packagings'][$i]['Packaging']['fee_free']);
+					}else{
+						$_SESSION['svcart']['packagings'][$i]['Packaging']['fee_free'] = 0;
+						$_SESSION['svcart']['packagings'][$i]['subtotal'] = 0;
+						$_SESSION['svcart']['packagings'][$i]['is_promotion'] = 0;
+					}
+				}
+			}
+			//判断是否有商品和贺卡
+			if(isset($_SESSION['svcart']['products'])){
+			$product_ranks = $this->ProductRank->findall_ranks();
+			if(isset($_SESSION['User']['User'])){
+				$user_rank_list=$this->UserRank->findrank();		
+			}
+			$_SESSION['svcart']['cart_info']['product_subtotal'] = 0;
+			//是否全为虚拟商品
+			$_SESSION['svcart']['cart_info']['all_virtual'] = 1;
+
+			if(isset($_SESSION['svcart']['products'])){	
+				foreach($_SESSION['svcart']['products'] as $i=>$p){
+					if(isset($this->configs['volume_setting']) && $this->configs['volume_setting'] == 1){
+						$product_volume = $this->ProdcutVolume->find(array('ProdcutVolume.product_id'=>$p['Product']['id'],'ProdcutVolume.volume_number '=>$p['quantity']));
+						if(isset($product_volume['ProdcutVolume'])){
+								$volume_price = $product_volume['ProdcutVolume']['volume_price'];
+						}
+					}					
+					
+					$_SESSION['svcart']['cart_info']['sum_weight'] += $p['Product']['weight']*$p['quantity'];
+					if(empty($p['Product']['extension_code'])){
+						$_SESSION['svcart']['cart_info']['all_virtual'] = 0;
+					}
+					//获得是否有会员价
+					if(isset($_SESSION['User'])){
+						if(isset($product_ranks[$p['Product']['id']]) && isset($_SESSION['User']['User']['rank']) && isset($product_ranks[$p['Product']['id']][$_SESSION['User']['User']['rank']])){
+							if(isset($product_ranks[$p['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['is_default_rank']) && $product_ranks[$p['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['is_default_rank'] == 0){
+							
+								$p['Product']['product_rank_price'] = $product_ranks[$p['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['product_price'];
+							
+							}else if(isset($user_rank_list[$_SESSION['User']['User']['rank']])){
+							
+								$p['Product']['product_rank_price'] = ($user_rank_list[$_SESSION['User']['User']['rank']]['UserRank']['discount']/100)*($p['Product']['shop_price']);	
+							
+							}
+						}						
+						
+					//	$p['Product']['product_rank_price'] = 	$this->Product->user_price($i,$p,$this);
+					}else{
+					//如果会员未登录 删除SESSION中残留的product_rank_price
+						if(isset($p['Product']['product_rank_price']) || isset($_SESSION['svcart']['products'][$i]['product_rank_price'])){
+							unset($p['Product']['product_rank_price']);
+							unset($_SESSION['svcart']['products'][$i]['product_rank_price']);
+						}
+					}
+					
+					//有会员价
+					if(isset($volume_price)){
+						$promotion_price = $volume_price;
+						$_SESSION['svcart']['cart_info']['sum_subtotal'] += $volume_price*$p['quantity'];					
+					}elseif(isset($p['Product']['product_rank_price'])){
+						$promotion_price = $p['Product']['product_rank_price'];
+						$_SESSION['svcart']['products'][$i]['product_rank_price'] = $promotion_price;
+						
+						$_SESSION['svcart']['cart_info']['sum_subtotal'] += $p['Product']['product_rank_price']*$p['quantity'];
+						
+						
+					}else{
+						if($this->is_promotion($p)){
+							//该商品现价
+								$promotion_price = $p['Product']['promotion_price'];
+							//全部商品现价合计
+							//$_SESSION['svcart']['cart_info']['sum_subtotal'] += $p['Product']['promotion_price']*$p['quantity'];
+								$_SESSION['svcart']['cart_info']['sum_subtotal'] += $p['Product']['promotion_price']*$p['quantity'];
+							$_SESSION['svcart']['products'][$i]['is_promotion'] = 1;
+						}else{
+							
+							$promotion_price = $p['Product']['shop_price'];
+								$promotion_price = $p['Product']['shop_price'];
+							
+							//总现合计
+						//	$_SESSION['svcart']['cart_info']['sum_subtotal'] += $p['Product']['shop_price']*$p['quantity'];
+						
+								$_SESSION['svcart']['cart_info']['sum_subtotal'] += $p['Product']['shop_price']*$p['quantity'];
+							$_SESSION['svcart']['products'][$i]['is_promotion'] = 0;
+						}
+					}
+					//该商品原价
+				//	$_SESSION['svcart']['products'][$i]['market_subtotal'] = $p['Product']['market_price']*$p['quantity'];
+						$_SESSION['svcart']['products'][$i]['market_subtotal'] = $p['Product']['market_price']*$p['quantity'];
+				
+					//该商品小计
+					$_SESSION['svcart']['products'][$i]['subtotal'] = $promotion_price*$p['quantity'];
+					$_SESSION['svcart']['cart_info']['product_subtotal'] += $promotion_price*$p['quantity'];
+					//全部商品原价合计
+					$_SESSION['svcart']['cart_info']['sum_market_subtotal'] += $_SESSION['svcart']['products'][$i]['market_subtotal'];
+					//该商品差价
+					
+					//$_SESSION['svcart']['products'][$i]['discount_price'] = $p['Product']['market_price'] - $promotion_price;
+					
+						$_SESSION['svcart']['products'][$i]['discount_price'] = $p['Product']['market_price'] - $promotion_price;
+					
+					//该商品折扣%?
+					if($promotion_price > 0){
+							$_SESSION['svcart']['products'][$i]['discount_rate'] = round($promotion_price/$p['Product']['market_price'],2)*100 ;
+						
+					}else{
+					$_SESSION['svcart']['products'][$i]['discount_rate'] = 100;
+					}
+				}
+			}
+			}
+			if(isset($_SESSION['svcart']['cards'])){
+				foreach($_SESSION['svcart']['cards'] as $i=>$p){
+					
+						$card_curr_free_money = $p['Card']['free_money'];
+					
+					if(isset($_SESSION['svcart']['cart_info']['product_subtotal']) && ($p['Card']['free_money'] == 0 || $_SESSION['svcart']['cart_info']['product_subtotal'] < $card_curr_free_money)){
+					//	$_SESSION['svcart']['cards'][$i]['subtotal'] = $p['Card']['fee']*$p['quantity'];//小计
+					
+							$_SESSION['svcart']['cards'][$i]['subtotal'] = $p['Card']['fee']*$p['quantity'];
+					
+						$_SESSION['svcart']['cart_info']['sum_subtotal'] += $_SESSION['svcart']['cards'][$i]['subtotal'];
+						$_SESSION['svcart']['cart_info']['sum_market_subtotal'] += $_SESSION['svcart']['cards'][$i]['subtotal'];
+						unset($_SESSION['svcart']['cards'][$i]['Card']['fee_free']);
+					}else{
+						$_SESSION['svcart']['cards'][$i]['subtotal'] = 0;//小计
+						$_SESSION['svcart']['cards'][$i]['Card']['fee_free'] = 0;
+					}
+				}
+			}
+		}
+	
+		if($type == 'card'){
+			if(isset($_SESSION['svcart']['cards'])){
+				foreach($_SESSION['svcart']['cards'] as $i=>$p){
+					
+						$card_curr_free_money = $p['Card']['free_money'];
+				//	pr($_SESSION['svcart']['cart_info']['product_subtotal']."------------------".$card_curr_free_money);
+					if(isset($_SESSION['svcart']['cart_info']['product_subtotal']) && ($p['Card']['free_money'] == 0 || $_SESSION['svcart']['cart_info']['product_subtotal'] < $card_curr_free_money)){
+					//	$_SESSION['svcart']['cards'][$i]['subtotal'] = $p['Card']['fee']*$p['quantity'];//小计
+					
+						$_SESSION['svcart']['cards'][$i]['subtotal'] = $p['Card']['fee']*$p['quantity'];
+					
+						$_SESSION['svcart']['cards'][$i]['is_promotion'] = 0;
+						//总现合计
+						$_SESSION['svcart']['cart_info']['sum_subtotal'] += $_SESSION['svcart']['cards'][$i]['subtotal'];
+						//总原合计
+						$_SESSION['svcart']['cart_info']['sum_market_subtotal'] += $_SESSION['svcart']['cards'][$i]['subtotal'];
+						unset($_SESSION['svcart']['cards'][$i]['Card']['fee_free']);
+					}else{
+						$_SESSION['svcart']['cards'][$i]['subtotal'] = 0;//小计
+						$_SESSION['svcart']['cards'][$i]['is_promotion'] = 0;		
+						$_SESSION['svcart']['cards'][$i]['Card']['fee_free'] = 0;
+					}
+				}
+			}
+			if(isset($_SESSION['svcart']['products'])){
+			$product_ranks = $this->ProductRank->findall_ranks();
+			if(isset($_SESSION['User']['User'])){
+				$user_rank_list=$this->UserRank->findrank();		
+			}
+			$_SESSION['svcart']['cart_info']['product_subtotal'] = 0;
+			//是否全为虚拟商品
+			$_SESSION['svcart']['cart_info']['all_virtual'] = 1;
+
+			if(isset($_SESSION['svcart']['products'])){	
+				foreach($_SESSION['svcart']['products'] as $i=>$p){
+					if(isset($this->configs['volume_setting']) && $this->configs['volume_setting'] == 1){
+						$product_volume = $this->ProdcutVolume->find(array('ProdcutVolume.product_id'=>$p['Product']['id'],'ProdcutVolume.volume_number '=>$p['quantity']));
+						if(isset($product_volume['ProdcutVolume'])){
+								$volume_price = $product_volume['ProdcutVolume']['volume_price'];
+						}
+					}					
+					
+					$_SESSION['svcart']['cart_info']['sum_weight'] += $p['Product']['weight']*$p['quantity'];
+					if(empty($p['Product']['extension_code'])){
+						$_SESSION['svcart']['cart_info']['all_virtual'] = 0;
+					}
+					//获得是否有会员价
+					if(isset($_SESSION['User'])){
+						if(isset($product_ranks[$p['Product']['id']]) && isset($_SESSION['User']['User']['rank']) && isset($product_ranks[$p['Product']['id']][$_SESSION['User']['User']['rank']])){
+							if(isset($product_ranks[$p['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['is_default_rank']) && $product_ranks[$p['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['is_default_rank'] == 0){
+							  //$p['Product']['product_rank_price']= $product_ranks[$p['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['product_price'];			  
+							
+									$p['Product']['product_rank_price'] = $product_ranks[$p['Product']['id']][$_SESSION['User']['User']['rank']]['ProductRank']['product_price'];
+							
+							}else if(isset($user_rank_list[$_SESSION['User']['User']['rank']])){
+							  //$p['Product']['product_rank_price']=($user_rank_list[$_SESSION['User']['User']['rank']]['UserRank']['discount']/100)*($p['Product']['shop_price']);			  
+							
+									$p['Product']['product_rank_price'] = ($user_rank_list[$_SESSION['User']['User']['rank']]['UserRank']['discount']/100)*($p['Product']['shop_price']);	
+							
+							}
+						}						
+						
+					//	$p['Product']['product_rank_price'] = 	$this->Product->user_price($i,$p,$this);
+					}else{
+					//如果会员未登录 删除SESSION中残留的product_rank_price
+						if(isset($p['Product']['product_rank_price']) || isset($_SESSION['svcart']['products'][$i]['product_rank_price'])){
+							unset($p['Product']['product_rank_price']);
+							unset($_SESSION['svcart']['products'][$i]['product_rank_price']);
+						}
+					}
+					
+					//有会员价
+					if(isset($volume_price)){
+						$promotion_price = $volume_price;
+						$_SESSION['svcart']['cart_info']['sum_subtotal'] += $volume_price*$p['quantity'];					
+					}elseif(isset($p['Product']['product_rank_price'])){
+						$promotion_price = $p['Product']['product_rank_price'];
+						$_SESSION['svcart']['products'][$i]['product_rank_price'] = $promotion_price;
+						
+						$_SESSION['svcart']['cart_info']['sum_subtotal'] += $p['Product']['product_rank_price']*$p['quantity'];
+						
+					}else{
+						if($this->is_promotion($p)){
+							//该商品现价
+								$promotion_price = $p['Product']['promotion_price'];
+							//全部商品现价合计
+								$_SESSION['svcart']['cart_info']['sum_subtotal'] += $p['Product']['promotion_price']*$p['quantity'];
+							$_SESSION['svcart']['products'][$i]['is_promotion'] = 1;
+						}else{
+							
+							$promotion_price = $p['Product']['shop_price'];
+							
+							//总现合计
+						//	$_SESSION['svcart']['cart_info']['sum_subtotal'] += $p['Product']['shop_price']*$p['quantity'];
+						
+								$_SESSION['svcart']['cart_info']['sum_subtotal'] += $p['Product']['shop_price']*$p['quantity'];
+							$_SESSION['svcart']['products'][$i]['is_promotion'] = 0;
+						}
+					}
+					//该商品原价
+						$_SESSION['svcart']['products'][$i]['market_subtotal'] = $p['Product']['market_price']*$p['quantity'];
+				
+					//该商品小计
+					$_SESSION['svcart']['products'][$i]['subtotal'] = $promotion_price*$p['quantity'];
+					$_SESSION['svcart']['cart_info']['product_subtotal'] += $promotion_price*$p['quantity'];
+					//全部商品原价合计
+					$_SESSION['svcart']['cart_info']['sum_market_subtotal'] += $_SESSION['svcart']['products'][$i]['market_subtotal'];
+					//该商品差价
+					
+					//$_SESSION['svcart']['products'][$i]['discount_price'] = $p['Product']['market_price'] - $promotion_price;
+					
+						$_SESSION['svcart']['products'][$i]['discount_price'] = $p['Product']['market_price'] - $promotion_price;
+					
+					//该商品折扣%?
+					if($promotion_price > 0){
+				//		$_SESSION['svcart']['products'][$i]['discount_rate'] = round($promotion_price/$p['Product']['market_price'],2)*100 ;
+						
+							$_SESSION['svcart']['products'][$i]['discount_rate'] = round($promotion_price/$p['Product']['market_price'],2)*100 ;
+						
+					}else{
+					$_SESSION['svcart']['products'][$i]['discount_rate'] = 100;
+					}
+				}
+			}
+
+		}
+			
+			if(isset($_SESSION['svcart']['packagings'])){
+				foreach($_SESSION['svcart']['packagings'] as $i=>$p){
+						$packaging_curr_free_money = $p['Packaging']['free_money'];
+					if(isset($_SESSION['svcart']['cart_info']['product_subtotal']) && ($p['Packaging']['free_money'] >0 || $_SESSION['svcart']['cart_info']['product_subtotal'] < $packaging_curr_free_money)){
+							$_SESSION['svcart']['packagings'][$i]['subtotal'] = $p['Packaging']['fee']*$p['quantity'];
+						$_SESSION['svcart']['cart_info']['sum_subtotal'] += $_SESSION['svcart']['packagings'][$i]['subtotal'];
+						$_SESSION['svcart']['cart_info']['sum_market_subtotal'] += $_SESSION['svcart']['packagings'][$i]['subtotal'];
+						unset($_SESSION['svcart']['packagings'][$i]['Packaging']['fee_free']);
+					}else{
+						$_SESSION['svcart']['packagings'][$i]['subtotal'] = 0;
+						$_SESSION['svcart']['packagings'][$i]['Packaging']['fee_free'] = 0;
+					}
+				}
+			}
+		}
+		//节省
+		$_SESSION['svcart']['cart_info']['discount_price'] = $_SESSION['svcart']['cart_info']['sum_market_subtotal'] - $_SESSION['svcart']['cart_info']['sum_subtotal'];
+		$save_cookie = $_SESSION['svcart'];unset($save_cookie['products']);unset($save_cookie['promotion']['products']);$this->Cookie->write('cart_cookie',serialize($save_cookie),false,3600 * 24);   
+
+	}
+	
+	function order_price(){
+		//pr($_SESSION['svcart']);
+		//统计商品价格
+		$_SESSION['svcart']['cart_info']['sum_subtotal'] = 0;
+		$_SESSION['svcart']['cart_info']['sum_market_subtotal'] = 0;
+		if(isset($_SESSION['svcart']['products']) && sizeof($_SESSION['svcart']['products'])>0){
+			foreach($_SESSION['svcart']['products'] as $k=>$v){
+				$_SESSION['svcart']['cart_info']['sum_subtotal'] += $v['subtotal'] ;
+				$_SESSION['svcart']['cart_info']['sum_market_subtotal'] += $v['market_subtotal'] ;
+			}
+			$_SESSION['svcart']['cart_info']['all_product'] = $_SESSION['svcart']['cart_info']['sum_subtotal'];
+		}
+		if(isset($_SESSION['svcart']['cards']) && sizeof($_SESSION['svcart']['cards'])>0){
+			foreach($_SESSION['svcart']['cards'] as $k=>$v){
+				$_SESSION['svcart']['cart_info']['sum_subtotal'] += $v['subtotal'] ;
+				$_SESSION['svcart']['cart_info']['sum_market_subtotal'] += $v['subtotal'] ;
+			}
+		}		
+		if(isset($_SESSION['svcart']['packagings']) && sizeof($_SESSION['svcart']['packagings'])>0){
+			foreach($_SESSION['svcart']['packagings'] as $k=>$v){
+				$_SESSION['svcart']['cart_info']['sum_subtotal'] += $v['subtotal'] ;
+				$_SESSION['svcart']['cart_info']['sum_market_subtotal'] += $v['subtotal'] ;
+			}
+		}
+		if($_SESSION['svcart']['cart_info']['sum_market_subtotal'] > 0){
+			$_SESSION['svcart']['cart_info']['discount_rate'] = round($_SESSION['svcart']['cart_info']['sum_subtotal']/$_SESSION['svcart']['cart_info']['sum_market_subtotal']*100);
+		}else{
+			$_SESSION['svcart']['cart_info']['discount_rate'] = 100;
+		}
+		$_SESSION['svcart']['cart_info']['discount_price'] = $_SESSION['svcart']['cart_info']['sum_market_subtotal']-$_SESSION['svcart']['cart_info']['sum_subtotal'];
+		$_SESSION['svcart']['cart_info']['total'] = $_SESSION['svcart']['cart_info']['sum_subtotal'];
+		if(isset($_SESSION['svcart']['shipping']['shipping_fee'])){
+			$_SESSION['svcart']['cart_info']['total'] += $_SESSION['svcart']['shipping']['shipping_fee'];
+		}
+		if(isset($_SESSION['svcart']['shipping']['insure_fee_confirm'])){
+			$_SESSION['svcart']['cart_info']['total']  += $_SESSION['svcart']['shipping']['insure_fee_confirm'];
+		}	
+		if(isset($_SESSION['svcart']['payment']['payment_fee'])){
+			$_SESSION['svcart']['cart_info']['total'] += $_SESSION['svcart']['payment']['payment_fee'];
+		}
+		if(isset($_SESSION['svcart']['promotion'])){
+			if($_SESSION['svcart']['promotion']['type'] == 1){
+		//		$_SESSION['svcart']['cart_info']['total'] = round($_SESSION['svcart']['cart_info']['total']*$_SESSION['svcart']['promotion']['promotion_fee']/100,2);
+				$_SESSION['svcart']['cart_info']['all_product'] = round($_SESSION['svcart']['cart_info']['all_product']*$_SESSION['svcart']['promotion']['promotion_fee']/100,2);
+				$_SESSION['svcart']['cart_info']['total'] -= $_SESSION['svcart']['cart_info']['all_product'];
+				
+			}
+			if($_SESSION['svcart']['promotion']['type'] == 0){
+				$_SESSION['svcart']['cart_info']['total'] -= $_SESSION['svcart']['promotion']['promotion_fee'];
+			}	
+			
+			if($_SESSION['svcart']['promotion']['type'] == 2 && isset($_SESSION['svcart']['promotion']['product_fee'])){
+				//foreach(){
+				$_SESSION['svcart']['cart_info']['total'] += $_SESSION['svcart']['promotion']['product_fee'];
+				//}
+			}				
+		}
+		if(isset($_SESSION['svcart']['point']['fee'])){
+			$_SESSION['svcart']['cart_info']['total'] -= $_SESSION['svcart']['point']['fee'];
+		}			
+		if(isset($_SESSION['svcart']['coupon']['fee'])){
+			if(!isset($_SESSION['svcart']['coupon']['discount'])){
+				$_SESSION['svcart']['coupon']['discount'] = 100;
+			}
+			$_SESSION['svcart']['cart_info']['total'] -= $_SESSION['svcart']['coupon']['fee'];
+			$_SESSION['svcart']['cart_info']['total'] = round($_SESSION['svcart']['cart_info']['total']*$_SESSION['svcart']['coupon']['discount']/100,2);
+		}
+		if(isset($_SESSION['svcart']['invoice']['tax_point'])){
+			$_SESSION['svcart']['invoice']['fee'] = round($_SESSION['svcart']['cart_info']['sum_subtotal']*$_SESSION['svcart']['invoice']['tax_point']/100,2);
+			$_SESSION['svcart']['cart_info']['total'] += $_SESSION['svcart']['invoice']['fee'];
+		}
+		
+	}
+	
+	function findpromotions($id=''){
+		$info_subtotal = $_SESSION['svcart']['cart_info']['sum_subtotal'];
+    //  $info_total = $_SESSION['svcart']['cart_info']['total'];
+        $conditions = "1=1 and Promotion.status = '1' ";
+        $now_time = date("Y-m-d H:i:s");
+    	$conditions .= " and Promotion.start_time <= '".$now_time."'";
+      	$conditions .= " and Promotion.end_time >= '".$now_time."'";
+        $conditions .= " and Promotion.min_amount <= $info_subtotal ";
+        $conditions .= " and Promotion.max_amount >= $info_subtotal ";
+        $conditions .= " or (Promotion.max_amount = '0' and Promotion.min_amount <= $info_subtotal)";
+        if($id != ''){
+     	   $conditions .= " and Promotion.id = $id ";
+        }
+        $this->Promotion->set_locale($this->locale);
+        //$promotions = $this->Promotion->findall($conditions,"","Promotion.orderby asc");
+        $promotions = $this->Promotion->find('all',array(
+        'fields' => array('Promotion.id','Promotion.type','Promotion.type_ext','Promotion.start_time','Promotion.end_time'
+        ,'Promotion.min_amount','Promotion.max_amount','Promotion.user_rank'
+       	,'PromotionI18n.title','PromotionI18n.meta_keywords','PromotionI18n.meta_description'),
+        'conditions'=>array($conditions),'order'=>array("Promotion.orderby asc")));
+        
+        
+                //特惠品信息
+        if(isset($promotions) && count($promotions)>0){
+    		foreach($promotions as $k=>$v){
+    			if($v['Promotion']['type'] == 2){
+    		    	$PromotionProducts[$k] = $this->PromotionProduct->findallbypromotion_id($v['Promotion']['id']);
+    				if(isset($PromotionProducts[$k]) && count($PromotionProducts[$k])>0){
+    						$pro_ids = array();
+    						foreach($PromotionProducts[$k] as $key=>$value){
+    							$pro_ids[] = $value['PromotionProduct']['product_id'] ;
+    						}
+    						if(!empty($pro_ids)){
+    							$this->Product->set_locale($this->locale);
+    							$pro_products = $this->Product->find('all',array('fields'=>array('Product.id','Product.img_thumb','Product.market_price','ProductI18n.name','Product.shop_price','Product.code'),'conditions'=>array('Product.id'=>$pro_ids)));
+    							$pro_products_list = array();
+    							if(isset($pro_products) && sizeof($pro_products)>0){
+    								foreach($pro_products as $kk=>$vv){
+    									$pro_products_list[$vv['Product']['id']] = $vv;
+    								}
+    							}
+    						}
+    						
+    					foreach($PromotionProducts[$k] as $key=>$value){
+    						if(isset($pro_products_list[$value['PromotionProduct']['product_id']])){
+    							$promotions[$k]['products'][$value['PromotionProduct']['product_id']] = $pro_products_list[$value['PromotionProduct']['product_id']];
+    							$promotions[$k]['products'][$value['PromotionProduct']['product_id']]['Product']['now_fee'] = $value['PromotionProduct']['price'];
+    						}
+    					//	$promotions[$k]['products'][$value['PromotionProduct']['product_id']] = $this->Product->findbyid($value['PromotionProduct']['product_id']);
+    					}
+    				}
+    			}
+    		}
+    	}
+    	return $promotions;
+	}
+
 
  }	
 ?>

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: category_articles_controller.php 2907 2009-07-15 11:04:21Z shenyunfeng $
+ * $Id: category_articles_controller.php 4078 2009-09-04 11:42:15Z huangbo $
 *****************************************************************************/
 class  CategoryArticlesController extends AppController {
     var $name = 'CategoryArticles';
@@ -73,7 +73,10 @@ class  CategoryArticlesController extends AppController {
 		$now = date("Y-m-d H:i:s");
        	$yestoday = date("Y-m-d H:i:s",strtotime ("-1 day"));
        	$filter = "1=1";
-        $filter .= " and  Article.status = '1' and Article.created <= '".$now."' and  Article.created >='".$yestoday."' and Article.category_id = ".$cat_id;     	
+        $filter .= " and  Article.status = '1' and Article.created <= '".$now."' and  Article.created >='".$yestoday."' ";
+        if($cat_id != 'hot'){
+      	 	$filter .= "and Article.category_id = ".$cat_id;
+        }     	
         $this->Article->set_locale($this->locale);
        	$today = $this->Article->find('all',array('conditions'=>array($filter),'fields'=>array('Article.id'),'recursive'=>-1));
 		$this->set("today",count($today));        
@@ -97,7 +100,7 @@ class  CategoryArticlesController extends AppController {
                 $article_list[$key]['Article']['created']=substr($val['Article']['created'],0,10);
                 $article_list[$key]['Article']['modified']=substr($val['Article']['modified'],0,10);
 	                if(isset($this->configs['products_name_length']) && $this->configs['products_name_length'] >0){
-						$article_list[$key]['ArticleI18n']['title'] = $this->Article->sub_str($val['ArticleI18n']['title'],$this->configs['article_title_length']);
+						$article_list[$key]['ArticleI18n']['sub_title'] = $this->Article->sub_str($val['ArticleI18n']['title'],$this->configs['article_title_length']);
 	                }
                 }
                 $this->set('article_list',$article_list);
@@ -210,7 +213,7 @@ class  CategoryArticlesController extends AppController {
                 $article_list[$key]['Article']['created']=substr($val['Article']['created'],0,10);
                 $article_list[$key]['Article']['modified']=substr($val['Article']['modified'],0,10);
 	                if(isset($this->configs['products_name_length']) && $this->configs['products_name_length'] >0){
-						$article_list[$key]['ArticleI18n']['title'] = $this->Article->sub_str($val['ArticleI18n']['title'],$this->configs['article_title_length']);
+						$article_list[$key]['ArticleI18n']['sub_title'] = $this->Article->sub_str($val['ArticleI18n']['title'],$this->configs['article_title_length']);
 	                }
                 }
                 $this->set('article_list',$article_list);

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: language_dictionary.php 2952 2009-07-16 09:56:25Z huangbo $
+ * $Id: language_dictionary.php 2951 2009-07-16 09:53:05Z huangbo $
 *****************************************************************************/
 class LanguageDictionary extends AppModel{
 	var $name = 'LanguageDictionary'; 

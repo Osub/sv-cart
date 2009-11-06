@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: product.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: product.php 4930 2009-10-12 10:24:42Z huangbo $
 *****************************************************************************/
 class Product extends AppModel
 {
@@ -24,7 +24,7 @@ class Product extends AppModel
 					                              'order'        => '',   
 					                              'dependent'    =>  true,   
 					                              'foreignKey'   => 'product_id'
-					                        	 ) ,
+					                        	 ) 
 					   	/*	'ProductsCategory' =>array
 												(
 										          'className'     => 'ProductsCategory',   
@@ -32,20 +32,20 @@ class Product extends AppModel
 					                              'dependent'    =>  true,   
 					                              'foreignKey'   => 'Product_id'
 					                        	),*/
-					  		'ProviderProduct' =>array
+					  	/*	'ProviderProduct' =>array
 												(
 										          'className'     => 'ProviderProduct',   
 					                              'order'        => '',   
 					                              'dependent'    =>  true,   
 					                              'foreignKey'   => 'product_id'
-					                        	),	
-					   		'ProductLocalePrice' =>array
+					                        	),	*/
+					  /* 	,	'ProductLocalePrice' =>array
 												(
 										          'className'     => 'ProductLocalePrice',   
 					                              'order'        => '',   
 					                              'dependent'    =>  true,   
 					                              'foreignKey'   => 'product_id'
-					                        	)	     
+					                        	)*/
                  	   );
 	/*		var $hasMany = array('ProductAttribute' =>array
 															(
@@ -58,9 +58,9 @@ class Product extends AppModel
 			*/
 	function set_locale($locale){
     	$conditions = " ProductI18n.locale = '".$locale."'";
-     	$condition = " ProductLocalePrice.locale = '".$locale."'";
+     //	$condition = " ProductLocalePrice.locale = '".$locale."'";
     	$this->hasOne['ProductI18n']['conditions'] = $conditions;
-    	$this->hasOne['ProductLocalePrice']['conditions'] = $condition;
+    //	$this->hasOne['ProductLocalePrice']['conditions'] = $condition;
     }
     
  /*
@@ -89,13 +89,31 @@ class Product extends AppModel
 		}
 	//	$Lists=$this->findAll($condition,'',$orderby);
 		$params = array('order' => array($orderby),
+			'fields' =>	array('Product.id'
+																				,'Product.recommand_flag'
+																				,'Product.status'
+																				,'Product.img_thumb'
+																				,'Product.market_price'
+																				,'Product.shop_price'
+																				,'Product.promotion_price'
+																				,'Product.promotion_start'
+																				,'Product.promotion_end'
+																				,'Product.promotion_status'
+																				,'Product.code'
+																				,'Product.brand_id'
+																				,'Product.category_id'
+																				,'Product.product_rank_id'
+																				,'Product.quantity','ProductI18n.name'
+																				),			
+			
+			
 		    			'conditions' => array($condition)
 			   			);
 		$Lists = $this->cache_find('all',$params,$this->name.$locale);	
 		return $Lists;
 	}
 
-    function promotion($number,$locale){
+    function promotion($number,$locale,$category_ids =''){
 /*		$cache_key = md5($this->name."_promotion_".$number);
 		
 		$products = cache::read($cache_key);
@@ -111,6 +129,10 @@ class Product extends AppModel
 			
 //			cache::write($cache_key,$products);*/
 			$datetime = date("Y-m-d H:i:s");
+			$condition = "Product.status ='1' and Product.alone = '1' and Product.forsale ='1' and promotion_status in ('1','2') and '".$datetime."' between promotion_start and promotion_end  ";
+			if($category_ids != ""){
+				$condition  .= " and Product.category_id = ".$category_ids;
+			}			
 			$params = array('order' => array('Product.modified DESC'),
 																'recursive' => -1,
 																'fields' =>	array('Product.id','Product.recommand_flag','Product.status','Product.img_thumb'
@@ -124,7 +146,7 @@ class Product extends AppModel
 																				,'Product.quantity'
 																				,'Product.product_rank_id'
 																				),																
-			    												'conditions' => "Product.status ='1' and Product.alone = '1' and Product.forsale ='1' and promotion_status in ('1','2') and '".$datetime."' between promotion_start and promotion_end  ",
+			    												'conditions' => $condition,
 			    												'limit' => $number
 			    												);
 			$products = $this->cache_find('all',$params,$this->name.$locale);			
@@ -139,14 +161,14 @@ class Product extends AppModel
     //	$condition = "Product.status ='1' and Product.alone = '1' and Product.forsale ='1' and Product.promotion_status in ('1','2') and '".$datetime."' between Product.promotion_start and Product.promotion_end  and Product.id= '".$product_id."'";
 //		$products=$this->find($condition);
 	//	pr($product);exit;
-		if(($product['Product']['promotion_status']== 1 || $product['Product']['promotion_status']== 2) && $product['Product']['promotion_start'] <= $datetime && $product['Product']['promotion_end'] >=  $datetime){
+		if(isset($product['Product']) && ($product['Product']['promotion_status']== 1 || $product['Product']['promotion_status']== 2) && $product['Product']['promotion_start'] <= $datetime && $product['Product']['promotion_end'] >=  $datetime){
 			return true;
 		}else{
 			return false;
    		}
     }
     
-	function newarrival($number,$locale){
+	function newarrival($number,$locale,$category_ids =''){
 //		$cache_key = md5($this->name."_newarrival_".$number);
 //		$products = cache::read($cache_key);
 //		if($products){
@@ -164,6 +186,14 @@ class Product extends AppModel
 			
 			
 			cache::write($cache_key,$products);*/
+			$condition = array('Product.status'=>'1',
+								'Product.alone' => '1',
+								'Product.forsale' => '1'
+								);
+			if($category_ids != ""){
+				$condition['Product.category_id'] = $category_ids;
+			}
+			
 			$params = array('order' => array('Product.modified DESC'),
 																'recursive' => -1,
 																'fields' =>	array('Product.id','Product.recommand_flag','Product.status','Product.img_thumb'
@@ -177,10 +207,7 @@ class Product extends AppModel
 																				,'Product.product_rank_id'
 																				,'Product.quantity'
 																				),
-			    												'conditions' => array('Product.status'=>'1',
-			    																	  'Product.alone' => '1',
-			    																	  'Product.forsale' => '1'
-			    																		),
+			    												'conditions' => $condition,
 			    												'limit' => $number
 			    												);
 			$products = $this->cache_find('all',$params,$this->name.$locale);			
@@ -188,7 +215,7 @@ class Product extends AppModel
 	//	}
 	}
 	
-	function recommand($number,$locale){
+	function recommand($number,$locale,$category_ids =''){
 	/*	$cache_key = md5($this->name."_recommand_".$number);
 		
 		$products = cache::read($cache_key);
@@ -208,6 +235,15 @@ class Product extends AppModel
 			cache::write($cache_key,$products);
 			return $products;
 		}*/
+		$condition =  array('Product.status'=>'1',
+		    			  'Product.alone' => '1',
+		    			  'Product.forsale' => '1',
+						  'Product.recommand_flag' => '1'
+		    			);
+		if($category_ids != ""){
+			$condition['Product.category_id'] = $category_ids;
+		}
+		
 		$params = array('order' => array('Product.modified DESC'),
 																'recursive' => -1,
 																'fields' =>	array('Product.id','Product.recommand_flag','Product.status','Product.img_thumb'
@@ -223,35 +259,70 @@ class Product extends AppModel
 																				),			
 			
 			
-		    												'conditions' => array('Product.status'=>'1',
-		    																	  'Product.alone' => '1',
-		    																	  'Product.forsale' => '1',
-		    																	  'Product.recommand_flag' => '1'
-		    																		),
+		    												'conditions' => $condition,
 		    												'limit' => $number
 		    												);
 		$products = $this->cache_find('all',$params,$this->name.$locale);
 		return $products;
 	}
 	
+	function all_list($number,$locale,$category_ids =''){
+		$condition =  array('Product.status'=>'1',
+		    			  'Product.alone' => '1',
+		    			  'Product.forsale' => '1'
+				    		);
+		if($category_ids != ""){
+			$condition['Product.category_id'] = $category_ids;
+		}
+		
+		$params = array('order' => array('Product.modified DESC'),
+																'recursive' => -1,
+																'fields' =>	array('Product.id','Product.recommand_flag','Product.status','Product.img_thumb'
+																				,'Product.market_price'
+																				,'Product.shop_price'
+																				,'Product.promotion_price'
+																				,'Product.promotion_start'
+																				,'Product.promotion_end'
+																				,'Product.promotion_status'
+																				,'Product.code'
+																				,'Product.quantity'
+																				,'Product.product_rank_id'
+																				),			
+		    												'conditions' => $condition,
+		    												'limit' => $number
+		    												);
+		$products = $this->cache_find('all',$params,$this->name.$locale);
+		return $products;
+	}	
 	
-	function search($locale,$keyword){
+	function search($locale,$keyword,$num = 10){
 		$condition=array(
 		   'OR' => array(
 		   	  array("Product.code like '%$keyword%' "),
 		      array("ProductI18n.name like '%$keyword%' "),
 		      array("ProductI18n.description like '%$keyword%' ")
-		   		)
+		   		),
+		   	'AND' =>array('Product.status'=>'1',
+						'Product.alone' => '1',
+						'Product.forsale' => '1')
 		   );
-	    $Pids=$this->findall($condition,'DISTINCT Product.id');
+	  /*  $Pids=$this->findall($condition,'DISTINCT Product.id');
 	    if(is_array($Pids)){
 	    	foreach($Pids as $v ){
 	    		$pid_array[]=$v['Product']['id'];
 	    	}
-	    }
+	    }*/
 	    $this->set_locale($locale);
- 	    $condition = array("Product.id"=>$pid_array);
-	    $result=$this->findall($condition);
+ 	   // $condition = array("Product.id"=>$pid_array);
+ 	    $params = array('order' => array('Product.modified DESC'),
+						'fields' =>	array('Product.id','Product.img_thumb','Product.code','ProductI18n.name'),
+						'conditions' => $condition,
+ 	    				'limit' => $num
+ 	    				);
+		$result = $this->cache_find('all',$params,$this->name."_search_".$locale);
+	  //  $result=$this->findall($condition);
+	    
+	    
 	    return $result;
 	  }
 	
@@ -291,7 +362,8 @@ class Product extends AppModel
 	    {
 	        $newstr .= '...';
 	    }
-	    return $newstr;
+	    return $newstr;	
+
 	}
 	
 	function localeformat($id,$db){
@@ -307,7 +379,7 @@ class Product extends AppModel
 				 if(isset($category_info['ProductsCategory'])){
 				 $lists_formated['ProductsCategory']=$category_info['ProductsCategory'];
 				 }
-				 $lists_formated['ProviderProduct']=$v['ProviderProduct'];
+			//	 $lists_formated['ProviderProduct']=$v['ProviderProduct'];
 				 $lists_formated['ProductI18n'][]=$v['ProductI18n'];
 				 foreach($lists_formated['ProductI18n'] as $key=>$val){
 				 	  $lists_formated['ProductI18n'][$val['locale']]=$val;
@@ -363,11 +435,12 @@ class Product extends AppModel
 		 	$top_products = $this->cacheFind($this->name,'findalllang'.$locale,array('locale'=>$locale,'size'=>$size));
 		 }else{
 		 	$top_products = $this->find('all',array('order' => array('Product.sale_stat desc'),
-																	'fields' =>	array('Product.id','Product.code',
+																	'fields' =>	array('Product.id','Product.code','Product.market_price','Product.img_thumb','Product.shop_price',
 																						'ProductI18n.name'
 																				),								 		
 	    												'conditions' => array('Product.status'=>'1',
-	    																	  'Product.forsale' => '1'
+	    																	  'Product.forsale' => '1',
+	    																		'Product.sale_stat >'=>'0'
 	    																		),
 	    												'limit' => $size
 	    			
@@ -392,6 +465,13 @@ class Product extends AppModel
 		
 		return $home_category_products_list;		
 	}
+	
+	function find_total($params,$locale){
+		$total = $this->cache_find('count',$params,$this->name."_find_total_".$locale);
+		return $total;
+	}
+	
+	
 	
 }
 ?>

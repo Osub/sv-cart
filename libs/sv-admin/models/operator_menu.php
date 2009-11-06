@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: operator_menu.php 2659 2009-07-08 02:32:43Z shenyunfeng $
+ * $Id: operator_menu.php 5493 2009-11-03 10:47:49Z huangbo $
 *****************************************************************************/
 class Operator_menu extends AppModel
 {
@@ -23,28 +23,37 @@ class Operator_menu extends AppModel
 							  'foreignKey' => 'operator_menu_id'							
 						)
 					);
-    
+    var $cacheQueries = true;
 	function set_locale($locale){
     	$conditions = " Operator_menuI18n.locale = '".$locale."'";
     	$this->hasOne['Operator_menuI18n']['conditions'] = $conditions;
     }
 
    	function tree($actions="all",$locale){//
-   	    $conditions=" status ='1' ";
-   	   	//$this->set_locale($this->locale);
-   	    if($actions!="all"){
-   	    $conditions.="AND Operator_menu.operator_action_code in(".$actions.")";
-   	    }
-   	    $actions_arr = $this->cache_find('all',array('conditions'=>array($conditions),'order' => array('orderby asc')),$this->name.$locale);
-		//$actions_arr=$this->findAll($conditions,'','orderby asc');
-		
-		$this->acionts_parent_format = array();//先致空
-		if(is_array($actions_arr))
-			foreach($actions_arr as $k=>$v)
-			{	$v['Operator_menu']['name'] = $v['Operator_menuI18n']['name'];
-				$this->acionts_parent_format[$v['Operator_menu']['parent_id']][]=$v;
-			}
-		return $this->subcat_get('0');
+		$cache_key = md5($this->name."_".$locale);
+		$menu_formatcode = cache::read($cache_key);
+		if($menu_formatcode){
+			
+			return $menu_formatcode;
+		}else{
+
+	   	    $conditions=" status ='1' ";
+	   	   	//$this->set_locale($this->locale);
+	   	    if($actions!="all"){
+	   	    $conditions.="AND Operator_menu.operator_action_code in(".$actions.")";
+	   	    }
+	   	    $actions_arr = $this->cache_find('all',array('conditions'=>array($conditions),'fields'=>array("Operator_menu.operator_action_code,Operator_menu.link,Operator_menu.orderby,Operator_menu.parent_id,Operator_menu.id,Operator_menuI18n.name"),'order' => array('orderby asc')),$this->name.$locale);
+			//$actions_arr=$this->findAll($conditions,'','orderby asc');
+			
+			$this->acionts_parent_format = array();//先致空
+			if(is_array($actions_arr))
+				foreach($actions_arr as $k=>$v)
+				{	$v['Operator_menu']['name'] = $v['Operator_menuI18n']['name'];
+					$this->acionts_parent_format[$v['Operator_menu']['parent_id']][]=$v;
+				}
+			cache::write($cache_key,$this->subcat_get('0'));
+			return $this->subcat_get('0');
+		}
 	}
 	
    	function alltree(){//

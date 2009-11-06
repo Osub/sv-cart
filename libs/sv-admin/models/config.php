@@ -9,10 +9,11 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: config.php 3268 2009-07-23 06:02:01Z huangbo $
+ * $Id: config.php 5195 2009-10-20 05:29:32Z huangbo $
 *****************************************************************************/
 class Config extends AppModel
-{
+{    	
+
 	var $name = 'Config';  
 	var $hasOne = array('ConfigI18n' =>   
                         array('className'    => 'ConfigI18n',
@@ -23,8 +24,6 @@ class Config extends AppModel
                         )   
                   );
 
-    var $cacheQueries = true;
-    
     function set_locale($locale){
     	$conditions = " ConfigI18n.locale = '".$locale."'";
     	$this->hasOne['ConfigI18n']['conditions'] = $conditions;
@@ -56,19 +55,18 @@ class Config extends AppModel
 	}
 	function getformatcode_all($store_id = 0){
 		$condition = " store_id = '".$store_id."'";
-		$configs=$this->findAll($condition,'','orderby asc');
+		$configs=$this->find("all",array("conditions"=>$condition,'order'=>'orderby asc',"fields"=>array("ConfigI18n.locale","Config.code","ConfigI18n.value")));
 		$configs_formatcode =array();
 		if(is_array($configs))
-		foreach($configs as $v){
+			foreach($configs as $v){
+				
+				$configs_formatcode[$v["ConfigI18n"]["locale"]][$v['Config']['code']]=$v['ConfigI18n']['value'];
+				
+			}
 			
-			$configs_formatcode[$v["ConfigI18n"]["locale"]][$v['Config']['code']]=$v['ConfigI18n']['value'];
-			
-		}
-		
 		if(!isset($configs_formatcode['use_sku'])){
 			$configs_formatcode['use_sku'] = 0;
 		}		
-		
 		return $configs_formatcode;
 	}
 

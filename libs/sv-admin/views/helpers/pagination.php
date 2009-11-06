@@ -241,6 +241,7 @@ class PaginationHelper extends Helper
             $t[] = $this->_generateLink($this->_pageDetails['pageCount'],$this->_pageDetails['pageCount'],$escapeTitle); 
         } 
         $t = implode($separator, $t); 
+        
         return $t; 
     } 
      

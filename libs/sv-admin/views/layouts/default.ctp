@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: default.ctp 2715 2009-07-09 02:51:28Z zhengli $
+ * $Id: default.ctp 4105 2009-09-07 07:54:16Z huangbo $
 *****************************************************************************/
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -32,7 +32,29 @@
 	var now_locale = "<?php echo $now_locale?>";//当前语言
 </script>
 <?php echo $minify->css(array('/css/layout','/css/admin','/css/calendar','/css/menu','/css/container','/css/treeview','/css/image','/css/swfupload','/css/tabview','/css/style'));?>
-<?php echo $minify->js(array('/../js/yui/yahoo-dom-event.js','/../js/yui/container_core-min.js','/../js/yui/menu-min.js','/../js/yui/element-beta-min.js','/../js/yui/animation-min.js','/../js/yui/connection-min.js','/../js/yui/get-min.js','/../js/yui/container-min.js','/../js/yui/tabview-min.js','/../js/yui/json-min.js','/../js/yui/calendar-min.js','/js/common.js','/js/calendar.js','/../js/swfobject.js'));?>
+<?php echo $minify->js(array('/../js/yui/yahoo-dom-event.js','/../js/yui/container_core-min.js','/../js/yui/menu-min.js','/../js/yui/element-beta-min.js','/../js/yui/animation-min.js','/../js/yui/connection-min.js','/../js/yui/get-min.js','/../js/yui/container-min.js','/../js/yui/tabview-min.js','/../js/yui/json-min.js','/../js/yui/calendar-min.js','/js/utils.js','/js/common.js','/js/calendar.js','/../js/swfobject.js'));?>
+<!--对话框-->
+<input type="hidden" value="" id="img_src_text_number" />
+<input type="hidden" value="" id="assign_dir" />
+<div id="layer_dialog" class="svcart-overlay">
+<div id="loginout">
+	<h1><b>系统提示</b></h1>
+	<div id="buyshop_box">
+		<p class="login-alettr">
+		<?php echo $html->image("msg.gif",array('class'=>'sub_icon vmiddle'));?>
+		<b>
+		<span id="admin_dialog_content"></span>
+		</b>
+		</p>
+		<br /><input type="hidden" id="confirm" />
+		<p class="buy_btn mar" ><span id="admin_button_replace"><?php echo $html->link("取消","javascript:;",array("onclick"=>"layer_dialog_obj.hide()"));?>
+		<?php echo $html->link("确定","javascript:;",array("onclick"=>"confirm_record()"));?></span></p>
+	</div>
+	<p><?php echo $html->image("loginout-bottom.png");?></p>
+</div>
+</div>
+<!--End 对话框-->
+
 <!--菜单-->
 <script type="text/javascript">
     YAHOO.util.Event.onContentReady("topmenu", function () {
@@ -62,27 +84,6 @@
 	}
 	?>
 <?php echo $cakeDebug; ?>
-<!--对话框-->
-<input type="hidden" value="" id="img_src_text_number" />
-<input type="hidden" value="" id="assign_dir" />
-<div id="layer_dialog" class="svcart-overlay">
-<div id="loginout">
-	<h1><b>系统提示</b></h1>
-	<div id="buyshop_box">
-		<p class="login-alettr">
-		<?php echo $html->image("msg.gif",array('class'=>'sub_icon vmiddle'));?>
-		<b>
-		<span id="admin_dialog_content"></span>
-		</b>
-		</p>
-		<br /><input type="hidden" id="confirm" />
-		<p class="buy_btn mar" ><span id="admin_button_replace"><?php echo $html->link("取消","javascript:;",array("onclick"=>"layer_dialog_obj.hide()"));?>
-		<?php echo $html->link("确定","javascript:;",array("onclick"=>"confirm_record()"));?></span></p>
-	</div>
-	<p><?php echo $html->image("loginout-bottom.png");?></p>
-</div>
-</div>
-<!--End 对话框-->
 
 </body>
 </html>

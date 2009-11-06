@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: search.ctp 3225 2009-07-22 10:59:01Z huangbo $
+ * $Id: search.ctp 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -18,8 +18,11 @@
 
 <!--Main Start-->
 <br />
-<div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."留言管理","/messages/",'',false,false);?></strong></p>
+
+<div class="home_main" style="padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' ); ">
 <?php echo $form->create('',array('action'=>'',"type"=>"get",'name'=>'UserForm','onsubmit'=>"return false"));?>
+<div id="listDiv">
 <table cellpadding="0" cellspacing="0" width="100%" class="list_data">
 <tr class="thead">
 	<th align="left"><input type="checkbox" name="chkall" value="checkbox" onclick="selectAll(this,'checkbox');" />编号<?php echo $html->image('sort_desc.gif',array('align'=>'absmiddle'))?></th>
@@ -33,7 +36,7 @@
 <!--Comment Uncheck-->
 	<?php if(isset($UserMessage_list) && sizeof($UserMessage_list)>0){?>
 	<?php foreach($UserMessage_list as $k=>$v){ ?>
-	<tr>
+	<tr <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >
 	<td><input type="checkbox" name="checkbox[]" value="<?php echo $v['UserMessage']['id'] ?>" /><?php echo $v['UserMessage']['id'] ?></td>
 	<td><span><?php echo $v['UserMessage']['name'] ?></span></td>
 	<td align="center"><?php echo $v['UserMessage']['rank'] ?></td>
@@ -55,11 +58,11 @@
 	<td align="center">
 
 
-	<?php echo $html->link("编辑","/messages/view_search/{$v['UserMessage']['id']}");?>|<?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$this->webroot}messages/remove_search/{$v['UserMessage']['id']}/{$v['UserMessage']['msg_title']}')"));?>
+	<?php echo $html->link("编辑","/messages/view_search/{$v['UserMessage']['id']}");?>|<?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$admin_webroot}messages/remove_search/{$v['UserMessage']['id']}/{$v['UserMessage']['msg_title']}')"));?>
 
 		</td></tr>
 	<?php } }?>
-</table>
+</table></div>
 <!--Comment Uncheck End-->	
 	<?php if(isset($UserMessage_list) && sizeof($UserMessage_list)>0){?>	
 	<input type="hidden" name="search" value="search">

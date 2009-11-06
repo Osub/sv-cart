@@ -9,9 +9,27 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 2703 2009-07-08 11:54:52Z huangbo $
+ * $Id: add.ctp 4218 2009-09-11 02:34:41Z huangbo $
 *****************************************************************************/
 ?>
+<!--时间控件层start-->
+	<div id="container_cal" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal"></div><div style="clear:both;"></div></div>
+	</div>
+	<div id="container_cal2" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal2"></div><div style="clear:both;"></div></div>
+	</div>
+	<div id="container_cal3" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal3"></div><div style="clear:both;"></div></div>
+	</div>
+	<div id="container_cal4" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal4"></div><div style="clear:both;"></div></div>
+	</div>
+<!--end-->
 <?php echo $form->create('votes',array('action'=>'/add/'));?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
@@ -62,21 +80,4 @@
 	</div>
 </div>
 <?php echo $form->end();?>
-</div><!--时间控件层start-->
-	<div id="container_cal" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal2" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal2"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal3" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal3"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal4" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal4"></div><div style="clear:both;"></div></div>
-	</div>
-<!--end-->
+</div>

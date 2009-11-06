@@ -9,14 +9,20 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: coupon_type.php 725 2009-04-17 08:00:21Z huangbo $
+ * $Id: coupon_type.php 4930 2009-10-12 10:24:42Z huangbo $
 *****************************************************************************/
 class CouponType extends AppModel{
 	var $name = 'CouponType';
 	var $hasOne = array('CouponTypeI18n' =>   
                         array('className'    => 'CouponTypeI18n', 
                               'conditions'    =>  '',
-                              'order'        => 'CouponType.id',   
+                              'order'        => '',   
+                              'dependent'    =>  true,   
+                              'foreignKey'   => 'coupon_type_id'  
+                        ),'Coupon' =>   
+                        array('className'    => 'Coupon', 
+                              'conditions'    =>  '',
+                              'order'        => '',   
                               'dependent'    =>  true,   
                               'foreignKey'   => 'coupon_type_id'  
                         )

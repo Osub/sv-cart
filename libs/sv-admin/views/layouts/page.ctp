@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: page.ctp 2718 2009-07-09 05:33:11Z shenyunfeng $
+ * $Id: page.ctp 3428 2009-07-31 11:48:18Z huangbo $
 *****************************************************************************/
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -45,6 +45,7 @@
 <div class="home_footer">
 	<p class="copyright">© 2009 上海实玮网络科技有限公司 版权所有</p>
 	<p class="pwoered"><?php if(isset($SVConfigs['memory_useage'])&&$SVConfigs['memory_useage']=="1"){echo "占用内存 ".$memory_useage." MB";} ?>
+	<?php echo round(getMicrotime() - $GLOBALS['TIME_START'], 4) . "s"?>  <?php if(isset($GLOBALS['SQL_TIME']) && isset($GLOBALS['SQL_COUNT'])){echo "(default) ".$GLOBALS['SQL_COUNT']." queries took ".$GLOBALS['SQL_TIME']. "ms";}?>
 	 Gzip <?echo (isset($gzip_is_start) && $gzip_is_start == 1)?"已使用":"未使用";?> 
 	<?php echo $html->link("Powered by SV-Cart ".$SVConfigs['version'],"http://www.seevia.cn",'',false,false);?></p>
 

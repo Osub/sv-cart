@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: product_type.php 1246 2009-05-07 11:29:14Z shenyunfeng $
+ * $Id: product_type.php 4307 2009-09-16 06:52:02Z huangbo $
 *****************************************************************************/
 class ProductType extends AppModel
 {
@@ -29,7 +29,6 @@ class ProductType extends AppModel
 							  'foreignKey' => 'product_type_id'							
 						)
 					);
-	
     function set_locale($locale){
     	$conditions = " ProductTypeI18n.locale = '".$locale."'";
     	$this->hasOne['ProductTypeI18n']['conditions'] = $conditions;

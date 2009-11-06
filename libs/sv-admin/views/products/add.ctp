@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 2952 2009-07-16 09:56:25Z huangbo $
+ * $Id: add.ctp 5439 2009-10-26 10:10:48Z huangbo $
 *****************************************************************************/
 ?>
 <!--Main Start-->
@@ -17,39 +17,58 @@
 <?php echo $html->css('button');?>
 <?php echo $html->css('slider');?>
 <?php echo $html->css('color_font');?>
-
-
 <?php echo $javascript->link('/../js/yui/dragdrop-min.js');?>
 <?php echo $javascript->link('/../js/yui/button-min.js');?>
 <?php echo $javascript->link('/../js/yui/slider-min.js');?>
 <?php echo $javascript->link('/../js/yui/colorpicker-min.js');?>
-
 <?php echo $javascript->link('color_picker');?>
 <?php echo $javascript->link('product');?>
-<?php echo $form->create('Product',array('action'=>'add','name'=>'thisForm','id'=>'thisForm','OnSubmit'=>'return products_check();'));?>
 
+<?php echo $form->create('Product',array('action'=>'add','name'=>'thisForm','id'=>'thisForm','OnSubmit'=>'return products_check();'));?>
+<!--时间控件层start-->
+<div id="container_cal" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+	<div class="hd">日历</div>
+	<div class="bd"><div id="cal"></div><div style="clear:both;"></div></div>
+</div>
+<div id="container_cal2" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+	<div class="hd">日历</div>
+	<div class="bd"><div id="cal2"></div><div style="clear:both;"></div></div>
+</div>
+<div id="container_cal3" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+	<div class="hd">日历</div>
+	<div class="bd"><div id="cal3"></div><div style="clear:both;"></div></div>
+</div>
+<div id="container_cal4" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+	<div class="hd">日历</div>
+	<div class="bd"><div id="cal4"></div><div style="clear:both;"></div></div>
+</div>
+<!--end-->
 
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
-<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."商品列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."商品列表","/".(empty($_SESSION['cart_back_url'])?$this->params['controller']:$_SESSION['cart_back_url']),'',false,false);?></strong></p>
 
 <div class="home_main">
+<ul class="tab">
+	<li class="hover" id="tabs1" onclick="overtab('tabs',1,4)"><span>基本信息</span></li>
+	<li class="normal" id="tabs2" onclick="overtab('tabs',2,4)"><span>详细信息</span></li>
+	<li class="normal" id="tabs3" onclick="overtab('tabs',3,4)"><span>商品相册</span></li>
+	<li class="normal" id="tabs4" onclick="overtab('tabs',4,4)"><span>商品属性</span></li>
+</ul>
 <input type="hidden" name="action_type" value="product_base_info">
+<div id="con_tabs_1" class="display">
 <table width="100%" cellpadding="0" cellspacing="0" class="">
 <tr>
 <td align="left" width="50%" valign="top" style="padding-right:5px">
 <!--Communication Stat-->
 	<div class="order_stat athe_infos">
-	  <div class="title"><h1>
-	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
-	  通用信息</h1></div>
-	  <div class="box">
-<?php  if(isset($languages) && sizeof($languages)>0){
-	foreach ($languages as $k => $v){?>
-	<input id="ProductI18n<?php echo $k;?>Locale" name="data[ProductI18n][<?php echo $k;?>][locale]" type="hidden" value="<?php echo $v['Language']['locale'];?>">
-<?php 
-	}
-}?>
+
+	  	<div class="box">
+		
+		<?php  if(isset($languages) && sizeof($languages)>0){
+			foreach ($languages as $k => $v){?>
+				<input id="ProductI18n<?php echo $k;?>Locale" name="data[ProductI18n][<?php echo $k;?>][locale]" type="hidden" value="<?php echo $v['Language']['locale'];?>">
+		<?php }}?>
+ 	    
  	    <h2>商品名称：</h2>
 <?php  if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
@@ -72,12 +91,27 @@
 
     </div>
   	 
-		
+ 	    <h2>款号名称：</h2>
+<?php  if(isset($languages) && sizeof($languages)>0){
+	foreach ($languages as $k => $v){?>
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input  name="data[ProductI18n][<?php echo $k;?>][style_name]"  type="text" maxlength="100"  style="" /></span>
+		</p>
+<?php 
+	}
+}?>
 		
 		<h2>商品关键词：</h2>
 <?php  if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input id="ProductI18n<?php echo $k;?>MetaKeywords" name="data[ProductI18n][<?php echo $k;?>][meta_keywords]" type="text" style="width:215px;" value=""> 用空格分隔</span></p>
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input id="ProductI18n<?php echo $k;?>MetaKeywords" name="data[ProductI18n][<?php echo $k;?>][meta_keywords]" type="text" style="width:215px;" value=""> 
+			<select style="width:90px;border:1px solid #649776" onchange="add_to_seokeyword(this,'ProductI18n<?php echo $k;?>MetaKeywords')">
+				<option value='常用关键字'>常用关键字</option>
+				<?php foreach( $seokeyword_data as $sk=>$sv){?>
+					<option value='<?php echo $sv["SeoKeyword"]["name"]?>'><?php echo $sv["SeoKeyword"]["name"]?></option>
+				<?php }?>
+			</select>
+
+		用逗号分隔</span></p>
 <?php 
 	}
 }?>
@@ -85,7 +119,7 @@
 		<h2>商品简单描述：</h2>
 <?php  if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><textarea id="ProductI18n<?php echo $k;?>MetaDescription" name="data[ProductI18n][<?php echo $k;?>][meta_description]" ></textarea> <font color="#ff0000">*</font></span></p>
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><textarea id="ProductI18n<?php echo $k;?>MetaDescription" name="data[ProductI18n][<?php echo $k;?>][meta_description]" ></textarea></span></p>
 <?php 
 	}
 }?>
@@ -119,13 +153,10 @@
 <td valign="top" width="50%" style="padding-left:5px;">
 <!--Other Stat-->
 	<div class="order_stat athe_infos tongxun">
-	  <div class="title"><h1>
-	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
-	  其他信息</h1></div>
+
 	  <div class="box">
 		<dl><dt><?php echo $html->image('help_icon.gif',array('align'=>'absmiddle',"onclick"=>"help_show_or_hide('help_text2')"))?>商品货号：</dt><dd><input type="text" class="text_inputs"  name="data[Product][code]" value="" onblur="product_code_unique(this,'')"/><br /><span style="display:none" id="help_text2">如果您不输入商品货号，系统将自动生成一个唯一货号。</span></dd></dl>
-		<input type="hidden" id="ProductCode"  value="temp"/>
+		<input type="hidden" id="ProductCode"  value="<?php echo $_SESSION['Operator_Info']['Operator']['id'];?>_temp"/>
 		<dl><dt>商品分类：</dt><dd><select id="ProductsCategory" name="data[Product][category_id]">
 		<option value="0">所有分类</option>
 		<?php if(isset($categories_tree) && sizeof($categories_tree)>0){?><?php foreach($categories_tree as $first_k=>$first_v){?>
@@ -155,9 +186,9 @@
 	<div id="other_cats"></div>
 	</span>
 	
-	</dd>	</dl>
+	</dd></dl>
 	
-	
+
 	<?php if(!empty($brands_tree)){?>
 		<dl><dt>商品品牌：</dt><dd>
 	<select id="ProductBrandId" name="data[Product][brand_id]">
@@ -176,41 +207,71 @@
 	         <option value="<?php echo $v['Provider']['id']?>" ><?php echo $v['Provider']['name']?></option>
 	    <?php }}?>
 	</select></dd></dl><?php }?>
+		<dl><dt>进货价：</dt><dd><input type="text" class="text_inputs" id="Productpurchase_price" name="data[Product][purchase_price]"  /></dd></dl>
+		<?php if(!empty($provider_list)){?>
+		<dl><dt>扩展供应商：</dt>
+		<dd>
+			<table id="provider-tables">
+	  		<?php if(!empty($this->data['other_provider'])){$pij=1;?>
+			<?php foreach($this->data['other_provider'] as $pk=>$pv){?>
+			<tr>
+				<td><?php if($pij==1){?><a href="javascript:;" name="1" onclick="addprovider(this)">[+]</a><?php }else{?><a href="javascript:;" name="1" onclick="removeprovider(this)">[-]</a><?php }$pij++;?>
+				<select  name="other_provider[]" style='margin-bottom:2px;'>
+			    <option value="0">请选择....</option>
+			    <?php if(isset($provider_list) && sizeof($provider_list>provider_list)>0){?>
+			    <?php foreach($provider_list as $k=>$v){?>
+			         <option value="<?php echo $v['Provider']['id']?>" ><?php echo $v['Provider']['name']?></option>
+			    <?php }}?>
+				</select>
+				<input type="text" style="width:75px;border:1px solid #649776" name="other_provider_price[]" /></td>
+			</tr>
+			<?php }?><?php }else{?>
+				<tr>
+				<td><a href="javascript:;" name="1" onclick="addprovider(this)">[+]</a>
+				<select  name="other_provider[]" style='margin-bottom:2px;'>
+			    <option value="0">请选择....</option>
+			    <?php if(isset($provider_list) && sizeof($provider_list>provider_list)>0){?>
+			    <?php foreach($provider_list as $k=>$v){?>
+			         <option value="<?php echo $v['Provider']['id']?>"><?php echo $v['Provider']['name']?></option>
+			    <?php }}?>
+				</select>
+				<input type="text" style="width:75px;border:1px solid #649776" name="other_provider_price[]" /></td>
+			</tr>
+			<?php }?>
+			</table>
+		</dd></dl><?php }?>
+		<dl><dt>市场售价：</dt><dd><input type="text" class="text_inputs" id="ProductMarketPrice" name="data[Product][market_price]" value=""/><input class="pointer" type="button" value="取整数" onclick="integral_market_price()" /></dd></dl>
+
 		<dl><dt>本店售价：</dt><dd><input type="text" class="text_inputs" id="ProductShopPrice" name="data[Product][shop_price]" onblur="priceSetted();user_rank_list();" value=""/><input type="button" class="pointer" value="按市场价计算" onclick="marketPriceSetted()"/> <font color="#ff0000">*</font></dd></dl>
 		<?php if(!empty($user_rank_list)){?>
 		<dl>
 		   <dt>会员价格：</dt>
 		   <dd>
+		    <table>
+		    
 		    <?php if(isset($user_rank_list) && sizeof($user_rank_list) >0){?>
 		   <?php foreach($user_rank_list as $k=>$v){?>
-		       <p style="overflow:hidden;height:100%;width:305px;padding-top:2px"><span style="float:right">折扣率: <input type="text"  class="text_inputs" style="width:30px;margin:-1px 0 0;padding:0;text-align:center" id="user_price_discount<?php echo $k?>" name="user_price_discount[<?php echo $k?>]" value="<?php echo $v['UserRank']['discount']?>" onkeyup="set_price_note(<?php echo $k?>)" size="8"  />
-		       	   <input type="checkbox" id="is_default_rank<?php echo $k?>" name="is_default_rank[<?php echo $k?>]" <?php if(@$v['UserRank']['is_default_rank']==1){ echo "checked"; }?> value="1" onclick="user_prince_check(this.checked,<?php echo $k?>)" >自动按照比例结算</span>
-		       	   <?php echo $v['UserRank']['name']?><input class="text_inputs" style="width:50px;margin:-1px 0 0 4px;padding:0;text-align:center" id="rank_product_price<?php echo $k?>" name="rank_product_price[<?php echo $k?>]"  value="0" class="no_border_input" size="3" onkeyup="rank_product_price(<?php echo $k?>)"  />
+		       <tr>
+		    <td>
+		       	    </td><td><?php echo $v['UserRank']['name']?> </td><td><input class="text_inputs" style="width:50px;margin:-1px 0 0 4px;padding:0;text-align:center" id="rank_product_price<?php echo $k?>" name="rank_product_price[<?php echo $k?>]"  value="0" class="no_border_input" size="3" onkeyup="rank_product_price(<?php echo $k?>)"  />
 				 <input type="hidden" id="user_rank<?php echo $k?>" name="user_rank[<?php echo $k?>]" value="<?php echo @$v['UserRank']['id']?>"  /></p>
 					<input type="hidden" id="productrank_id<?php echo $k?>" name="productrank_id[<?php echo $k?>]" value="<?php echo @$v['UserRank']['productrank_id']?>"   />
-		     <?php }}?></dd>
+		 
+	 		   </td><td>折扣率: <input type="text"  class="text_inputs" style="width:30px;margin:-1px 0 0;padding:0;text-align:center" id="user_price_discount<?php echo $k?>" name="user_price_discount[<?php echo $k?>]" value="<?php echo $v['UserRank']['discount']?>" onkeyup="set_price_note(<?php echo $k?>)" size="8"  />
+		       	   <input type="checkbox" id="is_default_rank<?php echo $k?>" name="is_default_rank[<?php echo $k?>]" <?php if(@$v['UserRank']['is_default_rank']==1){ echo "checked"; }?> value="1" onclick="user_prince_check(this.checked,<?php echo $k?>)" >自动按照比例结算</span>
+		     		  </td></tr>
+  
+  		     <?php }}?>
+		     		  </table>
+		     		   </dd>
 		</dl>
-	<?php }?>
-	 <?php if(isset($SVConfigs['mlti_currency_module'])&&$SVConfigs['mlti_currency_module']==1){?>
-		<dl>
-		   <dt>语言价格：</dt>
-		   <dd>
-		    <?php if(isset($languages) && sizeof($languages) >0){?>
-		   <?php foreach($languages as $k=>$v){?>
-		       <p style="overflow:hidden;height:100%;width:305px;padding-top:2px">
-		<span style="float:left">
-		<?php echo $v['Language']['name']?>: <input type="text"  class="text_inputs" style="width:30px;margin:-1px 0 0;padding:0;text-align:center"  name="locale_product_price[<?php echo $v['Language']['locale']?>][product_price]"   size="8" />
-		<input type="checkbox" name="locale_product_price[<?php echo $v['Language']['locale']?>][status]" value="1" >是否有效
-	 
-	   	</span>
-		     <?php }}?></dd>
-		</dl>
-	<?php }?>
-		<dl><dt>市场售价：</dt><dd><input type="text" class="text_inputs" id="ProductMarketPrice" name="data[Product][market_price]" value=""/><input class="pointer" type="button" value="取整数" /></dd></dl>
-		<dl><dt>赠送积分数：</dt><dd><input type="text" class="text_inputs" name="data[Product][point]" /></dd></dl>
-	
 		<dl><dt>优惠价格：</dt><dd>[<?php echo $html->link("+","javascript:;",array("onclick"=>"add_price()"),false,false);?>]优惠数量<input type="text" class="text_inputs" name="data[ProdcutVolume][number][]"  onblur="check_number(this)"/> 优惠价格<input type="text" class="text_inputs" name="data[ProdcutVolume][price][]" onblur="check_price(this)"/></dd></dl>
 		<div id="add_price"></div>
+
+	<?php }?>
+
+		<dl><dt>赠送积分数：</dt><dd><input type="text" class="text_inputs" name="data[Product][point]" /></dd></dl>
+	
 		<dl><dt><?php echo $html->image('help_icon.gif',array('align'=>'absmiddle',"onclick"=>"help_show_or_hide('help_text4')"))?>积分购买额度：</dt><dd><input type="text" class="text_inputs" name="data[Product][point_fee]" /><br /><span style="display:none" id="help_text4">购买该商品时最多可以使用多少的积分</span></dd></dl>
 		<dl style="padding:3px 0;*padding:4px 0;">
 					<dt class="promotion"><label for="ProductPromotionStatus"><input class="checkbox" type="checkbox" id="ProductPromotionStatus" name="data[Product][promotion_status]" value="1" onclick="handlePromote(this.checked);"  <?php if($this->data['Product']['promotion_status'] == 1){?>checked<?php }?>/>
@@ -223,15 +284,18 @@
 			<option value="0.001">克</option>
 			</select></dd></dl>
 			
-			<dl style="*padding:4px 0;"><dt style="padding-top:1px">默认库存：</dt><dd class="best_input"><input name="data[Product][quantity]" id="ProductQuantity" value="<?php echo $SVConfigs['default_stock']?>"/></dd></dl>
-			
+		<dl style="*padding:4px 0;"><dt style="padding-top:1px">商品库存数量：</dt><dd class="best_input"><input name="data[Product][quantity]" id="ProductQuantity" value="<?php echo $SVConfigs['default_stock']?>"/></dd></dl>
+		<dl style="*padding:4px 0;"><dt style="padding-top:1px">库存警告数量：</dt><dd class="best_input"><input name="data[Product][warn_quantity]" id="warn_quantity" value="<?php echo $SVConfigs['warn_quantity']?>"/></dd></dl>
+		<!--销售量-->
+		<dl><dt>销售量: </dt><dd><input type="text" style="width:150px;border:1px solid #649776" name="data[Product][sale_stat]"  /> </dd></dl>
+
 			
 		<dl style="padding:3px 0;*padding:4px 0;"><dt style="padding-top:1px">加入推荐：</dt><dd class="best_input"><input type="checkbox" name="data[Product][recommand_flag]" id="ProductRecommandFlag"value="1"/>推荐</dd></dl>
 		<dl style="*padding:4px 0;"><dt style="padding-top:1px">上架：</dt><dd class="best_input"><input type="checkbox" name="data[Product][forsale]" id="ProductForsale"value="1" checked/>打钩表示能作为普通商品销售，否则不允许销售。</dd></dl>
 		<dl style="*padding:5px 0;"><dt style="padding-top:1px">能作为普通商品销售：</dt><dd class="best_input"><input type="checkbox" name="data[Product][alone]" id="ProductAlone"value="1" checked/>打钩表示允许销售，否则只能作为配件或赠品销售。</dd></dl>
-		<dl  style="*padding:5px 0;" ><dt style="padding-top:1px">是否显示款号颜色图：</dt><dd class="best_input"><input type="radio" class="checkbox" name="data[Product][is_colors_gallery]" value="1" checked />是<input type="radio" class="checkbox" name="data[Product][is_colors_gallery]" value="0"   />否</label></dd></dl>
+		<dl  style="*padding:5px 0;" ><dt style="padding-top:1px">是否显示款号颜色图：</dt><dd class="best_input"><input type="radio" class="checkbox" name="data[Product][is_colors_gallery]" value="1"  />是<input type="radio" class="checkbox" name="data[Product][is_colors_gallery]" value="0"  checked />否</label></dd></dl>
+		<dl  style="*padding:5px 0;" ><dt style="padding-top:1px">过往精品：</dt><dd class="best_input"><input type="radio" class="checkbox" name="data[Product][bestbefore]" value="1"  />是<input type="radio" class="checkbox" name="data[Product][bestbefore]" value="0"  checked />否</label></dd></dl>
 		<dl><dt>商品款号：</dt><dd><input type="text" class="text_inputs"  name="data[Product][style_code]" /></dd></dl>
-
 		<dl><dt>
 			商品款号颜色图：
 		</dt><dd>
@@ -247,6 +311,7 @@
 </tr>
 
 </table>
+
 <!--商品邮费-->
 <?php if($SVConfigs["use_product_shipping_fee"] == 1){?>
 	<div class="order_stat properies">
@@ -271,7 +336,7 @@
 <?php }else{?>
 	<?php foreach( $shipping_list as $k=>$v ){?>
 		<tr><td><?php echo $v["ShippingI18n"]["name"]?>:</td>
-		<td><input type="text" style="width:120px;border:1px solid #649776" name="product_shoping_fee[<?php echo @$v['Shipping']['id']?>]" ></td><td>是否有效：<input type="checkbox" value="1" name="product_shoping_fee_status[<?php echo @$v['Shipping']['id']?>]" style="border:1px solid #649776"  /></td></tr>
+		<td><input type="text" style="width:120px;border:1px solid #649776" name="product_shoping_fee[<?php echo @$v['Shipping']['id']?>]" ></td><td>有效：<input type="checkbox" value="1" name="product_shoping_fee_status[<?php echo @$v['Shipping']['id']?>]" style="border:1px solid #649776"  /></td></tr>
 	<?php }?>
 <?php }?>
 		</table>
@@ -281,34 +346,66 @@
 	</div>
 <?php }?>
 <!--end-->
-
+<?php if(isset($SVConfigs['mlti_currency_module'])&&$SVConfigs['mlti_currency_module']==1){?>
 <!--profile-->
 	<div class="order_stat properies">
 	  <div class="title"><h1>
 	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
 	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
-	  详细信息</h1></div>
+	  语言价</h1></div>
 	  <div class="box">
-	  
-	  <?php echo $javascript->link('fckeditor/fckeditor'); ?>
-<?php  if(isset($languages) && sizeof($languages)>0){
-	foreach ($languages as $k => $v){?>
-	  <?php echo $html->image($v['Language']['img01'],array('align'=>'absbottom'))?><br />
-<p class="profiles">
-       <?php echo $form->textarea('ProductI18n/description', array("cols" => "60","rows" => "10","value" => "","name"=>"data[ProductI18n][{$k}][description]","id"=>"ProductI18n{$k}Description"));?>
-        <?php  echo $fck->load("ProductI18n{$k}/description"); ?>
-		</p>
-<?php 
-	}
-}?>
+		<div id="listDiv">
+		<table cellpadding="0" cellspacing="0" width="100%" class="list_data">
+		<tr class="thead">
+		<th width="12%">语言</th>
+		<th width="20%">商品价</th>
+		<th width="8%">有效</th></tr>
+		<?php if(isset($languages) && sizeof($languages) >0){foreach($languages as $k=>$v){?>
+		<tr>
+			<td align="center"><?php echo $v['Language']['name']?></td>
+			<td align="center"><input type="text"  style="border:1px solid #649776"  name="locale_product_price[<?php echo $v['Language']['locale']?>][product_price]"  /></td>
+			<td align="center"><input type="checkbox" style="border:1px solid #649776" name="locale_product_price[<?php echo $v['Language']['locale']?>][status]" value="1"  ></td>
+		</tr>
+		<?php }}?>
+		</table>
+	  	</div>
 	  </div>
 	</div>
+<!--profile End-->
+<?php }?>
+</div>
+<!--profile-->
+<div id="con_tabs_2" class="none">
+	<div class="order_stat properies">
+
+	  <div class="box">
+		<?php if($SVConfigs["select_editor"]=="2"||empty($SVConfigs["select_editor"])){?>
+	  	<?php echo $javascript->link('tinymce/tiny_mce/tiny_mce'); ?>
+	  	<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?><table><tr><td valign="top">
+	  	<?php echo $html->image($v['Language']['img01'])?></td><td valign="top">
+		<textarea id="elm<?php echo $v['Language']['locale'];?>" name="data[ProductI18n][<?php echo $k;?>][description]" rows="15" cols="80" style="width: 80%"></textarea>
+		<?php  echo $tinymce->load("elm".$v['Language']['locale'],$now_locale); ?><br /><br />
+</td></tr>
+</table>
+    	<?php }?></p>
+		<?php }?><?php }?>
+		<?php if($SVConfigs["select_editor"]=="1"){?>
+				  <?php echo $javascript->link('fckeditor/fckeditor'); ?>
+			<?php  if(isset($languages) && sizeof($languages)>0){
+				foreach ($languages as $k => $v){?>
+				  <?php echo $html->image($v['Language']['img01'],array('align'=>'absbottom'))?><br />
+			<p class="profiles">
+			       <?php echo $form->textarea('ProductI18n/description', array("cols" => "60","rows" => "10","value" => "","name"=>"data[ProductI18n][{$k}][description]","id"=>"ProductI18n{$k}Description"));?>
+			        <?php  echo $fck->load("ProductI18n{$k}/description"); ?>
+					</p>
+			<?php }}?>
+		<?php }?>
+	  </div>
+	</div>
+</div><div id="con_tabs_3" class="none">
 <!--Product Photos-->
 	<div class="order_stat properies">
-	  <div class="title"><h1>
-	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
-	  <span>商品相册</span></h1></div>
+
 	  <div class="box">
 	  <input type="hidden" name="action_type" value="product_gallery"></>
 	  <div id="gallery-table">
@@ -350,101 +447,83 @@
      <?php }?>
 	  </ul>
 
-	  <p class="add_photo"><font face="宋体">[<?php echo $html->link("+","javascript:;",array("onclick"=>"addImg()"),false,false);?>]</font></p>
 	  <div id="Pro_img_div">
 		<p class="add_photo">
 
-		<span id="new_file"><span id="path_txt_id_1">上传文件 : </span>
-			<select name="image_path[1]"  onchange="image_path_change(this,1)">
+	<!-- 商品相册 -->
+    <table width="100%" id="gallery-tables"  align="center">
+	<!-- 上传图片 -->
+	<tr>
+		<td valign="bottom">
+			<a href="javascript:;" name="1" onclick="addImg(this)">[+]</a>
+			<select name="image_path[9999]" onchange="image_path_change(this,9999)">
 				<option value="system_path">系统路径</option>
 				<option value="definition_path">自定义路径</option>
 			</select>
-			<span id="definition_path_id_1" style="display:none">
-			缩略图：<input type="text" name="img_thumb[1]" />
-			详细图：<input type="text" name="img_detail[1]" />
-			原图：<input type="text" name="img_original[1]" />
+			<span id="definition_path_id_9999" style="display:none">
+			缩略图：<input type="text" name="img_thumb[9999]" />
+			详细图：<input type="text" name="img_detail[9999]" />
+			原图：<input type="text" name="img_original[9999]" />
 			</span>
-			<span id="system_path_id_1" >
-			<input type="text" name="img_url[1]" id="upload_img_text_1" readonly/>
-<?php echo $html->link($html->image('select_img.gif',array("align"=>"absmiddle","height"=>"23")),"javascript:img_sel(1,'products')",'',false,false)?>
+			<span id="system_path_id_9999" >
+             <input type="text" name="img_url[9999]" style="width:270px;border:1px solid #649776"  id="upload_img_text_9999" /><?php echo $html->link($html->image('select_img.gif',array("class"=>"vmiddle icons","height"=>"20")),"javascript:img_sel('9999','products')",'',false,false)?>
 			</span>
-			</span><br />
-			图片描述 : 
-<?php  if(isset($languages) && sizeof($languages)>0){
-	foreach ($languages as $k => $v){?>
-		  <?php echo $html->image($v['Language']['img01'])?><input type="text" name="img_desc[<?php echo $v['Language']['locale']?>][1]" id="img_desc[1]"/>
-<?php }}?>
-		排序: <input type="text" name="img_sort[1]" id="img_sort[1]" size="2"/>
-			</p>
-<li>
-	<?php echo @$html->image("",array('id'=>'logo_thumb_img_1','height'=>'150','style'=>'display:none'))?>
+			 <br />
+			 图片描述: 
+			 	<?php  if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?>
+		  		<?php echo $html->image($v['Language']['img01'],array("class"=>"vmiddle"))?> <input type="text" style="width:100px;border:1px solid #649776"   name="img_desc[<?php echo $v['Language']['locale']?>][9999]" id="img_desc[9999]"/>
+				<?php }}?>排序: <input type="text" name="img_sort[1]" id="img_sort[1]" size="2" style="border:1px solid #649776"/><input type="radio" name="img_def" value="9999">默认
+			 	<br /><?php echo @$html->image("",array('id'=>"logo_thumb_img_9999",'style'=>"display:none"))?>
+				</td>
+	</tr>
 
-		  </li>
-
-		</div>
-		<li><div id="other_imgs"></div></li>
+	</table>
 
 		</div>
 
-	  </div>
+		</div>
+
+	  </div><!--默认图-->
+	  	  <br />
+<div class="order_stat properies">
+	<div class="title"><h1>
+	<?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
+	<?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
+	默认图</h1></div>
+	<div class="box">
+		<table>
+		<tr>默认图片地址：<input type="text" name="img_url_default" style="width:270px;border:1px solid #649776"  id="upload_img_text_99999"  /><?php echo $html->link($html->image('select_img.gif',array("class"=>"vmiddle icons","height"=>"20")),"javascript:img_sel('99999','products')",'',false,false)?></td></tr>
+		<tr><td><?php echo $html->image("temp",array('id'=>"logo_thumb_img_99999",'align'=>'absmiddle','width'=>'108','height'=>'108',"style"=>"display:none"));?></td></tr>
+		</table>
 	</div>
-<!--用来创造要替换的字符串start-->
-  	<span id="imgupload" style="display:none">
 
- 		<p class="add_photo">
+</div>
 
-		<span id="new_file"><span id="path_txt_id_'&id&'">上传文件 : </span>
-			<select name="image_path['&id&']"  onchange="image_path_change(this,'&id&')">
-				<option value="system_path">系统路径</option>
-				<option value="definition_path">自定义路径</option>
-			</select>
-			<span id="definition_path_id_'&id&'" style="display:none">
-			缩略图：<input type="text" name="img_thumb['&id&']" />
-			详细图：<input type="text" name="img_detail['&id&']" />
-			原图：<input type="text" name="img_original['&id&']" />
-			</span>
-			<span id="system_path_id_'&id&'" >
-			<input type="text" name="img_url['&id&']" id="upload_img_text_'&id&'" readonly/>
-<?php echo $html->link($html->image('select_img.gif',array("align"=>"absmiddle","height"=>"23")),"javascript:img_sel('&id&','products')",'',false,false)?>
-			</span>
-			</span><br />
-		图片描述 : 
-<?php  if(isset($languages) && sizeof($languages)>0){
-	foreach ($languages as $k => $v){?>
-		  <?php echo $html->image($v['Language']['img01'])?><input type="text" name="img_desc[<?php echo $v['Language']['locale']?>]['&id&']" id="img_desc['&id&']"/>
-<?php }}?>
-		排序: <input type="text" name="img_sort['&id&']" id="img_sort['&id&']" size="2"/>
-			</p>
-
-	<?php echo @$html->image("",array('id'=>'logo_thumb_img_'&id&'','height'=>'150','style'=>'display:none'))?>
-
-  	</span> <!--用来创造要替换的字符串end-->
-	<script>
-	    var ddd = 2;
-	    function addImg(){
-	      //	alert(ddd);
-	    	var conObj=document.getElementById('other_imgs');
-	     	var imgupload_str = document.getElementById("imgupload").innerHTML; 
-	     	conObj.innerHTML+=imgupload_str.replace(/\'&amp;id&amp;\'/g,ddd);
-	      	ddd++;
+	</div></div>
+<!--商品属性-->
+<div id="con_tabs_4" class="none">
+<?php $product_type_list=$this->requestAction("/commons/product_type_list/0");?>
+	<?php if(!empty($product_type_list)){?>
+	<div class="order_stat properies">
+	  <div class="box">
 	 
-	    }
-	    
-	    function image_path_change(obj,num){
-	    	if(obj.value == "system_path"){
-	    		document.getElementById("definition_path_id_"+num).style.display = "none";
-	    		document.getElementById("system_path_id_"+num).style.display = "inline-block";
-	    		document.getElementById("path_txt_id_"+num).style.display = "inline-block";
-	    		
-	    	}
-	    	if(obj.value == "definition_path"){
-	    		document.getElementById("definition_path_id_"+num).style.display = "inline-block";
-	    		document.getElementById("system_path_id_"+num).style.display = "none";
-	    		document.getElementById("path_txt_id_"+num).style.display = "none";
-	    	}
 
-	    }
-	</script>
+	  <input type="hidden" name="action_type" value="product_attr" />
+      <input id="ProductId" name="data[Product][id]" type="hidden" >
+	  <div class="properies_left">
+	  
+		<dl><dt>&nbsp;</dt><dd>
+		<select name="product_type" id="product_type" onchange="getAttrList(0)">
+		  <option value="">请选择</option>
+          <?php echo $product_type_list;?>
+		</select></dd></dl>
+
+		<span id="productsAttr"></span>
+		</div>
+	  </div>
+	</div><?php }?>
+	
+</div>
 <!--Product Photos End-->
 <!--profile End-->
 <p class="submit_btn"><input type="submit" value="确定" /><input type="reset" value="重置" /></p>
@@ -536,25 +615,115 @@ onload = function(){
        	   
        	   
        	   }
+  /**
+   * 删除图片上传
+   */
+  function removeImg(obj)
+  {
+      var row = rowindex(obj.parentNode.parentNode);
+      var tbl = document.getElementById('gallery-tables');
+
+      tbl.deleteRow(row);
+  }
+
+  /**
+   * 新增一个图片
+   */
+  function addImg(obj)
+  {
+      var src  = obj.parentNode.parentNode;
+     
+      var idx  = rowindex(src); 
+      var tbl  = document.getElementById('gallery-tables');
+      var row  = tbl.insertRow(idx + 1);
+      var cell = row.insertCell(-1);
+      var img_str = src.cells[0].innerHTML.replace(/(.*)(addImg)(.*)(\[)(\+)/i, "$1removeImg$3$4-");
+      img_str = img_str.replace(/\'9999\'/g,obj.name)
+      img_str = img_str.replace(/9999/g,obj.name)
+      cell.innerHTML = img_str;
+      obj.name = obj.name-0+1;
+  }
+	    function image_path_change(obj,num){
+	    	if(obj.value == "system_path"){
+	    		document.getElementById("definition_path_id_"+num).style.display = "none";
+	    		document.getElementById("system_path_id_"+num).style.display = "inline-block";
+	    		document.getElementById("path_txt_id_"+num).style.display = "inline-block";
+	    	}
+	    	if(obj.value == "definition_path"){
+	    		document.getElementById("definition_path_id_"+num).style.display = "inline-block";
+	    		document.getElementById("system_path_id_"+num).style.display = "none";
+	    		document.getElementById("path_txt_id_"+num).style.display = "none";
+	    	}
+		}
+		document.onmousemove=function(e)
+{
+  var obj = Utils.srcElement(e);
+  if (typeof(obj.onclick) == 'function' && obj.onclick.toString().indexOf('listTable.edit') != -1)
+  {
+    obj.title = '点击修改内容';
+    obj.style.cssText = 'background: #21964D;';
+    obj.onmouseout = function(e)
+    {
+      this.style.cssText = '';
+    }
+  }
+  else if (typeof(obj.href) != 'undefined' && obj.href.indexOf('listTable.sort') != -1)
+  {
+    obj.title = '点击对列表排序';
+  }
+}
+
+</script>
+<script type="text/javascript">
+  function add_to_seokeyword(obj,keyword_id){
+	
+	var keyword_str = GetId(keyword_id).value;
+	var keyword_str_arr = keyword_str.split(",");
+	for( var i=0;i<keyword_str_arr.length;i++ ){
+		if(keyword_str_arr[i]==obj.value){
+			return false;
+		}
+	}
+	if(keyword_str!=""){
+		GetId(keyword_id).value+= ","+obj.value;
+	}else{
+		GetId(keyword_id).value+= obj.value;
+	}
+}
+</script>
+<script style="text/javascript">
+
+  /**
+   * 删除扩展供应商
+   */
+  function removeprovider(obj)
+  {
+      var row = rowindex(obj.parentNode.parentNode);
+      var tbl = document.getElementById('provider-tables');
+
+      tbl.deleteRow(row);
+  }
+
+  /**
+   * 新增扩展供应商
+   */
+  function addprovider(obj)
+  {
+      var src  = obj.parentNode.parentNode;
+     
+      var idx  = rowindex(src); 
+      var tbl  = document.getElementById('provider-tables');
+      var row  = tbl.insertRow(idx + 1);
+      var cell = row.insertCell(-1);
+      var img_str = "";
+      for( var i=0;i<src.cells.length;i++ ){
+      	img_str+= src.cells[i].innerHTML.replace(/(.*)(addprovider)(.*)(\[)(\+)/i, "$1removeprovider$3$4-");
+      }
+	  cell.innerHTML = img_str;
+      
+  }
+
+
 </script>
 
 
-
-		  <!--时间控件层start-->
-	<div id="container_cal" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal2" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal2"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal3" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal3"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal4" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal4"></div><div style="clear:both;"></div></div>
-	</div>
-<!--end-->

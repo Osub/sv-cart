@@ -9,17 +9,21 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: sitemaps_controller.php 2771 2009-07-10 10:46:46Z shenyunfeng $
+ * $Id: sitemaps_controller.php 5101 2009-10-15 11:23:51Z huangbo $
 *****************************************************************************/
 class  SitemapsController extends AppController {
 	var $name = 'Sitemaps';
-	var $helpers = array('Time'); 
-	var $uses = array('Category','Brand','Product','Article','Sitemap');
+	var $helpers = array('Time','Xml'); 
+	var $uses = array('Category','Brand','Product','Article','Sitemap','Topic','Promotion');
+	var $cacheQueries = true;
+	var $cacheAction = "1 hour";
+
+	
  	function view(){
 		Configure::write('debug', 0);
  		//商品类目
  		$this->Category->set_locale($this->locale);
-		$product_cat=$this->Category->tree('P',0,$this->locale);
+		$product_cat=$this->Category->tree('P',0,$this->locale,$this);
 		$this->set('product_cat',$product_cat['tree']);
 		//品牌类目
 		$this->Brand->set_locale($this->locale);
@@ -41,7 +45,7 @@ class  SitemapsController extends AppController {
 		$ur_heres=array();
 		$ur_heres[]=array('name'=>$this->languages['home'],'url'=>"/");
 		$ur_heres[]=array('name'=>$this->languages['sitemap'],'url'=>"/sitemaps");
-		$this->set('languages',$this->locale);
+	//	$this->set('languages',$this->locale);
 		$this->set('locations',$ur_heres);
 		$this->pageTitle = $this->languages['sitemap']." - ".$this->configs['shop_title'];
 		$categories_tree = array();
@@ -55,9 +59,10 @@ class  SitemapsController extends AppController {
 
  	}
  	function index(){
+     	$this->cacheAction = "1 hour";
  		//商品类目
  		$this->Category->set_locale($this->locale);
-		$product_cat=$this->Category->tree('P',0,$this->locale);
+		$product_cat=$this->Category->tree('P',0,$this->locale,$this);
 		$this->set('product_cat',$product_cat['tree']);
 		//品牌类目
 		$this->Brand->set_locale($this->locale);
@@ -66,6 +71,29 @@ class  SitemapsController extends AppController {
  		$this->set('brands',$brands);
 		//文章类目
 		$article_cat=$this->Category->tree('A',0,$this->locale);
+		
+		//专题
+		$this->Topic->set_locale($this->locale);
+		$topics = $this->Topic->cache_find('all',array('conditions'=>array('1=1'),'order'=>'Topic.created DESC','fields'=>array('Topic.id','TopicI18n.title')),"all_topic_".$this->locale);
+		$this->set('topics',$topics);
+		//促销活动
+		$this->Promotion->set_locale($this->locale);
+		$promotions = $this->Promotion->cache_find('all',array('conditions'=>array('Promotion.status'=>1),'order'=>'Promotion.created DESC','fields'=>array('Promotion.id','PromotionI18n.title')),"all_promotions_".$this->locale);
+		$this->set('promotions',$promotions);
+		//积分换购
+		$this->Product->set_locale($this->locale);
+		$products = $this->Product->cache_find('all',array('conditions'=>array('Product.status'=>1,'Product.forsale'=>1,'Product.point >'=>0),'order'=>'Product.created DESC','fields'=>array('Product.id','ProductI18n.name')),"all_point_products_".$this->locale);
+		$this->set('products',$products);
+		//所有文章
+		$this->Article->set_locale($this->locale);
+		$articles = $this->Article->cache_find('all',array('conditions'=>array('1=1'),'order'=>'Article.created DESC','fields'=>array('Article.id','ArticleI18n.title','Article.category_id')),"all_articles_".$this->locale);
+		$articles_list = array();
+		if(isset($articles) && sizeof($articles)>0){
+			foreach($articles as $k=>$v){
+				$articles_list[$v['Article']['category_id']][] = $v;
+			}
+		}
+ 		$this->set('articles',$articles_list);
 		//pr($article_cat);
 		$this->set('article_cat',$article_cat['tree']);
 		$ur_heres=array();

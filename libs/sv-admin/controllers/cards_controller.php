@@ -1,6 +1,6 @@
 <?php
 /*****************************************************************************
- * SV-Cart 贺卡管理
+ * SV-Cart 贺卡
  * ===========================================================================
  * 版权所有  上海实玮网络科技有限公司，并保留所有权利。
  * 网站地址: http://www.seevia.cn
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: cards_controller.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: cards_controller.php 4691 2009-09-28 10:11:57Z huangbo $
 *****************************************************************************/
 class CardsController extends AppController {
 	var $name = 'Cards';
@@ -21,8 +21,9 @@ class CardsController extends AppController {
 		/*判断权限*/
 		$this->operator_privilege('card_view');
 		/*end*/
-		$this->pageTitle = '贺卡管理' ." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'贺卡管理','url'=>'/cards/');
+		$this->pageTitle = '贺卡' ." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'促销栏目','url'=>'');
+		$this->navigations[] = array('name'=>'贺卡','url'=>'/cards/');
 		$this->set('navigations',$this->navigations);
 		
 		$this->Card->set_locale($this->locale);
@@ -41,8 +42,9 @@ class CardsController extends AppController {
 		/*判断权限*/
 		$this->operator_privilege('card_operation');
 		/*end*/
-		$this->pageTitle = "贺卡管理 - 贺卡管理" ." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'贺卡管理','url'=>'/cards/');
+		$this->pageTitle = "贺卡 - 贺卡" ." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'促销栏目','url'=>'');
+		$this->navigations[] = array('name'=>'贺卡','url'=>'/cards/');
 		$this->navigations[] = array('name'=>'编辑贺卡','url'=>'');
 		
 		if($this->RequestHandler->isPost()){
@@ -72,7 +74,7 @@ class CardsController extends AppController {
         	if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
         	$this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑贺卡:'.$userinformation_name ,'operation');
             }
-			$this->flash("贺卡  ".$userinformation_name." 编辑成功。点击继续编辑该贺卡。",'/cards/edit/'.$id,10);
+			$this->flash("贺卡  ".$userinformation_name." 编辑成功。点击这里继续编辑该贺卡。",'/cards/edit/'.$id,10);
 
 		}
 		
@@ -87,8 +89,9 @@ class CardsController extends AppController {
 	
 	
 	function add(){
-		$this->pageTitle = "添加贺卡 - 贺卡管理" ." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'贺卡管理','url'=>'/cards/');
+		$this->pageTitle = "添加贺卡 - 贺卡" ." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'促销栏目','url'=>'');
+		$this->navigations[] = array('name'=>'贺卡','url'=>'/cards/');
 		$this->navigations[] = array('name'=>'添加贺卡','url'=>'');
 		$this->set('navigations',$this->navigations);
 		
@@ -118,7 +121,7 @@ class CardsController extends AppController {
         	if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
         	$this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'增加贺卡:'.$userinformation_name ,'operation');
             }
-			$this->flash("贺卡  ".$userinformation_name." 添加成功。点击继续编辑该贺卡。",'/cards/edit/'.$id,10);
+			$this->flash("贺卡  ".$userinformation_name." 添加成功。点击这里继续编辑该贺卡。",'/cards/edit/'.$id,10);
 		}
 
 	

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 2485 2009-06-30 11:33:00Z huangbo $
+ * $Id: add.ctp 4372 2009-09-18 10:38:17Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -17,7 +17,7 @@
 <!--Main Start-->
 <br />
 	
-<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."包装列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."包装列表","/".(empty($_SESSION['cart_back_url'])?$this->params['controller']:$_SESSION['cart_back_url']),'',false,false);?></strong></p>
 <div class="home_main">
 <?php echo $form->create('Packages',array('action'=>'add','onsubmit'=>'return packages_check();'));?>
 <table width="100%" cellpadding="0" cellspacing="0" class="">
@@ -85,7 +85,7 @@
 			<dd><input type="text" name="data[Packaging][orderby]" class="text_inputs" style="width:115px;" onkeyup="check_input_num(this)" /> <font color="#646464"><br />如果您不输入排序号，系统将默认为50</font></dd></dl>
 		<dl><dt>是否有效：</dt>
 			<dd><input type="radio" name="data[Packaging][status]" value="1" checked /> 是 <input type="radio" name="data[Packaging][status]" value="0" /> 否</dd></dl>
-		<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+
 	  </div>
 	</div>
 <!--Password End-->

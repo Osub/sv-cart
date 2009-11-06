@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: sitemaps_controller.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: sitemaps_controller.php 4691 2009-09-28 10:11:57Z huangbo $
 *****************************************************************************/
 
 class SitemapsController extends AppController {
@@ -22,6 +22,7 @@ class SitemapsController extends AppController {
 		$this->operator_privilege('sitemap_view');
 		/*end*/
 		$this->pageTitle = '站点地图'." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'系统管理','url'=>'');
 		$this->navigations[] = array('name'=>'站点地图','url'=>'/sitemap/');
 		$this->set('navigations',$this->navigations);
 		$condition = '';
@@ -41,6 +42,7 @@ class SitemapsController extends AppController {
 	function add(){
 		$this->operator_privilege('sitemap_add');
 		$this->pageTitle = "新增模块- 站点地图" ." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'系统管理','url'=>'');
 		$this->navigations[] = array('name'=>'站点地图','url'=>'/sitemaps/');
 		$this->navigations[] = array('name'=>'新增模块','url'=>'');
 		$this->set('navigations',$this->navigations);
@@ -54,7 +56,7 @@ class SitemapsController extends AppController {
     	        if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	        $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加模块:'.$this->data['Sitemap']['name'] ,'operation');
     	        }
-				$this->flash("模块  ".$this->data['Sitemap']['name']." 添加成功。点击继续编辑该模块。",'/sitemaps/edit/'.$id,10);
+				$this->flash("模块  ".$this->data['Sitemap']['name']." 添加成功。点击这里继续编辑该模块。",'/sitemaps/edit/'.$id,10);
 			}else{
 			
 			}
@@ -66,6 +68,7 @@ class SitemapsController extends AppController {
 		$this->operator_privilege('sitemap_edit');
 		/*end*/
 		$this->pageTitle = "编辑模块 - 站点地图"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'系统管理','url'=>'');
 		$this->navigations[] = array('name'=>'站点地图','url'=>'/sitemaps/');
 		$this->navigations[] = array('name'=>'编辑模块','url'=>'');
 		
@@ -79,7 +82,7 @@ class SitemapsController extends AppController {
     	        if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	        $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑模块:'.$this->data['Sitemap']['name'] ,'operation');
     	        }
-				$this->flash("模块 ".$this->data['Sitemap']['name']." 编辑成功。点击继续编辑该模块。",'/sitemaps/edit/'.$id,10);
+				$this->flash("模块 ".$this->data['Sitemap']['name']." 编辑成功。点击这里继续编辑该模块。",'/sitemaps/edit/'.$id,10);
 			}
 		}
 		$provider_edit=$this->Sitemap->findbyid( $id );

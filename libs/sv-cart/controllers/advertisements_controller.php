@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: advertisements_controller.php 2794 2009-07-13 07:10:55Z wuchao $
+ * $Id: advertisements_controller.php 5433 2009-10-26 09:49:14Z huangbo $
 *****************************************************************************/
 
 class AdvertisementsController extends AppController {
@@ -27,8 +27,8 @@ class AdvertisementsController extends AppController {
 		$this->layout = 'default_full';
 	}
 	
-	function show($id=''){
-	    Configure::write('debug', 0);
+	function show($id='',$type=2){
+	  //  Configure::write('debug', 0);
 	    $url = $this->server_host.substr($this->cart_webroot,0,-1);
 
         $str = "";
@@ -38,7 +38,8 @@ class AdvertisementsController extends AppController {
         $data = $this->Advertisement->find('all',array('conditions'=>
                 array('Advertisement.advertisement_position_id'=>$id,
         'AdvertisementI18n.start_time <='=>$now,'AdvertisementI18n.end_time >='=>$now,'Advertisement.status'=>1)));
-
+        
+        
 		if (!empty($data))
 		{
 			foreach($data as $k=>$v)
@@ -49,8 +50,7 @@ class AdvertisementsController extends AppController {
                     case '0':        
                         /* 图片广告 */        
                         $src = (strpos($v['AdvertisementI18n']['code'], 'http://') === false && strpos($v['AdvertisementI18n']['code'], 'https://') === false) ? $url . "{$v['AdvertisementI18n']['code']}" : $v['AdvertisementI18n']['code'];        
-                        $str= '<a href="'.$url.'/advertisements/to_ad_url?ad_id='.$v['Advertisement']['id'].'&uri=' .
-                        	urlencode($v['AdvertisementI18n']['url']) . '"target="_blank">'.
+                        $str= '<a href="'.$url.'/advertisements/url/'.$v['Advertisement']['id']. '" target="_blank" title="'.$v['AdvertisementI18n']['name'].'">'.
                                '<img src="'.$src.'" border="0" alt="' .$v['AdvertisementI18n']['name'] .'" /></a>'; 
                         break;
                 
@@ -72,33 +72,38 @@ class AdvertisementsController extends AppController {
                     case '3':        
                         /* 文字广告 */        
                         $str = nl2br(htmlspecialchars(addslashes($v['AdvertisementI18n']['code'])));
-                        $str = '<a href="'.$url.'/advertisements/to_ad_url?ad_id='.$v['Advertisement']['id'].'&uri='
-                         .urlencode($v['AdvertisementI18n']['url']). '" target="_blank">' .
+                        $str = '<a href="'.$url.'/advertisements/url/'.$v['Advertisement']['id']. '" target="_blank">' .
                           nl2br(htmlspecialchars(addslashes($v['AdvertisementI18n']['code']))). '</a>';
                         break;        
                 }
-                echo "document.writeln('$str');";
+                if($type == "2"){
+                	echo "document.writeln('$str');";
+                }
             } 
+                if($type == "1"){
+                	return $str;
+                }
             die();
 		}
 	}
 	
-	function to_ad_url(){
+	function url($id=0){
 		
 		/*更新点击次数*/
-		$ad_id = $_GET['ad_id'];
-		$ad_click = $this->Advertisement->find('list',array('fields'=>array('Advertisement.id',
-			                    'Advertisement.click_count'),'conditions'=>array('Advertisement.id'=>$ad_id)));
-		$click_num = $ad_click[$ad_id]+1;
+		//$ad_id = $_GET['ad_id'];
+		$ad_click = $this->Advertisement->find('first',array('fields'=>array('Advertisement.id',
+			                    'Advertisement.click_count','AdvertisementI18n.url'),'conditions'=>array('Advertisement.id'=>$id)));
+		
+		$click_num = $ad_click['Advertisement']['click_count']+1;
 		$data1 = array();
 		$data1 = array('Advertisement.click_count'=>$click_num);
-		$this->Advertisement->updateAll($data1,array('Advertisement.id'=>$ad_id)); //更新
+		$this->Advertisement->updateAll($data1,array('Advertisement.id'=>$id)); //更新
         
 		/* 跳转到广告的链接页面 */
-		if (!empty($_GET['uri']))
+		if (!empty($id))
 		{
-		    $uri = (strpos($_GET['uri'], 'http://') === false && strpos($_GET['uri'], 'https://') === false) ? 
-		    $this->http() . urldecode($_GET['uri']) : urldecode($_GET['uri']);
+		    $uri = (strpos($ad_click['AdvertisementI18n']['url'], 'http://') === false && strpos($ad_click['AdvertisementI18n']['url'], 'https://') === false) ? 
+		    $this->server_host.substr($this->cart_webroot,0,strlen($this->cart_webroot)-1).urldecode($ad_click['AdvertisementI18n']['url']) : urldecode($ad_click['AdvertisementI18n']['url']);
 		}
 		else
 		{
@@ -107,8 +112,7 @@ class AdvertisementsController extends AppController {
 		
 		header("Location: $uri\n");
 		exit;
-	}
-	
+	}	
 	/**
 	 * 获得当前环境的 HTTP 协议方式
 	 *

@@ -9,14 +9,31 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 2989 2009-07-17 02:03:04Z huangbo $
+ * $Id: add.ctp 4708 2009-09-28 13:45:35Z huangbo $
 *****************************************************************************/
 ?>
-
+<!--时间控件层start-->
+	<div id="container_cal" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal"></div><div style="clear:both;"></div></div>
+	</div>
+	<div id="container_cal2" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal2"></div><div style="clear:both;"></div></div>
+	</div>
+	<div id="container_cal3" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal3"></div><div style="clear:both;"></div></div>
+	</div>
+	<div id="container_cal4" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal4"></div><div style="clear:both;"></div></div>
+	</div>
+<!--end-->
 
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
-<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."专题列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."专题列表","/".(empty($_SESSION['cart_back_url'])?$this->params['controller']:$_SESSION['cart_back_url']),'',false,false);?></strong></p>
 <div class="home_main">
 <!--Main Start-->
 <table width="100%" cellpadding="0" cellspacing="0" class="">
@@ -27,14 +44,18 @@
 <br />
 
 <?php echo $form->create('Topic',array('action'=>'/add/' ,'onsubmit'=>'return topics_check();'));?>
-<div class="order_stat athe_infos configvalues">
-	<div class="title"><h1>
+
+<table width="100%" cellpadding="0" cellspacing="0" class="">
+<tr>
+<td align="left" width="50%" valign="top" style="padding-right:5px">
+<!--Communication Stat-->
+	<div class="order_stat athe_infos department_config">
+	  <div class="title"><h1>
 	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
 	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  编辑专题</h1></div>
 	  <div class="box">
-<!--Mailtemplates_Config-->
-	  <div class="shop_config menus_configs">
+	  	
 		
 		<h2>专题名称：</h2>
 <?php if(isset($languages) && sizeof($languages)>0){
@@ -46,7 +67,15 @@
    		<h2>SEO分类关键字：</h2>
 <?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
-		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input type="text" style="width:360px;" id="meta_keywords_<?php echo $v['Language']['locale']?>" name="data[TopicI18n][<?php echo $k;?>][meta_keywords]"  /> <font color="#ff0000">*</font></span></p>
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input type="text" style="width:360px;" id="meta_keywords_<?php echo $v['Language']['locale']?>" name="data[TopicI18n][<?php echo $k;?>][meta_keywords]"  />
+			<select style="width:90px;border:1px solid #649776" onchange="add_to_seokeyword(this,'meta_keywords_<?php echo $v['Language']['locale']?>')">
+				<option value='常用关键字'>常用关键字</option>
+				<?php foreach( $seokeyword_data as $sk=>$sv){?>
+					<option value='<?php echo $sv["SeoKeyword"]["name"]?>'><?php echo $sv["SeoKeyword"]["name"]?></option>
+				<?php }?>
+			</select>
+
+	 	<font color="#ff0000">*</font></span></p>
 		
 <?php 	}
    } ?>
@@ -63,6 +92,17 @@
 <?php 
 	}
 }?>
+
+	  </div>
+	</div>
+<!--Communication Stat End-->
+</td>
+<td valign="top" width="50%" style="padding-left:5px;padding-top:25px;">
+<!--Password-->
+	<div class="order_stat athe_infos">
+	  
+	  <div class="box">
+		
    <dl><dt style="width:105px;">活动周期: </dt>
 		<span class="search_box"  style="background:none;padding:0;border:0;width:1px;" >
 			<dd><input type="text" name="data[Topic][start_time]" class="text_inputs" style="width:120px;"  id="date" readonly="readonly"   /><?php echo $html->image('calendar.gif',array("id"=>"show","class"=>"calendar_edit"))?>
@@ -70,18 +110,23 @@
 		
 		
 		<dl><dt style="width:105px;"><?php echo $html->image('help_icon.gif',array('align'=>'absmiddle',"onclick"=>"help_show_or_hide('help_text1')"))?>专题模板文件: </dt>
-		<dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" name=""  /><br/><span style="display:none" id="help_text1">填写当前专题的模板文件名,模板文件应上传到当前商城模板目录下,不填写将调用默认模板。</span></dd></dl>
+		<dd><input type="text" style="width:357px;*width:180px;border:1px solid #649776" name="data[Topic][template]"  /><br/><span style="display:none" id="help_text1">填写当前专题的模板文件名,模板文件应上传到当前商城模板目录下,不填写将调用默认模板。</span></dd></dl>
 			
 			
 			
 		<dl><dt style="width:105px;"><?php echo $html->image('help_icon.gif',array('align'=>'absmiddle',"onclick"=>"help_show_or_hide('help_text2')"))?>专题样式列表: </dt>
-		<dd><textarea style="width:360px;height:135px;" name="data[Topic][css]"></textarea><br/><span style="display:none" id="help_text2">填写当前专题的CSS样式代码，不填写将调用模板默认CSS文件<br />[+][-]</span></dd></dl>
+		<dd><textarea style="width:360px;border:1px solid #649776" name="data[Topic][css]"></textarea></dd></dl>
 		
-		
-		<br />
-		
-		</div>
-<!--Mailtemplates_Config End-->
+	  </div>
+	</div>
+<!--Password End-->
+
+</td>
+</tr>
+
+</table>
+	
+	
 		
 		
 		
@@ -108,7 +153,16 @@
 	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  专题介绍</h1></div>
 	  <div class="box">
-<?php //pr($javascript);?>
+		<?php if($SVConfigs["select_editor"]=="2"||empty($SVConfigs["select_editor"])){?>
+		<?php echo $javascript->link('tinymce/tiny_mce/tiny_mce'); ?>
+	  	<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?><table><tr><td valign="top">
+	  	<?php echo $html->image($v['Language']['img01'])?></td><td valign="top">
+		<textarea id="elm<?php echo $v['Language']['locale'];?>" name="data[TopicI18n][<?php echo $k;?>][intro]" rows="15" cols="80" style="width: 80%"></textarea>
+		<?php  echo $tinymce->load("elm".$v['Language']['locale'],$now_locale); ?><br /><br /></td></tr>
+</table>
+    	<?php }?></p>
+		<?php }?><?php }?>
+		<?php if($SVConfigs["select_editor"]=="1"){?>
 <?php echo $javascript->link('fckeditor/fckeditor'); ?>
 <?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
@@ -129,6 +183,7 @@
 	}
 }?>
 
+		<?php }?>
 
 
 
@@ -146,21 +201,21 @@
 
 </div>
 <!--Main Start End-->
-</div><!--时间控件层start-->
-	<div id="container_cal" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal2" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal2"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal3" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal3"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal4" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal4"></div><div style="clear:both;"></div></div>
-	</div>
-<!--end-->
+</div>
+<script type="text/javascript">
+  function add_to_seokeyword(obj,keyword_id){
+	
+	var keyword_str = GetId(keyword_id).value;
+	var keyword_str_arr = keyword_str.split(",");
+	for( var i=0;i<keyword_str_arr.length;i++ ){
+		if(keyword_str_arr[i]==obj.value){
+			return false;
+		}
+	}
+	if(keyword_str!=""){
+		GetId(keyword_id).value+= ","+obj.value;
+	}else{
+		GetId(keyword_id).value+= obj.value;
+	}
+}
+</script>

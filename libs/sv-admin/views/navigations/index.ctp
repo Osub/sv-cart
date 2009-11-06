@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 2659 2009-07-08 02:32:43Z shenyunfeng $
+ * $Id: index.ctp 3949 2009-08-31 07:34:05Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -46,38 +46,100 @@
 </div><br></br>
 <!--Main Start-->
 <p class="add_categories"><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."添加导航","/navigations/add",array(),false,false);?></p>
-<div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
-<table cellpadding="0" cellspacing="0" width="100%" class="list_data">
+<div class="home_main" style="padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' ); ">
+<div id="listDiv">
+<table cellpadding="0" cellspacing="0" width="100%" class="list_data" id="list-table">
 <tr class="thead">
-	<th>名称</th>
-	<th>显示</th>
-	<th>新窗口</th>
-	<th>排序</th>
-	<th>位置</th>
-	<th>操作</th>
+	<th width="60%">名称</th>
+	<th width="8%">显示</th>
+	<th width="8%">新窗口</th>
+	<th width="8%">排序</th>
+	<th width="8%">位置</th>
+	<th width="8%">操作</th>
 </tr>
 <!--Navigation List-->
 <?php if(isset($navigations2) && sizeof($navigations2)>0){?>
-	<?php  foreach($navigations2 as $navigation){ ?>
-<tr>
-	<td><?php echo $html->link($navigation['NavigationI18n']['name'],$navigation['NavigationI18n']['url'],'',false,false);?></td>
+	<?php  foreach($navigations2 as $k=>$navigation){ ?>
+<tr class="0 <?php if((abs($k)+2)%2!=1){?>tr_bgcolor<?php }else{?><?php }?>" >
+	<td><?php echo $html->image('menu_plus.gif',array("onclick"=>"rowClicked(this)")); ?>&nbsp;<?php echo $html->link($navigation['NavigationI18n']['name'],$navigation['NavigationI18n']['url'],'',false,false);?></td>
 	<td align="center"><?php if($navigation['Navigation']['status']){echo $html->image('yes.gif');} else {echo $html->image('no.gif');}?></td>
 	<td align="center"><?php if($navigation['Navigation']['target']=='_blank'){echo $html->image('yes.gif');} else {echo $html->image('no.gif');}?></td>
 	<td align="center"><?php echo $navigation['Navigation']['orderby'];?></td>
-	<td align="center"><?php echo $navigation['Navigation']['typename'];?></td>
+	<td align="center"><?php echo $systemresource_info["navigation_type"][$navigation['Navigation']['type']];?></td>
 	<td align="center">
-	<?php echo $html->link("编辑","/navigations/edit/{$navigation['Navigation']['id']}");?>|<?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$this->webroot}navigations/remove/{$navigation['Navigation']['id']}')"));?>
+	<?php echo $html->link("编辑","/navigations/edit/{$navigation['Navigation']['id']}");?>|<?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$admin_webroot}navigations/remove/{$navigation['Navigation']['id']}')"));?>
 	</td>
 </tr>
-<?php  }}?>
-</table>
+<?php if(!empty($navigation['SubMenu']) && sizeof($navigation['SubMenu'])>0)foreach($navigation['SubMenu'] as $kk=>$vv){?>
+<tr class="1" style="display:none" >
+	<td>&nbsp;&nbsp;&nbsp;<?php echo $html->link($vv['NavigationI18n']['name'],$vv['NavigationI18n']['url'],'',false,false);?></td>
+	<td align="center"><?php if($vv['Navigation']['status']){echo $html->image('yes.gif');} else {echo $html->image('no.gif');}?></td>
+	<td align="center"><?php if($vv['Navigation']['target']=='_blank'){echo $html->image('yes.gif');} else {echo $html->image('no.gif');}?></td>
+	<td align="center"><?php echo $vv['Navigation']['orderby'];?></td>
+	<td align="center"><?php echo $systemresource_info["navigation_type"][$navigation['Navigation']['type']];?></td>
+	<td align="center">
+	<?php echo $html->link("编辑","/navigations/edit/{$vv['Navigation']['id']}");?>|<?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$admin_webroot}navigations/remove/{$vv['Navigation']['id']}')"));?>
+	</td>
+</tr>	
+<!--second menu End-->	
+<?php }?>
+<?php }}?></table></div>
+
 
 		
 <!--User List End-->
 <div class="pagers" style="position:relative">	
-<?php echo $this->element('pagers', array('cache'=>'+0 hour'));?>
+<?php //echo $this->element('pagers', array('cache'=>'+0 hour'));?>
 </div>
 
 </div>
 
 <!--Main Start End-->
+<script type="text/javascript">
+/**
+ * 折叠菜单列表
+ */
+function rowClicked(obj){
+	if(obj.src.indexOf("minus.gif") != -1){	
+		obj.src = server_host+"/sv-admin/img/menu_plus.gif";
+	}
+	else{
+		obj.src = server_host+"/sv-admin/img/minus.gif";
+	}
+	obj = obj.parentNode.parentNode;
+  	var tbl = document.getElementById("list-table");
+  	var lvl = parseInt(obj.className);
+  	var fnd = false;
+  	for (i = 0; i < tbl.rows.length; i++){
+		var row = tbl.rows[i];
+		if (tbl.rows[i] == obj){
+			fnd = true;
+		}
+		else{
+			if (fnd == true){
+				var cur = parseInt(row.className);
+				if (cur > lvl){
+					row.style.display = (row.style.display != 'none') ? 'none' : (BrowserisIE()) ? 'block' : 'table-row';
+				}
+				else{
+					fnd = false;
+					break;
+				}
+			}
+		}
+  	}
+
+	
+}
+function BrowserisIE(){
+	if(navigator.userAgent.search("Opera")>-1){
+		return false;
+	}
+	if(navigator.userAgent.indexOf("Mozilla/5.")>-1){
+        return false;
+    }
+    if(navigator.userAgent.search("MSIE")>0){
+        return true;
+    }
+}
+</script>

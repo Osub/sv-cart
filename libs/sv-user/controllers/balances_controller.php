@@ -9,14 +9,14 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: balances_controller.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: balances_controller.php 3428 2009-07-31 11:48:18Z huangbo $
 *****************************************************************************/
 class BalancesController extends AppController {
 
 	var $name = 'Balances';
     var $components = array ('Pagination','RequestHandler'); // Added 
     var $helpers = array('Pagination'); // Added 
-	var $uses = array("Order","User","Payment","UserBalanceLog","UserAccount",'PaymentApiLog',"SystemResource");
+	var $uses = array("Order","User","Payment","UserBalanceLog","UserAccount",'PaymentApiLog');
 
 
 	function index(){
@@ -28,11 +28,7 @@ class BalancesController extends AppController {
 	    $user_id=$_SESSION['User']['User']['id'];
 		$user_account = $this->UserAccount->findall('UserAccount.user_id = '.$user_id);
 		$this->set('user_account',$user_account);
-		
-        $this->SystemResource->set_locale($this->locale);
-        $systemresource_info = $this->SystemResource->resource_formated(true,$this->locale);
-        $this->set('systemresource_info',$systemresource_info);//资源库信息		
-        			
+		        			
 		//当前位置
 		$this->navigations[] = array('name'=>__($this->languages['my_balance'],true),'url'=>"");
 		$this->set('locations',$this->navigations);

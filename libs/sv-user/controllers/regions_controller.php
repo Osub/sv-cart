@@ -9,23 +9,32 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: regions_controller.php 2419 2009-06-30 02:04:57Z zhengli $
+ * $Id: regions_controller.php 4985 2009-10-13 09:38:17Z huangbo $
 *****************************************************************************/
 class RegionsController extends AppController {
 	var $name = 'Regions';
-	var $helpers = array('Html','Form');
+	var $helpers = array('Html','Form','Cache');
 	var $components = array('RequestHandler');
-	
+	var $cacheQueries = true;
+	var $cacheAction = "1 hour";	
 	var $regions_selects =array();
 
-	function choice(){
-		
+	function choice($str="",$address_id = 0){
+		Configure::write('debug',0);
 //		if($this->RequestHandler->isPost()){
 			$this->Region->set_locale($this->locale);
 			$regions = $this->Region->find("threaded");
 //			pr($regions);
 			$str = "";
 			if(isset($_POST['str'])){
+				$is_error = count(explode('请选择',$_POST['str']));
+				if($is_error > 1){
+					$count=strpos($_POST['str'],'请选择');
+					$_POST['str'] = substr($_POST['str'],0,$count);
+				}
+				if(trim($_POST['str']) == '请选择'){
+					$_POST['str'] == "";
+				}				
 				$str = $_POST['str'];
 			}
 			if(isset($_POST['id'])){
@@ -51,7 +60,6 @@ class RegionsController extends AppController {
 			}
 //			pr($this->regions_selects);
 //		}
-		Configure::write('debug',0);
 		$this->layout="ajax";
  	}
  	
@@ -92,12 +100,22 @@ class RegionsController extends AppController {
  		}
  	}
 
- 	function twochoice(){
+ 	function twochoice($str="",$address_id = 0){
+ 				Configure::write('debug',0);
+
 //		if($this->RequestHandler->isPost()){
 			$this->Region->set_locale($this->locale);
 			$regions = $this->Region->find("threaded");
 			$str = "";
 			if(isset($_POST['str'])){
+				$is_error = count(explode('请选择',$_POST['str']));
+				if($is_error > 1){
+					$count=strpos($_POST['str'],'请选择');
+					$_POST['str'] = substr($_POST['str'],0,$count);
+				}
+				if(trim($_POST['str']) == '请选择'){
+					$_POST['str'] == "";
+				}				
 				$str = $_POST['str'];
 			}	
 			$this->children($regions,$str);
@@ -120,7 +138,6 @@ class RegionsController extends AppController {
 			}
 	//		pr($this->regions_selects);
 //		}
-		Configure::write('debug',0);
 		$this->layout="ajax";
  	}
 

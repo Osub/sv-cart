@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: file.php 2703 2009-07-08 11:54:52Z huangbo $ */
+/* SVN FILE: $Id: file.php 4366 2009-09-18 09:49:37Z huangbo $ */
 /**
  * Convenience class for reading, writing and appending to files.
  *
@@ -17,9 +17,9 @@
  * @package       cake
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v 0.2.9
- * @version       $Revision: 8120 $
- * @modifiedby    $LastChangedBy: gwoo $
- * @lastmodified  $Date: 2009-03-19 13:25:10 -0700 (Thu, 19 Mar 2009) $
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
@@ -366,12 +366,13 @@ class File extends Object {
 	function md5($maxsize = 5) {
 		if ($maxsize === true) {
 			return md5_file($this->path);
-		} else {
-			$size = $this->size();
-			if ($size && $size < ($maxsize * 1024) * 1024) {
-				return md5_file($this->path);
-			}
 		}
+
+		$size = $this->size();
+		if ($size && $size < ($maxsize * 1024) * 1024) {
+			return md5_file($this->path);
+		}
+
 		return false;
 	}
 /**

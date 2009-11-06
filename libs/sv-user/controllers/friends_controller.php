@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: friends_controller.php 2770 2009-07-10 10:43:12Z shenyunfeng $
+ * $Id: friends_controller.php 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 uses('sanitize');		
 class FriendsController extends AppController {
@@ -43,11 +43,9 @@ class FriendsController extends AppController {
 			        }
 			        //编辑指定分组的好友
 			        if(isset($this->params['form']['action_type']) && $this->params['form']['action_type'] == 'edit_contact'){
-	          $this->pageTitle = $this->languages['edit'].$this->languages['successfully']." - ".$this->configs['shop_title']; 
-	          
+	        			  $this->pageTitle = $this->languages['edit'].$this->languages['successfully']." - ".$this->configs['shop_title'];
     				       $this->UserFriend->save($this->data['UserFriend']);
-    			               			            	    $this->redirect("/friends/");
-
+   	            	       $this->redirect("/friends/");
     			           //$this->flash($this->languages['edit'].$this->languages['successfully'],'../friends','');
 			         }
 			         //增加分组
@@ -55,14 +53,13 @@ class FriendsController extends AppController {
 	          $this->pageTitle = $this->languages['edit'].$this->languages['successfully']." - ".$this->configs['shop_title'];
 			         	    $this->UserFriendCat->save($this->data['UserFriendCat']);
     			            	    $this->redirect("/friends/");
-
     			            //$this->flash($this->languages['edit'].$this->languages['successfully'],'../friends','');
 			         }
 		      }
 		      
 	          $user_id=$_SESSION['User']['User']['id'];
 	          //取得所有好友的分类列表
-	          $friend_cat_list=$this->UserFriendCat->findAll(" user_id='".$user_id."' ");
+	          $friend_cat_list=$this->UserFriendCat->find("all",array("conditions"=>"UserFriendCat.user_id='".$user_id."' or UserFriendCat.user_id = '0'","order"=>"UserFriendCat.user_id ASC"));
 	          //取得所有的好友
 	          $friend_list=$this->UserFriend->findAll(" user_id='".$user_id."' ");
 	          if(isset($friend_list)){
@@ -70,13 +67,13 @@ class FriendsController extends AppController {
 	          }
 	          //pr($friend_cat_list);
 	          foreach($friend_cat_list as $k=>$v){
-	  	            $this->data[$v['UserFriendCat']['id']]=$v;
-	  	            $this->data[$v['UserFriendCat']['id']]['user']=array();
-	  	            $this->data[$v['UserFriendCat']['id']]['count']=0;
+	  	            $this->data['my_friends_list'][$v['UserFriendCat']['id']]=$v;
+	  	            $this->data['my_friends_list'][$v['UserFriendCat']['id']]['user']=array();
+	  	            $this->data['my_friends_list'][$v['UserFriendCat']['id']]['count']=0;
 	          }
 	          foreach($friend_list as $k=>$v){
-	  	            $this->data[$v['UserFriend']['cat_id']]['user'][$v['UserFriend']['id']]=$v;
-	  	            $this->data[$v['UserFriend']['cat_id']]['count']=count($this->data[$v['UserFriend']['cat_id']]['user']);
+	  	            $this->data['my_friends_list'][$v['UserFriend']['cat_id']]['user'][$v['UserFriend']['id']]=$v;
+	  	            $this->data['my_friends_list'][$v['UserFriend']['cat_id']]['count']=count($this->data['my_friends_list'][$v['UserFriend']['cat_id']]['user']);
 	           }
 			  $js_languages = array("group_name_can_not_empty" => $this->languages['group'].$this->languages['apellation'].$this->languages['can_not_empty'],
 			  	  					"friend_name_not_empty" => $this->languages['friend'].$this->languages['name'].$this->languages['can_not_empty'],

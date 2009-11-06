@@ -9,13 +9,15 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: commons_controller.php 2918 2009-07-16 03:26:36Z shenyunfeng $
+ * $Id: commons_controller.php 5433 2009-10-26 09:49:14Z huangbo $
  *****************************************************************************/
 class CommonsController extends AppController{
     var $name='Commons';
     var $components=array('Email'); // Added
     var $uses=array("MailTemplate","Topic","TopicProduct",'Operator','Operator_action','Operator_menu','Region','ProductType','ProductRelation','Product','ProductArticle','Article');
     //$languages = $this->requestAction('commons/get_languages_front/');
+	
+    
     function operator_action(){
         //获取菜单
         $this->Operator_action->set_locale($this->locale);
@@ -221,7 +223,7 @@ class CommonsController extends AppController{
             }
             $html .= $val['ProductTypeAttributeI18n']['name']."</td><td><input  type='hidden' name='attr_id_list[]' value=".$val['ProductTypeAttribute']['id']." />";
             if($val['ProductTypeAttribute']['attr_input_type']=="0"){
-                $html .= '<input style="width:355px;height:60px;border:1px solid #649776;overflow-y:scroll" name="attr_value_list[]" type="text" value="'.$val['ProductAttribute']['product_type_attribute_value'].'"  /> ';
+                $html .= '<input style="width:355px;border:1px solid #649776;overflow-y:scroll" name="attr_value_list[]" type="text" value="'.$val['ProductAttribute']['product_type_attribute_value'].'"  /> ';
             }
             elseif($val['ProductTypeAttribute']['attr_input_type']=="2"){
                 $html .= '<textarea style="width:355px;height:60px;border:1px solid #649776;overflow-y:scroll" name="attr_value_list[]" >'.$val['ProductAttribute']['product_type_attribute_value'].'</textarea>';
@@ -250,13 +252,30 @@ class CommonsController extends AppController{
     }
     //取得商品关联商品
     function get_linked_products($product_id){
+        $this->Product->hasMany = array();
+		$this->Product->hasOne = array('ProductI18n'     =>array
+												( 
+												  'className'    => 'ProductI18n',   
+					                              'order'        => '',   
+					                              'dependent'    =>  true,   
+					                              'foreignKey'   => 'product_id'
+					                        	 ) ,
+					   		
+                 	   );
+
         $product_relations=$this->ProductRelation->findAll("ProductRelation.product_id = '".$product_id."'","","ProductRelation.orderby desc");
-        $res=$this->Product->find("all");
+		$product_id_arr = array();
+		foreach( $product_relations as $k=>$v ){
+			$product_id_arr[] = $v["ProductRelation"]["related_product_id"];
+		}
+		$this->Product->set_locale($this->locale);
+        $res=$this->Product->find("all",array("conditions"=>array("Product.id"=>$product_id_arr)));
+		
         foreach($res as $k => $v){
             $products[$v['Product']['id']]=$v;
         }
         foreach($product_relations as $k => $v){
-            if(is_array(@$products[$v['ProductRelation']['related_product_id']])){
+            if(is_array($products[$v['ProductRelation']['related_product_id']])){
                 $product_relations[$k]['Product']=$products[$v['ProductRelation']['related_product_id']]['Product'];
                 $product_relations[$k]['Product']['name']='';
                 if(isset($products[$v['ProductRelation']['related_product_id']]['ProductI18n']) && is_array($products[$v['ProductRelation']['related_product_id']]['ProductI18n'])){
@@ -265,19 +284,37 @@ class CommonsController extends AppController{
                 $product_relations[$k]['ProductI18n']=$products[$v['ProductRelation']['related_product_id']]['ProductI18n'];
             }
             $linked_type=$v['ProductRelation']['is_double']==0 ? '单项关联' : '双向关联';
-            $product_relations[$k]['ProductI18n']['name']=@$product_relations[$k]['ProductI18n']['name']." -- [$linked_type]";
+            $product_relations[$k]['ProductI18n']['name']=$product_relations[$k]['ProductI18n']['name']." -- [$linked_type]";
             $product_relations[$k]['Product']['name']=@$product_relations[$k]['Product']['name']." -- [$linked_type]";
         }
         return $product_relations;
     }
     //取得专题关联商品
     function get_linked_topic_products($topic_id){
+        $this->Product->hasMany = array();
+		$this->Product->hasOne = array('ProductI18n'     =>array
+												( 
+												  'className'    => 'ProductI18n',   
+					                              'order'        => '',   
+					                              'dependent'    =>  true,   
+					                              'foreignKey'   => 'product_id'
+					                        	 ) ,
+					   		
+                 	   );
+
         $this->Product->set_locale($this->locale);
         if(!empty($topic_id)){
             $wh["TopicProduct.topic_id"]=$topic_id;
         }
         $topic_products=$this->TopicProduct->findAll($wh,"","TopicProduct.orderby desc");
-        $res=$this->Product->findAll();
+		
+		$product_id_arr = array();
+		foreach( $topic_products as $k=>$v ){
+			$product_id_arr[] = $v["TopicProduct"]["product_id"];
+		}
+		
+        $res=$this->Product->find("all",array("conditions"=>array("Product.id"=>$product_id_arr)));
+
         foreach($res as $k => $v){
             $products[$v['Product']['id']]=$v;
         }
@@ -301,7 +338,12 @@ class CommonsController extends AppController{
     function get_products_articles($product_id){
         $this->Article->set_locale($this->locale);
         $product_articles=$this->ProductArticle->findAll("ProductArticle.product_id = '".$product_id."'","","ProductArticle.orderby desc");
-        $res=$this->Article->findAll();
+        
+		$article_id_arr = array();
+		foreach( $product_articles as $k=>$v ){
+			$article_id_arr[] = $v["ProductArticle"]["article_id"];
+		}
+        $res=$this->Article->find("all",array("conditions"=>array("Article.id"=>$article_id_arr)));
         foreach($res as $k => $v){
             $articles[$v['Article']['id']]['Article']=$v['Article'];
             $articles[$v['Article']['id']]['ArticleI18n']=$v['ArticleI18n'];
@@ -324,10 +366,25 @@ class CommonsController extends AppController{
     }
     //取得文章关联商品
     function get_articles_products($article_id){
+        $this->Product->hasMany = array();
+		$this->Product->hasOne = array('ProductI18n'     =>array
+												( 
+												  'className'    => 'ProductI18n',   
+					                              'order'        => '',   
+					                              'dependent'    =>  true,   
+					                              'foreignKey'   => 'product_id'
+					                        	 ) ,
+					   		
+                 	   );
+
         //$this->ProductArticle->set_locale($this->locale);
         $this->Product->set_locale($this->locale);
-        $product_articles=$this->ProductArticle->findAll("ProductArticle.article_id = '".$article_id."'","","ProductArticle.orderby desc");
-        $res=$this->Product->findAll();
+        $product_articles=$this->ProductArticle->find("all",array("conditions"=>array("ProductArticle.article_id"=>$article_id),"order"=>"ProductArticle.orderby desc"));
+		$product_id_arr = array();
+		foreach( $product_articles as $k=>$v ){
+			$product_id_arr[] = $v["ProductArticle"]["product_id"];
+		}
+        $res=$this->Product->find("all",array("conditions"=>array("Product.id"=>$product_id_arr)));
         foreach($res as $k => $v){
             $products[$v['Product']['id']]['Product']=$v['Product'];
             $products[$v['Product']['id']]['ProductI18n']=$v['ProductI18n'];

@@ -9,13 +9,10 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 3225 2009-07-22 10:59:01Z huangbo $
+ * $Id: index.ctp 4218 2009-09-11 02:34:41Z huangbo $
 *****************************************************************************/
 ?>
-
-
- 
-
+<p class="none"><span id="show3">&nbsp;eee</span><span id="show4">&nbsp;</span></p>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 <!--Search-->
@@ -29,63 +26,14 @@
 	<?php foreach($msg_type as $k=>$v){?>
 		<option value="<?php echo $k;?>" <?php if("$k"==@$modssss){ echo "selected";}?> ><?php echo $v;?></option>
 	<?php }}?>
-	</select>&nbsp;&nbsp;留言标题：<input type="text" name="title" value="<?php echo @$titles?>" class="name" />&nbsp;&nbsp;发布时间：<input type="text" name="start_time" class="time" id="date"value="<?php echo @$start_time?>" readonly="readonly" /><?php echo $html->image("calendar.gif",array('width'=>'18','height'=>'18','alt'=>'Calendar',"id"=>"show","class"=>"calendar"))?>－<input type="text" name="end_time" value="<?php echo @$end_time?>" class="time" id="date2" readonly="readonly" /><?php echo $html->image("calendar.gif",array('width'=>'18','height'=>'18','alt'=>'Calendar',"id"=>"show2","class"=>"calendar"))?></p></dd>
+	</select>&nbsp;&nbsp;留言标题：<input type="text" name="title" value="<?php echo @$titles?>" style="border:1px solid #649776" />&nbsp;&nbsp;发布时间：<input type="text" name="start_time" style="border:1px solid #649776" id="date"value="<?php echo @$start_time?>" readonly="readonly" /><?php echo $html->image("calendar.gif",array('width'=>'18','height'=>'18','alt'=>'Calendar',"id"=>"show","class"=>"calendar"))?>－<input type="text" name="end_time" value="<?php echo @$end_time?>" style="border:1px solid #649776" id="date2" readonly="readonly" /><?php echo $html->image("calendar.gif",array('width'=>'18','height'=>'18','alt'=>'Calendar',"id"=>"show2","class"=>"calendar"))?></p></dd>
 	<dt class="small_search"><input type="submit" value="搜索" onclick="search_user()"  class="search_article" /></dt>
 <input type="hidden" name="search" value="search">
 </div>
 <br /><br />
 <!--Search End-->
 <!--Main Start-->
-
-<div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
-<table cellpadding="0" cellspacing="0" width="100%" class="list_data">
-<tr class="thead">
-	<th align="left" width="80px"><label><input type="checkbox" name="chkall" value="checkbox" onclick="selectAll(this,'checkbox');" />编号</label></th>
-	<th width="190px">用户名</th>
-	<th width="190px">留言标题</th>
-	<th width="400px">留言对象</th>
-	<th width="60px">类型</th>
-	<th width="150px" >留言时间</th>
-	<th width="60px"> 回复</th>
-	<th width="90px">操作</th></tr>
-<!--Messgaes List-->
-	<?php if(isset($UserMessage_list) && sizeof($UserMessage_list)>0){?>
-
-	<?php foreach($UserMessage_list as $k=>$v){ ?>
-	<tr>
-	<td><label><input type="checkbox" name="checkbox[]" value="<?php echo $v['UserMessage']['id'] ?>" /><?php echo $v['UserMessage']['id'] ?></label></td>
-	<td><span><?php echo $v['UserMessage']['user_name'] ?></span></td>
-	<td><span><?php echo $v['UserMessage']['msg_title'] ?></span></td>
-	<td  width="400px">
-		<?php echo @$systemresource_info["type"][$v['UserMessage']['type']]?>
-		<?php if( $v['UserMessage']['type'] == "P"){?>
-			：<?php echo @$products_list[$v['UserMessage']['value_id']]?>
-		<?php }else if($v['UserMessage']['type'] == "O"){?>
-			：<?php echo @$order_list[$v['UserMessage']['value_id']]["Order"]["order_code"]?>
-		<?php }else{?>
-			未知对象
-		<?php }?>
-	</td>
-	<td align="center"><?php echo $systemresource_info["msg_type"][$v['UserMessage']['msg_type']] ?></td>
-	<td align="center"><?php echo $v['UserMessage']['created'] ?></td>
-	<td align="center"><?php if( $v['UserMessage']['status'] == 0 ){ echo "未回复";}else{echo "已回复";}?></td>
-	<td align="center">
-	<?php echo $html->link("编辑","view/{$v['UserMessage']['id']}");?> | <?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$this->webroot}messages/remove/{$v['UserMessage']['id']}')"));?>
-		</td></tr>
-	<?php }} ?><?php //pr($UserMessage_list); ?>
-<!--Messgaes List End-->	
-	</table>
-	
-	
-	
-
-<div class="pagers" style="position:relative">
-	<?php if(isset($UserMessage_list) && sizeof($UserMessage_list)>0){?>
-<p class='batch'><select style="width:59px;border:1px solid #689F7C;display:none" name="act_type"><option value="delete">删除</option></select> <input type="submit" onclick="batch_action()" value="删除" /></p>	<?php } ?>
-<?php echo $form->end();?>
-    <?php echo $this->element('pagers', array('cache'=>'+0 hour'));?></div>
-</div>
-</div>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."待处理留言","/messages/search",'',false,false);?></strong></p>
 	
 	<!--时间控件层start-->
 	<div id="container_cal" class="calender_2">
@@ -105,6 +53,57 @@
 		<div class="bd"><div id="cal4"></div><div style="clear:both;"></div></div>
 	</div>
 <!--end-->
+
+<div class="home_main" style="padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' ); ">
+<div id="listDiv">
+<table cellpadding="0" cellspacing="0" width="100%" class="list_data">
+<tr class="thead">
+	<th align="left" width="80px"><label><input type="checkbox" name="chkall" value="checkbox" onclick="selectAll(this,'checkbox');" />编号</label></th>
+	<th width="190px">用户名</th>
+	<th width="190px">留言标题</th>
+	<th width="400px">留言对象</th>
+	<th width="60px">类型</th>
+	<th width="150px" >留言时间</th>
+	<th width="60px"> 回复</th>
+	<th width="90px">操作</th></tr>
+<!--Messgaes List-->
+	<?php if(isset($UserMessage_list) && sizeof($UserMessage_list)>0){?>
+
+	<?php foreach($UserMessage_list as $k=>$v){ ?>
+	<tr <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >
+	<td><label><input type="checkbox" name="checkbox[]" value="<?php echo $v['UserMessage']['id'] ?>" /><?php echo $v['UserMessage']['id'] ?></label></td>
+	<td><span><?php echo $v['UserMessage']['user_name'] ?></span></td>
+	<td><span><?php echo $v['UserMessage']['msg_title'] ?></span></td>
+	<td  width="400px">
+		<?php echo @$systemresource_info["type"][$v['UserMessage']['type']]?>
+		<?php if( $v['UserMessage']['type'] == "P"){?>
+			：<?php echo @$products_list[$v['UserMessage']['value_id']]?>
+		<?php }else if($v['UserMessage']['type'] == "O"){?>
+			：<?php echo @$order_list[$v['UserMessage']['value_id']]["Order"]["order_code"]?>
+		<?php }else{?>
+			未知对象
+		<?php }?>
+	</td>
+	<td align="center"><?php echo $systemresource_info["msg_type"][$v['UserMessage']['msg_type']] ?></td>
+	<td align="center"><?php echo $v['UserMessage']['created'] ?></td>
+	<td align="center"><?php if( $v['UserMessage']['status'] == 0 ){ echo "未回复";}else{echo "已回复";}?></td>
+	<td align="center">
+	<?php echo $html->link("编辑","view/{$v['UserMessage']['id']}");?> | <?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$admin_webroot}messages/remove/{$v['UserMessage']['id']}')"));?>
+		</td></tr>
+	<?php }} ?><?php //pr($UserMessage_list); ?>
+<!--Messgaes List End-->	
+	</table></div>
+	
+	
+	
+
+<div class="pagers" style="position:relative">
+	<?php if(isset($UserMessage_list) && sizeof($UserMessage_list)>0){?>
+<p class='batch'><select style="width:59px;border:1px solid #689F7C;display:none" name="act_type"><option value="delete">删除</option></select> <input type="submit" onclick="batch_action()" value="删除" /></p>	<?php } ?>
+<?php echo $form->end();?>
+    <?php echo $this->element('pagers', array('cache'=>'+0 hour'));?></div>
+</div>
+</div>
 <script type="text/javascript">
 function batch_action() 
 { 

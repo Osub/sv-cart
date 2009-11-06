@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: brand.php 725 2009-04-17 08:00:21Z huangbo $
+ * $Id: brand.php 5203 2009-10-20 07:21:12Z huangbo $
 *****************************************************************************/
 class Brand extends AppModel
 {
@@ -23,25 +23,14 @@ class Brand extends AppModel
                               'foreignKey'   => 'brand_id'
                         )
                   );
-    
     	function set_locale($locale){
     	$conditions = " BrandI18n.locale = '".$locale."'";
     	$this->hasOne['BrandI18n']['conditions'] = $conditions;
         
     }
-  /*  function localeformat($id){
-		$info=$this->findbyid($id);
-		if(is_array($info['BrandI18n']))
-			foreach($info['BrandI18n'] as $k => $v){
-				$info['BrandI18n'][$v['locale']]=$v;
-			}
-		return $info;
-	}*/
-	
 	//品牌数组结构调整
     function localeformat($id){
 		$lists=$this->findAll("Brand.id = '".$id."'");
-	//	pr($lists);
 		foreach($lists as $k => $v){
 				 $lists_formated['Brand']=$v['Brand'];
 				 $lists_formated['BrandI18n'][]=$v['BrandI18n'];
@@ -54,21 +43,12 @@ class Brand extends AppModel
 	}
 	
 	
+	function getbrandformat_test(){
+			$lists=$this->find("all",array("fields"=>array("Brand.id,BrandI18n.name,BrandI18n.locale")));
+			return $lists;
+	}
 	function getbrandformat(){
-		$condition="";
-		$lists=$this->findAll($condition);
-		//pr($lists);
-		//$lists_formated = array();
-	/*	if(is_array($lists))
-			foreach($lists as $k => $v){
-				 $lists_formated[$v['Brand']['id']]['Brand']=$v['Brand'];
-				 $lists_formated[$v['Brand']['id']]['BrandI18n'][]=$v['BrandI18n'];
-				 $lists_formated[$v['Brand']['id']]['Brand']['name']='';
-				 foreach($lists_formated[$v['Brand']['id']]['BrandI18n'] as $key=>$val){
-				 	  $lists_formated[$v['Brand']['id']]['Brand']['name'] .=$val['name']."|";
-				 }
-			}*/
-
+		$lists=$this->find("all",array("fields"=>array("Brand.id,BrandI18n.name,BrandI18n.locale"),"order"=>"Brand.orderby asc,BrandI18n.name asc"));
 		return $lists;
 	}
 

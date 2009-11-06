@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: plugins_controller.php 3209 2009-07-22 08:52:55Z huangbo $
+ * $Id: plugins_controller.php 4366 2009-09-18 09:49:37Z huangbo $
 *****************************************************************************/
 class PluginsController extends AppController {
 
@@ -20,6 +20,7 @@ class PluginsController extends AppController {
 	
 	function index(){
 		$this->pageTitle = "插件管理"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'功能管理','url'=>'');
 		$this->navigations[] = array('name'=>'插件管理','url'=>'/plugins/');
 		$this->set('navigations',$this->navigations);
 		
@@ -51,6 +52,7 @@ class PluginsController extends AppController {
 	
 	function add(){
 		$this->pageTitle = "新增插件 - 插件管理"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'功能管理','url'=>'');
 		$this->navigations[] = array('name'=>'插件管理','url'=>'/plugins/');
 		$this->navigations[] = array('name'=>'新增插件','url'=>'');
 		$this->set('navigations',$this->navigations);

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: category.php 2304 2009-06-26 07:00:53Z zhengli $
+ * $Id: category.php 3949 2009-08-31 07:34:05Z huangbo $
 *****************************************************************************/
 class Category extends AppModel
 {
@@ -45,14 +45,21 @@ class Category extends AppModel
 			$lists=$this->findall("status ='1' AND type='".$type."' ",'','orderby asc');
 			$lists_formated = array();
 		//	pr($lists);  全部的分类
+       		$week_ago = date("Y-m-d H:i:s",strtotime ("-1 week"));
 			if(is_array($lists)){
 				foreach($lists as $k => $v){
+					if($v['Category']['created'] >= $week_ago){
+						$v['Category']['is_new'] = 1;
+					}
 					$lists_formated[$v['Category']['id']]=$v;
 				}
 			//	pr($lists_formated); 格式化为ID为序
 				$this->allinfo['assoc']=$lists_formated;
 				
 				foreach($lists as $k=>$v){
+					if($v['Category']['created'] >= $week_ago){
+						$v['Category']['is_new'] = 1;
+					}					
 					$this->categories_parent_format[$v['Category']['parent_id']][]=$v;
 				}
 			//	pr($this->categories_parent_format); //格式化为以parent_id为序

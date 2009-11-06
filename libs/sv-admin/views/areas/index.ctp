@@ -9,12 +9,14 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 2516 2009-07-01 10:29:18Z shenyunfeng $
+ * $Id: index.ctp 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 ?> 
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
-<!--Main Start-->
-
+<!--Main Start--> 
+<?php if(isset($pid) && $pid != 0){?>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."上一级","javascript:history.go(-1);",'',false,false);?></strong></p>
+<?php }?>
 <div class="home_main">
 
 
@@ -22,30 +24,25 @@
 <!--Areas List-->
 	<div class="order_stat properies">
 	  <div class="title">
-	  <?php if(isset($pid) && $pid != 0){?>
-<?php echo $html->link($html->image('btn_left.gif',array('class'=>'left')).$html->image('btn_right.gif',array('class'=>'right'))."上一级","javascript:history.go(-1);",array("class"=>"add_main"),false,false);?>
 
-	  
-	  <?php }?>
 <?php echo $html->link($html->image('btn_left.gif',array('class'=>'left')).$html->image('btn_right.gif',array('class'=>'right'))."新增区域","javascript:showPanel2();",array("class"=>"add_main"),false,false);?>
 <h1>
 	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
 	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  <?php echo $num_name?></h1></div>
 	  <div class="box">
+	<table  cellpadding="0" cellspacing="0" width="100%" >
 	  <?php if(isset($area_list) && sizeof($area_list)>0){?>	
-<?php foreach($area_list as $k=>$v){?>
-		<div class="language_manages" style="margin:0 15px 4px 0;float:left;display:inline;white-space:nowrap;"><span>
-		<?php if($v['RegionI18n']['name'] == '未命名'){?>
-		<!--    <input name="region_name" id="region_name" value="未命名" onblur="javascript:edit_region_name(this.value);" size="5"/>
-		    <input name="regioni18n_id" id="regioni18n_id" value="<?php echo $v['RegionI18n']['id'];?>" type="hidden"/>
-		--><?php }else{?>
-		     <?php echo $v['RegionI18n']['name']?>
+<?php $j=1;foreach($area_list as $k=>$v){?>
+	<?php if($j==1){?><tr><?php }?><td align="right">
+		<?php if($v['RegionI18n']['name'] == '未命名'){}else{?>
+		<?php echo $v['RegionI18n']['name']?>
 		<?php }?>
-		</a></span>
 		<span style="margin:0 3px;"><?php echo $html->image('line_.gif',array('align'=>'absmiddle'))?></span>
-		<span class="handle"><?php echo $html->link("管理","/areas/index/{$v['Region']['id']}",'',false,false);?>&nbsp&nbsp<?php echo $html->link("编辑","javascript:edit({$v['RegionI18n']['region_id']},{$pid})",'',false,false);?>&nbsp&nbsp<?php echo $html->link("删除","/areas/remove/{$v['Region']['id']}",'',false,false);?></span></div>
-<?php }?><?php }?>
+		</td><td><span class="handle"><?php echo $html->link("管理","/areas/index/{$v['Region']['id']}",'',false,false);?>&nbsp&nbsp<?php echo $html->link("编辑","javascript:edit({$v['RegionI18n']['region_id']},{$pid})",'',false,false);?>&nbsp&nbsp<?php echo $html->link("删除","/areas/remove/{$v['Region']['id']}",'',false,false);?></span></div>
+	</td><?php $j++;if($j==8){?></tr><?php $j=1;}?>
+<?php }}?>
+	</table>
 	  </div>
 	</div>
 <!--Areas List End-->
@@ -70,6 +67,7 @@
 		<div class="keyword" style="float:right">
 			<dl>
 			<dd><b>排序：</b></dd><dt><input type="text" name="orderby" id="orderby" value="" ></dt>
+			<dd><b>简写：</b></dd><dt><input type="text" name="abbreviated" id="abbreviated" value="" ></dt>
 			</dl>
 			</div>
 		<?php if(is_array($languages)){?>
@@ -147,6 +145,7 @@ function edit(region_id,pid){
 			document.getElementById("regionI18n_name_id_"+result[i].locale).value = result[i].name;
 			document.getElementById("RegionI18n_id_"+result[i].locale).value = result[i].id;
 			document.getElementById("orderby").value = result[i].orderby;
+			document.getElementById("abbreviated").value = result[i].abbreviated;
 			document.getElementById("region_id").value = result[i].region_id;
 			
 		}

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: points_controller.php 2412 2009-06-30 01:53:18Z zhengli $
+ * $Id: points_controller.php 4366 2009-09-18 09:49:37Z huangbo $
 *****************************************************************************/
 class PointsController extends AppController {
 
@@ -23,6 +23,7 @@ class PointsController extends AppController {
 		$this->operator_privilege('accumulate_point_log_view');
 		/*end*/
 		$this->pageTitle = "积分日志"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'客户管理','url'=>'');
 		$this->navigations[] = array('name'=>'积分日志','url'=>'/points/');
 		$this->set('navigations',$this->navigations);
 		
@@ -52,8 +53,8 @@ class PointsController extends AppController {
 	   	   $this->set('start_time',$this->params['url']['start_time']);
 	   	}
 	   	else {
-	   	   $condition['and']['modified >='] = date('Y-m-d');
-	   	   $this->set('start_time',date('Y-m-d'));
+	   	   $condition['and']['modified >='] = date('Y-m-')."1";
+	   	   $this->set('start_time',date('Y-m-')."1");
 	   	}
 	   	/* 结束时间 */
 	   	if(isset($this->params['url']['end_time']) && $this->params['url']['end_time'] != ''){

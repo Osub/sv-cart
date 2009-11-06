@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: product.php 3134 2009-07-21 06:45:45Z huangbo $
+ * $Id: product.php 3367 2009-07-29 03:29:39Z huangbo $
 *****************************************************************************/
 class Product extends AppModel
 {
@@ -20,7 +20,7 @@ class Product extends AppModel
 					                              'order'        => '',   
 					                              'dependent'    =>  true,   
 					                              'foreignKey'   => 'product_id'
-					                        	 ) ,
+					                        	 )
 					   	/*	'ProductsCategory' =>array
 												(
 										          'className'     => 'ProductsCategory',   
@@ -28,13 +28,13 @@ class Product extends AppModel
 					                              'dependent'    =>  true,   
 					                              'foreignKey'   => 'Product_id'
 					                        	)*/
-					   		'ProductLocalePrice' =>array
+					   	/*	'ProductLocalePrice' =>array
 												(
 										          'className'     => 'ProductLocalePrice',   
 					                              'order'        => '',   
 					                              'dependent'    =>  true,   
 					                              'foreignKey'   => 'product_id'
-					                        	)						                        		
+					                        	)				*/		                        		
                  	   );
 
 
@@ -44,6 +44,33 @@ class Product extends AppModel
     	$this->hasOne['ProductI18n']['conditions'] = $conditions;
         
     }
+    
+    function return_lists($ids){
+    	$conditions = array('Product.id'=>$ids);
+    	$products = $this->find('all',array('conditions'=>$conditions,
+												'fields' =>	array('Product.id','Product.recommand_flag','Product.status','Product.img_thumb'
+																,'Product.market_price'
+																,'Product.shop_price'
+																,'Product.promotion_price'
+																,'Product.promotion_start'
+																,'Product.promotion_end'
+																,'Product.promotion_status'
+																,'Product.code'
+																,'Product.product_rank_id','ProductI18n.name'
+																)									
+    										
+    										));
+    	$product_lists = array();									
+    	if(isset($products) && sizeof($products)>0){
+    		foreach($products as $k=>$v){
+    			$product_lists[$v['Product']['id']] = $v;
+    		}
+    	}
+   		return $product_lists;
+    }
+    
+    
+    
  /*
 商品列表
 *$products_id=>商品ID号

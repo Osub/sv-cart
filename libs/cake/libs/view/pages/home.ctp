@@ -1,5 +1,5 @@
-<?php 
-/* SVN FILE: $Id: home.ctp 2703 2009-07-08 11:54:52Z huangbo $ */
+<?php
+/* SVN FILE: $Id: home.ctp 4366 2009-09-18 09:49:37Z huangbo $ */
 /**
  *
  * PHP versions 4 and 5
@@ -16,9 +16,9 @@
  * @package       cake
  * @subpackage    cake.cake.libs.view.templates.pages
  * @since         CakePHP(tm) v 0.10.0.1076
- * @version       $Revision: 8120 $
- * @modifiedby    $LastChangedBy: gwoo $
- * @lastmodified  $Date: 2009-03-19 13:25:10 -0700 (Thu, 19 Mar 2009) $
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 if (Configure::read() == 0):
@@ -27,13 +27,13 @@ endif;
 ?>
 <h2><?php echo sprintf(__('Release Notes for CakePHP %s.', true), Configure::version()); ?></h2>
 <a href="https://trac.cakephp.org/wiki/changelog/1.2.x.x"><?php __('Read the changelog'); ?> </a>
-<?php 
+<?php
 if (Configure::read() > 0):
 	Debugger::checkSessionKey();
 endif;
 ?>
 <p>
-	<?php 
+	<?php
 		if (is_writable(TMP)):
 			echo '<span class="notice success">';
 				__('Your tmp directory is writable.');
@@ -46,7 +46,7 @@ endif;
 	?>
 </p>
 <p>
-	<?php 
+	<?php
 		$settings = Cache::settings();
 		if (!empty($settings)):
 			echo '<span class="notice success">';
@@ -60,7 +60,7 @@ endif;
 	?>
 </p>
 <p>
-	<?php 
+	<?php
 		$filePresent = null;
 		if (file_exists(CONFIGS.'database.php')):
 			echo '<span class="notice success">';
@@ -76,14 +76,14 @@ endif;
 		endif;
 	?>
 </p>
-<?php 
+<?php
 if (isset($filePresent)):
 	uses('model' . DS . 'connection_manager');
 	$db = ConnectionManager::getInstance();
 	@$connected = $db->getDataSource('default');
 ?>
 <p>
-	<?php 
+	<?php
 		if ($connected->isConnected()):
 			echo '<span class="notice success">';
 	 			__('Cake is able to connect to the database.');
@@ -98,7 +98,7 @@ if (isset($filePresent)):
 <?php endif;?>
 <h3><?php __('Editing this Page'); ?></h3>
 <p>
-<?php 
+<?php
 __('To change the content of this page, create: APP/views/pages/home.ctp.<br />
 To change its layout, create: APP/views/layouts/default.ctp.<br />
 You can also add some CSS styles for your pages at: APP/webroot/css.');

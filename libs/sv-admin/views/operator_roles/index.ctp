@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 2516 2009-07-01 10:29:18Z shenyunfeng $
+ * $Id: index.ctp 3949 2009-08-31 07:34:05Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
@@ -31,28 +31,29 @@
 <!--Main Start-->
 <p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."新增角色","/roles/add/",'',false,false);?></strong></p>
 
-<div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
+<div class="home_main" style="padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' ); ">
   <?php echo $form->create('',array('action'=>''));?>
+<div id="listDiv">
 <table cellpadding="0" cellspacing="0" width="100%" class="list_data">
 <tr class="thead">
-	<th>角色名称</th>
-	<th>角色人数</th>
-	<th>权限摘要</th>
-	<th>操作</th>
-</tr>
+	<th width="12%">角色名称</th>
+	<th width="8%">角色人数</th>
+	<th width="72%">权限摘要</th>
+	<th width="8%">操作</th>
+</tr> 
 <?php if(isset($role_list) && sizeof($role_list)>0){?>
-<?php foreach($role_list as $k=>$v){?>	
-<tr>
-	<td align="center"><?php echo $v['OperatorRoleI18n']['name']?></td>
+<?php $ij=0; foreach($role_list as $k=>$v){?>	
+<tr <?php if((abs($ij)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }$ij++;?> >
+	<td><?php echo $v['OperatorRoleI18n']['name']?></td>
 	<td align="center"><?php echo $v['OperatorRole']['number']?></td>
-	<td align="center"><?php echo $v['OperatorRole']['actionses']?></td>
+	<td><?php echo $v['OperatorRole']['actionses']?></td>
 	<td align="center">
-	<?php echo $html->link("编辑","/roles/edit/{$v['OperatorRole']['id']}");?>|<?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$this->webroot}roles/remove/{$v['OperatorRole']['id']}')"));?>
+	<?php echo $html->link("编辑","/roles/edit/{$v['OperatorRole']['id']}");?>|<?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$admin_webroot}roles/remove/{$v['OperatorRole']['id']}')"));?>
 </td>
 </tr>
 <?php }} ?>		
-</table>
-
+</table></div>
+</div>
   <div class="pagers" style="position:relative">
 <?php echo $this->element('pagers', array('cache'=>'+0 hour'));?>
 </div>

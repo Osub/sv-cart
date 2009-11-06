@@ -9,45 +9,61 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: coupons_controller.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: coupons_controller.php 4930 2009-10-12 10:24:42Z huangbo $
 *****************************************************************************/
 class CouponsController extends AppController {
 	var $name = 'Coupons';
     var $components = array ('Pagination','RequestHandler','Email');
     var $helpers = array('Pagination','Html','Javascript'); 
-	var $uses = array('CouponType','CouponTypeI18n','Coupon','Category','Brand','User','Product','MailTemplate','UserRank');
+	var $uses = array('SystemResource','MailSendQueue','CouponType','CouponTypeI18n','Coupon','Category','Brand','User','Product','MailTemplate','UserRank');
 
 	function index(){
+		$this->CouponType->hasOne = array('CouponTypeI18n' =>   
+                        array('className'    => 'CouponTypeI18n', 
+                              'conditions'    =>  '',
+                              'order'        => '',   
+                              'dependent'    =>  true,   
+                              'foreignKey'   => 'coupon_type_id'  
+                        )
+                  );
+
 		/*判断权限*/
 		$this->operator_privilege('coupon_view');
 		/*end*/
-		$this->pageTitle = '电子优惠券管理'." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'电子优惠券管理','url'=>'/coupons/');
+		$this->pageTitle = '优惠券'." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'促销栏目','url'=>'');
+		$this->navigations[] = array('name'=>'优惠券','url'=>'/coupons/');
 		$this->set('navigations',$this->navigations);
-		
+		$condition1 = '';
+		$condition  = '1=1';
+		if(!empty($_REQUEST["send_type"]) || @$_REQUEST["send_type"] == "0"){
+			$condition1["CouponType.send_type"] = $_REQUEST["send_type"];
+			$this->set('send_type',$_REQUEST["send_type"]);
+		}
+		if(!empty($_REQUEST["cname"])){
+			$condition1["CouponTypeI18n.name like"] = "%".$_REQUEST["cname"]."%";
+			$this->set('cname',$_REQUEST["cname"]);
+		}
 		$this->CouponType->set_locale($this->locale);
-		$condition = '1=1';
+		
 		$page = 1;
 	    $rownum=isset($this->configs['show_count']) ? $this->configs['show_count']:((!empty($rownum)) ?$rownum:20);
 		$parameters = array($rownum,$page);		
 		$options = array();
-   	    $total = count($this->CouponType->find("all",array("conditions"=>$condition,"fields"=>"DISTINCT CouponType.id")));
+   	    $total = count($this->CouponType->find("all",array("conditions"=>$condition1,"fields"=>"DISTINCT CouponType.id")));
 
 		$sortClass = 'CouponType';
 		$page = $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass);
 		//取得优惠券列表
-		$data = $this->CouponType->findAll($condition,'',"CouponType.send_start_date,CouponType.use_start_date",$rownum,$page);
+		$data = $this->CouponType->find("all",array("conditions"=>$condition1,"order"=>"CouponType.send_start_date,CouponType.use_start_date","page"=>$page,"limlt"=>$rownum));
+     
+        //资源库信息
+        $this->SystemResource->set_locale($this->locale);
+        $systemresource_info = $this->SystemResource->resource_formated(false);//find("first",array("conditions"=>array("code"=>"order_status")));
+       	//
 		foreach($data as $k=>$v){
-			switch($v['CouponType']['send_type']){
-				case 0: $v['CouponType']['send_type_name'] = '按用户发放';break;
-				case 1: $v['CouponType']['send_type_name'] = '按商品发放';break;
-				case 2: $v['CouponType']['send_type_name'] = '按订单金额发放';break;
-				case 3: $v['CouponType']['send_type_name'] = '线下发放的红包 ';break;
-				case 4: $v['CouponType']['send_type_name'] = '注册后发放 ';break;
-				case 5: $v['CouponType']['send_type_name'] = 'coupon ';break;
-				default: $v['CouponType']['send_type_name'] = '其他';break;
+			$v['CouponType']['send_type_name'] = $systemresource_info["coupontype"][$v['CouponType']['send_type']];
 
-			}
 			if($v['CouponType']['send_type'] == 5){
 				$v['CouponType']['count_coupon'] = 0;
 				$v['CouponType']['max_use'] = 0;
@@ -106,15 +122,26 @@ class CouponsController extends AppController {
 		}
 		$this->set('coupons',$data);
 		$this->set('sent_coupons',$sent_coupons);		
-	
+		$this->set('systemresource_info',$systemresource_info);		
+
 	}
 	
 	function view($id){
+		$this->CouponType->hasOne = array('CouponTypeI18n' =>   
+                        array('className'    => 'CouponTypeI18n', 
+                              'conditions'    =>  '',
+                              'order'        => '',   
+                              'dependent'    =>  true,   
+                              'foreignKey'   => 'coupon_type_id'  
+                        )
+                  );
+
 		/*判断权限*/
 		$this->operator_privilege('coupon_operation');
 		/*end*/
 		$this->pageTitle = '查看电子优惠券'." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'电子优惠券管理','url'=>'/coupons/');
+		$this->navigations[] = array('name'=>'促销栏目','url'=>'');
+		$this->navigations[] = array('name'=>'优惠券','url'=>'/coupons/');
 		$this->navigations[] = array('name'=>'查看电子优惠券','url'=>'');
 		$this->set('navigations',$this->navigations);
 		$condition["Coupon.coupon_type_id"] = $id;
@@ -140,7 +167,15 @@ class CouponsController extends AppController {
 	
 	
 	function remove($id){
-		
+		$this->CouponType->hasOne = array('CouponTypeI18n' =>   
+                        array('className'    => 'CouponTypeI18n', 
+                              'conditions'    =>  '',
+                              'order'        => '',   
+                              'dependent'    =>  true,   
+                              'foreignKey'   => 'coupon_type_id'  
+                        )
+                  );
+
 		$pn = $this->CouponTypeI18n->find('list',array('fields' => array('CouponTypeI18n.coupon_type_id','CouponTypeI18n.name'),'conditions'=> 
                                         array('CouponTypeI18n.coupon_type_id'=>$id,'CouponTypeI18n.locale'=>$this->locale)));
         
@@ -152,14 +187,33 @@ class CouponsController extends AppController {
 	
 	}
 	function remove_coupon($id){
+		$this->CouponType->hasOne = array('CouponTypeI18n' =>   
+                        array('className'    => 'CouponTypeI18n', 
+                              'conditions'    =>  '',
+                              'order'        => '',   
+                              'dependent'    =>  true,   
+                              'foreignKey'   => 'coupon_type_id'  
+                        )
+                  );
+
 		$this->Coupon->deleteAll("Coupon.id='$id'");
 		$this->flash("删除成功",'/coupons/',10);
 	
 	}
 	
 	function edit($id){
-		$this->pageTitle = "电子优惠券管理 - 电子优惠券管理"." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'电子优惠券管理','url'=>'/coupons/');
+		$this->CouponType->hasOne = array('CouponTypeI18n' =>   
+                        array('className'    => 'CouponTypeI18n', 
+                              'conditions'    =>  '',
+                              'order'        => '',   
+                              'dependent'    =>  true,   
+                              'foreignKey'   => 'coupon_type_id'  
+                        )
+                  );
+
+		$this->pageTitle = "优惠券 - 优惠券"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'促销栏目','url'=>'');
+		$this->navigations[] = array('name'=>'优惠券','url'=>'/coupons/');
 		$this->navigations[] = array('name'=>'编辑电子优惠券','url'=>'');
 	
 		
@@ -171,11 +225,11 @@ class CouponsController extends AppController {
 			//$this->CouponType->deleteall("id = '".$this->data['CouponType']['id']."'",false);
 			//$this->CouponTypeI18n->deleteall("coupon_type_id = '".$this->data['CouponType']['id']."'",false);
 			if(empty($this->data['CouponType']['money'])){
-				$this->flash("电子优惠券金额 不能为空  编辑失败。点击继续编辑电子优惠券。",'/coupons/add/',10,false);
+				$this->flash("电子优惠券金额 不能为空  编辑失败。点击这里继续编辑电子优惠券。",'/coupons/add/',10,false);
 				return false;
 			}
 			if(empty($this->data['CouponType']['min_amount'])){
-				$this->flash("电子优惠券最小订单金额 不能为空  编辑失败。点击继续编辑电子优惠券。",'/coupons/add/',10,false);
+				$this->flash("电子优惠券最小订单金额 不能为空  编辑失败。点击这里继续编辑电子优惠券。",'/coupons/add/',10,false);
 				return false;
 			}			
 			foreach($this->data['CouponTypeI18n'] as $v){
@@ -197,7 +251,7 @@ class CouponsController extends AppController {
 			if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑电子优惠券:'.$userinformation_name ,'operation');
     	    }
-			$this->flash("电子优惠券  ".$userinformation_name." 编辑成功。点击继续编辑该电子优惠券。",'/coupons/edit/'.$id,10);
+			$this->flash("电子优惠券  ".$userinformation_name." 编辑成功。点击这里继续编辑该电子优惠券。",'/coupons/edit/'.$id,10);
 		}
 		
 		$coupontype = $this->CouponType->localeformat( $id );
@@ -209,18 +263,28 @@ class CouponsController extends AppController {
 	}
 	
 	function add(){
-		$this->pageTitle = "电子优惠券管理 - 电子优惠券管理"." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'电子优惠券管理','url'=>'/coupons/');
+		$this->CouponType->hasOne = array('CouponTypeI18n' =>   
+                        array('className'    => 'CouponTypeI18n', 
+                              'conditions'    =>  '',
+                              'order'        => '',   
+                              'dependent'    =>  true,   
+                              'foreignKey'   => 'coupon_type_id'  
+                        )
+                  );
+
+		$this->pageTitle = "优惠券 - 优惠券"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'促销栏目','url'=>'');
+		$this->navigations[] = array('name'=>'优惠券','url'=>'/coupons/');
 		$this->navigations[] = array('name'=>'编辑电子优惠券','url'=>'');
 		$this->set('navigations',$this->navigations);
 		
 		if($this->RequestHandler->isPost()){
 			if(empty($this->data['CouponType']['money'])){
-				$this->flash("电子优惠券金额 不能为空  添加失败。点击继续添加电子优惠券。",'/coupons/add/',10,false);
+				$this->flash("电子优惠券金额 不能为空  添加失败。点击这里继续添加电子优惠券。",'/coupons/add/',10,false);
 				return false;
 			}
 			if(empty($this->data['CouponType']['min_amount'])){
-				$this->flash("电子优惠券最小订单金额 不能为空  添加失败。点击继续添加电子优惠券。",'/coupons/add/',10,false);
+				$this->flash("电子优惠券最小订单金额 不能为空  添加失败。点击这里继续添加电子优惠券。",'/coupons/add/',10,false);
 				return false;
 			}
 
@@ -250,14 +314,24 @@ class CouponsController extends AppController {
 			if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加电子优惠券:'.$userinformation_name ,'operation');
     	    }
-			$this->flash("电子优惠券  ".$userinformation_name." 添加成功。点击继续编辑该电子优惠券。",'/coupons/edit/'.$id,10);
+			$this->flash("电子优惠券  ".$userinformation_name." 添加成功。点击这里继续编辑该电子优惠券。",'/coupons/edit/'.$id,10);
 		}
 	}
 	
 	
 	function send($id){
-		$this->pageTitle = "电子优惠券管理 - 电子优惠券发放"." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'电子优惠券管理','url'=>'/coupons/');
+		$this->CouponType->hasOne = array('CouponTypeI18n' =>   
+                        array('className'    => 'CouponTypeI18n', 
+                              'conditions'    =>  '',
+                              'order'        => '',   
+                              'dependent'    =>  true,   
+                              'foreignKey'   => 'coupon_type_id'  
+                        )
+                  );
+
+		$this->pageTitle = "优惠券 - 电子优惠券发放"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'促销栏目','url'=>'');
+		$this->navigations[] = array('name'=>'优惠券','url'=>'/coupons/');
 		$this->navigations[] = array('name'=>'电子优惠券发放','url'=>'');
 		$this->set('navigations',$this->navigations);
         		
@@ -319,6 +393,15 @@ class CouponsController extends AppController {
 	}
 	
 	function insert_link_users($link_id,$id){
+		$this->CouponType->hasOne = array('CouponTypeI18n' =>   
+                        array('className'    => 'CouponTypeI18n', 
+                              'conditions'    =>  '',
+                              'order'        => '',   
+                              'dependent'    =>  true,   
+                              'foreignKey'   => 'coupon_type_id'  
+                        )
+                  );
+
 		$this->CouponType->set_locale($this->locale);
 		$coupon_info = $this->CouponType->findbyid($id);
 		$coupon_arr = $this->Coupon->findall("",'DISTINCT Coupon.sn_code');
@@ -399,6 +482,15 @@ class CouponsController extends AppController {
 		
 		
 	function send_print(){
+		$this->CouponType->hasOne = array('CouponTypeI18n' =>   
+                        array('className'    => 'CouponTypeI18n', 
+                              'conditions'    =>  '',
+                              'order'        => '',   
+                              'dependent'    =>  true,   
+                              'foreignKey'   => 'coupon_type_id'  
+                        )
+                  );
+
 		$times = $_POST['num'];
 		$this->CouponType->set_locale($this->locale);
 		$coupon_info = $this->CouponType->findbyid($_POST['coupon_type_id']);
@@ -427,6 +519,15 @@ class CouponsController extends AppController {
 	}
 	
 	function send_coupon(){
+		$this->CouponType->hasOne = array('CouponTypeI18n' =>   
+                        array('className'    => 'CouponTypeI18n', 
+                              'conditions'    =>  '',
+                              'order'        => '',   
+                              'dependent'    =>  true,   
+                              'foreignKey'   => 'coupon_type_id'  
+                        )
+                  );
+
 		$this->CouponType->set_locale($this->locale);
 		$coupon_info = $this->CouponType->findbyid($_POST['coupon_type_id']);
 		$coupon_arr = $this->Coupon->findall("",'DISTINCT Coupon.sn_code');
@@ -457,51 +558,54 @@ class CouponsController extends AppController {
 	}
 	
 	function send_coupon_email($id){
+		$this->CouponType->hasOne = array('CouponTypeI18n' =>   
+                        array('className'    => 'CouponTypeI18n', 
+                              'conditions'    =>  '',
+                              'order'        => '',   
+                              'dependent'    =>  true,   
+                              'foreignKey'   => 'coupon_type_id'  
+                        )
+                  );
+
 			$coupon = $this->Coupon->findbyid($id);
 			$user = $this->User->findbyid($coupon['Coupon']['user_id']);
+			$user_name = $user['User']['name'];//template
+			
 			$this->CouponType->set_locale($this->locale);
 			$coupon_type = $this->CouponType->findbyid($coupon['Coupon']['coupon_type_id']);
-			$shop_name = $this->configs['shop_name'];
-			$send_date =date('Y-m-d H:m:s');
-		 	$to_email = $user['User']['email'];
-			$template = 'send_coupon';
-			$user_name = $user['User']['name'];
-			$money = $coupon_type['CouponType']['money'];
-			
+			$money = $coupon_type['CouponType']['money'];//template
+			$shop_name=$this->configs['shop_name'];//template
+			$shop_url=$this->server_host.$this->cart_webroot;//template
+			$send_date=date('Y-m-d H:m:s');//template
+			//读模板
+			$template='send_coupon';
 			$this->MailTemplate->set_locale($this->locale);
 			$template=$this->MailTemplate->find("code = '$template' and status = '1'");
-		
-			$fromName=$shop_name;
-			$subject=$template['MailTemplateI18n']['title'];
-			$this->Email->sendAs = 'html';
-			$this->Email->is_ssl = $this->configs['smtp_ssl'];
-			$this->Email->is_mail_smtp=$this->configs['mail_service'];
-
-			$this->Email->smtp_port = $this->configs['smtp_port'];
-			$this->Email->smtpHostNames = "".$this->configs['smtp_host']."";
-			$this->Email->smtpUserName = "".$this->configs['smtp_user']."";
-			$this->Email->smtpPassword = "".$this->configs['smtp_pass']."";
-			$this->Email->fromName = $fromName;
-			eval("\$subject = \"$subject\";");
-			$this->Email->subject = "=?utf-8?B?" . base64_encode($subject) . "?=";
-			$this->Email->from = "".$this->configs['smtp_user']."";
-			/* 商店网址 */
-			$shop_url = $this->server_host.$this->cart_webroot;
-			$template_str = $template['MailTemplateI18n']['html_body'];
-			eval("\$template_str = \"$template_str\";");
-			$this->Email->html_body = $template_str;
-	        $text_body = $template['MailTemplateI18n']['text_body'];
-	     	eval("\$text_body = \"$text_body\";");
-	  	    $this->Email->text_body = $text_body;
-			$this->Email->to = "".$to_email."";
-			if(@$this->Email->send()){
-				$coupon['Coupon']['emailed'] = 1;
-				$this->Coupon->save($coupon);
-				return true;			
-			}else{
-				return false;			
-			}
-		}
+			//模板赋值
+			$html_body=$template['MailTemplateI18n']['html_body'];
+			eval("\$html_body = \"$html_body\";");
+            $text_body=$template['MailTemplateI18n']['text_body'];
+            eval("\$text_body = \"$text_body\";");
+            //主题赋值
+            $title = $template['MailTemplateI18n']['title'];
+            eval("\$title = \"$title\";");
+            
+		        $mailsendqueue = array(
+		       		"sender_name"=>$shop_name,//发送从姓名
+		       		"receiver_email"=>$user_name.";".$user['User']['email'],//接收人姓名;接收人地址
+		         	"cc_email"=>";",//抄送人
+		         	"bcc_email"=>";",//暗送人
+		          	"title"=>$title,//主题 
+		           	"html_body"=>$html_body,//内容
+		          	"text_body"=>$text_body,//内容
+		         	"sendas"=>"html"
+		     	);
+         	$this->MailSendQueue->saveAll(array("MailSendQueue"=>$mailsendqueue));//保存邮件队列
+          	if(isset($this->configs['email_the_way'])&&$this->configs['email_the_way'] == 1){
+           		$this->requestAction('/mail_sends/?status=1'); 
+          	}
+    	return true;
+	}
 	
 	function user_coupon_email($id){
 		Configure::write('debug', 0);
@@ -517,6 +621,15 @@ class CouponsController extends AppController {
 	}
 	
 	function send_by_user_rank(){
+		$this->CouponType->hasOne = array('CouponTypeI18n' =>   
+                        array('className'    => 'CouponTypeI18n', 
+                              'conditions'    =>  '',
+                              'order'        => '',   
+                              'dependent'    =>  true,   
+                              'foreignKey'   => 'coupon_type_id'  
+                        )
+                  );
+
 		$users = $this->User->findall('User.rank ='.$_POST['user_rank']);
 	//	pr($users);
 		$this->CouponType->set_locale($this->locale);

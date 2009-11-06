@@ -9,22 +9,41 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: svshow.php 2699 2009-07-08 11:07:31Z huangbo $
+ * $Id: svshow.php 4433 2009-09-22 10:08:09Z huangbo $
 *****************************************************************************/
 
 class SVshowHelper extends HTMLHelper {
 
-	function productimagethumb($img,$link, $options = array()) {
+	function productimagethumb($img,$link, $options = array(),$default_img = '',$name='') {
 		if($img == ""){
+			if($default_img == ""){
 			$img = "/img/product_default.jpg";
+			}else{
+			$img = $default_img;
+			}
 		}
 		
-		$options["width"] =108;
-		$options["height"] =108;
-		return $this->link($this->image($img,$options),$link,"",false,false);
+		//$options["width"] =108;
+	//	$options["height"] =108;
+		return $this->link($this->image($img,$options),$link,array('title'=>$name),false,false);
+	}
+	
+	function productimagehome($img,$link, $options = array(),$default_img = '',$name='') {
+		if($img == ""){
+			if($default_img == ""){
+			$img = "/img/product_default.jpg";
+			}else{
+			$img = $default_img;
+			}
+		}
+		
+		//$options["width"] =108;
+	//	$options["height"] =108;
+		return $this->link($this->image($img,$options),$link,array('title'=>$name),false,false);
 	}
 	
 	function price_format($price,$config){
+		$price = round($price,2);
 		return sprintf($config,$price);
 	}
 	
@@ -38,6 +57,19 @@ class SVshowHelper extends HTMLHelper {
 		}
 	}
 	
+	function article_link($id,$locale,$name,$config){
+		if($config == 1){
+			$name = str_replace("\\","-",$name);
+			$name = str_replace(",","-",$name);
+			$name = str_replace("&","-",$name);
+			$name = str_replace("?","-",$name);
+			$name = str_replace("/","-",$name);
+			$url_name = urldecode($name);
+			return "/articles/".$id."/".$locale."/".$url_name;
+		}else{
+			return "/articles/".$id;
+		}
+	}
 	
 }
 ?>

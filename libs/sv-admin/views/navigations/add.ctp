@@ -9,14 +9,14 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: add.ctp 2485 2009-06-30 11:33:00Z huangbo $
+ * $Id: add.ctp 4372 2009-09-18 10:38:17Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here',array('cache'=>'+0 hour','navigations'=>$navigations)); //pr($this->data);?>
 <?php echo $form->create('Navigation',array('action'=>'add/','onsubmit'=>'return navigations_check();'));?>
 <div class="content">
 <!--Main Start-->
-<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."导航列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."导航列表","/".(empty($_SESSION['cart_back_url'])?$this->params['controller']:$_SESSION['cart_back_url']),'',false,false);?></strong></p>
 
 <div class="home_main">
 <table width="100%" cellpadding="0" cellspacing="0" class="">
@@ -29,8 +29,6 @@
 	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  编辑导航</h1></div>
 	  <div class="box" style="padding-left:10px;padding-right:10px;">
-
-
   	    <h2 style="width:80px;margin-bottom:5px;">导航名称：</h2>
 <?php if(isset($languages) && sizeof($languages)>0){
 	foreach ($languages as $k => $v){?>
@@ -60,60 +58,60 @@
 	</div>
 <!--Communication Stat End-->
 </td>
-<style type="text/css">
-.tongxun dl{
-	margin:3px 0;*margin:1px 0 0;
-}
-</style>
+
 <td valign="top" width="50%" style="padding-left:5px;padding-top:25px;">
 <!--Other Stat-->
-	<div class="order_stat athe_infos tongxun">
+	<div class="order_stat athe_infos">
 	  
 	  <div class="box">
 	  <br />
+	  	<dl style="padding:3px 0;*padding:4px 0;"><dt style="padding-top:1px">上级导航：</dt><dd >
+		<select name="data[Navigation][parent_id]">
+		<option value="000">顶级导航</option>
+		<?php if(isset($navigation_data) && sizeof($navigation_data)>0){?>
+		<?php foreach($navigation_data as $k=>$v){?>
+		<option value="<?php echo $v['Navigation']['id']?>" ><?php echo $v['NavigationI18n']['name']?></option><?php }}?>
+		</select></dd></dl>
+		</dd></dl>
 
-	<dl style="padding:3px 0;*padding:4px 0;"><dt style="padding-top:1px">系统内容：</dt><dd >
-	<select name="data[Navigation][controller]">
-	<option value="pages" <?php if($this->data['Navigation']['controller']=='pages') echo "selected";?> >首页</option>
-	<option value="categories" <?php if($this->data['Navigation']['controller']=='categories') echo "selected";?>>分类</option>
-	<option value="brands" <?php if($this->data['Navigation']['controller']=='brands') echo "selected";?>>品牌</option>
-	<option value="products" <?php if($this->data['Navigation']['controller']=='products') echo "selected";?>>商品</option>
-	<option value="articles" <?php if($this->data['Navigation']['controller']=='articles') echo "selected";?>>文章</option>
-	<option value="cars" <?php if($this->data['Navigation']['controller']=='cars') echo "selected";?>>购物车</option>
-	</select>
-	</dd>
+		<dl style="padding:3px 0;*padding:4px 0;"><dt style="padding-top:1px">系统内容：</dt><dd >
+		<select name="data[Navigation][controller]">
+		<option value="pages" <?php if($this->data['Navigation']['controller']=='pages') echo "selected";?> >首页</option>
+		<option value="categories" <?php if($this->data['Navigation']['controller']=='categories') echo "selected";?>>分类</option>
+		<option value="brands" <?php if($this->data['Navigation']['controller']=='brands') echo "selected";?>>品牌</option>
+		<option value="products" <?php if($this->data['Navigation']['controller']=='products') echo "selected";?>>商品</option>
+		<option value="articles" <?php if($this->data['Navigation']['controller']=='articles') echo "selected";?>>文章</option>
+		<option value="cars" <?php if($this->data['Navigation']['controller']=='cars') echo "selected";?>>购物车</option>
+		</select>
+		</dd>
 
 		</dl>
 		<dl style="padding:3px 0;*padding:4px 0;"><dt style="padding-top:1px">位置：</dt><dd><select name="data[Navigation][type]"><option value="T" >顶部</option><option value="H" >帮助栏目</option><option value="B" >底部</option><option value="M" >中间</option></select></dd></dl>
-		<dl><dt>显示顺序：</dt><dd><input type="text" class="text_inputs" style="width:112px;" name="data[Navigation][orderby]" onkeyup="check_input_num(this)" /><br /> 如果您不输入排序号，系统将默认为50</dd></dl>
-
+		<dl><dt>显示顺序：</dt><dd><input type="text" class="text_inputs" style="width:112px;" name="data[Navigation][orderby]" onkeyup="check_input_num(this)" /><p class="msg">如果您不输入排序号，系统将默认为50</p></dd></dl>
 		<dl style="padding:3px 0;*padding:4px 0;">
 		<dt style="padding-top:1px">是否有效：</dt>
 		<dd class="best_input"><label><input type="radio" name="data[Navigation][status]" value="1" checked />是</label><label><input type="radio" name="data[Navigation][status]" value="0" />否</label></dd></dl>
 		<dl style="padding:3px 0;*padding:4px 0;">
 		<dt style="padding-top:1px">是否弹出新窗口：</dt>
 		<dd class="best_input"><label><input type="radio" name="data[Navigation][target]" value="_blank" checked />是</label><label><input type="radio" name="data[Navigation][target]" value="_self" />否</label></dd></dl>
-		<dl><dt style="font-family:arial;">ico图片：</dt><dd><input type="text" class="text_inputs" style="width:112px;" name="data[Navigation][icon]"  id="upload_img_text_0"  ><br /><br />
-			
-			<?php echo @$html->image("",array('id'=>'logo_thumb_img_0','height'=>'50','style'=>'display:none'))?>
-
-			</dd><dd><?php echo $html->link($html->image('select_img.gif',$title_arr['select_img']),"javascript:img_sel(0,'others')",'',false,false)?></dd></dl>
-		<br /><br /><br /><br />
+		<dl><dt style="font-family:arial;">ico图片：</dt><dd><input type="text" class="text_inputs" style="width:112px;" name="data[Navigation][icon]"  id="upload_img_text_0"  ><br />
+			<?php echo @$html->image("",array('id'=>'logo_thumb_img_0','style'=>'display:none'))?>
+			</dd><dd><?php echo $html->link($html->image('select_img.gif',array("class"=>"vmiddle icons",$title_arr['select_img'],"height"=>"20")),"javascript:img_sel(0,'others')",'',false,false)?></dd></dl>
 	  </div>
 	</div>
 <!--Other Stat End-->
 </td>
 </tr>
-
 </table>
-
-
-
-
 <p class="submit_btn" style="padding:1px 0;margin:0"><input type="submit" value="确定" /><input type="reset" value="重置" /></p>
-
-
 </div>
 <!--Main Start End-->
 </div>
-<?php $form->end();?>	
+<?php $form->end();?>
+<style>
+<!--
+#logo_thumb_img_0{ padding:4px; border:1px #E3E3DF solid; vertical-align:middle;
+width:60px;height:50px;
+}
+-->
+</style>

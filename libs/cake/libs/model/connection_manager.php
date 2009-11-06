@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: connection_manager.php 2703 2009-07-08 11:54:52Z huangbo $ */
+/* SVN FILE: $Id: connection_manager.php 4366 2009-09-18 09:49:37Z huangbo $ */
 /**
  * Datasource connection manager
  *
@@ -19,9 +19,9 @@
  * @package       cake
  * @subpackage    cake.cake.libs.model
  * @since         CakePHP(tm) v 0.10.x.1402
- * @version       $Revision: 8120 $
- * @modifiedby    $LastChangedBy: gwoo $
- * @lastmodified  $Date: 2009-03-19 13:25:10 -0700 (Thu, 19 Mar 2009) $
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 uses ('model' . DS . 'datasources' . DS . 'datasource');

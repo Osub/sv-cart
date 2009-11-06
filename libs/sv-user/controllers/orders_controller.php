@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: orders_controller.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: orders_controller.php 4762 2009-09-30 02:18:25Z huangbo $
 *****************************************************************************/
 uses('sanitize');		
 class OrdersController extends AppController {
@@ -17,7 +17,7 @@ class OrdersController extends AppController {
 	var $name = 'Orders';
     var $components = array ('Pagination','RequestHandler'); // Added 
     var $helpers = array('Pagination'); // Added 
-	var $uses = array('SystemResource','Order','OrderProduct','Payment','Shipping','PaymentApiLog','UserPointLog','VirtualCard','ProductDownload','ProductDownloadLog','ProductService','ProductServiceLog','UserBalanceLog','UserMessage','Coupon','CouponType','Region','OrderCard','OrderPackaging','Packaging','Card');
+	var $uses = array('Order','OrderProduct','Product','Payment','Shipping','PaymentApiLog','UserPointLog','VirtualCard','ProductDownload','ProductDownloadLog','ProductService','ProductServiceLog','UserBalanceLog','UserMessage','Coupon','CouponType','Region','OrderCard','OrderPackaging','Packaging','Card');
 
 /************   我的订单首页    ***************/
 	function index($order_status=0,$start_date='',$end_date='',$order_id=''){
@@ -28,12 +28,7 @@ class OrdersController extends AppController {
 		$this->page_init();
 		$mrClean = new Sanitize();		
 			
-		$order_id = $mrClean->html($order_id, true);
-        //资源库信息
-        $this->SystemResource->set_locale($this->locale);
-        $systemresource_info = $this->SystemResource->resource_formated(true,$this->locale);
-        $this->set('systemresource_info',$systemresource_info);//资源库信息		
-		
+		$order_id = $mrClean->html($order_id, true);		
 		//当前位置
 		$this->navigations[] = array('name'=>__($this->languages['order_list'],true),'url'=>"");
 
@@ -70,7 +65,7 @@ class OrdersController extends AppController {
 	   $parameters=Array($rownum,$page);
 	   $options=Array();
 	   $page= $this->Pagination->init($condition,"",$options,$total,$rownum,$sortClass);
-	   $my_orders=$this->Order->findAll($condition,'',"Order.created DESC","$rownum",$page);
+	   $my_orders=$this->Order->find('all',array('conditions'=>array($condition),'order'=>'Order.created DESC','recursive' => -1,'limit'=>$rownum,'page'=>$page));
 	   if(empty($my_orders)){	   		
 	   	   $my_orders=array();
 	   }else{
@@ -117,11 +112,14 @@ class OrdersController extends AppController {
 		        }else{
 		         	$my_orders[$k]['Order']['coupon_fee'] = 0;
 		        }
-		        
+		        $country =$this->Region->findById($v['Order']['regions']);
+		        if($country){
+		       		 $my_orders[$k]['Order']['country'] =$country['RegionI18n']['name'];
+		        }		        
 		        $my_orders[$k]['Order']['need_paid'] = number_format($v['Order']['total']-$v['Order']['money_paid']-$v['Order']['point_fee']-$my_orders[$k]['Order']['coupon_fee']-$v['Order']['discount'],2 ,'.','')+0;
 	   		}
 	   		//pr($my_order_ids);
-	   		$order_product = $this->OrderProduct->find('all',array('conditions'=>array('OrderProduct.order_id'=>$my_order_ids)));
+	   		$order_product = $this->OrderProduct->find('all',array('recursive' => -1,'conditions'=>array('OrderProduct.order_id'=>$my_order_ids)));
 	   		$product_weights = array();
 	   		if(isset($order_product) && sizeof($order_product)>0){
 	   			foreach($order_product as $k=>$v){
@@ -157,11 +155,6 @@ class OrdersController extends AppController {
 	function view($id){
 		$this->page_init();
 		
-        //资源库信息
-        $this->SystemResource->set_locale($this->locale);
-        $systemresource_info = $this->SystemResource->resource_formated(true,$this->locale);
-        $this->set('systemresource_info',$systemresource_info);//资源库信息				
-		
 		$flash_url = $this->server_host.$this->user_webroot."orders";
 		//当前位置
 		$this->navigations[] = array('name'=>__($this->languages['order_list'],true),'url'=>"/orders");
@@ -173,7 +166,11 @@ class OrdersController extends AppController {
 	    }
 	    //订单详细 /*****订单部分的处理********/
 		$condition=" Order.id='".$id."' ";
-		$order_info=$this->Order->find($condition);
+		$order_info=$this->Order->find('all',array('conditions'=>$condition,'recursive'=>'-1'));
+		if(isset($order_info[0])){
+			$order_info = $order_info[0];
+		}
+	//	pr($order_info);
 		$this->navigations[] = array('name'=>$order_info['Order']['order_code'],'url'=>"");
 				$this->set('locations',$this->navigations);
 
@@ -352,9 +349,32 @@ class OrdersController extends AppController {
 		
 	//	pr($order_info);
 		//订单商品详细  /*****订单商品部分的处理********/
-		$condition=" OrderProduct.order_id='".$order_info['Order']['id']."' and  ProductI18n.locale='".$this->locale."' ";
-		$order_products=$this->OrderProduct->findAll($condition);
-	//	pr($order_products);
+		$condition=" OrderProduct.order_id='".$order_info['Order']['id']."'";
+		$order_products=$this->OrderProduct->find('all',array('conditions'=>array($condition),'recursive' => -1));
+		$extension_code_count = 0;
+		$order_product_id = array();
+		$order_virtual_products = array();			
+		if(isset($order_products) && sizeof($order_products)>0){
+			foreach($order_products as $k=>$v){
+				$order_product_id[] = $v['OrderProduct']['product_id'];
+			}
+			if(!empty($order_product_id)){
+				$this->Product->set_locale($this->locale);
+				$product_list = $this->Product->return_lists($order_product_id);
+			}
+			
+			foreach($order_products as $k=>$v){
+				$order_products[$k]['Product'] = $product_list[$v['OrderProduct']['product_id']]['Product'];
+				$order_products[$k]['ProductI18n'] = $product_list[$v['OrderProduct']['product_id']]['ProductI18n'];
+				if($v['OrderProduct']['extension_code'] > ''){
+					$order_virtual_products[] = $order_products[$k];
+				}else{
+					$extension_code_count ++;
+				}
+			}			
+		}		
+		
+		
 		static $market_subtotal=0;
 		static $shop_subtotal=0;
 		$size = count($order_products);
@@ -420,22 +440,22 @@ class OrdersController extends AppController {
 		   	   $replies=$this->UserMessage->findAll("UserMessage.parent_id = '".$v['UserMessage']['id']."'");
 		   	   $my_messages[$k]['Reply']=$replies;
 		   	   if($v['UserMessage']['msg_type'] == 0){
-		   	   	      $my_messages[$k]['UserMessage']['type'] = $systemresource_info['msg_type']['0'];//$this->languages['message'];
+		   	   	      $my_messages[$k]['UserMessage']['type'] = $this->systemresource_info['msg_type']['0'];//$this->languages['message'];
 		   	   }
 		   	   else if($v['UserMessage']['msg_type'] == 1){
-		   	   	      $my_messages[$k]['UserMessage']['type'] = $systemresource_info['msg_type']['1'];//$this->languages['complaint'];
+		   	   	      $my_messages[$k]['UserMessage']['type'] = $this->systemresource_info['msg_type']['1'];//$this->languages['complaint'];
 		   	   }
 		   	   else if($v['UserMessage']['msg_type'] == 2){
-		   	   	      $my_messages[$k]['UserMessage']['type'] = $systemresource_info['msg_type']['2'];//$this->languages['inquiry'];
+		   	   	      $my_messages[$k]['UserMessage']['type'] = $this->systemresource_info['msg_type']['2'];//$this->languages['inquiry'];
 		   	   }
 		   	   else if($v['UserMessage']['msg_type'] == 3){
-		   	   	      $my_messages[$k]['UserMessage']['type'] = $systemresource_info['msg_type']['3'];//$this->languages['after_sale'];
+		   	   	      $my_messages[$k]['UserMessage']['type'] = $this->systemresource_info['msg_type']['3'];//$this->languages['after_sale'];
 		   	   }
 		   	   else if($v['UserMessage']['msg_type'] == 4){
-		   	   	      $my_messages[$k]['UserMessage']['type'] = $systemresource_info['msg_type']['4'];//$this->languages['inquire'];
+		   	   	      $my_messages[$k]['UserMessage']['type'] = $this->systemresource_info['msg_type']['4'];//$this->languages['inquire'];
 		   	   }
 		   	  else {
-		   	   	      $my_messages[$k]['UserMessage']['type'] = $systemresource_info['msg_type']['5'];//$this->languages['untyped'];
+		   	   	      $my_messages[$k]['UserMessage']['type'] = $this->systemresource_info['msg_type']['5'];//$this->languages['untyped'];
 		   	   }
 		   }
 		   $this->set('my_messages',$my_messages);
@@ -447,8 +467,9 @@ class OrdersController extends AppController {
          $service_product=array();
         if ($order_info['Order']['payment_status'] != 0)
         {
-			$condition=" OrderProduct.order_id='".$order_info['Order']['id']."' and  ProductI18n.locale='".$this->locale."' and  OrderProduct.extension_code>'' ";
-			$order_virtual_products=$this->OrderProduct->findAll($condition);
+		//	$condition=" OrderProduct.order_id='".$order_info['Order']['id']."' and  OrderProduct.extension_code>'' ";
+		//	$order_virtual_products=$this->OrderProduct->findAll($condition);
+			
 			if(!empty($order_virtual_products))foreach($order_virtual_products as $k=>$v){
 				//pr($order_virtual_products);
 				/* 虚拟卡处理 */
@@ -467,6 +488,7 @@ class OrdersController extends AppController {
 						//$order_info['Order']['virtual_card'][] = $vv['VirtualCard'];
 						$virtual_card[$vv['VirtualCard']['product_id']][] = $vv['VirtualCard'];
 					}
+					
 					//pr($order_info['Order']['virtual_card']);
 				}
 				/* 下载处理 */
@@ -505,9 +527,9 @@ class OrdersController extends AppController {
         /*
 	        SV_SIMPLE
         */
-        if($order_info['Order']['payment_status']!=2){
-         	$this->order_pay($order_info['Order']['id']);
-        }
+      /*  if($order_info['Order']['payment_status']!=2){
+         	$this->order_pay($order_info['Order']['id'],'1');
+        }*/
         
         
 
@@ -521,8 +543,9 @@ class OrdersController extends AppController {
 	   	$this->pageTitle = $this->languages['my_order']." - ".$this->configs['shop_title'];
 		//pr($order_products);
 		/* 是否显示配送 */
-		$condition=" OrderProduct.order_id='".$order_info['Order']['id']."' and  ProductI18n.locale='".$this->locale."' and OrderProduct.extension_code='' ";
-		if($this->OrderProduct->findAll($condition))
+		$condition=" OrderProduct.order_id='".$order_info['Order']['id']."' and OrderProduct.extension_code='' ";
+	//	if($this->OrderProduct->find('count',array('fields' => 'DISTINCT OrderProduct.id',	'recursive' => -1,'conditions'=>array($condition))))
+		if($extension_code_count)
 			$this->set('all_virtual',0);
 		else $this->set('all_virtual',1);
 		$this->set('order_info',$order_info);
@@ -538,8 +561,8 @@ class OrdersController extends AppController {
 function cancle_order($order_id){
 	$order=array(
 		'id'=> $order_id ,
-		'status'=> 2,
-		'payment_status' => 1,
+		'status'=> 2
+		//'payment_status' => 1,
 		);
 	$this->Order->save($order);
 	 //显示的页面
@@ -630,15 +653,20 @@ function change_payment($payment_id,$order_id){
 
 
 /* 支付*/
-	function order_pay($oid = 0){
+	function order_pay($oid = 0,$fun =''){
 			if($oid != 0){
 				$_POST['id'] = $oid;
+				$is_ajax = 0;
+			}else{
+				$is_ajax = 1;
 			}
+			$url_format ='';
 //		if($this->RequestHandler->isPost()){
 			$order = $this->Order->findbyid($_POST['id']);
 			$pay_log = $this->PaymentApiLog->findbytype_id($_POST['id']);
 			$pay = $this->Payment->findbycode($pay_log['PaymentApiLog']['payment_code']);
 			$order_pr = $order['Order'];
+			$order_pr['currency_code'] = $order['Order']['order_currency'];
 			$order_pr['log_id'] = $pay_log['PaymentApiLog']['id'];
 			$result['msg'] = $this->languages['pay'];
 			$pay_php = $pay['Payment']['php_code'];
@@ -682,29 +710,29 @@ function change_payment($payment_id,$order_id){
 			$result['type'] = 0;
 
 	//	}
-		   if($oid != 0){
-		   	//	return $url;
-		   }else{
-			   if(!isset($_POST['is_ajax'])){
-					$flash_url = $this->server_host.$this->user_webroot."orders";			   	   
-					$this->page_init();
-					$this->pageTitle = isset($result['msg'])?$result['msg']:'';
-					if(isset($_POST['act']) && $_POST['act'] == 'index'){
-					$this->flash($url_format,$flash_url,10);		
-					}else if(isset($_POST['act']) && $_POST['act'] == 'view'){
-					$this->flash($url_format,$flash_url."/".$_POST['id'],10);		
+			   if($is_ajax == 1){
+					$this->set('result',$result);
+			   		$this->layout="ajax";				
+			   	}else{		
+			   		if($fun != ''){
+			   			return $url_format;
+			   		}else{
+						$flash_url = $this->server_host.$this->user_webroot."orders";			   	   
+						$this->page_init();
+						$this->pageTitle = isset($result['msg'])?$result['msg']:'';
+						$this->set('$url_format','1');
+						$this->flash($this->languages['pay'],$flash_url,'');		
 					}
-				}		
-				
-				$this->set('result',$result);
-		   		$this->layout="ajax";
-		  }
+		   		}
 	}
 	
-	function confirm_order(){
+	function confirm_order($id =''){
+		if($id != ''){
+			$_POST['id'] = $id;
+		}
 		$result['type'] = 1;
 		$result['msg'] = "";
-		if($this->RequestHandler->isPost()){
+	//	if($this->RequestHandler->isPost()){
 			$flash_url = $this->server_host.$this->user_webroot."orders";		
 			$order_info = array(
 								'id' => $_POST['id'],
@@ -713,7 +741,7 @@ function change_payment($payment_id,$order_id){
 			$this->Order->save($order_info);
 			$result['type'] = 0;
 			$result['msg'] = $this->languages['thanks_for_purchase'];
-   		}
+   	//	}
 		if(!isset($_POST['is_ajax'])){
 		    $this->page_init();
 			$this->pageTitle = "".$result['msg']."";

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: newsletter_controller.php 2817 2009-07-13 11:20:32Z zhengli $
+ * $Id: newsletter_controller.php 5527 2009-11-05 02:07:24Z huangbo $
 *****************************************************************************/
 class NewsletterController extends AppController {
 	var $name = 'Newsletter';
@@ -52,23 +52,23 @@ class NewsletterController extends AppController {
 				/* 商店网址 */
 				$shop_url = $this->server_host.$this->cart_webroot;
   	            eval("\$template_str = \"$template_str\";");
-		 	  	$this->Email->smtpHostNames = "".$this->configs['smtp_host']."";
-			    $this->Email->smtpUserName = "".$this->configs['smtp_user']."";
-			    $this->Email->smtpPassword = "".$this->configs['smtp_pass']."";
-				$this->Email->is_ssl = $this->configs['smtp_ssl'];
-		$this->Email->is_mail_smtp = $this->configs['mail_service'];
-				$this->Email->smtp_port = $this->configs['smtp_port'];
-			    $this->Email->from = "".$this->configs['smtp_user']."";
-			    $this->Email->to = "".$_POST['email']."";
-			    $this->Email->fromName =$shop_name;
-			  	$this->Email->html_body = "".$template_str."";
 		        $text_body = $template['MailTemplateI18n']['text_body'];
 		     	eval("\$text_body = \"$text_body\";");
-		  	    $this->Email->text_body = $text_body;
 				$subject = $template['MailTemplateI18n']['title'];
 				eval("\$subject = \"$subject\";");
-				$this->Email->subject = "=?utf-8?B?" . base64_encode($subject) . "?=";
-				if($this->Email->send()){
+				$mailsendqueue = array(
+					"sender_name"=>$shop_name,//发送从姓名
+					"receiver_email"=>";".$to_email,//接收人姓名;接收人地址
+				 	"cc_email"=>";",//抄送人
+				 	"bcc_email"=>";",//暗送人
+				  	"title"=>$subject,//主题 
+				   	"html_body"=>$template_str,//内容
+				  	"text_body"=>$text_body,//内容
+				 	"sendas"=>"html"
+				);
+				$this->Email->send_mail($this->locale,$this->configs['email_the_way'], $mailsendqueue);
+
+				if($this->Email->send_mail($this->locale,$this->configs['email_the_way'], $mailsendqueue)){
 			      $result['type'] = 0;
 			    }else{
 			      $result['type'] = 1;
@@ -101,23 +101,22 @@ class NewsletterController extends AppController {
 				/* 商店网址 */
 				$shop_url = $this->server_host.$this->cart_webroot;
 				eval("\$template_str = \"$template_str\";");
-				$this->Email->is_ssl = $this->configs['smtp_ssl'];
-		$this->Email->is_mail_smtp = $this->configs['mail_service'];
-				$this->Email->smtp_port = $this->configs['smtp_port'];
-				$this->Email->smtpHostNames = "".$this->configs['smtp_host']."";
-				$this->Email->smtpUserName = "".$this->configs['smtp_user']."";
-				$this->Email->smtpPassword = "".$this->configs['smtp_pass']."";
-				$this->Email->from = "".$this->configs['smtp_user']."";
-				$this->Email->to = "".$this->configs['test_mail_address']."";
-				$this->Email->fromName =$shop_name;
-				$this->Email->html_body = "".$template_str."";
 		        $text_body = $template['MailTemplateI18n']['text_body'];
 		     	eval("\$text_body = \"$text_body\";");
-		  	    $this->Email->text_body = $text_body;
 				$subject = $template['MailTemplateI18n']['title'];
 				eval("\$subject = \"$subject\";");
-				$this->Email->subject = "=?utf-8?B?" . base64_encode($subject) . "?=";
-				$this->Email->send();		  
+				$mailsendqueue = array(
+					"sender_name"=>$shop_name,//发送从姓名
+					"receiver_email"=>";".$to_email,//接收人姓名;接收人地址
+				 	"cc_email"=>";",//抄送人
+				 	"bcc_email"=>";",//暗送人
+				  	"title"=>$subject,//主题 
+				   	"html_body"=>$template_str,//内容
+				  	"text_body"=>$text_body,//内容
+				 	"sendas"=>"html"
+				);
+				$this->Email->send_mail($this->locale,$this->configs['email_the_way'], $mailsendqueue);
+	  
 			}
 	 		
 	 		$this->flash($this->languages['activation'].$this->languages['successfully'],'/','');

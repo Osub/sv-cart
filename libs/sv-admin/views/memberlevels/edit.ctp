@@ -9,14 +9,14 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: edit.ctp 2516 2009-07-01 10:29:18Z shenyunfeng $
+ * $Id: edit.ctp 4372 2009-09-18 10:38:17Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
 <!--Main Start-->
 <br />
-<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."会员等级列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."会员等级列表","/".(empty($_SESSION['cart_back_url'])?$this->params['controller']:$_SESSION['cart_back_url']),'',false,false);?></strong></p>
 <div class="home_main">
 <!--ConfigValues-->
 <?php echo $form->create('memberlevels',array('action'=>'edit/'.$userrank_info['UserRank']['id'],'onsubmit'=>'return memberlevels_check();'));?>
@@ -51,7 +51,7 @@
 		<dl><dt>积分上限: </dt>
 		<dd class="intagrel">
 		<input type="text" name="data[UserRank][max_points]" value="<?php echo @$userrank_info['UserRank']['max_points']?>" style="width:76px;border:1px solid #649776" value="0" /><br />
-		<div class="msg"><input type="checkbox" class="checkbox" name="data[UserRank][show_price]" value="1" <?php if($userrank_info['UserRank']['show_price']==1){echo "checked";}?> />在商品详细页显示应该会员等级的商品价格</div>
+		<div class="msg"><input type="checkbox" class="checkbox" name="data[UserRank][show_price]" value="1" <?php if($userrank_info['UserRank']['show_price']==1){echo "checked";}?> />在商品详细页显示会员等级的商品价格</div>
 		<div class="msg"><input type="checkbox" class="checkbox" name="data[UserRank][special_rank]" value="1" <?php if($userrank_info['UserRank']['special_rank']==1){echo "checked";}?> />特殊会员组 <?php echo $html->image('help_icon.gif',array('class'=>'vmiddle icons',"onclick"=>"help_show_or_hide('help_text')"))?></div>
 		<p style="display:none" id="help_text" class="msg"><font color="#646464">特殊会员组的会员不会随着积分的变化而变化。</font></p>
 		</dd>

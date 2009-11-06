@@ -9,31 +9,51 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: edit.ctp 2989 2009-07-17 02:03:04Z huangbo $
+ * $Id: edit.ctp 5425 2009-10-26 05:25:54Z huangbo $
   *****************************************************************************/
 ?>
-
+<!--时间控件层start-->
+	<div id="container_cal" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal"></div><div style="clear:both;"></div></div>
+	</div>
+	<div id="container_cal2" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal2"></div><div style="clear:both;"></div></div>
+	</div>
+	<div id="container_cal3" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal3"></div><div style="clear:both;"></div></div>
+	</div>
+	<div id="container_cal4" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal4"></div><div style="clear:both;"></div></div>
+	</div>
+<!--end-->
 
 <?php echo $javascript->link('selectzone');?>
 <?php echo $javascript->link('product');?>
-
+<?php echo $javascript->link('utils');?>	
+<?php echo $javascript->link('listtable');?>	
 
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
-<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."专题列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."专题列表","/".(empty($_SESSION['cart_back_url'])?$this->params['controller']:$_SESSION['cart_back_url']),'',false,false);?></strong></p>
 <div class="home_main">
 
 <!--Main Start-->
 <?php echo $form->create('Topic',array('action'=>'/edit/'.$topic['Topic']['id'],'onsubmit'=>'return topics_check();'));?>
-<div class="order_stat athe_infos configvalues">
-	<div class="title"><h1>
+	
+<table width="100%" cellpadding="0" cellspacing="0" class="">
+<tr>
+<td align="left" width="50%" valign="top" style="padding-right:5px">
+<!--Communication Stat-->
+	<div class="order_stat athe_infos department_config">
+	  <div class="title"><h1>
 	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
 	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  编辑专题</h1></div>
 	  <div class="box">
-	  <input type="hidden" name="data[Topic][id]" value="<?php echo $topic['Topic']['id'];?>" />
-<!--Mailtemplates_Config-->
-	  <div class="shop_config menus_configs">
 	  	
 		
 		<h2>专题名称：</h2>
@@ -49,7 +69,15 @@
 <?php if(isset($languages) && sizeof($languages) > 0){
     foreach($languages as $k => $v){
 ?>
-		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input type="text" style="width:360px;" id="meta_keywords_<?php echo $v['Language']['locale']?>" name="data[TopicI18n][<?php echo $k;?>][meta_keywords]" value="<?php echo @$topic['TopicI18n'][$k]['meta_keywords']?>"  /> <font color="#ff0000">*</font></span></p>
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input type="text" style="width:360px;" id="meta_keywords_<?php echo $v['Language']['locale']?>" name="data[TopicI18n][<?php echo $k;?>][meta_keywords]" value="<?php echo @$topic['TopicI18n'][$k]['meta_keywords']?>"  />
+			<select style="width:90px;border:1px solid #649776" onchange="add_to_seokeyword(this,'meta_keywords_<?php echo $v['Language']['locale']?>')">
+				<option value='常用关键字'>常用关键字</option>
+				<?php foreach( $seokeyword_data as $sk=>$sv){?>
+					<option value='<?php echo $sv["SeoKeyword"]["name"]?>'><?php echo $sv["SeoKeyword"]["name"]?></option>
+				<?php }?>
+			</select>
+
+		<font color="#ff0000">*</font></span></p>
 		
 <?php }
 }
@@ -58,7 +86,7 @@
 <?php if(isset($languages) && sizeof($languages) > 0){
     foreach($languages as $k => $v){
 ?>
-		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input type="text" style="width:360px;" id="meta_description_<?php echo $v['Language']['locale']?>" name="data[TopicI18n][<?php echo $k;?>][meta_description]" value="<?php echo @$topic['TopicI18n'][$k]['meta_description']?>" /> <font color="#ff0000">*</font></span></p>
+		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><input type="text" style="width:360px;;border:1px solid #649776" id="meta_description_<?php echo $v['Language']['locale']?>" name="data[TopicI18n][<?php echo $k;?>][meta_description]" value="<?php echo @$topic['TopicI18n'][$k]['meta_description']?>" /> <font color="#ff0000">*</font></span></p>
 		
 <?php }
 }
@@ -75,6 +103,18 @@
 }
 ?>
 
+	  </div>
+	</div>
+<!--Communication Stat End-->
+</td>
+<td valign="top" width="50%" style="padding-left:5px;padding-top:25px;">
+<!--Password-->
+	<div class="order_stat athe_infos">
+	  
+	  <div class="box">
+	  <input type="hidden" name="data[Topic][id]" value="<?php echo $topic['Topic']['id'];?>" />
+<!--Mailtemplates_Config-->
+	  <div class="shop_config menus_configs">
 
    <dl><dt style="width:105px;padding-top:8px;">活动周期: </dt>
 		
@@ -93,14 +133,18 @@
 			
 			
 		<dl><dt style="width:105px;"><?php echo $html->image('help_icon.gif',array('align'=>'absmiddle',"onclick"=>"help_show_or_hide('help_text2')"))?>专题样式列表: </dt>
-		<dd><textarea style="width:360px;height:135px;" name="data[Topic][css]"><?php echo $topic['Topic']['css'];?></textarea><br/><span style="display:none" id="help_text2">填写当前专题的CSS样式代码，不填写将调用模板默认CSS文件<br />[+][-]</span></dd></dl>
-		
-		</div>
-<!--Mailtemplates_Config End-->
-		
+		<dd><textarea style="width:360px;border:1px solid #649776" name="data[Topic][css]"><?php echo $topic['Topic']['css'];?></textarea></dd></dl>
 	  </div>
 	</div>
+<!--Password End-->
 
+</td>
+</tr>
+
+</table>
+
+	
+	<br/>
 <!--Main End-->
 
 <!--profile-->
@@ -110,8 +154,16 @@
 	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  专题介绍</h1></div>
 	  <div class="box">
-	
-
+		<?php if($SVConfigs["select_editor"]=="2"||empty($SVConfigs["select_editor"])){?>
+		<?php echo $javascript->link('tinymce/tiny_mce/tiny_mce'); ?>
+	  	<?php if(isset($languages) && sizeof($languages)>0){foreach ($languages as $k => $v){?><table><tr><td valign="top">
+	  	<?php echo $html->image($v['Language']['img01'])?></td><td valign="top">
+		<textarea id="elm<?php echo $v['Language']['locale'];?>" name="data[TopicI18n][<?php echo $k;?>][intro]" rows="15" cols="80" style="width: 80%"><?php echo $topic['TopicI18n'][$k]['intro'];?></textarea>
+		<?php  echo $tinymce->load("elm".$v['Language']['locale'],$now_locale); ?></td></tr>
+</table>
+    	<?php }?>
+		<?php }?><?php }?>
+		<?php if($SVConfigs["select_editor"]=="1"){?>
 <?php echo $javascript->link('fckeditor/fckeditor'); ?>
 
 <?php if(isset($languages) && sizeof($languages) > 0){
@@ -133,14 +185,13 @@
 		<br /><br />
 <?php }}?>
 
-
-
-
+		<?php }?>
 		<p class="submit_btn"><input type="submit" value="确定" /><input type="reset" value="重置" /></p>
 		
 <?php echo $form->end();?>
 	
 	  </div>
+	  	  <br/>
 	  	  <!--Product Relative-->
 <input type="hidden" id="products_id" value="">
 	<div class="order_stat properies">
@@ -149,7 +200,7 @@
 	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  <span>关联商品</span></h1></div>
 	  <div class="box">
-<?php echo $form->create('',array('action'=>'','name'=>"linkForm","type"=>"get","id"=>"linkForm"));?>
+<?php echo $form->create('',array('action'=>'','name'=>"linkForm","type"=>"get","id"=>"linkForm" ,"onsubmit"=>"return false"));?>
 
 		<p class="select_cat">
 		<?php echo $html->image('serach_icon.gif',array('align'=>'absmiddle'))?>
@@ -198,7 +249,8 @@
                              <?php if (isset($v['Product'])){?>
                            <p class="rel_list">
                            <span class="handle">
-排序:<input size="2" value="<?php echo $v['TopicProduct']['orderby']?>" onblur="update_orderby(<?php echo $v['TopicProduct']['id']?>,this.value,'T');">
+							排序:<span onclick="javascript:listTable.edit(this, 'products/update_orderby/T/',<?php echo $v['TopicProduct']['id']?>)"><?php echo $v['TopicProduct']['orderby']?></span>
+							
                            <?php echo $html->image('delete1.gif',array('align'=>'absmiddle',"onMouseout"=>"onMouseout_deleteimg(this)","onmouseover"=>"onmouseover_deleteimg(this)","onclick"=>"drop_relation_product('drop_link_topic_products',".$topic['Topic']['id'].",".$v['TopicProduct']['product_id'].",'T');"));?></span><?php echo $v['Product']['name']?>
 </p>
                             <?php }?>
@@ -221,21 +273,42 @@
 
 </div>
 <!--Main Start End-->
-</div><!--时间控件层start-->
-	<div id="container_cal" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal2" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal2"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal3" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal3"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal4" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal4"></div><div style="clear:both;"></div></div>
-	</div>
-<!--end-->
+</div>
+<script>
+document.onmousemove=function(e)
+{
+  var obj = Utils.srcElement(e);
+  if (typeof(obj.onclick) == 'function' && obj.onclick.toString().indexOf('listTable.edit') != -1)
+  {
+    obj.title = '点击修改内容';
+    obj.style.cssText = 'background: #21964D;';
+    obj.onmouseout = function(e)
+    {
+      this.style.cssText = '';
+    }
+  }
+  else if (typeof(obj.href) != 'undefined' && obj.href.indexOf('listTable.sort') != -1)
+  {
+    obj.title = '点击对列表排序';
+  }
+}
+
+
+</script>
+<script type="text/javascript">
+  function add_to_seokeyword(obj,keyword_id){
+	
+	var keyword_str = GetId(keyword_id).value;
+	var keyword_str_arr = keyword_str.split(",");
+	for( var i=0;i<keyword_str_arr.length;i++ ){
+		if(keyword_str_arr[i]==obj.value){
+			return false;
+		}
+	}
+	if(keyword_str!=""){
+		GetId(keyword_id).value+= ","+obj.value;
+	}else{
+		GetId(keyword_id).value+= obj.value;
+	}
+}
+</script>

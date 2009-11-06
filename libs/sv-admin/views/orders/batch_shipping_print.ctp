@@ -68,7 +68,7 @@
 <table border="0" width="96%">
     <tbody>
         <tr align="right">
-            <td><?php if($vall['Order']['discount']>0){?>- 折扣：<?php echo $vall['Order']['discount']?> <?php } ?>
+            <td>
             <?php if($vall['Order']['pack_fee']!='0.00'){?><!-- 包装名称包装费用 --> + 包装费用：<?php echo $vall['Order']['format_pack_fee']?> <?php } ?>
             <?php if($vall['Order']['card_fee']!='0.00'){?><!-- 贺卡名称以及贺卡费用 --> + 贺卡费用：<?php echo $vall['Order']['format_card_fee']?> <?php } ?>
             <?php if($vall['Order']['payment_fee']!='0.00'){?><!-- 支付手续费 --> + 支付费用：<?php echo $vall['Order']['format_payment_fee']?> <?php } ?> 
@@ -77,8 +77,9 @@
             <!-- 订单总金额 -->   = 订单总金额：<?php echo $vall['Order']['format_total'];?></td>
         </tr>
         <tr align="right">
-            <td><!-- 如果已付了部分款项, 减去已付款金额 --> <?php if($vall['Order']['money_paid']!='0.00'){?>- 已付款金额：<?php echo $vall['Order']['format_money_paid']?> <?php } ?> 
+            <td><!-- 如果已付了部分款项, 减去已付款金额 --> <?php if($vall['Order']['discount']>0){?>- 折扣：<?php echo $vall['Order']['discount']?> <?php } ?><?php if($vall['Order']['money_paid']!='0.00'){?>- 已付款金额：<?php echo $vall['Order']['format_money_paid']?> <?php } ?> 
             <!-- 如果使用了积分支付, 减去已使用的积分 -->   <?php if($vall['Order']['point_fee']!='0.00'){?>- 使用积分：<?php echo $vall['Order']['format_point_fee']?> <?php } ?> 
+            <!-- 如果使用了积分支付, 减去已使用的积分 -->   <?php if(intval($vall['Order']['coupon_fees'])!='0.00'){?>- 红包：<?php echo $vall['Order']['coupon_fee']?> <?php } ?> 
             <!-- 应付款金额 --> = 应付款金额：<?php echo $vall['Order']['format_should_pay'];;?></td>
         </tr>
     </tbody>

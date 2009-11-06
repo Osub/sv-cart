@@ -9,12 +9,12 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: view.ctp 3276 2009-07-23 09:14:17Z huangbo $
+ * $Id: view.ctp 4551 2009-09-25 05:43:19Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
-<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."订单列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."订单列表","/".(empty($_SESSION['cart_back_url'])?$this->params['controller']:$_SESSION['cart_back_url']),'',false,false);?></strong></p>
 <style type="text/css">
 table.products_infos th{
 	border-bottom:3px solid #DBDBDB;
@@ -37,7 +37,7 @@ table.handels{
 	margin-top:10px;
 }
 table.handels tr.headers{
-	background:url({$this->webroot}img/handel_bg.gif) repeat-x;
+	background:url({$admin_webroot}img/handel_bg.gif) repeat-x;
 }
 table.handels th{
 	border-right:1px solid #FAF9F8;
@@ -61,7 +61,7 @@ table.handels th{
 			<table width="97%" cellpadding="0" cellspacing="0" class="order_view">
 			<tr>
 				<th width="20%" align="left">订单号：</th>
-				<td width="80%"><?php echo $order_info['Order']['order_code']?> <?php echo $order_info['Order']['consignee']?> [<?php echo $html->link("发送/查看留言","/messages/index/{$order_info['Order']['user_id']}",array("class"=>"none"),false,false);?>] <?php echo $html->link("编辑","/orders/edit/{$order_info['Order']['id']}",array("class"=>"green_4"),false,false);?></td>
+				<td width="80%"><?php echo $order_info['Order']['order_code']?> <?php echo $order_info['Order']['consignee']?> [<?php echo $html->link("发送/查看留言","/messages/index/{$order_info['Order']['user_id']}",array(),false,false);?>] <?php echo $html->link("编辑","/orders/edit/{$order_info['Order']['id']}",array("class"=>"green_4"),false,false);?></td>
 			</tr>
 			<tr>
 				<th align="left">订单状态：</th>
@@ -91,9 +91,7 @@ table.handels th{
 			</tr>
 			<tr>
 				<th align="left">订单货币：</th>
-				<td>		
-				<?php echo !empty($order_info['Order']['order_currency'])?$order_info['Order']['order_currency']:"RMB"?>
-				</td>
+				<td><?php echo empty($order_info['Order']['order_currency'])?"RMB":$order_info['Order']['order_currency'];?></td>
 			</tr>
 			</table>
 			</td>
@@ -109,8 +107,9 @@ table.handels th{
 	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	  商品列表</h1></div>
 	  <div class="box" style="padding:10px 0;">
-<table cellpadding="0" cellspacing="0" width="100%" class="products_infos">	
-<tr class="tr_head">
+<div id="listDiv">
+<table cellpadding="0" cellspacing="0" width="100%" class="list_data">
+<tr class="thead">
 	<th width="10%">&nbsp;</th>
 	<th width="14%">商品货号</th>
 	<th width="20%">商品名称</th>
@@ -122,10 +121,10 @@ table.handels th{
 </tr>
 <?php $sum = 0;if(isset($order_info['OrderProduct']) && sizeof($order_info['OrderProduct'])>0){?>
 	<?php foreach($order_info['OrderProduct'] as $k=>$v){?>
-<tr>
+<tr <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >
 	<td><?php echo $html->image($server_host.$root_all.$product_img_new[$v['product_id']]["Product"]["img_thumb"],array('align'=>'absmiddle'))?></td>
 	<td><?php echo $html->link($v['product_code'],$server_host.$cart_webroot."products/{$v['product_id']}",array('target'=>'_blank'));?></td>
-	<td><?php echo $v['product_name'];?><?php if(!empty($v['delivery_note'])){?><br />注：<?php echo $v['delivery_note'];}?>&nbsp;</td>
+	<td><?php echo $html->link($v['product_name'],$server_host.$cart_webroot."products/{$v['product_id']}",array('target'=>'_blank'));?><?php if(!empty($v['delivery_note'])){?><br />注：<?php echo $v['delivery_note'];}?>&nbsp;</td>
 	<td><?php echo $v['product_attrbute']?>&nbsp;</td>
 	<td align="center"><?php echo sprintf($price_format,sprintf("%01.2f",$product_img_new[$v['product_id']]["Product"]["market_price"]));?></td>
 	<td align="center"><?php echo sprintf($price_format,sprintf("%01.2f",$v['product_price']));?></td>
@@ -133,7 +132,7 @@ table.handels th{
 	<td align="center"><?php echo $v['total']?></td>
 </tr>
 <?php $sum=$sum+$product_img_new[$v['product_id']]["Product"]["market_price"]*$v['product_quntity'];}?>
-<table cellpadding="6" cellspacing="0" width="100%" style="border-top:3px solid #ccc;">	
+<table cellpadding="6" cellspacing="0" width="100%" style="border-top:1px solid #ccc;">	
 
 <tr>	
 	<td style="padding-top:10px;">金额小计：
@@ -248,7 +247,7 @@ table.handels th{
 		</tr>
 		<tr>
 			<th width="10%" align="left">发票税额：</th>
-			<td width="40%"><?php echo sprintf($price_format,sprintf("%01.2f",$order_info['Order']['subtotal']))?><input type="hidden" id="subtotal" name="subtotal" value="<?php echo $order_info['Order']['subtotal']?>"></td>
+			<td width="40%"><?php echo sprintf($price_format,sprintf("%01.2f",$order_info['Order']['tax']))?><input type="hidden" id="tax" name="tax" value="<?php echo $order_info['Order']['tax']?>"></td>
 			<th width="10%" class="description" align="left">订单总金额：</th>
 			<td><?php echo sprintf($price_format,sprintf("%01.2f",$order_info["Order"]["total"]));?></td>
 		</tr>
@@ -303,7 +302,8 @@ table.handels th{
 	<?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
 	操作信息</h1></div>
 	<div class="box" style="padding-left:0;padding-right:0;">
-<table cellpadding="0" cellspacing="0" width="100%" class="list_data">	
+<div id="listDiv1">
+<table cellpadding="0" cellspacing="0" width="100%" class="list_data">
 <tr class="thead">
 	<th width="145px">操作时间</th>
 	<th width="80px">操作者</th>
@@ -313,7 +313,7 @@ table.handels th{
 	<th>备注</th>
 </tr>
 <?php if(isset($action_list) && sizeof($action_list)>0){foreach($action_list as $k=>$v){?>
-<tr>
+<tr <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >
 	<td align="center" width="145px"><?php echo $v['OrderAction']['created']?></td>
 	<td align="center" width="80px"><?php echo $v['Operator']['name']?></td>
 	<td align="center" width="80px"><?php echo $systemresource_info["order_status"][$v['OrderAction']['order_status']];?></td>
@@ -323,10 +323,45 @@ table.handels th{
 </tr>
 <?php }?>
 <?php }?>
-</table>
+</table></div>
 </div></div>
 
 <!--Product Photos End-->
 </div></div>
 <!--Main Start End-->
 </div>
+<script>
+//列表鼠标划动效果
+if (document.getElementById("listDiv1")){
+	var this_bgcolor = "";
+	document.getElementById("listDiv1").onmouseover = function(e){
+	    obj = Utils.srcElement(e);
+		if (obj){
+			if (obj.parentNode.tagName.toLowerCase() == "tr") row = obj.parentNode;
+				else if (obj.parentNode.parentNode.tagName.toLowerCase() == "tr") row = obj.parentNode.parentNode;
+				else return;
+				for (i = 0; i < row.cells.length; i++){
+		        	if (row.cells[i].tagName != "TH"){
+		        		this_bgcolor = row.cells[i].className;
+		        		row.cells[i].className = 'hover';
+		        	}
+		 		}
+		}
+	}
+	document.getElementById("listDiv1").onmouseout = function(e){
+    	obj = Utils.srcElement(e);
+		if (obj){
+	      	if (obj.parentNode.tagName.toLowerCase() == "tr") row = obj.parentNode;
+		      	else if (obj.parentNode.parentNode.tagName.toLowerCase() == "tr") row = obj.parentNode.parentNode;
+		      	else return;
+				for (i = 0; i < row.cells.length; i++){
+		          	if (row.cells[i].tagName != "TH"){
+		          		row.cells[i].className= this_bgcolor;
+		          	}
+		      	}
+    	}
+  	}
+}
+//end
+
+</script>

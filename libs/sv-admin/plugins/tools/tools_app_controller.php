@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: tools_app_controller.php 3053 2009-07-17 11:59:14Z huangbo $
+ * $Id: tools_app_controller.php 4482 2009-09-24 03:35:50Z huangbo $
 *****************************************************************************/
 class ToolsAppController extends Controller{
 	var $uses = null;
@@ -263,7 +263,7 @@ class ToolsAppController extends Controller{
         $sql = preg_replace('/^\s*(?:--|#).*/m', '', $sql);
 
         /* 删除SQL块注释，匹配换行符，且为非贪婪匹配 */
-        $sql = preg_replace('/^\s*\/\*.*?\*\//ms', '', $sql);
+        //$sql = preg_replace('/^\s*\/\*.*?\*\//ms', '', $sql);
 
         return $sql;
     }

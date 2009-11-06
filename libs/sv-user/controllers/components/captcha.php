@@ -13,7 +13,7 @@ App::import('Vendor','Securimage' ,array('file'=>'securimage/securimage.php')); 
   
  
 //the local directory of the vendor used to retrieve files
-define('CAPTCHA_VENDOR_DIR', APP . 'vendors' . DS . 'securimage/');
+define('CAPTCHA_VENDOR_DIR', dirname(dirname(dirname(dirname(__FILE__)))) . '/vendors' . DS . 'securimage/');
 
 class CaptchaComponent extends Object {
 

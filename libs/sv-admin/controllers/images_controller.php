@@ -9,19 +9,185 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: images_controller.php 2659 2009-07-08 02:32:43Z shenyunfeng $
+ * $Id: images_controller.php 5493 2009-11-03 10:47:49Z huangbo $
 *****************************************************************************/
 class ImagesController extends AppController {
 
 	var $name = 'Images';
 	var $helpers = array('Html','Javascript');
 	var $uses = array("Config");
+	
+	function test(){
+		if(!is_dir("../img/article_categories/")){
+			mkdir("../img/article_categories/", 0777);
+			@chmod("../img/article_categories/", 0777);
+		}
+		if(!is_dir("../img/articles/")){
+			mkdir("../img/articles/", 0777);
+			@chmod("../img/articles/", 0777);
+		}
+		if(!is_dir("../img/brands/")){
+			mkdir("../img/brands/", 0777);
+			@chmod("../img/brands/", 0777);
+		}
+		if(!is_dir("../img/cards/")){
+			mkdir("../img/cards/", 0777);
+			@chmod("../img/cards/", 0777);
+		}
+		if(!is_dir("../img/home/")){
+			mkdir("../img/home/", 0777);
+			@chmod("../img/home/", 0777);
+		}
+		if(!is_dir("../img/others/")){
+			mkdir("../img/others/", 0777);
+			@chmod("../img/others/", 0777);
+		}
+		if(!is_dir("../img/packs/")){
+			mkdir("../img/packs/", 0777);
+			@chmod("../img/packs/", 0777);
+		}
+		if(!is_dir("../img/product_categories/")){
+			mkdir("../img/product_categories/", 0777);
+			@chmod("../img/product_categories/", 0777);
+		}
+		if(!is_dir("../img/products/")){
+			mkdir("../img/products/", 0777);
+			@chmod("../img/products/", 0777);
+		}
+		if(!is_dir("../img/topics/")){
+			mkdir("../img/topics/", 0777);
+			@chmod("../img/topics/", 0777);
+		}
+		if(!is_dir("../img/links/")){
+			mkdir("../img/links/", 0777);
+			@chmod("../img/links/", 0777);
+		}
+		if(!empty($_REQUEST['path'])){
+			$dir = "../img".$_REQUEST['path'];
+			@chmod("../img".$_REQUEST['path'], 0777);
+		}else{
+			$dir = "../img/";
+			@chmod("../img/", 0777);
+		}
+		if(!empty($_REQUEST['product_categories_id'])){
+			$categories = "../img".$_REQUEST['path'].$_REQUEST['product_categories_id']."/";
+			@mkdir("../img".$_REQUEST['path'].$_REQUEST['product_categories_id']."/", 0777);
+			@chmod("../img".$_REQUEST['path'].$_REQUEST['product_categories_id']."/".$_REQUEST['path'], 0777);
+		}
+		if(!empty($_REQUEST['article_categories_id'])){
+			$categories = "../img".$_REQUEST['path'].$_REQUEST['article_categories_id']."/";
+			@mkdir("../img".$_REQUEST['path'].$_REQUEST['article_categories_id']."/", 0777);
+			@chmod("../img".$_REQUEST['path'].$_REQUEST['article_categories_id']."/".$_REQUEST['path'], 0777);
+		}
+		if(!empty($_REQUEST['dirname'])&&!empty($_REQUEST['path'])){
+			
+			$crdir = "../img".$_REQUEST['path'].$_REQUEST['dirname'];
+			if(!is_dir($crdir)){
+				mkdir($crdir, 0777);
+				@chmod($crdir, 0777);
+			}
+			if($_REQUEST['path']=='/products/'){
+				$crdir_detail 	= "../img".$_REQUEST['path'].$_REQUEST['dirname']."/detail";
+				if(!is_dir($crdir_detail)){
+					mkdir($crdir_detail, 0777);
+					@chmod($crdir_detail, 0777);
+				}
+				$crdir_original = "../img".$_REQUEST['path'].$_REQUEST['dirname']."/original";
+				if(!is_dir($crdir_original)){
+					mkdir($crdir_original, 0777);
+					@chmod($crdir_original, 0777);
+				}
+			}
+		}else{
+			$crdir = "../img";
+		}
 
+		//echo $dir;
+		$handle=opendir($dir);   
+		$i=0;
+		$j=0;   
+		while($file=readdir($handle)){   
+			if(($file!=".")&&($file!="..")){
+				if(is_dir($dir."/".$file)){  
+					$list[$i]=$file;   
+					$i=$i+1;   
+				}else{
+					$list_img[$j]=substr($dir."/".$file,2);
+					$list_img_name[$j]=$file;
+					$j=$j+1;
+				}
+			}
+		}   
+		closedir($handle); 
+		Configure::write('debug',0);
+		$results['message'] = $list;
+		$results['list_img'] = $list_img;
+		$results['list_img_name'] = $list_img_name;
+		foreach($results as $k=>$v){
+			foreach($v as $kk=>$vv){    
+				if(substr($vv, -3) ==".db"||$vv ==".svn"||substr($vv, -4) ==".swf"||$vv =="downloads"||$vv =="temp"){
+					$results[$k][$kk]="";
+				}
+				//echo $vv;
+			}
+		}
+		array_filter($results['message']);
+		for( $i=0;$i<count($results['message']);$i++ ){
+			if( $results['message'][$i] != ""){
+				$arr_message[] = $results['message'][$i];
+			}
+		}
+		$results['message'] = $arr_message;
+		for( $i=0;$i<count($results['list_img']);$i++ ){
+			if( $results['list_img'][$i] != ""){
+				$arr_list_img[] = $results['list_img'][$i];
+			}
+		}
+		$results['list_img'] = $arr_list_img;
+		
+		for( $i=0;$i<count($results['list_img_name']);$i++ ){
+			if( $results['list_img_name'][$i] != ""){
+				$list_img_names[] = $results['list_img_name'][$i];
+			}
+		}
+		$results['list_img_name'] = $list_img_names;
+		if(count($results['list_img'])>0){
+			$show_img_str = "";
+			$ij = 1;
+		
+			$results['show_img_str'] = $show_img_str;
+		}
+		if(!empty($_REQUEST['article_categories_id'])||!empty($_REQUEST['product_categories_id'])){
+			if(!empty($_REQUEST['article_categories_id'])){
+				$categories_id = $_REQUEST['article_categories_id'];
+			}
+			if(!empty($_REQUEST['product_categories_id'])){
+				$categories_id = $_REQUEST['product_categories_id'];
+				
+			}
+			$results_message = $results['message'];
+			for($i=0;$i<=count($results_message)-1;$i++){
+				
+				if($categories_id == $results_message[$i]){
+					$results['message'] = "";
+					$results['message'][] = $results_message[$i];
+				}
+			
+			}
+		
+		}
+		$this->set("results",$results);
+	
+	//	die(json_encode($results));
+		$this->set("hosts",$this->server_host.substr($this->root_all,0,-1));
+	
+	}
 	function index(){
 		/*判断权限*/
 		$this->operator_privilege('image_view');
 		/*end*/
 		$this->pageTitle = '图片管理'." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'界面管理','url'=>'');
 		$this->navigations[] = array('name'=>'图片管理','url'=>'/images/');
 		$this->set('navigations',$this->navigations);
 		
@@ -156,12 +322,17 @@ class ImagesController extends AppController {
 		}   
 		closedir($handle); 
 		Configure::write('debug',0);
-		$results['message'] = $list;
+		if(!empty($_REQUEST['dirname'])&&!empty($_REQUEST['path'])){
+			$results['message'] = $_REQUEST['dirname'];
+		}
+		else{
+			$results['message'] = $list;
+		}
 		$results['list_img'] = $list_img;
 		$results['list_img_name'] = $list_img_name;
 		foreach($results as $k=>$v){
 			foreach($v as $kk=>$vv){    
-				if(substr($vv, -3) ==".db"||$vv ==".svn"||substr($vv, -4) ==".swf"){
+				if(substr($vv, -3) ==".db"||$vv ==".svn"||substr($vv, -4) ==".swf"||$vv =="downloads"){
 					$results[$k][$kk]="";
 				}
 				//echo $vv;
@@ -189,9 +360,24 @@ class ImagesController extends AppController {
 		$results['list_img_name'] = $list_img_names;
 		if(count($results['list_img'])>0){
 			$show_img_str = "";
+			$ij = 1;
 			foreach( $results['list_img'] as $k=>$v ){
-				$show_img_str.='<li><a href="'.$this->server_host.substr($this->root_all,0,-1).$v.'" rel="lightbox" name="img_hide_show[]"><div class="box"  ><img src="'.$this->server_host.substr($this->root_all,0,-1).$v.'" onclick="img_src_return(this)" name="'.$v.'" /></div></a><div  style=" margin:-20px   0   0   100px"><input type="image"  src="'.$this->server_host.substr($this->root_all,0,-1).'/sv-admin/img/no.gif" onclick="remove_img(this)" value="'.$v.'"  /></div><span ><a href="javascript:" ondblclick="mkname(this)" name="'.$v.'" >'.$results['list_img_name'][$k].'</a></span></li>';
+				$show_img_str.='<li>';
+				$show_img_str.='<a href="'.$this->server_host.substr($this->root_all,0,-1).$v.'" rel="lightbox" name="img_hide_show[]">';
+				$show_img_str.='<img src="'.$this->server_host.substr($this->root_all,0,-1).$v.'" onclick="img_src_return(this)" name="'.$v.'" /></a>';
+				$show_img_str.='<p><span onclick=\'javascript:listTable.edit(this,"images/pic_rename/","'.$results['list_img_name'][$k].'","'.$dir.'/")\'>'.$results['list_img_name'][$k].'</span>&nbsp&nbsp<a href="javascript:;" onclick="remove_img(\''.$v.'\')"><font color=\'\'>删除</font></a></p><div class="bg"></div></li>';
+				/*
+				if($ij==1){$show_img_str.='<tr>';}
+				$show_img_str.='<td>';
+				$show_img_str.='<table style="border: medium none ; padding-left: 30px; border-collapse: collapse; font-family: 宋体" border="1" bordercolor="#C4F9A4">';
+				$show_img_str.='<tr><td colspan="2">'.'<a href="'.$this->server_host.substr($this->root_all,0,-1).$v.'" rel="lightbox" name="img_hide_show[]"><div class="box"  ><img src="'.$this->server_host.substr($this->root_all,0,-1).$v.'" onclick="img_src_return(this)" name="'.$v.'" /></div></a>'.'</td></tr>';
+				$show_img_str.='<tr><td valign="top"  width="70%">'.'<a href="javascript:" ondblclick="mkname(this)" name="'.$v.'" >'.$results['list_img_name'][$k].'</a>'.'</td><td  width="30%"><input type="image"  src="'.$this->server_host.substr($this->root_all,0,-1).'/sv-admin/img/no.gif" onclick="remove_img(this)" value="'.$v.'"  />'.'</td></tr>';
+				$show_img_str.='</table>';
+				$show_img_str.='</td>';
+				$ij++;
+				if($ij==7){$show_img_str.='</tr>';$ij=1;}*/
 			}
+		
 			$results['show_img_str'] = $show_img_str;
 		}
 		if(!empty($_REQUEST['article_categories_id'])||!empty($_REQUEST['product_categories_id'])){
@@ -231,6 +417,14 @@ class ImagesController extends AppController {
 		Configure::write('debug',0);
 		die();
 	}
+	//重命名图片名
+	function pic_rename(){
+		$old_name = $_REQUEST['old_name'];
+		$new_name = $_REQUEST['new_name'];
+		rename($old_name,$new_name);
+		Configure::write('debug',0);
+		die();
+	}
 
 	function del_dir(){
 		$dir = "../img".$_REQUEST['dir_src'];
@@ -262,7 +456,6 @@ class ImagesController extends AppController {
 		Configure::write('debug',0);
 		die();
 	}
-
 	function upload(){
 		if (!isset($_FILES["Filedata"]) || !is_uploaded_file($_FILES["Filedata"]["tmp_name"]) || $_FILES["Filedata"]["error"] != 0) {
 			$session_operator_str = serialize($_SESSION['Operator_Info']);
@@ -297,8 +490,16 @@ class ImagesController extends AppController {
 			$image_height = $this->configs['image_height'];
 			
 			//处理文件目录start
-			$img_thumb_watermark_name 	= substr(md5($_SESSION['Operator_Info']['Operator']['id']),-3).substr(md5(time()),-5);//名称
 			$imgname_arr 				= explode(".",$_FILES["Filedata"]["name"]);
+			if(preg_match("/[\x80-\xff]./",$imgname_arr[0])){
+				$img_thumb_watermark_name 	= substr(md5($_SESSION['Operator_Info']['Operator']['id']),-3).substr(md5(time()),-5);//名称
+			}
+			else{
+				$img_thumb_watermark_name	= $imgname_arr[0];
+				
+			}
+			
+			
 			$image_name 				= $img_thumb_watermark_name.".".$imgname_arr[1];//要改成的文件名
 			$dir_root					= "../img".$_REQUEST['img_addr'];
 			//end 
@@ -335,8 +536,8 @@ class ImagesController extends AppController {
 			$WaterMark_img_address 		= substr($_SERVER["DOCUMENT_ROOT"],0, -1).trim($watermark_file);//水印文件
 			//商品缩略图
 			if(substr($_REQUEST['img_addr'],0,9) == "/products"){
- 				$image_name	= $this->make_thumb($img_original,$thumbl_image_width,$thumb_image_height,"#FFFFFF",$img_thumb_watermark_name,$thumb);
-	 			$image_name	= $this->make_thumb($img_original,$image_width,$image_height,"#FFFFFF",$img_thumb_watermark_name,$img_detail);
+ 				$image_name	= $this->make_thumb($img_original,$thumbl_image_width,$thumb_image_height,"#FFFFFF",$img_thumb_watermark_name,$thumb,$imgname_arr[1]);
+	 			$image_name	= $this->make_thumb($img_original,$image_width,$image_height,"#FFFFFF",$img_thumb_watermark_name,$img_detail,$imgname_arr[1]);
 	
 			}
 			//水印
@@ -346,7 +547,12 @@ class ImagesController extends AppController {
 				$this->imageWaterMark($thumb.$image_name,$watermark_location,$WaterMark_img_address,$watermark_transparency);
 			}
 			if( $retain_original_image_when_upload_products==1){
-				echo '<li><a href="'.$this->server_host.$this->root_all.'img'.$_REQUEST['img_addr']."/".$image_name.'" rel="lightbox" name="img_hide_show[]"><div class="box"  ><img src="'.$this->server_host.$this->root_all.'img'.$_REQUEST['img_addr']."/".$image_name.'" name="/img'.$_REQUEST['img_addr']."/".$image_name.'" onclick="img_src_return(this)" /></div></a><div  style=" margin:-20px   0   0   100px"><input type="image"  src="'.$this->server_host.substr($this->root_all,0,-1).'/sv-admin/img/no.gif" onclick="remove_img(this)" value="/img'.$upload_img_src.'""  /></div><span ><a href="javascript:" ondblclick="mkname(this)" name="/img'.$upload_img_src.'" >'.$image_name.'</a></span></li>';
+				$show_img_str='<li>';
+				$show_img_str.='<a href="'.$this->server_host.$this->root_all.'img'.$_REQUEST['img_addr']."/".$image_name.'" rel="lightbox" name="img_hide_show[]">';
+				$show_img_str.='<img src="'.$this->server_host.$this->root_all.'img'.$_REQUEST['img_addr']."/".$image_name.'" name="/img'.$_REQUEST['img_addr']."/".$image_name.'" onclick="img_src_return(this)" /></a>';
+				$show_img_str.='<p><span onclick=\'javascript:listTable.edit(this,"images/pic_rename/","'.$image_name.'","'.$dir_root.'/")\'>'.$image_name.'</span>&nbsp&nbsp<a href="javascript:;" onclick="remove_img(\'/img'.$upload_img_src.'\')"><font color=\'\'>删除</font></a></p><div class="bg"></div></li>';
+				echo $show_img_str;
+				//echo '<li><a href="'.$this->server_host.$this->root_all.'img'.$_REQUEST['img_addr']."/".$image_name.'" rel="lightbox" name="img_hide_show[]"><div class="box"  ><img src="'.$this->server_host.$this->root_all.'img'.$_REQUEST['img_addr']."/".$image_name.'" name="/img'.$_REQUEST['img_addr']."/".$image_name.'" onclick="img_src_return(this)" /></div></a><div  style=" margin:-20px   0   0   100px"><input type="image"  src="'.$this->server_host.substr($this->root_all,0,-1).'/sv-admin/img/no.gif" onclick="remove_img(this)" value="/img'.$upload_img_src.'""  /></div><span ><a href="javascript:" ondblclick="mkname(this)" name="/img'.$upload_img_src.'" >'.$image_name.'</a></span></li>';
 			}elseif($retain_original_image_when_upload_products==0){
 				@unlink($img_address);
 			}
@@ -369,7 +575,8 @@ class ImagesController extends AppController {
 	* @param   strint      $dir         指定生成图片的目录名
 	* @return  mix         如果成功返回缩略图的路径，失败则返回false
 	*/
-	function make_thumb($img, $thumb_width = 0, $thumb_height = 0, $bgcolor='#FFFFFF',$filename,$dir){
+	function make_thumb($img, $thumb_width = 0, $thumb_height = 0, $bgcolor='#FFFFFF',$filename,$dir,$imgname){
+		//echo $filename;
 		/* 检查缩略图宽度和高度是否合法 */
 		if ($thumb_width == 0 && $thumb_height == 0){
 			return false;
@@ -419,13 +626,13 @@ class ImagesController extends AppController {
 		
 		/* 生成文件 */
 		if (function_exists('imagejpeg')){
-			$filename .= '.jpg';
+			$filename .= ".".$imgname;
 			imagejpeg($img_thumb, $dir . $filename,90);
 		}elseif (function_exists('imagegif')){
-			$filename .= '.gif';
+			$filename .= ".".imgname;
 			imagegif($img_thumb, $dir . $filename,90);
 		}elseif (function_exists('imagepng')){
-			$filename .= '.png';
+			$filename .= ".".$imgname;
 			imagepng($img_thumb, $dir . $filename,90);
 		}else{
 			return false;

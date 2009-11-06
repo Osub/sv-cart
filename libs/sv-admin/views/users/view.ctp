@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: view.ctp 2989 2009-07-17 02:03:04Z huangbo $
+ * $Id: view.ctp 4893 2009-10-11 10:07:01Z huangbo $
 *****************************************************************************/
 ?>
 
@@ -17,21 +17,45 @@
 
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
-<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."会员列表","/".$_SESSION['cart_back_url'],'',false,false);?></strong></p>
-
+<p class="add_categories"><strong><?php echo $html->link($html->image('add.gif',array('align'=>'absmiddle'))."会员列表","/".(empty($_SESSION['cart_back_url'])?$this->params['controller']:$_SESSION['cart_back_url']),'',false,false);?></strong></p>
+		  <!--时间控件层start-->
+	<div id="container_cal" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal"></div><div style="clear:both;"></div></div>
+	</div>
+	<div id="container_cal2" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal2"></div><div style="clear:both;"></div></div>
+	</div>
+	<div id="container_cal3" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal3"></div><div style="clear:both;"></div></div>
+	</div>
+	<div id="container_cal4" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
+		<div class="hd">日历</div>
+		<div class="bd"><div id="cal4"></div><div style="clear:both;"></div></div>
+	</div>
+<!--end-->
 <!--Main Start-->
 <div class="home_main">
+<ul class="tab">
+	<li class="hover" id="tabs1" onmouseover="overtab('tabs',1,8)"><span>编辑会员</span></li>
+	<li class="normal" id="tabs2" onmouseover="overtab('tabs',2,8)"><span>收货地址</span></li>
+	<li class="normal" id="tabs3" onmouseover="overtab('tabs',3,8)"><span>订单列表</span></li>
+	<li class="normal" id="tabs6" onmouseover="overtab('tabs',6,8)"><span>提问查询</span></li>
+	<li class="normal" id="tabs7" onmouseover="overtab('tabs',7,8)"><span>评论查询</span></li>
+	<li class="normal" id="tabs8" onmouseover="overtab('tabs',8,8)"><span>会员相册</span></li>
+	<li class="normal" id="tabs4" onmouseover="overtab('tabs',4,8)"><span>资金日志</span></li>
+	<li class="normal" id="tabs5" onmouseover="overtab('tabs',5,8)"><span>积分日志</span></li>
+</ul>
 <?php echo $form->create('User',array('action'=>'view' ,'onsubmit'=>'return users_check();'));?>
 <input id="UserId" name="data[User][id]" type="hidden" value="<?php echo  $this->data['User']['id'];?>">
+<div id="con_tabs_1" class="display">
 <table width="100%" cellpadding="0" cellspacing="0" class="">
 <tr>
 <td align="left" width="50%" valign="top" style="padding-right:5px">
 <!--Communication Stat-->
 	<div class="order_stat athe_infos">
-	  <div class="title"><h1>
-	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
-	  编辑会员</h1></div>
 	  <div class="box">
 	  <br />
   	    <dl>
@@ -108,12 +132,10 @@
 	</div>
 <!--Communication Stat End-->
 </td>
-<td valign="top" width="50%" style="padding-left:5px;padding-top:25px;">
+<td valign="top" width="50%" style="padding-left:5px;">
 <!--Password-->
 	<div class="order_stat athe_infos tongxun editmember">
-	  
 	  <div class="box">
-		
 		<dl><dt>新密码：</dt>
 			<dd><input type="password" class="text_inputs" style="width:270px;" id="user_new_password" name="data[User][new_password]"/> <font color="#F94671">*</font></dd></dl>
 		<dl><dt>重复新密码：</dt>
@@ -173,39 +195,172 @@
 </table>
 <?php echo $form->end();?>
 <!--Addresse List-->
+<div id="con_tabs_6" class="none">
 	<div class="order_stat operators">
-	  <div class="title">
-	  <h1>
-	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
-	  收货地址</h1></div>
 	  <div class="box users_configs">
 <table cellpadding="0" cellspacing="0" width="100%" class="list_data">
+<tr class="thead">
+	<th width="190px">用户名</th>
+	<th width="190px">提问标题</th>
+	<th width="400px">提问对象</th>
+
+	<th width="150px" >提问时间</th>
+	<th width="60px"> 回复</th>
+	<th width="90px">操作</th></tr>
+<!--Messgaes List-->
+	<?php if(isset($UserMessage_list) && sizeof($UserMessage_list)>0){?>
+
+	<?php foreach($UserMessage_list as $k=>$v){ ?>
+	<tr <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >
+	<td><span><?php echo $v['UserMessage']['user_name'] ?></span></td>
+	<td><span><?php echo $v['UserMessage']['msg_title'] ?></span></td>
+	<td  width="400px">
+		<?php echo @$systemresource_info["type"][$v['UserMessage']['type']]?>
+		<?php if( $v['UserMessage']['type'] == "P"){?>
+			：<?php echo @$products_list[$v['UserMessage']['value_id']]?>
+		<?php }else if($v['UserMessage']['type'] == "O"){?>
+			：<?php echo @$order_list[$v['UserMessage']['value_id']]["Order"]["order_code"]?>
+		<?php }else{?>
+			未知对象
+		<?php }?>
+	</td>
+	<td align="center"><?php echo $v['UserMessage']['created'] ?></td>
+	<td align="center"><?php if( $v['UserMessage']['status'] == 0 ){ echo "未回复";}else{echo "已回复";}?></td>
+	<td align="center">
+	<?php echo $html->link("编辑","product_view/{$v['UserMessage']['id']}");?> | <?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$admin_webroot}messages/remove/{$v['UserMessage']['id']}')"));?>
+		</td></tr>
+	<?php }} ?><?php //pr($UserMessage_list); ?>
+<!--Messgaes List End-->	
+	</table></div>
+	  </div>
+</div></div>
+<div id="con_tabs_7" class="none">
+	<div class="order_stat operators">
+	  <div class="box users_configs">
+<table cellpadding="0" cellspacing="0" width="100%" class="list_data">
+<tr class="thead">
+	<th align="left" width="6%"><input type="checkbox" name="chkall" value="checkbox" onclick="selectAll(this,'checkbox');" />编号<?php echo $html->image('sort_desc.gif',array('align'=>'absmiddle'))?></th>
+	<th width="12%">用户名</th>
+	<th width="35%">评论内容</th>
+	<th width="8%"><font face="arial">IP地址</font></th>
+	<th width="11%">评论时间<?php echo $html->image('sort_desc.gif',array('align'=>'absmiddle'))?></th>
+	<th width="8%">状态</th>
+	<th width="12%">操作</th></tr>
+<!--Comment List-->
+<?php if(isset($comments_info) && sizeof($comments_info)>0){?>
+<?php foreach($comments_info as $k=>$v){?>
+	<tr <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >
+	<td><?php echo $v['Comment']['id']?></td>
+	<td><?php echo $v['Comment']['name']?></td>
+	<td><?php echo preg_replace('#^(?:[\x00-\x7F]|[\xC0-\xFF][\x80-\xBF]+){0,0}'.'((?:[\x00-\x7F]|[\xC0-\xFF][\x80-\xBF]+){0,40}).*#s','$1',$v['Comment']['content']);?></td>
+	<td align="center"><?php echo $v['Comment']['ipaddr']?></td>
+	<td align="center"><?php echo $v['Comment']['created']?></td>
+	<td align="center"><?php if($v['Comment']['status']=='1'){ echo "显示"; }if($v['Comment']['status']=='0'){  echo "不显示"; }if($v['Comment']['status']=='2'){  echo "删除"; } ?></td>
+	<td align="center">
+	<?php if($v['Comment']['type']=="P"){?>
+		<?php echo $html->link("查看",$server_host.$root_all."/products/{$v['Comment']['type_id']}",array("target"=>"_blank"));?> |
+	<?php }?>
+	<?php if($v['Comment']['type']=="A"){?>
+		<?php echo $html->link("查看",$server_host.$root_all."/articles/{$v['Comment']['type_id']}",array("target"=>"_blank"));?> |
+	<?php }?>
+	
+	 <?php echo $html->link("回复","/comments/edit/{$v['Comment']['id']}");?>
+| <?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$admin_webroot}comments/remove/{$v['Comment']['id']}')"));?></td></tr>
+
+<?php }?><?php }?>
+</table>
+	  </div>
+</div></div>
+<div id="con_tabs_8" class="none">
+	<div class="order_stat operators">
+	  <div class="box users_configs">
+<table cellpadding="0" cellspacing="0" width="100%" class="list_data">
+<tr class="thead">
+	<th width="10%">用户名</th>	
+	<th>商品名称</th>
+	<th>图片</th>
+	<th width="10%">是否有效</th>
+	<th width="14%">创建日期</th>
+	<th width="14%">修改日期</th>
+	<th width="10%">操作</th></tr>
+<!--Products Cat List-->
+<?php if(isset($userproductgalleries_data) && sizeof($userproductgalleries_data)>0){?>
+<?php foreach($userproductgalleries_data as $k=>$v){?>
+	<tr <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >
+	<td><? echo $html->link($v['User']['name'],"/users/".$v['User']['id'],array("target"=>"_blank"),false,false);?></td>
+	<td><?php echo $html->link($product_list[$v["UserProductGallery"]["product_id"]]['ProductI18n']['name'],$server_host.$root_all."/products/".$v["UserProductGallery"]["product_id"],array("target"=>"_blank"),false,false);?></td>
+	
+	<td align="center"><?php echo $html->image($server_host.$root_all.$v['UserProductGallery']['img'],array('class'=>'vmiddle','width'=>'40','height'=>'40'));?></td>
+	<td align="center"><?php if ($v['UserProductGallery']['status'] == 1){?><?php echo $html->image('yes.gif',array('align'=>'absmiddle','onclick'=>'')) ?><?php }elseif($v['UserProductGallery']['status'] == 0){?><?php echo $html->image('no.gif',array('align'=>'absmiddle','onclick'=>''))?><?php }?></td>
+	<td align="center"><?php echo $v['UserProductGallery']['created'];?></td>
+	<td align="center"><?php echo $v['UserProductGallery']['modified'];?></td>
+	<td align="center">
+		<?php if($v['UserProductGallery']['status'] != 1){?>
+		<?php echo $html->link("有效","javascript:;",array("onclick"=>"layer_dialog_show('确定设为有效?','{$admin_webroot}user_product_galleries/effective/{$v['UserProductGallery']['id']}')"));?>
+		<?php }else{?>
+		<?php echo $html->link("无效","javascript:;",array("onclick"=>"layer_dialog_show('确定设为无效?','{$admin_webroot}user_product_galleries/invalid/{$v['UserProductGallery']['id']}')"));?>
+		<?php }?>
+		| <?php echo $html->link("移除","javascript:;",array("onclick"=>"layer_dialog_show('确定删除?','{$admin_webroot}user_product_galleries/remove/{$v['UserProductGallery']['id']}')"));?></td></tr>
+<?php }?>
+<?php }?></table>
+	  </div>
+</div></div>
+<div id="con_tabs_2" class="none">
+<?php echo $form->create('User',array('action'=>'addr/' ));?>
+	<div class="order_stat operators">
+	  <div class="box users_configs">
+	<table cellpadding="0" cellspacing="0" width="100%" class="list_data" id="addr-tables">
 		<tr class="thead">
-			<th width="13%">收货人</th>
+			<th width="3%"></th>
+			<th width="10%">收货人</th>
 			<th width="30%">地址</th>
 			<th width="30%">联系方式</th>
 			<th width="27%">其他</th>
 		</tr>
-		<tr>
-			<td width="13%"><?php echo $user_address['UserAddress']['consignee']?></td>
-			<td width="30%"><?php echo $user_address['UserAddress']['address']?></td>
-			<td width="30%"><p>电话：<?php echo $user_address['UserAddress']['telephone']?></p><p>手机：<?php echo $user_address['UserAddress']['mobile']?></p><p>Email：<?php echo $user_address['UserAddress']['email']?></p></td>
-			<td  width="27%"><p>最佳送时间：<?php echo $user_address['UserAddress']['best_time']?></p><p>标志建筑：<?php echo $user_address['UserAddress']['sign_building']?></p></td>
+		<?php if(!empty($user_address)){foreach( $user_address as $k=>$v ){?>
+		<tr id="item" > 
+			<td width="3%"><?php if($k>0){?><a href="javascript:;"  onclick="removeaddr(this)">[-]</a><?php }else{?><a href="javascript:;" onclick="addaddr(this)">[+]</a><?php }?></td>
+			<td width="10%"><input type="text" name="thisconsignee[]" value="<?php echo $v['UserAddress']['consignee']?>" /></td>
+			<td width="30%"><p>地址：<input type="text" name="thisaddress[]" value="<?php echo $v['UserAddress']['address']?>" /></p><p>邮编：<input type="text" name="thiszipcode[]" value="<?php echo $v['UserAddress']['zipcode']?>" /></p></td>
+			<td width="30%"><p>电 话：<input type="text"   name="thistelephone[]"  value="<?php echo $v['UserAddress']['telephone']?>" /></p><p>手 机：<input type="text"  name="thismobile[]"  value="<?php echo $v['UserAddress']['mobile']?>" /></p><p>Email：<input type="text"  name="thisemail[]" value="<?php echo $v['UserAddress']['email']?>" /></p></td>
+			<td width="27%"><p>最佳送时间：<input type="text"   name="thisbest_time[]" value="<?php echo $v['UserAddress']['best_time']?>" /></p><p>标 志 建筑：<input type="text" name="thissign_building[]" value="<?php echo $v['UserAddress']['sign_building']?>" /> </p></td>
 		</tr>
+		<?php }}else{?>
+		<tr id="item" > 
+			<td width="3%"><a href="javascript:;" onclick="addaddr(this)">[+]</a></td>
+			<td width="10%"><input type="text" name="thisconsignee[]" /></td>
+			<td width="30%"><p>地址：<input type="text" name="thisaddress[]" /></p><p>邮编：<input type="text" name="thiszipcode[]" /></p></td>
+			<td width="30%"><p>电 话：<input type="text"   name="thistelephone[]"  /></p><p>手 机：<input type="text"  name="thismobile[]"   /></p><p>Email：<input type="text"  name="thisemail[]" /></p></td>
+			<td width="27%"><p>最佳送时间：<input type="text"   name="thisbest_time[]" /></p><p>标 志 建筑：<input type="text" name="thissign_building[]" /> </p></td>
+		</tr>
+		<?php }?>
+			
 		</table>
-		
-	  </div>
-	  </div>
+	<table cellpadding="0" cellspacing="0" width="100%" class="list_data" >
+		<tr><td colspan="5"><p class="submit_btn"><input type="submit" value="确定" /><input type="reset" value="重置" /></p></td></tr>
+	</table> 
+</div>
+</div>
+<?php echo $form->end();?>
+</div>
 <!--Addresse List End-->
-<br />
+<script>
+function addaddr(){
+    var node = document.getElementById("item").cloneNode(true);
+    node.id = "item_" + (0 + 1);
+    document.getElementById("item").parentNode.appendChild(node);
+}
+function removeaddr(obj){
+      var row = rowindex(obj.parentNode.parentNode);
+      var tbl = document.getElementById('addr-tables');
+
+      tbl.deleteRow(row);
+  }
+
+</script>
 <!--Orders List-->
+<div id="con_tabs_3" class="none">
 	<div class="order_stat operators">
-	  <div class="title">
-	  <h1>
-	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
-	  订单列表</h1></div>
 	  <div class="box users_configs">
 <table cellpadding="0" cellspacing="0" width="100%" class="list_data">
 <tr class="thead">
@@ -213,7 +368,7 @@
 <!--List Start-->
 <?php if(isset($orders_list) && sizeof($orders_list)){?>
 	  <?php foreach($orders_list as $k=>$v){?>
-	<tr>
+	<tr <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >
 	<td width="140px" align="center" class="order_num no_wrap"><?php echo $html->link($v['Order']['order_code'],"/orders/".$v['Order']['id'],array('target'=>'_blank'),false,false);?></td>
 	<td align="center"><?php echo $v['Order']['created']?></td>
 	<td><P><?php echo $v['Order']['consignee']?>[TEL:<?php echo $v['Order']['telephone']?>]</P>
@@ -229,16 +384,11 @@
 </table>
 		<p style="clear:both;"></p>
 	  </div>
-	  </div>
+	  </div></div>
 <!--Orders List End-->
-<br />
 <!--bankcrollLog List-->
+<div id="con_tabs_4" class="none">
 	<div class="order_stat operators">
-	  <div class="title">
-	  <h1>
-	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
-	  资金日志</h1></div>
 	  <div class="box users_configs">
 <table cellpadding="0" cellspacing="0" width="100%" class="list_data">
 <tr class="thead">
@@ -250,7 +400,7 @@
 		</tr>
 <?php if(isset($balances_list) && sizeof($balances_list)){?>
 <?php foreach($balances_list as $k=>$v){?>
-	<tr>
+	<tr <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >
 	<td align="center"><?php echo $v['UserBalanceLog']['created'];?></td>
 	<td align="center"><?php echo $v['UserBalanceLog']['amount'];?></td>
 
@@ -260,16 +410,11 @@
 <?php }}?>
 	</table>
 	  </div>
-	  </div>
+	  </div></div>
 <!--bankcrollLog List End-->
-<br />
 <!--IntegralLog List-->
+<div id="con_tabs_5" class="none">
 	<div class="order_stat operators">
-	  <div class="title">
-	  <h1>
-	  <?php echo $html->image('tab_left.gif',array('class'=>'left'))?>
-	  <?php echo $html->image('tab_right.gif',array('class'=>'right'))?>
-	  积分日志</h1></div>
 	  <div class="box users_configs">
 <table cellpadding="0" cellspacing="0" width="100%" class="list_data">
 <tr class="thead">
@@ -281,7 +426,7 @@
 	</tr>
 	<?php if(isset($points_list) && sizeof($points_list)>0){?>
 <?php foreach($points_list as $k=>$v){?>
-	<tr>
+	<tr <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >
 	<td align="center"><?php echo $v['UserPointLog']['created'];?></td>
 	<td align="center"><?php echo $v['UserPointLog']['point'];?></td>
 
@@ -291,27 +436,8 @@
 <?php }}?></table>
 	  </div>
 	  <br />
-	  </div>
+	  </div></div>
 <!--IntegralLog List End-->
 </div>
 <!--Main Start End-->
-<?php echo $html->image('content_left.gif',array('class'=>'content_left'))?><?php echo $html->image('content_right.gif',array('class'=>'content_right'))?>
 </div>
-		  <!--时间控件层start-->
-	<div id="container_cal" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal2" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal2"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal3" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal3"></div><div style="clear:both;"></div></div>
-	</div>
-	<div id="container_cal4" style="border-top:1px solid #808080;border-bottom:1px solid #808080;display:none">
-		<div class="hd">日历</div>
-		<div class="bd"><div id="cal4"></div><div style="clear:both;"></div></div>
-	</div>
-<!--end-->

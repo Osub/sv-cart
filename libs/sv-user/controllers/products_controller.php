@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: products_controller.php 3053 2009-07-17 11:59:14Z huangbo $
+ * $Id: products_controller.php 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 class ProductsController extends AppController {
 
@@ -43,6 +43,15 @@ class ProductsController extends AppController {
 			if(empty($orderby)){
 		 		$orderby=isset($this->configs['products_category_page_orderby_type'])? $this->configs['products_category_page_orderby_type']." ". $this->configs['products_category_page_orderby_method'] :((!empty($orderby)) ?$orderby:'created '.$this->configs['products_category_page_orderby_method']);
 			}
+			
+		if($rownum == "all"){
+			$rownum_sql = 99999;
+		}else{
+			$rownum_sql = $rownum;
+		}
+			
+			
+			
 	    //取得我的所有订单id
 	    $condition=" user_id=".$user_id;
 	    $my_orders=$this->Order->findAll($condition);
@@ -56,28 +65,26 @@ class ProductsController extends AppController {
 	    // pr($orders_id);
 	    //取得我购买的商品
 	    $condition=array("OrderProduct.order_id"=>$orders_id," ProductI18n.locale='".$this->locale."' ");
+	    
 	    $total = $this->OrderProduct->findCount($condition,0);
 	    $sortClass='OrderProduct';
 	    $page=1;
-	    $parameters=Array($rownum,$page);
+	    $parameters=Array($rownum_sql,$page);
 	    $options=Array();
-	    $page = $this->Pagination->init($condition,"",$options,$total,$rownum,$sortClass);
+	    $page = $this->Pagination->init($condition,"",$options,$total,$rownum_sql,$sortClass);
 	   // $my_orders_products=$this->OrderProduct->findAll($condition,'',"","$rownum",$page);
+	   
 	    $my_orders_products=$this->OrderProduct->find('all',array('conditions'=>array($condition),
 																'fields' =>	array('OrderProduct.id','OrderProduct.order_id','OrderProduct.product_id','Product.img_thumb'
 																				,'Product.market_price'
 																				,'Product.shop_price'
 																				,'Product.code','Product.id'
-																				,'Product.brand_id'
+																				,'Product.brand_id','OrderProduct.created','OrderProduct.product_price'
 																				,'ProductI18n.name'
 																				),		  	  
-	  	  'order'=>array("Product.$orderby"),'limit'=>$rownum,'page'=>$page));
+	  	  'order'=>array("Product.$orderby"),'limit'=>$rownum_sql,'page'=>$page));
 	    
-	    
-	    
-	    
-	  //  pr($my_orders_products);
-	    
+	    	    
 	    if(empty($my_orders_products)){
 	   	    $my_orders_products=array();
 	    }

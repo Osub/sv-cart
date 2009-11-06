@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: navigation.php 1368 2009-05-14 09:47:51Z zhengli $
+ * $Id: navigation.php 4009 2009-09-03 02:25:54Z huangbo $
 *****************************************************************************/
 class Navigation extends AppModel
 {
@@ -31,7 +31,34 @@ class Navigation extends AppModel
     }
 
 	var $navigations_parent_format=array();
-	
+   	function alltree($condition,$orderby,$rownum,$page,$locale){//
+   	    $this->set_locale($locale);
+		$actions=$this->findAll($condition,'',$orderby,$rownum,$page);
+		$this->acionts_parent_format = array();//先致空
+		if(is_array($actions))
+			foreach($actions as $k=>$v)
+			{
+				$this->acionts_parent_format[$v['Navigation']['parent_id']][]=$v;
+			}
+	//	pr($this->acionts_parent_format);
+		return $this->subcat_get('0');
+	}
+	function subcat_get($action_id){
+		$subcat=array();
+		if(isset($this->acionts_parent_format[$action_id]) && is_array($this->acionts_parent_format[$action_id]))
+			foreach($this->acionts_parent_format[$action_id] as $k=>$v){
+				$action=$v;
+				if(isset($this->acionts_parent_format[$v['Navigation']['id']]) && is_array($this->acionts_parent_format[$v['Navigation']['id']]) ){
+					$action['SubMenu']=$this->subcat_get($v['Navigation']['id']);
+				}
+				else{
+					$action['SubMenu']='';
+				}
+				$subcat[$k]=$action;
+			}
+		return $subcat;
+	}
+
 	function getdata($condition,$orderby,$rownum,$page,$locale){
 		$this->set_locale($locale);
 		$navigations=$this->findAll($condition,'',$orderby,$rownum,$page);
@@ -62,19 +89,9 @@ class Navigation extends AppModel
 				}
 				$this->navigations_parent_format[]=$v;
 			}
-		//pr($this->navigations_parent_format);
 		
 		return $this->navigations_parent_format;
 	}
-/*	function localformat($id){
-		$data = $this->findById($id);
-		if(!empty($data['NavigationI18n'])){
-			foreach($data['NavigationI18n'] as $k=>$v){
-				$data['NavigationI18n'][$v['locale']] = $v;
-			}
-		}
-		return $data;
-	}*/
 	
 	//数组结构调整
     function localeformat($id){

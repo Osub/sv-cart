@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: themes_controller.php 3251 2009-07-23 03:39:24Z huangbo $
+ * $Id: themes_controller.php 5328 2009-10-22 08:06:54Z huangbo $
 *****************************************************************************/
 class ThemesController extends AppController {
 	var $name = 'Themes';
@@ -20,6 +20,7 @@ class ThemesController extends AppController {
 		$this->operator_privilege('template_view');
 		/*end*/
 		$this->pageTitle = '模板管理'." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'界面管理','url'=>'');
 		$this->navigations[] = array('name'=>'模板管理','url'=>'/themes/');
 		$this->set('navigations',$this->navigations);
 		
@@ -32,7 +33,6 @@ class ThemesController extends AppController {
 			$curr_template_arr = $this->get_template_info('SV_DEFAULT');
 			$curr_template_arr['template_style'] = "";			
 		}
-	//	pr($curr_template_arr);
 	    /* 获得目录可用的模版 */
 	    $available_templates = array();
 	    $theme_styles = array();
@@ -45,7 +45,7 @@ class ThemesController extends AppController {
 	            //$theme_styles[$file] = $this->theme_styles($file);
 	        }
 	    }
-	 // pr($available_templates);
+	 	//pr($available_templates);
 	    $this->set('theme_styles',$theme_styles);
 	    $install_templates=$available_templates;
 		@closedir($template_dir);
@@ -96,6 +96,7 @@ class ThemesController extends AppController {
 		$this->data['Template']['author'] = $curr['author'];
 		$this->data['Template']['url'] = $curr['author_uri'];
 		$this->data['Template']['version'] = $curr['version'];
+		$this->data['Template']['description'] = $curr['description'];
 		$this->Template->saveall($this->data['Template']);
 		//操作员日志
     	if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
@@ -128,6 +129,16 @@ class ThemesController extends AppController {
 			$temp['Template']['template_style'] = $curr_template_arr['style'][0];
 			$this->Template->save($temp['Template']);
 		}
+		$this->clear_temp_cache();
+	//	if(){
+	//		$this->Template->updateAll(array('Template.template_style' => $curr_template_arr['style'][0]),array('Template.name' => $code));
+	//	}
+		$this->Template->updateAll(array('Template.is_default' => "0"));
+		$this->Template->updateAll(array('Template.is_default' => "1"),array('Template.name' => $code));
+		die();
+	}
+	
+	function clear_temp_cache(){
 		$dirs = array('sv-cart','sv-user');
 		$cache_dirs = $this->get_cache_dirs($dirs);
 		$cache_key = md5("template_list_");
@@ -155,13 +166,10 @@ class ThemesController extends AppController {
 	        }
 	        closedir($folder);
 	    }
-	//	if(){
-	//		$this->Template->updateAll(array('Template.template_style' => $curr_template_arr['style'][0]),array('Template.name' => $code));
-	//	}
-		$this->Template->updateAll(array('Template.is_default' => "0"));
-		$this->Template->updateAll(array('Template.is_default' => "1"),array('Template.name' => $code));
-		die();
+	
+	
 	}
+	
 	function deletethemed(){//卸载
 		Configure::write('debug',0);
 		$name=$_REQUEST['code'];
@@ -194,12 +202,17 @@ class ThemesController extends AppController {
 		die();		
 	}	
 	
-	function select_style(){
-		$curr_template = $this->Template->find("where is_default ='1'");
+	function select_style($themename){
+		Configure::write('debug',0);
+		$curr_template = $this->Template->find("where name ='$themename'");
 		if($curr_template){
+			$this->Template->updateAll(array("is_default"=>0));
 			$curr_template['Template']['template_style'] = $_POST['template_style'];
+			$curr_template['Template']['is_default'] = 1;
 			$this->Template->save($curr_template);
 		}
+		$this->clear_temp_cache();
+		die();		
 	}
 
 	function tmp_show(){		
@@ -273,15 +286,15 @@ class ThemesController extends AppController {
 
 	    if (file_exists('../themed/' . $template_name . '/readme.txt') && !empty($template_name))
 	    {
-	        $arr = array_slice(file('../themed/'. $template_name. '/readme.txt'), 0, 7);
+	        $arr = array_slice(file('../themed/'. $template_name. '/readme.txt'), 0, 8);
 	        $template_name      = explode(': ', $arr[0]);
-	        $template_style     = explode(': ', $arr[6]);
+	        $template_style     = explode(': ', $arr[7]);
 	        $template_uri       = explode(': ', $arr[1]);
 	        $template_desc      = explode(': ', $arr[2]);
 	        $template_version   = explode(': ', $arr[3]);
 	        $template_author    = explode(': ', $arr[4]);
 	        $author_uri         = explode(': ', $arr[5]);
-	        
+	        $template_description     = explode(': ', $arr[6]);
 	        
 	        $info['style']       = explode(',', $template_style[1]);
 	        $info['name']       = isset($template_name[1]) ? trim($template_name[1]) : '';
@@ -289,10 +302,12 @@ class ThemesController extends AppController {
 	        $info['desc']       = isset($template_desc[1]) ? trim($template_desc[1]) : '';
 	        $info['version']    = isset($template_version[1]) ? trim($template_version[1]) : '';
 	        $info['author']     = isset($template_author[1]) ? trim($template_author[1]) : '';
+	        $info['description']     = isset($template_description[1]) ? trim($template_description[1]) : '';
 	        $info['author_uri'] = isset($author_uri[1]) ? trim($author_uri[1]) : '';
 	    }
 	    else
 	    {
+	    	$info['description'] ='';
 	    	$info['style']      = '';
 	        $info['name']       = '';
 	        $info['uri']        = '';
@@ -356,6 +371,62 @@ class ThemesController extends AppController {
 	    }
 	    return $templates_temp;
 	}	
+	
+	function rss_str(){
+		$this->layout = "ajax";
+		$templates = array();
+		$rssfeed = array("http://www.seevia.cn/products/templete_rss/82");
+		for($i=0;$i<sizeof($rssfeed);$i++ ){//分解开始
+			$buff = "";
+			$rss_str="";
+			//打开rss地址，并读取，读取失败则中止
+			if(!@get_headers($rssfeed[$i])){
+				return array();
+			}
+			$fp = fopen($rssfeed[$i],"r") or die("can not open $rssfeed");
+			while ( !feof($fp) ) {
+				$buff .= fgets($fp,4096);
+			}
+			//关闭文件打开
+			fclose($fp);
+
+			//建立一个 XML 解析器
+			$parser = xml_parser_create();
+			//xml_parser_set_option -- 为指定 XML 解析进行选项设置
+			xml_parser_set_option($parser,XML_OPTION_SKIP_WHITE,1);
+			//xml_parse_into_struct -- 将 XML 数据解析到数组$values中
+			xml_parse_into_struct($parser,$buff,$values,$idx);
+			//xml_parser_free -- 释放指定的 XML 解析器
+			xml_parser_free($parser);
+			foreach ($values as $val) {
+				$tag = @$val["tag"];
+				$type = @$val["type"];
+				$value = @$val["value"];
+				//标签统一转为小写
+				$tag = strtolower($tag);
+				
+				if ($tag == "item" && $type == "open"){
+					$is_item = 1;
+				}else if ($tag == "item" && $type == "close") {
+					//构造输出字符串
+					$templates[]= array('title'=>$title,'link'=>$link,'pubdate'=>$pubdate,'img_thumb'=>$img_thumb,'shop_price'=>$shop_price);
+					$is_item = 0;
+				}
+				//仅读取item标签中的内容
+				if(@$is_item==1){
+					if ($tag == "title") {$title = $value;}
+					else if ($tag == "link") {$link = $value;}
+					else if ($tag == "pubdate") {$pubdate = $value;}
+					else if ($tag == "img_thumb") {$img_thumb = $value;}
+					else if ($tag == "shop_price") {$shop_price = $value;}
+				}
+			}
+		}
+		$this->set('templates',$templates);
+		//pr($templates);
+		Configure::write('debug', 0);
+		//die(json_encode($rss_str));
+	}
 }
 
 ?>

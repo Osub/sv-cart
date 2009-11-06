@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: configvalues_controller.php 3276 2009-07-23 09:14:17Z huangbo $
+ * $Id: configvalues_controller.php 4708 2009-09-28 13:45:35Z huangbo $
 *****************************************************************************/
 class ConfigvaluesController extends AppController {
 	var $name = 'Configvalues';
@@ -21,6 +21,7 @@ class ConfigvaluesController extends AppController {
 		$this->operator_privilege('shop_view');
 		/*end*/
 		$this->pageTitle = '商店设置'." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'系统管理','url'=>'');
 		$this->navigations[] = array('name'=>'商店设置','url'=>'/configvalues/');
 		$this->set('navigations',$this->navigations);
 		$this->set('group_codess',$group_code);
@@ -123,15 +124,16 @@ class ConfigvaluesController extends AppController {
 				$this->ConfigI18n->updateAll(array("value" => "'".$value."'"),array("id" => $v["id"]));
 				
 			}
-			$this->flash('邮件服务器设置成功','/configvalues/mail_settings/','');
+			$this->flash('邮件设置成功','/configvalues/mail_settings/','');
 		}
 	}
 	function mail_settings(){
 		/*判断权限*/
 		$this->operator_privilege('mail_settings_view');
 		/*end*/
-		$this->pageTitle = '邮件服务器设置'." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'邮件服务器设置','url'=>'/configvalues/mail_settings/');
+		$this->pageTitle = '邮件设置'." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'系统管理','url'=>'');
+		$this->navigations[] = array('name'=>'邮件设置','url'=>'/configvalues/mail_settings/');
 		$this->set('navigations',$this->navigations);
 		$condition2["Config.group_code"] = "email";
 		$this->Config->hasOne = array();

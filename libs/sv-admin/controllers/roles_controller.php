@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: roles_controller.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: roles_controller.php 4691 2009-09-28 10:11:57Z huangbo $
 *****************************************************************************/
 class RolesController extends AppController {
 
@@ -26,6 +26,7 @@ class RolesController extends AppController {
 		$this->operator_privilege('role_view');
 		/*end*/
 		$this->pageTitle = "角色管理"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'内部管理','url'=>'');
 		$this->navigations[] = array('name'=>'角色管理','url'=>'/stores/');
 		$this->set('navigations',$this->navigations);
 		
@@ -94,6 +95,7 @@ class RolesController extends AppController {
 		$this->operator_privilege('role_edit');
 		/*end*/
 		$this->pageTitle = "编辑角色 - 角色管理"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'内部管理','url'=>'');
 		$this->navigations[] = array('name'=>'角色管理','url'=>'/roles/');
 		$this->navigations[] = array('name'=>'角色编辑','url'=>'');
 		$departments = $this->Department->findAssoc();	//取得部门列表
@@ -173,7 +175,7 @@ class RolesController extends AppController {
     	        if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	        $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑角色:'.$userinformation_name ,'operation');
     	        }
-				$this->flash("角色  ".$userinformation_name." 编辑成功。点击继续编辑该角色。",'/roles/edit/'.$id,10);
+				$this->flash("角色  ".$userinformation_name." 编辑成功。点击这里继续编辑该角色。",'/roles/edit/'.$id,10);
 
 
 			
@@ -197,6 +199,7 @@ class RolesController extends AppController {
 		$this->operator_privilege('role_add');
 		/*end*/
 		$this->pageTitle = "添加角色 - 角色管理"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'内部管理','url'=>'');
 		$this->navigations[] = array('name'=>'角色管理','url'=>'/roles/');
 		$this->navigations[] = array('name'=>'角色添加','url'=>'');
 		$this->set('navigations',$this->navigations);
@@ -247,7 +250,7 @@ class RolesController extends AppController {
     	        if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	        $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加角色:'.$userinformation_name ,'operation');
     	        }
-				$this->flash("角色  ".$userinformation_name." 编辑成功。点击继续编辑该角色。",'/roles/edit/'.$id,10);
+				$this->flash("角色  ".$userinformation_name." 编辑成功。点击这里继续编辑该角色。",'/roles/edit/'.$id,10);
 
 			//}
 			

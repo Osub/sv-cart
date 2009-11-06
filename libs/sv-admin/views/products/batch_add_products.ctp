@@ -9,14 +9,14 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: batch_add_products.ctp 2544 2009-07-03 05:55:59Z zhengli $
+ * $Id: batch_add_products.ctp 3507 2009-08-06 10:52:06Z tangyu $
 *****************************************************************************/
 ?>
 <!--Main Start-->
  
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
-<div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' );">
+<div class="home_main" style="padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' );">
 <?php echo $form->create('products',array('action'=>'/batch_add_products/','name'=>"theForm"));?>
 <input type="hidden" name="category_id" value="<?php echo $category_id?>" />
 <ul class="product_llist users_title">

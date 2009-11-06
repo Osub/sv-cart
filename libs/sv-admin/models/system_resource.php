@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: system_resource.php 2703 2009-07-08 11:54:52Z huangbo $
+ * $Id: system_resource.php 4512 2009-09-24 11:15:59Z huangbo $
 *****************************************************************************/
 class SystemResource extends AppModel
 {
@@ -92,7 +92,7 @@ class SystemResource extends AppModel
     
    	function localeformat($id){
 		$lists=$this->findAll("SystemResource.id = '".$id."'");
-	//	pr($lists);
+		$lists_formated = array();
 		foreach($lists as $k => $v){
 				 $lists_formated['SystemResource']=$v['SystemResource'];
 				 $lists_formated['SystemResourceI18n'][]=$v['SystemResourceI18n'];
@@ -100,17 +100,38 @@ class SystemResource extends AppModel
 				 	  $lists_formated['SystemResourceI18n'][$val['locale']]=$val;
 				 }
 			}
-	//	pr($lists_formated);
 		return $lists_formated;
 	}
 
-function find_tree($condition){
+function find_tree($condition,$condition2=array()){
    	    
-   	   	$this->set_locale($this->locale);
-   	   	$conditions = $this->find($condition);
-   	   	$tree = $this->find("parent_id = '".$conditions['SystemResource']['id']."'");
+   	   //	$this->set_locale($this->locale);
+   	   	$conditions = $this->find(array('code'=>$condition));
+   	   	$condition2['SystemResource.parent_id'] = $conditions['SystemResource']['id'];
+   	   	
+   	   	$tree = $this->find("all",array("conditions"=>$condition2));
    	    return $tree;
 	}
+function find_assoc($condition,$condition2=array()){
+   	    
+   	   //	$this->set_locale($this->locale);
+   	   	$conditions = $this->find(array('code'=>$condition));
+   	   	$condition2['SystemResource.parent_id'] = $conditions['SystemResource']['id'];
+   	   	
+   	   	$tree = $this->find("all",array("conditions"=>$condition2));
+   	   	$array_assoc = array();
+   	   	foreach($tree as $k=>$v){
+   	   		$array_assoc[$v['SystemResource']['resource_value']] = $v['SystemResourceI18n']['name'];
+   	   	}
+   	    return $array_assoc;
+	}
+function find_resource($code, $resource_value){
+   	    
+   	   	$conditions = $this->find(array('code'=>$code));
+   	   	$tree = $this->find(array("parent_id = '".$conditions['SystemResource']['id']."'","resource_value"=>$resource_value));
+   	    return $tree;
+}
+	
 //leo20090626
 function resource_formated($mystatus=true){
 	$conditions="";

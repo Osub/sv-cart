@@ -9,27 +9,28 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 2516 2009-07-01 10:29:18Z shenyunfeng $
+ * $Id: index.ctp 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 ?>
 <div class="content">
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour','navigations'=>$navigations));?>
 
 <!--Main Start-->
-<div class="home_main" style="width:96%;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
+<div class="home_main" style="padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' ); ">
+<div id="listDiv">
 <table cellpadding="0" cellspacing="0" width="100%" class="list_data">
 <tr class="thead">
-	<th>配送方式名称</th>
-	<th>配送方式描述</th>
-	<th>保价费用</th>
-	<th>货到付款？</th>
-	<th>插件版本</th>
-	<th>操作</th>
+	<th width="19%">配送方式名称</th>
+	<th width="27%">配送方式描述</th>
+	<th width="8%">保价费用</th>
+	<th width="8%">货到付款？</th>
+	<th width="25%">插件版本</th>
+	<th width="13%">操作</th>
 </tr>
 <!--Shippingments List-->
 <?php if(isset($shippings) && sizeof($shippings)>0){?>
-<?php foreach($shippings as $shipping){?>
-<tr>
+<?php foreach($shippings as $k=>$shipping){?>
+<tr <?php if((abs($k)+2)%2!=1){?>class="tr_bgcolor"<?php }else{?>class=""<?php }?> >
 	<td><?php echo $shipping['ShippingI18n']['name']?></td>
 	<td><?php echo $shipping['ShippingI18n']['description']?></td>
 	<td align="center"><?php echo $shipping['Shipping']['insure_fee']?></td>
@@ -39,7 +40,7 @@
 	</td>
 </tr>
 <?php }}?>
-</table>
+</table></div>
 <!--Shippingments List End-->	
 
 <div class="pagers" style="position:relative;">

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: area_add.ctp 2485 2009-06-30 11:33:00Z huangbo $
+ * $Id: area_add.ctp 3743 2009-08-19 06:43:32Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $javascript->link('shipping');?>
@@ -45,9 +45,7 @@
 		<p class="products_name"><?php echo $html->image($v['Language']['img01'])?><span><textarea name="data[ShippingAreaI18n][<?php echo $k?>][description]"></textarea></span></p>
 		<input type="hidden" name="data[ShippingAreaI18n][<?php echo $k?>][locale]" value="<?php echo $v['Language']['locale']?>" />		
 <?php }} ?>
-	<dl><dt>是否有效：</dt>
-			<dd>&nbsp;&nbsp;<input type="radio" name="data[ShippingArea][status]" value="1" checked /> 是 <input type="radio" name="data[ShippingArea][status]" value="0" /> 否</dd></dl>
-		
+
 		<br />
 	  </div>
 	</div>
@@ -55,26 +53,17 @@
 </td>
 <td valign="top" width="50%" style="padding-left:5px;padding-top:25px;">
 <!--Other Stat-->
-	<div class="order_stat athe_infos tongxun">
+	<div class="order_stat athe_infos">
 	  
-	  <div class="box">
-		
-		<br />
-		<dl style="margin-bottom:5px;padding-top:8px;"><dt>排序：</dt>
-			<dd>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" class="text_inputs" style="width:95px;" name="data[ShippingArea][orderby]" onkeyup="check_input_num(this)"  /><br /> 如果您不输入排序号，系统将默认为50</dd></dl>
-		<dl style="margin-bottom:5px;padding-top:8px;"><dt>1000克以内费用：</dt>
-			<dd>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" class="text_inputs" style="width:180px;"name="money[][value]" /> </dd></dl>
-		<dl style="margin-bottom:5px;padding-top:8px;"><dt>5000克以内续重每500克费用：</dt>
-			<dd>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" class="text_inputs" style="width:180px;"name="money[][value]" /> </dd></dl>
-		<dl style="margin-bottom:5px;padding-top:8px;"><dt>5001克以上续重500克费用：</dt>
-			<dd>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" class="text_inputs" style="width:180px;"name="money[][value]" /> </dd></dl>
-		<dl style="margin-bottom:5px;padding-top:8px;"><dt>免费额度：</dt>
-			<dd>&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" class="text_inputs" style="width:95px;"name="data[ShippingArea][free_subtotal]" /> </dd></dl>
-		
-		
-		
-		<br />		<br />		<br />	
-		<br />
+	  <div class="box" style="padding-top:35px;">
+		<table>
+		  <tr><td style="vertical-align:top; font-weight: bolder " align="right">1000克以内费用：</td><td><input type="text" class="text_inputs" style="width:190px;border:1px solid #649776"  name="money[][value]" /></td></tr>
+		  <tr><td style="vertical-align:top; font-weight: bolder " align="right">&nbsp&nbsp&nbsp 5000克以内续重每500克费用：</td><td><input type="text" class="text_inputs" style="width:190px;border:1px solid #649776" name="money[][value]" /></td></tr>
+		  <tr><td style="vertical-align:top; font-weight: bolder " align="right">5001克以上续重500克费用：</td><td><input type="text" class="text_inputs" style="width:190px;border:1px solid #649776" name="money[][value]" /></td></tr>
+		  <tr><td style="vertical-align:top; font-weight: bolder " align="right">免费额度：</td><td><input type="text" class="text_inputs" style="width:90px;border:1px solid #649776" name="data[ShippingArea][free_subtotal]" /></td></tr>
+		  <tr><td style="font-weight: bolder " align="right">是否有效：</td><td><input type="radio" name="data[ShippingArea][status]" value="1" checked /> 是 <input type="radio" name="data[ShippingArea][status]" value="0" /> 否</td></tr>
+		  <tr><td style="vertical-align:top; font-weight: bolder " align="right">排序：</td><td><input type="text" class="text_inputs" style="width:90px;border:1px solid #649776"  name="data[ShippingArea][orderby]" onkeyup="check_input_num(this)"  /><br /> 如果您不输入排序号，系统将默认为50</td></tr>
+		 </table>
 	  </div>
 	</div>
 <!--Other Stat End-->
@@ -107,24 +96,17 @@
 		二级地区：
 		<select multiple size="10" style="width: 85px;" id="province_id" onclick="regions('province')">
 		<option value="" selected>请选择...</option>
-
 		</select >
 		三级地区：
 		<select multiple size="10" style="width: 85px;"id="citys" onclick="region_city('city')">
 			<option value="" selected>请选择...</option>
 		</select>
-		
 		四级地区：
 		<select multiple size="10" style="width: 85px;" id="area_id">
 			<option value="" selected>请选择...</option>
 			</select>
 				<input type="button" value="+" onclick="addItems()" />
 		</dl>
-		
-	
-	
-		<br />
-		
 		</div>
 <!--Order Stat End-->
 <!--Categories List End-->

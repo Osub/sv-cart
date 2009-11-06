@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_postgres.php 2703 2009-07-08 11:54:52Z huangbo $ */
+/* SVN FILE: $Id: dbo_postgres.php 4366 2009-09-18 09:49:37Z huangbo $ */
 
 /**
  * PostgreSQL layer for DBO.
@@ -20,9 +20,9 @@
  * @package       cake
  * @subpackage    cake.cake.libs.model.datasources.dbo
  * @since         CakePHP(tm) v 0.9.1.114
- * @version       $Revision: 7945 $
- * @modifiedby    $LastChangedBy: gwoo $
- * @lastmodified  $Date: 2008-12-18 18:16:01 -0800 (Thu, 18 Dec 2008) $
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
@@ -275,6 +275,9 @@ class DboPostgres extends DboSource {
 			case 'inet':
 			case 'float':
 			case 'integer':
+			case 'date':
+			case 'datetime':
+			case 'timestamp':
 				if ($data === '') {
 					return $read ? 'NULL' : 'DEFAULT';
 				}

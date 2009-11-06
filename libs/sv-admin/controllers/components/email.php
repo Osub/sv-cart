@@ -19,6 +19,10 @@ class EmailComponent
     var $html_body = null;
     var $to = null;
     var $toName = null;
+    var $addccto = null;
+    var $addcctoName = null;
+    var $addbccto = null;
+    var $addbcctoName = null;
     var $subject = null;
     var $cc = null;
     var $bcc = null;
@@ -69,7 +73,6 @@ class EmailComponent
     }
 
     function send(){
-    	//$this->Config->findall();
 		$mail = new PHPMailer();
 		if($this->is_mail_smtp==0){
 			$mail->IsMail();            // set mailer to use SMTP
@@ -88,36 +91,37 @@ class EmailComponent
 	    	$mail->Password = $this->smtpPassword;
 	    }
 	   	//$mail->SMTPDebug = 10;
-
 	    $mail->From     = $this->from;
 	    $mail->FromName = $this->fromName;
 	    $mail->AddAddress($this->to, $this->toName );
+	    if(!empty($this->addccto)&&!empty($this->addcctoName)){
+	    	$mail->AddCC($this->addccto,$this->addcctoName);
+	    }
+	    if(!empty($this->addbccto)&&!empty($this->addbcctoName)){
+	    	$mail->AddBCC($this->addbccto,$this->addbcctoName);
+	    }
 	    $mail->AddReplyTo($this->from, $this->fromName );
-	    
 	    $mail->CharSet  = 'UTF-8';
-	    $mail->WordWrap = 50;  
-
-	    if (!empty($this->attachments)) {
-	      foreach ($this->attachments as $attachment) {
-	        if (empty($attachment['asfile'])) {
-	          $mail->AddAttachment($attachment['filename']);
-	        } else {
-	          $mail->AddAttachment($attachment['filename'], $attachment['asfile']);
-	        }
-	      }
+	    $mail->WordWrap = 50;
+	    if(!empty($this->attachments)){
+			foreach ($this->attachments as $attachment){
+				if(empty($attachment['asfile'])){
+					$mail->AddAttachment($attachment['filename']);
+	        	}
+	        	else{
+	          		$mail->AddAttachment($attachment['filename'], $attachment['asfile']);
+	        	}
+	      	}
 	    }
 	    $mail->IsHTML(true); 
 	    $mail->Subject = $this->subject;
 	    $mail->Body    = $this->html_body;
 	    $mail->AltBody = $this->text_body;
-
 	    $result = $mail->Send();
-
 	    if($result == false ){
 		    $result = $mail->ErrorInfo;
 		}
 		return $result;
-	    
     }
 }
 ?>

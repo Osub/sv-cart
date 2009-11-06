@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: brand.php 2855 2009-07-15 03:25:34Z shenyunfeng $
+ * $Id: brand.php 5101 2009-10-15 11:23:51Z huangbo $
 *****************************************************************************/
 class Brand extends AppModel
 {
@@ -45,9 +45,9 @@ class Brand extends AppModel
 		
 		
 		
-		$lists=$this->findall($condition,'',$orderby);
-		$lists=$this->find('all',array('order'=>array($orderby),
-			'fields' =>	array('Brand.id','Brand.flash_config','Brand.url','Brand.img01','BrandI18n.name'
+//		$lists=$this->findall($condition,'',$orderby);
+		$lists=$this->find('all',array('order'=>array($orderby,'BrandI18n.name asc'),
+			'fields' =>	array('Brand.id','Brand.flash_config','Brand.url','Brand.img01','BrandI18n.img01','BrandI18n.name'
 																	
 																					),			
 		

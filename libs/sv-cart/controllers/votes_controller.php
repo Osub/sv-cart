@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: votes_controller.php 2699 2009-07-08 11:07:31Z huangbo $
+ * $Id: votes_controller.php 3311 2009-07-24 12:16:27Z huangbo $
 *****************************************************************************/
 class VotesController extends AppController {
 	var $name = 'Votes';
@@ -49,7 +49,8 @@ class VotesController extends AppController {
 	    		$this->VoteOption->save($vote_option['VoteOption']);
 	    	}elseif($_POST['type'] == 0){
 	    		$this->VoteOption->set_locale($this->locale);
-	    		$vote_option = $this->VoteOption->findallbyid($_POST['option']);
+	    		$option_ids = explode(',',$_POST['option']);
+	    		$vote_option = $this->VoteOption->findallbyid($option_ids);
 	    		if(isset($vote_option) && sizeof($vote_option)>0){
 	    			foreach($vote_option as $k=>$v){
 	    				$v['VoteOption']['option_count']++;
@@ -73,7 +74,7 @@ class VotesController extends AppController {
 					$vote_ids[] = $v['Vote']['id'];
 				}
 			}	    	
-			$vote_options = $this->VoteOption->find('all',array('order'=>array('VoteOption.option_count ASC'),'conditions'=>array("VoteOption.status" => 1,"VoteOption.vote_id" => $vote_ids)));
+			$vote_options = $this->VoteOption->find('all',array('order'=>array('VoteOption.option_count ASC','VoteOption.modified ASC'),'conditions'=>array("VoteOption.status" => 1,"VoteOption.vote_id" => $vote_ids)));
 			$vote_option_lists = array();
 			$vote_type = array();
 			if(isset($vote_options) && sizeof($vote_options)>0){
@@ -90,18 +91,29 @@ class VotesController extends AppController {
 			$count = 100;
 			if(isset($votes) && sizeof($votes)>0){
 				foreach($votes as $k=>$v){
+					if($v['Vote']['vote_count'] == 0){
+						$count = 0;
+					}					
 					$vote_lists[$v['Vote']['id']] = $v;
 					if(isset($vote_option_lists[$v['Vote']['id']])){
 						$vote_lists[$v['Vote']['id']]['options'] = $vote_option_lists[$v['Vote']['id']];
+							if(sizeof($vote_option_lists[$v['Vote']['id']])>0 ){
+								$all_count = 0;
+								foreach($vote_lists[$v['Vote']['id']]['options'] as $a=>$b){			
+									$all_count += $b['VoteOption']['option_count'];
+								}		
+							}						
 						if(sizeof($vote_option_lists[$v['Vote']['id']])>0 ){
 							foreach($vote_lists[$v['Vote']['id']]['options'] as $a=>$b){
-								if($a == (sizeof($vote_lists[$v['Vote']['id']]['options']) - 1)){
+								$mun = 0;
+								if($a == ($mun- 1)){
 								$percent = $count;
 								}else{
-								$percent = ($v['Vote']['vote_count'] >0 && $b['VoteOption']['option_count'])?round(($b['VoteOption']['option_count']/$v['Vote']['vote_count'])*100):0;
+								$percent = ($all_count >0 && $b['VoteOption']['option_count'])?round(($b['VoteOption']['option_count']/$all_count)*100):0;
 								$count -= $percent;
 								}
 								$vote_lists[$v['Vote']['id']]['options'][$a]['VoteOption']['dis'] = $percent;
+									$mun ++;
 							} 
 						}
 					}

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: upfile.ctp 2761 2009-07-10 09:06:59Z shenyunfeng $
+ * $Id: upfile.ctp 3507 2009-08-06 10:52:06Z tangyu $
 *****************************************************************************/
 ?>
 
@@ -33,7 +33,7 @@ width:120px;height:100px;
 
 
 <input type="hidden" value="/temp" id="img_address"/>
-<div class="home_main" style="width:96%;background-color: #FFFFFF;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
+<div class="home_main" style="background-color: #FFFFFF;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' ); ">
 
 	<ul class="product_llist departments_headers" style="background-color: #FFFFFF;"><li class="hadle">文件</li></ul>
 	<ul class="product_llist departments_headers departments_list" style='height:100%;'>
@@ -49,7 +49,7 @@ width:120px;height:100px;
 <!--upload--->
 
 <br />
-<div class="home_main" style="width:96%;background-color: #FFFFFF;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : '96%' ); ">
+<div class="home_main" style="background-color: #FFFFFF;padding:0 0 20px 0;min-width:970px;width:expression((documentElement.clientWidth < 970) ? '970px' : 'auto' ); ">
 <br />&nbsp&nbsp&nbsp<br />
 	<div id="content" style="margin:0;padding:0 10px;">
 			

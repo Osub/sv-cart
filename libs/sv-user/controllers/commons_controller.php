@@ -9,20 +9,38 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: commons_controller.php 2304 2009-06-26 07:00:53Z zhengli $
+ * $Id: commons_controller.php 3949 2009-08-31 07:34:05Z huangbo $
 *****************************************************************************/
 class CommonsController extends AppController {
 
 	var $name = 'Commons';
     var $components = array ('Email'); // Added 
-	var $uses = array('Language','Navigation','Region','UserAddress','UserRank','MailTemplate');
+	var $uses = array('Language','Navigation','Region','UserAddress','UserRank','MailTemplate','NewsletterList');
 
 	//$languages = $this->requestAction('commons/get_languages_front/'); 
- 	function get_languages_front(){
- 		$languages = $this->Language->findall("Language.front <> '0' ");
-		return $languages;
+ 	 function get_languages_front(){
+ 		 $languages = $this->Language->findall("Language.front <> '0' ");
+		 return $languages;
+ 	 }
+     function is_error(){
+	       $this->page_init();
+	       $this->pageTitle = $this->languages['page_not_exist']." - ".$this->configs['shop_title'];
+		   $this->flash($this->languages['page_not_exist'],isset($_SERVER['HTTP_REFERER'])?$_SERVER['HTTP_REFERER']:"/",3);
+     }
+ 	function update_newletter(){ 
+	    Configure::write('debug', 0);
+	    $result = 1;
+ 		$email = $this->NewsletterList->findbyemail($_SESSION['User']['User']['email']);
+ 		if(isset($email['NewsletterList']) && $email['NewsletterList']['status'] != 2){
+ 			$email['NewsletterList']['status'] = 2;
+	 		$this->NewsletterList->save($email);
+ 		}elseif(isset($email['NewsletterList']) && $email['NewsletterList']['status'] != 1){
+ 			$email['NewsletterList']['status'] = 1;
+	 		$this->NewsletterList->save($email);
+ 		}
+ 		die($result);
  	}
- 	
+
 	//$navigations = $this->requestAction('commons/get_navigations/T');
  	function get_navigations($type){
 

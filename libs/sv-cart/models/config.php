@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: config.php 2855 2009-07-15 03:25:34Z shenyunfeng $
+ * $Id: config.php 3367 2009-07-29 03:29:39Z huangbo $
 *****************************************************************************/
 class Config extends AppModel
 {
@@ -49,9 +49,7 @@ class Config extends AppModel
 			$configs_formatcode =array();
 			if(is_array($configs))
 			foreach($configs as $v){
-				
 				$configs_formatcode[$v['Config']['code']]=$v['ConfigI18n']['value'];
-				
 			}
 			if(!isset($configs_formatcode['use_sku'])){
 				$configs_formatcode['use_sku'] = 0;

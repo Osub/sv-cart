@@ -1,6 +1,6 @@
 <?php
 /*****************************************************************************
- * SV-Cart 地区管理
+ * SV-Cart 区域管理
  * ===========================================================================
  * 版权所有  上海实玮网络科技有限公司，并保留所有权利。
  * 网站地址: http://www.seevia.cn
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: areas_controller.php 2229 2009-06-19 06:54:47Z tangyu $
+ * $Id: areas_controller.php 4366 2009-09-18 09:49:37Z huangbo $
 *****************************************************************************/
 class AreasController extends AppController {
 	var $name = 'Areas';
@@ -20,8 +20,9 @@ class AreasController extends AppController {
 		/*判断权限*/
 		$this->operator_privilege('zone_view');
 		/*end*/
-		$this->pageTitle = "地区管理" ." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'地区管理','url'=>'/areas/');
+		$this->pageTitle = "区域管理" ." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'系统管理','url'=>'');
+		$this->navigations[] = array('name'=>'区域管理','url'=>'/areas/');
 		$area_list=$this->Region->getarealist($pid,$this->locale);
 		$region_parents = $this->Region->get_parents($pid);
 		$num = "1";
@@ -65,6 +66,7 @@ class AreasController extends AppController {
 			$arr[$k]['id'] = $v['RegionI18n']['id'];
 			$arr[$k]['orderby'] = $Region_info['Region']['orderby'];
 			$arr[$k]['region_id'] = $region_id;
+			$arr[$k]['abbreviated'] = $Region_info['Region']['abbreviated'];
 		}
 		Configure::write('debug',0);
 		die(json_encode($arr));
@@ -73,8 +75,9 @@ class AreasController extends AppController {
 //-- 新增地区
 /*------------------------------------------------------ */
     function add(){
-		$this->pageTitle = "添加地区-地区管理"." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'地区管理','url'=>'/areas/');
+		$this->pageTitle = "添加地区-区域管理"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'系统管理','url'=>'');
+		$this->navigations[] = array('name'=>'区域管理','url'=>'/areas/');
 		$this->navigations[] = array('name'=>'添加地区','url'=>'');
 		$Region_info = $this->Region->find("","","Region.id desc");
 		$region_info=array(
@@ -86,6 +89,7 @@ class AreasController extends AppController {
 				'param02'=>isset($this->params['form']['param02'])?$this->params['form']['param02']:'',
 				'param03'=>isset($this->params['form']['param03'])?$this->params['form']['param03']:'',
 				'orderby'=>!empty($this->params['form']['orderby'])?$this->params['form']['orderby']:50,
+				'abbreviated'=>!empty($this->params['form']['orderby'])?$this->params['form']['abbreviated']:"",
 		);
 		
     	$this->Region->save(array('Region'=>$region_info));
@@ -109,8 +113,9 @@ class AreasController extends AppController {
 //-- 删除地区
 /*------------------------------------------------------ */
     function remove($id){
-    	   $this->pageTitle = "删除地区-地区管理"." - ".$this->configs['shop_name'];
-		   $this->navigations[] = array('name'=>'地区管理','url'=>'/areas/');
+    	   $this->pageTitle = "删除地区-区域管理"." - ".$this->configs['shop_name'];
+    	   $this->navigations[] = array('name'=>'系统管理','url'=>'');
+		   $this->navigations[] = array('name'=>'区域管理','url'=>'/areas/');
 		   $this->navigations[] = array('name'=>'删除地区','url'=>'');
     	   $this->Region->deleteAll("Region.id = '".$id."'",false);
 		   $this->RegionI18n->deleteAll("RegionI18n.region_id = '".$id."'");

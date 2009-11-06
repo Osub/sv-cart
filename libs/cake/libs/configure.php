@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: configure.php 2703 2009-07-08 11:54:52Z huangbo $ */
+/* SVN FILE: $Id: configure.php 4366 2009-09-18 09:49:37Z huangbo $ */
 /**
  * Short description for file.
  *
@@ -19,9 +19,9 @@
  * @package       cake
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v 1.0.0.2363
- * @version       $Revision: 8120 $
- * @modifiedby    $LastChangedBy: gwoo $
- * @lastmodified  $Date: 2009-03-19 13:25:10 -0700 (Thu, 19 Mar 2009) $
+ * @version       $Revision$
+ * @modifiedby    $LastChangedBy$
+ * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
@@ -292,7 +292,7 @@ class Configure extends Object {
 
 		if (isset($config['debug'])) {
 			if ($_this->debug) {
-				error_reporting(E_ALL);
+				error_reporting(E_ALL & ~E_DEPRECATED);
 
 				if (function_exists('ini_set')) {
 					ini_set('display_errors', 1);

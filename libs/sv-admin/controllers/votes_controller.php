@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: votes_controller.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: votes_controller.php 4691 2009-09-28 10:11:57Z huangbo $
 *****************************************************************************/
 class VotesController extends AppController {
 
@@ -23,11 +23,28 @@ class VotesController extends AppController {
 		$this->operator_privilege('vote_view');
 		/*end*/
 	   	$this->pageTitle = "在线调查管理" ." - ".$this->configs['shop_name'];
+	   	$this->navigations[] = array('name'=>'客户管理','url'=>'');
 		$this->navigations[] = array('name'=>'在线调查管理','url'=>'/votes/');
 		$this->set('navigations',$this->navigations);
 		
 		$this->Vote->set_locale($this->locale);
    	   	$condition='';
+        if(isset($this->params['url']['date']) && $this->params['url']['date']!=''){
+        	$condition["and"]["Vote.created >="] = $this->params['url']['date']." 00:00:00";
+            
+            $this->set('date',$this->params['url']['date']);
+        }
+        if(isset($this->params['url']['date2']) && $this->params['url']['date2']!=''){
+        	$condition["and"]["Vote.created <="] = $this->params['url']['date2']." 23:59:59";
+            
+            $this->set('date2',$this->params['url']['date2']);
+        }
+        if(isset($this->params['url']['mystatus']) && $this->params['url']['mystatus']!=''){
+        	$condition["and"]["Vote.status"] = $this->params['url']['mystatus'];
+            
+            $this->set('mystatus',$this->params['url']['mystatus']);
+        }
+
    	    $total = count($this->Vote->find("all",array("conditions"=>$condition,"fields"=>"DISTINCT Vote.id")));
 	   	$sortClass='Vote';
 	   	$page=1;
@@ -35,11 +52,12 @@ class VotesController extends AppController {
 	   	$parameters=Array($rownum,$page);
 	   	$options=Array();
 	   	$page = $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass);
-   	   	$vote_list=$this->Vote->find("all",array("rownum"=>$rownum,"page"=>$page));
+   	   	$vote_list=$this->Vote->find("all",array("conditions"=>$condition,"rownum"=>$rownum,"page"=>$page));
    	   	$this->set("vote_list",$vote_list);
 	}
 	function edit($id){
 	   	$this->pageTitle = "在线调查管理" ." - ".$this->configs['shop_name'];
+	   	$this->navigations[] = array('name'=>'客户管理','url'=>'');
 		$this->navigations[] = array('name'=>'在线调查管理','url'=>'/votes/');
 		$this->navigations[] = array('name'=>'在线调查编辑','url'=>'');
 	
@@ -53,7 +71,7 @@ class VotesController extends AppController {
 				}
 				$this->VoteI18n->save(array("VoteI18n"=>$v));
 			}
-			$this->flash("在线调查主题 ".$this_locale_vote_name."  编辑成功。点击继续编辑该 在线调查主题。",'/votes/edit/'.$id,10);
+			$this->flash("在线调查主题 ".$this_locale_vote_name."  编辑成功。点击这里继续编辑该 在线调查主题。",'/votes/edit/'.$id,10);
 		}
 		$this->Vote->hasOne = array();
 		$this->Vote->hasMany = array('VoteI18n'=>array( 
@@ -76,6 +94,7 @@ class VotesController extends AppController {
 	}
 	function add(){
 	   	$this->pageTitle = "在线调查管理" ." - ".$this->configs['shop_name'];
+	   	$this->navigations[] = array('name'=>'客户管理','url'=>'');
 		$this->navigations[] = array('name'=>'在线调查管理','url'=>'/votes/');
 		$this->navigations[] = array('name'=>'在线调查新增','url'=>'');
 		$this->set('navigations',$this->navigations);
@@ -88,7 +107,7 @@ class VotesController extends AppController {
 				}
 				$this->VoteI18n->saveAll(array("VoteI18n"=>$v));
 			}
-			$this->flash("在线调查主题 ".$this_locale_vote_name."  添加成功。点击继续编辑该 在线调查主题。",'/votes/edit/'.$this->Vote->getLastInsertId(),10);
+			$this->flash("在线调查主题 ".$this_locale_vote_name."  添加成功。点击这里继续编辑该 在线调查主题。",'/votes/edit/'.$this->Vote->getLastInsertId(),10);
 		}
 	}
 	function remove($id){
@@ -100,6 +119,7 @@ class VotesController extends AppController {
 	
 	function option_list($vote_id){
 	   	$this->pageTitle = "在线调查管理" ." - ".$this->configs['shop_name'];
+	   	$this->navigations[] = array('name'=>'客户管理','url'=>'');
 		$this->navigations[] = array('name'=>'在线调查管理','url'=>'/votes/');
 		$this->Vote->set_locale($this->locale);
 		$vote_info = $this->Vote->find(array("Vote.id"=>$vote_id));
@@ -112,6 +132,7 @@ class VotesController extends AppController {
 	}
 	function option_add($vote_id){
 	   	$this->pageTitle = "在线调查管理" ." - ".$this->configs['shop_name'];
+	   	$this->navigations[] = array('name'=>'客户管理','url'=>'');
 		$this->navigations[] = array('name'=>'在线调查管理','url'=>'/votes/');
 		$this->Vote->set_locale($this->locale);
 		$vote_info = $this->Vote->find(array("Vote.id"=>$vote_id));		
@@ -127,13 +148,14 @@ class VotesController extends AppController {
 				}
 				$this->VoteOptionI18n->saveAll(array("VoteOptionI18n"=>$v));
 			}
-			$this->flash("调查选项 ".$this_locale_vote_option_name."  添加成功。点击继续编辑该 调查选项。",'/votes/option_edit/'.$vote_id."/".$this->VoteOption->getLastInsertId(),10);
+			$this->flash("调查选项 ".$this_locale_vote_option_name."  添加成功。点击这里继续编辑该 调查选项。",'/votes/option_edit/'.$vote_id."/".$this->VoteOption->getLastInsertId(),10);
 		}
 
 		$this->set('vote_id',$vote_id);
 	}
 	function option_edit($vote_id,$option_vote_id){
 	   	$this->pageTitle = "在线调查管理" ." - ".$this->configs['shop_name'];
+	   	$this->navigations[] = array('name'=>'客户管理','url'=>'');
 		$this->navigations[] = array('name'=>'在线调查管理','url'=>'/votes/');
 		$this->Vote->set_locale($this->locale);
 		$vote_info = $this->Vote->find(array("Vote.id"=>$vote_id));		
@@ -151,7 +173,7 @@ class VotesController extends AppController {
 				$this->VoteOptionI18n->save(array("VoteOptionI18n"=>$v));
 			
 			}
-			$this->flash("调查选项 ".$this_locale_vote_option_name."  编辑成功。点击继续编辑该 调查选项。",'/votes/option_edit/'.$vote_id.'/'.$option_vote_id.'/',10);
+			$this->flash("调查选项 ".$this_locale_vote_option_name."  编辑成功。点击这里继续编辑该 调查选项。",'/votes/option_edit/'.$vote_id.'/'.$option_vote_id.'/',10);
 		}
 		
 		$this->VoteOption->hasOne = array();
@@ -180,6 +202,7 @@ class VotesController extends AppController {
 	//log日志
 	function vote_logs($id){
 	   	$this->pageTitle = "在线调查日志" ." - ".$this->configs['shop_name'];
+	   	$this->navigations[] = array('name'=>'客户管理','url'=>'');
 		$this->navigations[] = array('name'=>'在线调查管理','url'=>'/votes/');
 		$this->navigations[] = array('name'=>'在线调查日志','url'=>'');
 		
@@ -222,6 +245,7 @@ class VotesController extends AppController {
 	
 	function vote_logs_edit($vote_logs_id){
 	   	$this->pageTitle = "在线调查日志" ." - ".$this->configs['shop_name'];
+	   	$this->navigations[] = array('name'=>'客户管理','url'=>'');
 		$this->navigations[] = array('name'=>'在线调查日志','url'=>'/vote_logs/');
 		$this->navigations[] = array('name'=>'在线调查日志编辑','url'=>'');
 		$this->set('navigations',$this->navigations);
@@ -246,7 +270,7 @@ class VotesController extends AppController {
 		if($this->RequestHandler->isPost()){
 			$this->data["VoteLog"]["id"] = $vote_logs_id;
 			$this->VoteLog->save($this->data);
-			$this->flash("调查日志 ".$new_vote_list[$vote_logs_list["VoteLog"]["vote_id"]]."  编辑成功。点击继续编辑该 调查选项。",'/votes/vote_logs_edit/'.$vote_logs_id.'/',10);
+			$this->flash("调查日志 ".$new_vote_list[$vote_logs_list["VoteLog"]["vote_id"]]."  编辑成功。点击这里继续编辑该 调查选项。",'/votes/vote_logs_edit/'.$vote_logs_id.'/',10);
 		}
 		//选项
 		$this->VoteOption->set_locale($this->locale);

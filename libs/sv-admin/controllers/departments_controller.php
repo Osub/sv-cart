@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: departments_controller.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: departments_controller.php 4691 2009-09-28 10:11:57Z huangbo $
 *****************************************************************************/ 
 class DepartmentsController extends AppController {
 	var $name = 'Departments';
@@ -22,7 +22,7 @@ class DepartmentsController extends AppController {
 		$this->operator_privilege('department_view');
 		/*end*/
 		$this->pageTitle = "部门管理"." - ".$this->configs['shop_name'];
-		
+		$this->navigations[] = array('name'=>'内部管理','url'=>'');
 		$this->navigations[] = array('name'=>'部门管理','url'=>'/departments/');
 		$this->set('navigations',$this->navigations);
 		
@@ -37,6 +37,7 @@ class DepartmentsController extends AppController {
 		$this->operator_privilege('department_operation');
 		/*end*/
 		$this->pageTitle = "编辑部门 - 部门管理"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'内部管理','url'=>'');
 		$this->navigations[] = array('name'=>'部门管理','url'=>'/departments/');
 		$this->navigations[] = array('name'=>'编辑部门','url'=>'');
 		
@@ -62,7 +63,7 @@ class DepartmentsController extends AppController {
 			if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑部门:'.$userinformation_name ,'operation');
     	    }
-			$this->flash("部门  ".$userinformation_name." 编辑成功。点击继续编辑该部门。",'/departments/edit/'.$id,10);
+			$this->flash("部门  ".$userinformation_name." 编辑成功。点击这里继续编辑该部门。",'/departments/edit/'.$id,10);
 
 			
 		}
@@ -93,9 +94,10 @@ class DepartmentsController extends AppController {
 		/*判断权限*/
 		$this->operator_privilege('department_add');
 		/*end*/
-		$this->pageTitle = "编辑部门 - 部门管理"." - ".$this->configs['shop_name'];
+		$this->pageTitle = "新增部门 - 部门管理"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'内部管理','url'=>'');
 		$this->navigations[] = array('name'=>'部门管理','url'=>'/departments/');
-		$this->navigations[] = array('name'=>'编辑部门','url'=>'');
+		$this->navigations[] = array('name'=>'新增部门','url'=>'');
 		$this->set('navigations',$this->navigations);
 
 
@@ -119,7 +121,7 @@ class DepartmentsController extends AppController {
 				if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	        $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加部门:'.$userinformation_name ,'operation');
     	        }
-				$this->flash("部门  ".$userinformation_name." 添加成功。点击继续编辑该部门。",'/departments/edit/'.$id,10);
+				$this->flash("部门  ".$userinformation_name." 添加成功。点击这里继续编辑该部门。",'/departments/edit/'.$id,10);
 			}
    	   
    }

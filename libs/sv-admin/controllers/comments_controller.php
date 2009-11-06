@@ -1,6 +1,6 @@
 <?php
 /*****************************************************************************
- * SV-Cart 评论管理
+ * SV-Cart 评论查询
  * ===========================================================================
  * 版权所有  上海实玮网络科技有限公司，并保留所有权利。
  * 网站地址: http://www.seevia.cn
@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: comments_controller.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: comments_controller.php 4433 2009-09-22 10:08:09Z huangbo $
 *****************************************************************************/
 class CommentsController extends AppController {
 
@@ -24,14 +24,19 @@ class CommentsController extends AppController {
  		/*判断权限*/
 		$this->operator_privilege('comment_view');
 		/*end*/
-		$this->pageTitle = "评论管理"." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'评论管理','url'=>'/comments/');
+		$this->pageTitle = "评论查询"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'客户管理','url'=>'');
+		$this->navigations[] = array('name'=>'评论查询','url'=>'/comments/');
 		$this->set('navigations',$this->navigations);
 		
 		$condition='';
 		if( isset($this->params['url']['content']) && $this->params['url']['content'] != '' ){
 			$condition["Comment.content LIKE"]=	"%".$this->params['url']['content']."%";
 			$this->set('content',$this->params['url']['content']);
+		}
+		if( isset($this->params['url']['cstatus']) && $this->params['url']['cstatus'] != '' ){
+			$condition["Comment.status"]=	$this->params['url']['cstatus'];
+			$this->set('cstatus',$this->params['url']['cstatus']);
 		}
 		if( isset($this->params['url']['end_time']) && $this->params['url']['end_time'] != '' ){
 			$condition["Comment.created <"] = $this->params['url']['end_time'];
@@ -49,7 +54,7 @@ class CommentsController extends AppController {
 	    $parameters=Array($rownum,$page);
  	    $options=Array();
 	    $page = $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass);
-   	    $this->data=$this->Comment->findAll($condition,'',"order by Comment.id",$rownum,$page);
+   	    $this->data=$this->Comment->findAll($condition,'',"order by Comment.created desc",$rownum,$page);
 
 			
 		foreach($this->data as $k=>$v){	
@@ -58,10 +63,10 @@ class CommentsController extends AppController {
 			$product = $this->Product->findAll($wh);
 			$this->data[$k]['Comment']['object'] = "";
 			if($v['Comment']['type'] == "P"){
-				$this->data[$k]['Comment']['type'] = "商品";
+				$this->data[$k]['Comment']['type_name'] = "商品";
 			}
 			if($v['Comment']['type'] == "A"){
-				$this->data[$k]['Comment']['type'] = "文章";
+				$this->data[$k]['Comment']['type_name'] = "文章";
 			}
 			foreach( $product as $kk=>$vv ){
 				$this->data[$k]['Comment']['object']= $vv['ProductI18n']['name'];
@@ -77,6 +82,7 @@ class CommentsController extends AppController {
 		$this->operator_privilege('comment_undea_view');
 		/*end*/
 		$this->pageTitle = "待处理评论"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'客户管理','url'=>'');
 		$this->navigations[] = array('name'=>'待处理评论','url'=>'/comments/search/uncheck');
 		$this->set('navigations',$this->navigations);
 		$condition["Comment.status"]="0";
@@ -175,8 +181,9 @@ class CommentsController extends AppController {
  		/*判断权限*/
 		$this->operator_privilege('comment_view_cancel');
 		/*end*/
-		$this->pageTitle = "回复评论 - 评论管理"." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'评论管理','url'=>'/comments/');
+		$this->pageTitle = "回复评论 - 评论查询"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'客户管理','url'=>'');
+		$this->navigations[] = array('name'=>'评论查询','url'=>'/comments/');
 		$this->navigations[] = array('name'=>'回复评论','url'=>'');
 		
 		if($this->RequestHandler->isPost()){
@@ -221,8 +228,9 @@ class CommentsController extends AppController {
  	}
 	
 	function edit_search( $id ){
-		$this->pageTitle = "回复评论 - 评论管理"." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'评论管理','url'=>'/comments/');
+		$this->pageTitle = "回复评论 - 评论查询"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'客户管理','url'=>'');
+		$this->navigations[] = array('name'=>'评论查询','url'=>'/comments/');
 		$this->navigations[] = array('name'=>'回复评论','url'=>'');
 		
 		if($this->RequestHandler->isPost()){

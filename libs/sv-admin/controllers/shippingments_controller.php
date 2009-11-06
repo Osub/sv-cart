@@ -9,12 +9,12 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: shippingments_controller.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: shippingments_controller.php 4708 2009-09-28 13:45:35Z huangbo $
 *****************************************************************************/
 class ShippingmentsController extends AppController {
 	var $name = 'Shippingments';
 
-	var $helpers = array('Html','Pagination');
+	var $helpers = array('Html','Pagination','Tinymce','fck');
 
 	var $components = array('Pagination','RequestHandler');
 	
@@ -25,6 +25,7 @@ class ShippingmentsController extends AppController {
 		$this->operator_privilege('ship_view');
 		/*end*/
 		$this->pageTitle = '配送方式'." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'系统管理','url'=>'');
 		$this->navigations[] = array('name'=>'配送方式','url'=>'/shippingments/');
 		$this->set('navigations',$this->navigations);
 		
@@ -54,6 +55,7 @@ class ShippingmentsController extends AppController {
 	}
 	function edit($id){
 		$this->pageTitle = "编辑配送方式- 配送方式"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'系统管理','url'=>'');
 		$this->navigations[] = array('name'=>'配送方式','url'=>'/shippingments/');
 		$this->navigations[] = array('name'=>'编辑配送方式','url'=>'');
 	
@@ -90,7 +92,7 @@ class ShippingmentsController extends AppController {
     	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑配送方式:'.$name ,'operation');
     	    }
-			$this->flash("配送方式 ".$name." 编辑成功。点击继续编辑该配送方式。",'/shippingments/edit/'.$id,10);
+			$this->flash("配送方式 ".$name." 编辑成功。点击这里继续编辑该配送方式。",'/shippingments/edit/'.$id,10);
 
 		}
 		$Shipping_info = $this->Shipping->findById($id);
@@ -113,6 +115,7 @@ class ShippingmentsController extends AppController {
 	}
 	function area_edit($id,$ids=""){
 		$this->pageTitle = "编辑配送方式- 配送方式"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'系统管理','url'=>'');
 		$this->navigations[] = array('name'=>'配送方式','url'=>'/shippingments/');
 		$this->Shipping->set_locale($this->locale);
 		$Shipping_info = $this->Shipping->findById($ids);
@@ -152,7 +155,7 @@ class ShippingmentsController extends AppController {
     	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑配送区域:'.$userinformation_name ,'operation');
     	    }
-			$this->flash("配送区域 ".$userinformation_name." 编辑成功。点击继续编辑该配送区域。",'/shippingments/area/'.$_REQUEST['re_id'],10);
+			$this->flash("配送区域 ".$userinformation_name." 编辑成功。点击这里继续编辑该配送区域。",'/shippingments/area/'.$_REQUEST['re_id'],10);
 
 
         }
@@ -222,6 +225,7 @@ class ShippingmentsController extends AppController {
 	}
 	function area( $id ){
 		$this->pageTitle = "编辑配送方式- 配送方式"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'系统管理','url'=>'');
 		$this->navigations[] = array('name'=>'配送方式','url'=>'/shippingments/');
 		$this->Shipping->set_locale($this->locale);
 		$Shipping_info = $this->Shipping->findById($id);
@@ -259,6 +263,7 @@ class ShippingmentsController extends AppController {
 	
 	function area_add( $id ) {
 		$this->pageTitle = "编辑配送区域- 配送方式"." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'系统管理','url'=>'');
 		$this->navigations[] = array('name'=>'配送方式','url'=>'/shippingments/');
 		$this->Shipping->set_locale($this->locale);
 		$Shipping_info = $this->Shipping->findById($id);
@@ -298,7 +303,7 @@ class ShippingmentsController extends AppController {
     	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加配送区域:'.$userinformation_name ,'operation');
     	    }
-			$this->flash("配送区域 ".$userinformation_name." 编辑成功。点击继续编辑该配送区域。",'/shippingments/area_edit/'.$this->ShippingArea->getLastInsertID().'/'.$id,10);
+			$this->flash("配送区域 ".$userinformation_name." 编辑成功。点击这里继续编辑该配送区域。",'/shippingments/area_edit/'.$this->ShippingArea->getLastInsertID().'/'.$id,10);
 
         	//pr($this->data);
         }

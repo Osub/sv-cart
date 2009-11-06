@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: balances_controller.php 2806 2009-07-13 09:44:42Z zhengli $
+ * $Id: balances_controller.php 4691 2009-09-28 10:11:57Z huangbo $
 *****************************************************************************/
 class BalancesController extends AppController {
 
@@ -23,6 +23,7 @@ class BalancesController extends AppController {
 		$this->operator_privilege('fund_log_view');
 		/*end*/
 		$this->pageTitle = "资金日志" ." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'客户管理','url'=>'');
 		$this->navigations[] = array('name'=>'资金日志','url'=>'/balances/');
 		$this->set('navigations',$this->navigations);
 		$condition ='';
@@ -46,8 +47,8 @@ class BalancesController extends AppController {
 	   	   $this->set('start_time',$this->params['url']['start_time']);
 	   	}
 	   	else {
-	   	   $condition['and']['modified >='] = date('Y-m-d');
-	   	   $this->set('start_time',date('Y-m-d'));
+	   	   $condition['and']['modified >='] = date('Y-m-')."1";
+	   	   $this->set('start_time',date('Y-m-')."1");
 	   	}
 	   	/* 结束时间 */
 	   	if(isset($this->params['url']['end_time']) && $this->params['url']['end_time'] != ''){
@@ -127,6 +128,7 @@ class BalancesController extends AppController {
 		$this->operator_privilege('voucher_undeal_view');
 		/*end*/
 		$this->pageTitle = "待处理充值" ." - ".$this->configs['shop_name'];
+		$this->navigations[] = array('name'=>'客户管理','url'=>'');
 		$this->navigations[] = array('name'=>'待处理充值','url'=>'/balances/search/processing/');
 		$this->set('navigations',$this->navigations);
 		
@@ -238,7 +240,7 @@ class BalancesController extends AppController {
     	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'会员:'.$user_info["User"]["name"].' 充值确认' ,'operation');
     	    }
-			$this->flash("会员 ".$user_info["User"]["name"]." 充值确认成功。点击反回列表页",'/balances/search/processing',10);
+			$this->flash("会员 ".$user_info["User"]["name"]." 充值确认成功。点击这里反回列表页",'/balances/search/processing',10);
 		}
 	}
 	

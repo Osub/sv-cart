@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: navigations_controller.php 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: navigations_controller.php 4691 2009-09-28 10:11:57Z huangbo $
 *****************************************************************************/
 class NavigationsController extends AppController {
 	var $name = 'Navigations';
@@ -18,13 +18,15 @@ class NavigationsController extends AppController {
 
 	var $components = array ('Pagination','Cookie','RequestHandler');
 	
-	var $uses = array('Navigation','NavigationI18n');
+	var $uses = array('Navigation','NavigationI18n','SystemResource');
 
 	function index(){
 		/*判断权限*/
 		$this->operator_privilege('navigation_view');
 		/*end*/
 	   	$this->checkSession();
+	   	
+	   	
 	   	$condition="1=1";
 	  	//导航筛选查询条件
 	   	$type = '';
@@ -46,25 +48,31 @@ class NavigationsController extends AppController {
 			$condition .= " and Navigation.id in (".implode(',',$navigationid).")";
 	    }
 		$this->pageTitle = "导航设置"." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'界面管理');
+		$this->navigations[] = array('name'=>'界面管理','url'=>'');
 		$this->navigations[] = array('name'=>'导航设置','url'=>'/navigations/');
 		
 		$this->set('navigations',$this->navigations);
    	    $total = count($this->Navigation->find("all",array("conditions"=>$condition)));
 	    $sortClass='Navigation';
 	    $page=1;
-	    $rownum=isset($this->configs['show_count']) ? $this->configs['show_count']:((!empty($rownum)) ?$rownum:20);
+	    $rownum=200000;//isset($this->configs['show_count']) ? $this->configs['show_count']:((!empty($rownum)) ?$rownum:20);
 	    $parameters=Array($rownum,$page);
 	    $options=Array();
 		$page  = $this->Pagination->init($condition,$parameters,$options,$total,$rownum,$sortClass);
-		
 		$orderby = 'Navigation.type,Navigation.orderby,Navigation.id';
-		$data = $this->Navigation->getdata($condition,$orderby,$rownum,$page,$this->locale);
+		$data = $this->Navigation->alltree($condition,$orderby,$rownum,$page,$this->locale);
+		
+		//资源库信息
+        $this->SystemResource->set_locale($this->locale);
+        $systemresource_info = $this->SystemResource->resource_formated(false);//find("first",array("conditions"=>array("code"=>"order_status")));
+       	//
+		$this->set("systemresource_info",$systemresource_info);
 		$this->set('navigations2',$data);
 		$this->set('type',$type);
 		$this->set('controller',$controller);
 		$this->set('navigation_name',$navigation_name);
-		$this->set('types',array('H'=>'帮助栏目','T'=>'顶部','B'=>'底部','M'=>'中间'));
+		
+		$this->set('types',$systemresource_info["navigation_type"]);
 		$this->set('controllers',array('pages'=>'首页','categories'=>'分类','brands'=>'品牌','products'=>'商品','articles'=>'文章','cars'=>'购物车'));
 
 	}
@@ -74,11 +82,11 @@ class NavigationsController extends AppController {
 		$this->operator_privilege('navigation_edit');
 		/*end*/
 		$this->pageTitle = "编辑导航设置 - 导航设置"." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'界面管理');
+		$this->navigations[] = array('name'=>'界面管理','url'=>'');
 		$this->navigations[] = array('name'=>'导航设置','url'=>'/navigations/');
 		$this->navigations[] = array('name'=>'编辑导航设置','url'=>'');
 		
-
+		
 		if($this->RequestHandler->isPost()){
 			$this->data['Navigation']['orderby'] = !empty($this->data['Navigation']['orderby'])?$this->data['Navigation']['orderby']:"50";
 			//$this->NavigationI18n->deleteAll("navigation_id='".$this->data['Navigation']['id']."'",false);
@@ -105,13 +113,15 @@ class NavigationsController extends AppController {
     	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'编辑导航设置:'.$userinformation_name ,'operation');
     	    }
-			$this->flash("导航设置 ".$userinformation_name." 编辑成功。点击继续编辑该导航设置。",'/navigations/edit/'.$id,10);
+			$this->flash("导航设置 ".$userinformation_name." 编辑成功。点击这里继续编辑该导航设置。",'/navigations/edit/'.$id,10);
 
 		}
 		$this->data = $this->Navigation->localeformat($id);
+		$navigation_data = $this->Navigation->find("all",array("conditions"=>array("Navigation.parent_id"=>"0")));
 		//leo20090722导航显示
 		$this->navigations[] = array('name'=>$this->data["NavigationI18n"][$this->locale]["name"],'url'=>'');
 	    $this->set('navigations',$this->navigations);
+	    $this->set('navigation_data',$navigation_data);
 
 	}
 
@@ -120,7 +130,7 @@ class NavigationsController extends AppController {
 		$this->operator_privilege('navigation_add');
 		/*end*/
 		$this->pageTitle = "添加导航栏 - 导航设置"." - ".$this->configs['shop_name'];
-		$this->navigations[] = array('name'=>'界面管理');
+		$this->navigations[] = array('name'=>'界面管理','url'=>'');
 		$this->navigations[] = array('name'=>'导航设置','url'=>'/navigations/');
 		$this->navigations[] = array('name'=>'添加导航栏','url'=>'');
 		$this->set('navigations',$this->navigations);
@@ -147,9 +157,11 @@ class NavigationsController extends AppController {
     	    if(isset($this->configs['open_operator_log']) && $this->configs['open_operator_log'] == 1){
     	    $this->log('操作员'.$_SESSION['Operator_Info']['Operator']['name'].' '.'添加导航设置:'.$userinformation_name ,'operation');
     	    }
-			$this->flash("导航设置 ".$userinformation_name."  编辑成功。点击继续编辑该导航设置。",'/navigations/edit/'.$id,10);
+			$this->flash("导航设置 ".$userinformation_name."  编辑成功。点击这里继续编辑该导航设置。",'/navigations/edit/'.$id,10);
 
 		}
+		$navigation_data = $this->Navigation->find("all",array("conditions"=>array("Navigation.parent_id"=>"0")));
+	    $this->set('navigation_data',$navigation_data);
 	}
 	function remove($id){
 		/*判断权限*/
