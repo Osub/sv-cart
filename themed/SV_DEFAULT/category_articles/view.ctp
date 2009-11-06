@@ -9,14 +9,14 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: view.ctp 3225 2009-07-22 10:59:01Z huangbo $
+ * $Id: view.ctp 4333 2009-09-17 10:46:57Z huangbo $
 *****************************************************************************/
 ?>
 <div id="Right">
 	<?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 	<div id="Products_box">
     	<h1 class="headers"><span class="l"></span><span class="r"></span><b><?php echo $SCLanguages['article'];?><?php echo $SCLanguages['list'];?></b></h1>
-<div id="Edit_box">
+<div class="Edit_box">
 <!--文章列表-->
   <div id="Edit_info">
  <?php if(isset($article_list) && sizeof($article_list)>0){?>   <div id="user_msg">
@@ -26,7 +26,7 @@
     <div id="article_box">
 <?php foreach($article_list as $key=>$v){ ?>    
 		<p class="list">
-			<span class="title"><?php echo $html->link($v['ArticleI18n']['title'],"/articles/{$v['Article']['id']}",array(),false,false);?></span>
+			<span class="title"><?php echo $html->link($v['ArticleI18n']['sub_title'],$svshow->article_link($v['Article']['id'],$dlocal,$v['ArticleI18n']['title'],$this->data['configs']['article_link_type']),array('title'=>$v['ArticleI18n']['title']),false,false);?></span>
 			<span class="time"><?php echo $v['Article']['created'];?></span>
 		</p>
 <?php } ?>
@@ -91,5 +91,5 @@ function show_last5(){
 </script>
     
     
-<?php echo $this->element('news', array('cache'=>array('time'=> "+24 hour",'key'=>'news'.$template_style)));?>
+<?php echo $this->element('news', array('cache'=>array('time'=> "+0 hour",'key'=>'news'.$template_style)));?>
 </div>

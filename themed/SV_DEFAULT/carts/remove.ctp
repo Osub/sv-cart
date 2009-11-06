@@ -9,11 +9,11 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: remove.ctp 2989 2009-07-17 02:03:04Z huangbo $
+ * $Id: remove.ctp 3779 2009-08-19 10:40:08Z huangbo $
 *****************************************************************************/
 ob_start();?>
 <?php if($result['type'] == "product"){?>
-<div id="loginout">
+<div id="loginout" class="loginout">
 <h1 class="hd"><b style="font-size:14px"><?php echo $SCLanguages['delete'].$SCLanguages['products'];?></b></h1>
 <div id="buyshop_box">
 <div class="shops">
@@ -68,12 +68,12 @@ ob_start();?>
 <?php }?>
 </p>
 </div>
-<p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."loginout-bottom.png":"loginout-bottom.png");?></p>
+<p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."loginout-bottom.gif":"loginout-bottom.gif");?></p>
 </div></div>
 <?php }?>
 
 <?php if($result['type'] == "packaging"){?>
-<div id="loginout">
+<div id="loginout" class="loginout">
 <h1 class="hd"><b style="font-size:14px"><?php echo $SCLanguages['delete'].$SCLanguages['packaging'];?></b></h1>
 <div id="buyshop_box">
 <div class="shops">
@@ -98,12 +98,12 @@ ob_start();?>
 <?php }?>
 </p>
 </div>
-<p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."loginout-bottom.png":"loginout-bottom.png");?></p>
+<p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."loginout-bottom.gif":"loginout-bottom.gif");?></p>
 </div></div>
 <?php }?>
 
 <?php if($result['type'] == "card"){?>
-<div id="loginout">
+<div id="loginout" class="loginout">
 <h1 class="hd"><b style="font-size:14px"><?php echo $SCLanguages['delete'].$SCLanguages['card'];?></b></h1>
 <div id="buyshop_box">
 <div class="shops">
@@ -128,7 +128,7 @@ ob_start();?>
 <?php }?>
 </p>
 </div>
-<p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."loginout-bottom.png":"loginout-bottom.png");?></p>
+<p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."loginout-bottom.gif":"loginout-bottom.gif");?></p>
 </div></div>
 <?php }?>
 <?php $result['message'] = ob_get_contents();

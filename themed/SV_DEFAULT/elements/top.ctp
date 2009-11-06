@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: top.ctp 3124 2009-07-21 02:27:57Z huangbo $
+ * $Id: top.ctp 4333 2009-09-17 10:46:57Z huangbo $
 *****************************************************************************/
 ?>
 <!--Brands-->
@@ -20,7 +20,7 @@
 <?php foreach($top_products as $k=>$v){?>
 <ul>
 	<li class="number"><?=($k+1);?></li>
-	<li><?php echo $html->link($v['ProductI18n']['name'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("class"=>"color_083","target"=>"_blank"),"",false,false);?></li>
+	<li><?php echo $html->link($v['ProductI18n']['name'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['product_link_type']),array("class"=>"color_083","target"=>"_blank"),"",false,false);?></li>
 	</ul>
 <?php }}?>
 </div>

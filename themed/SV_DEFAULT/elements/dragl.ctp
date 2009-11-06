@@ -1,42 +1,104 @@
 <?php if(!isset($_SESSION['User']['User']['id'])){ ?>
 <!--Login-->
-<div id="User_Login" class="yui-overlay"><div class="hd title"><b><?php //=$SCLanguages['member'];?><?php echo $SCLanguages['login'];?></b></div>
-<div class="keywords"><dl><dt><?php echo $SCLanguages['username'];?></dt><dd><input type="text" name="data[User][name]" id="UserName" class="enter text_input" /></dd></dl>
-	<dl>
-	<dt><?php echo $SCLanguages['password'];?></dt>
-	<dd><input type="password" name="data[User][password]" id="UserPassword" class="enter text_input" /></dd>
-	</dl>
-    <dl class="captcha" 	<?php if($SVConfigs['use_captcha'] == 0){?>style="display:none"<?php }?>>
-    <dt><?php echo $SCLanguages['verify_code'];?></dt>
-    <dd class="passbox"><input type="text" name="data[User][captcha]" id="UserCaptcha" class="Price text_input" style="width:80px;" /><a  href="javascript:show_login_captcha('login_captcha')"><img id="login_captcha" alt="<?php echo $SCLanguages['verify_code']?>" title="<?php echo $SCLanguages['not_clear']?>" /></a></dd>
-    </dl>
-    <p id="panel_login_message"></p>
-    <dl class="btn">
-    <dt class="logon"><?php echo $html->link(__($SCLanguages['login'],true),"javascript:panel_login();","",false,false);?></dt><dd class="forget_pass">
-<?php echo $html->link("<font face='宋体'>>></font>".$SCLanguages['forget_password'],$server_host.$user_webroot."forget_password/",array(),false,false);?>
-    </dd>
-    </dl>
-</div><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."adv_searchbottom.png":"adv_searchbottom.png",array("align"=>"left"))?></div>
+<div id="User_Login" class="yui-overlay dialog">
+<span class="upleft">&nbsp;</span>
+<h4 class="hd"><?php echo $SCLanguages['login'];?></h4>
+<div class="box keywords">
+	<dl><dt><?php echo $SCLanguages['username'];?></dt><dd><input type="text" name="data[User][name]" id="UserName" class="text_input" /></dd></dl>
+	<dl><dt><?php echo $SCLanguages['password'];?></dt><dd><input type="password" name="data[User][password]" id="UserPassword" class="text_input" /></dd></dl>
+	<dl class="captcha"	<?php if($this->data['configs']['use_captcha'] == 0){?>style="display:none"<?php }?>><dt><?php echo $SCLanguages['verify_code'];?></dt><dd><input type="text" name="data[User][captcha]" id="UserCaptcha" class="text_input" style="width:80px;" /><a  href="javascript:change_captcha('login_captcha')"><span id="captcha_inner"></span></a></dd></dl>
+	<p id="panel_login_message"></p>
+	<dl class="action"><dt><?php echo $html->link("<span>".$SCLanguages['login']."</span>","javascript:panel_login();",array("class"=>"button_3"),false,false);?></dt><dd><?php echo $html->link("<font face='宋体'>>></font>".$SCLanguages['forget_password'],$server_host.$user_webroot."forget_password/",array(),false,false);?></dd></dl>
+</div>
+<div class="bottom">&nbsp;</div>
+<span class="downleft">&nbsp;</span><span class="downright">&nbsp;</span>
+</div>
 <!--Login End-->
 <?php }?>
-<?php 	if(isset($languages) && sizeof($languages)>0){?>
+
+<?php if(isset($languages) && sizeof($languages)>0){?>
 <!--Language-->
-<div id="language" class="yui-overlay">
-<div class="hd title"><b><?php echo $SCLanguages['switch_languages'];?></b></div>
-<ul>
-<?php 
-foreach($languages as $language){?><li><?php echo $html->link($html->image($language['Language']['img01'],array("alt"=>$language['Language']['name'],'align'=>'middle')).$language['Language']['name'],"javascript:change_locale('".$language['Language']['locale']."');","",false,false);?></li>
-<?php }?></ul><?php echo $html->image(isset($img_style_url)?$img_style_url."/".'lauguage_bottom.gif':'lauguage_bottom.gif',array("align"=>"left"));?>
+<div id="language" class="yui-overlay dialog">
+<span class="upleft">&nbsp;</span>
+<h4 class="hd"><?php echo $SCLanguages['switch_languages'];?></h4>
+	<div class="box">
+	<ul>
+	<?php foreach($languages as $language){?>
+	<li><?php echo $html->link($html->image($language['Language']['img01'],array("alt"=>$language['Language']['name'],'align'=>'middle')).$language['Language']['name'],"javascript:change_locale('".$language['Language']['locale']."');","",false,false);?></li><?php }?>
+	</ul>
+	</div>
+<div class="bottom">&nbsp;</div>
+<span class="downleft">&nbsp;</span><span class="downright">&nbsp;</span>
 </div>
 <!--Language End-->
 <?php }?>
+<?php if(isset($can_select_template) && sizeof($can_select_template)>0){?>
+<!--Theme-->
+<div id="theme" class="yui-overlay dialog">
+<span class="upleft">&nbsp;</span>
+<h4 class="hd"><?php echo $this->data['languages']['switch_template'];?></h4>
+	<div class="drag theme">
+		<div class="box"><?php foreach($can_select_template as $k=>$v){?><ul><li class="lang"><?php echo $v['description']?></li><?php if(isset($v['style']) && sizeof($v['style'])>0){?><li class="thems"><?php foreach($v['style'] as $theme){?><?php echo $html->link($html->image($theme.".gif"),"javascript:change_theme('".$v['name']."','".$theme."')",array(),false,false)?>&nbsp;<?php }?></li><?php }?></ul><?php }?></div>
+	</div>
+<div class="bottom">&nbsp;</div>
+<span class="downleft">&nbsp;</span><span class="downright">&nbsp;</span>
+</div>
+<!--Theme End-->
+<?php }?>
+<cake:nocache>
+<?php if(isset($this->data['currencies']) && sizeof($this->data['currencies'])>0 && $session->check('Config.locale')){?>
+<!--Currency-->
+<div id="currencie" class="yui-overlay dialog">
+<span class="upleft">&nbsp;</span>
+<h4 class="hd"><?php echo $this->data['languages']['switch_currency'];?></div>
+	<div class="drag currencie">
+		<div class="box"><ul><?php foreach($this->data['currencies'] as $k=>$v){?>
+	<?php if($session->check('Config.locale') && isset($v[$session->read('Config.locale')])){?><li>
+<?php if($session->check('currencies') && $session->read('currencies') == $k){?><b><?php }?>
+			<?php echo $html->link($v[$session->read('Config.locale')]['Currency']['name'],"javascript:change_currencie('".$k."')",array(),false,false)?>
+<?php if($session->check('currencies') && $session->read('currencies') == $k){?></b><?php }?>		</li>	
+		<?php }?>
+			<?php }?></ul></div>
+	</div>
+<div class="bottom">&nbsp;</div>
+<span class="downleft">&nbsp;</span><span class="downright">&nbsp;</span>
+</div>
+<!--Currency End-->
+<?php }?>	
+</cake:nocache>
+<!--keywords-->
+<?php 
+if(isset($this->data['configs'])){
+	$header_keywords = explode(" ",$this->data['configs']['home_search_keywords']);
+}
+if(isset($header_keywords) && sizeof($header_keywords)>0){
+?>
+<div id="Select_Header_Keyword" class="yui-overlay dialog">
+<span class="upleft">&nbsp;</span>
+<h4 class="hd"><?php echo $this->data['languages']['hot'];?><?php echo $this->data['languages']['keywords'];?></h4>
+	<div class="drag hotkeyword">
+		<div class="box">
+		<ul>
+		<?php foreach($header_keywords as $value){?>
+		<li><?php echo $html->link($value,'/products/advancedsearch/SAD/'.$value,array(),false,false);?></li>
+		<?php }?>
+		</ul>
+		</div>
+	</div>
+<div class="bottom">&nbsp;</div>
+<span class="downleft">&nbsp;</span><span class="downright">&nbsp;</span>
+</div>
+<?php }?>
+<!--keywords End-->	
 <!--AdvancedSearch-->
-<div id="advanced_search" class="yui-overlay" style="height:100%;">
-<div class="hd title"><b><?php echo $SCLanguages['advanced_search'];?></b></div>
+<div id="advanced_search" class="yui-overlay dialog">
+<span class="upleft">&nbsp;</span>
+<h4 class="hd"><?php echo $SCLanguages['advanced_search'];?></h4>
 <form action="" method="post" name="ad_search">
-<div class="keywords">
-	<dl><dt><?php echo $SCLanguages['keywords'];?></dt><dd><input type="text" name="ad_keywords" id="ad_keywords" class="enter text_input" /></dd></dl>
-	<?php if(isset($categories_tree) && sizeof($categories_tree)>0){?><dl>
+<div class="box keywords">
+	<dl><dt><?php echo $SCLanguages['keywords'];?></dt><dd><input type="text" name="ad_keywords" id="ad_keywords" class="text_input" /></dd></dl>
+	<?php if(isset($categories_tree) && sizeof($categories_tree)>0){?>
+	<dl>
 		<dt><?php echo $SCLanguages['category'];?></dt>
 		<dd>
 		<select name="category_id" id="category_id" class="category_id">
@@ -71,6 +133,8 @@ foreach($languages as $language){?><li><?php echo $html->link($html->image($lang
 		<dd><input type="text" name="min_price" id="min_price" class="Price text_input" /><span>-</span><input type="text" name="max_price" id="max_price" class="Price text_input" /></dd>
 	</dl>
 	<p class="go"><a href="javascript:ad_search()"><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."search_go_btn.png":''."search_go_btn.png",array("alt"=>"搜索","title"=>"搜索"))?></a></p>
-</div></form><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."adv_searchbottom.png":"adv_searchbottom.png",array("align"=>"left"))?>
+</div></form>
+<div class="bottom">&nbsp;</div>
+<span class="downleft">&nbsp;</span><span class="downright">&nbsp;</span>
 </div>
 <!--AdvancedSearch End-->

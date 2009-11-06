@@ -11,7 +11,7 @@ li {
 	padding:0px; display: block;font-weight: normal;margin:0px; border-style: none;   list-style-type: none;
 }
 dl {
-	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+	display: block; padding: 0;margin:0;
 }
 dt {
 	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
@@ -32,10 +32,10 @@ h4 {
 	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
 }
 h5 {
-	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+	padding:0;margin:0;font-size:12px;
 }
 h6 {
-	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;float: left; padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
+	padding: 0; display: block;margin: 0;
 }
 p {
 	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal;padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
@@ -48,8 +48,16 @@ form{padding:0;margin:0;}
 .vmiddle{vertical-align:middle;}
 .margin_sid{margin-left:5px;margin-right:5px;}
 .radio{margin:-5px 3px 0 0;vertical-align:middle;position:relative;}
+.checkbox{
+	margin:-2px 3px 0 0;vertical-align:middle;position:relative;
+}
 input.text_input{padding-top:1px;padding-bottom:1px;font-family:arial;}
+
+.height_4{height:4px;line-height:4px;overflow:hidden;clear:both;}
+.height_25{height:25px;line-height:25px;overflow:hidden;}
 .font_14{font-size:14px;}
+
+.unline{text-decoration:underline;}
 
 #ysearch { text-align:center; }
 #ysearchinput { position:static;width:20em; } /* to center, set static and explicit width: */
@@ -60,48 +68,83 @@ input.text_input{padding-top:1px;padding-bottom:1px;font-family:arial;}
   width: 951px; margin: 0 auto; overflow:hidden;
 }
 #header{
-	width:950px;margin:0 auto;margin-bottom:10px;min-height:74px;
+	width:950px;margin:0 auto;margin-bottom:5px;min-height:74px;position:relative;z-index:2;
 }
-* html #header{
+*html #header{
 	height:74px;
 }
+#header .cart .number{margin:0 3px;}
 
 #footer{
-	width:950px;height:99px;padding-top:15px;margin:0 auto;margin-top:20px;clear:both;
-}
-#footer p{
-	text-align:center;
+	width:950px;padding:10px 0 3px;margin:10px auto 0;clear:both;height:100%;overflow:hidden;
 }
 #footer .link{
-	line-height:30px;
+	line-height:22px;
 }
-#footer .link a{
-	margin:8px;
+#footer .link span{
+	margin:0 8px;
 }
-#footer .Power{
-	line-height:20px;
-}
-#footer .Power .number{
-	margin-left:10px;
+#footer .Power{line-height:17px;}
+#footer .Power .number{margin-left:10px;}
+#footer .copyRight{
+	padding-bottom:4px;
 }
 #footer .copyRight font{
 	margin-right:4px;
 }
+#footer .logo{
+	border-right:1px solid #BABABA;width:21%;margin-top:18px;float:left;
+}
+#footer .footer_right{
+	width:74%;float:right;padding-top:8px;
+}
+#footer .service{
+	color:#333333;padding:3px 0 4px;
+}
+#footer .service img{
+	vertical-align:middle;margin:-4px 0 0;
+}
+#footer .service img.qq{
+	margin-top:-6px;margin-right:3px;
+}
+/*=============== help_foot_article µ×²¿ °ïÖúÎÄÕÂ ================*/
+.help_foot_article{
+	overflow:hidden;padding:0 18px 15px;height:100%;background:url('../img/black/dashed.gif') 0 bottom repeat-x;margin:0 10px;
+}
+.help_foot_article .box{
+	float:left;margin:0 10px 0 0;display:inline;width:19%;min-height:77px;
+}
+* html .help_foot_article .box{height:77px;}
+.help_foot_article h6{
+	font-size:100%;
+}
+.help_foot_article ul{
+	padding:6px 0 0;
+}
+.help_foot_article li{
+	margin:4px 0;padding-left:12px;background:url('../img/black/list.gif') 0 2px no-repeat;
+}
+.help_foot_article .tell{
+	margin-right:0;padding-top:5px;
+}
+
+
 #Left{
 	float:left;margin-left:8px;display:inline;width:176px;
 }
 #Right{
-	margin-right:7px;float:right;width:742px;display:inline;
+	margin-right:7px;float:right;width:754px;display:inline;
 }
 
 
 .submit_btn input.submit{width:63px;height:21px;cursor:pointer;}
 .submit_btn input.reset{width:63px;height:21px;cursor:pointer;}
 
-h1.headers{padding:5px 0 0 27px;height:31px;position:relative;margin:0 30px;}
+h1.headers{
+	padding:5px 0 0 27px;height:31px;position:relative;margin:0 30px;font-size:15px;line-height:28px;
+}
 h1.headers span.l{width:41px;height:36px;position:absolute;left:-30px;top:0;;overflow:hidden}
 h1.headers span.r{width:41px;height:36px;position:absolute;right:-30px;top:0;z-index:-1;overflow:hidden}
-h1.headers b{font-size:15px;line-height:28px;}
 
 * html h1.friendheader{height:36px;padding-top:0;line-height:30px;}
 
@@ -112,3 +155,29 @@ h1.headers b{font-size:15px;line-height:28px;}
 .not{text-align:center;font-size:14px;}
 .not strong{font-weight:bold}
 .not img{vertical-align:middle;margin:-5px 15px 0 0;}
+
+#ysearch { text-align:center; }
+#ysearchinput { position:static;width:20em; } /* to center, set static and explicit width: */
+#ysearchcontainer_search { text-align:left;width:20em;} /* to center, set left-align and explicit width: */
+#ysearchinput_search { position:static;width:20em; } /* to center, set static and explicit width: */
+#ysearchcontainer { text-align:left;width:20em;} /* to center, set left-align and explicit width: */
+/*=============== help_foot_article µ×²¿ °ïÖúÎÄÕÂ ================*/
+.help_foot_article{
+	overflow:hidden;padding:0 10px 15px;height:100%;background:url('../img/black/dashed.gif') 0 bottom repeat-x;margin:0 10px;
+}
+.help_foot_article .box{
+	float:left;margin:0 10px 0 0;display:inline;width:19%;min-height:77px;
+}
+* html .help_foot_article .box{height:77px;}
+.help_foot_article h6{
+	font-size:100%;padding-left:14px;
+}
+.help_foot_article ul{
+	padding:6px 0 0;
+}
+.help_foot_article li{
+	margin:4px 0;padding-left:12px;background:url('../img/black/list.gif') 0 2px no-repeat;
+}
+.help_foot_article .tell{
+	margin-right:0;padding-top:5px;
+}

@@ -8,11 +8,18 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: style_red.css 3261 2009-07-23 05:38:53Z huangbo $
+ * $Id: style_red.css 5195 2009-10-20 05:29:32Z huangbo $
 *****************************************************************************/
 
 body {background:#fff;}
 a{text-decoration:none;color:#8A8B8B;}
+.tab_head .name{
+	background:url('../img/red/catname.gif') 0 85% no-repeat;color:#9F1320;
+}
+h4 {
+	border-bottom:1px solid #E3B0AB;color:#DC6563;
+}
+.screening .all{color:#9E2817;}
 .float_l{float:left;}.float_r{float:right}
 .green_border{border:1px solid #CE928D;}
 .border_green_6{border:1px solid #CE928D;}
@@ -21,8 +28,9 @@ input.text_input{border:1px solid #D11E1C;padding-top:1px;padding-bottom:1px;fon
 .text_input{border:1px solid #D11E1C;}
 select.selects{border:1px solid #D11E1C;}
 .border{border:1px solid #CE928D}
+.border_bottom{border-bottom:1px solid #CE928D;}
 .border_b{border:1px solid #CE928D}
-.border_side{border-left:1px solid #E65C1E;border-right:1px solid #E65C1E;background:#fff;}
+.border_side{border-left:1px solid #CE928D;border-right:1px solid #CE928D;background:#fff;}
 .bgcolor_e{background:#FFEAEA;}
 .cursor{cursor:pointer;}
 /*Color*/
@@ -33,6 +41,9 @@ select.selects{border:1px solid #D11E1C;}
 .color_53{color:#9E2817;}
 .fff{color:#fff}
 .color_083{color:#8A8B8B;}
+.font_color_1{color:#E36765;}
+.font_red{color:#ff0000;}
+
 
 .find-btns{
 	background:url(../img/red/find.gif) 100% -20px no-repeat;
@@ -44,15 +55,67 @@ select.selects{border:1px solid #D11E1C;}
 	background:url(../img/red/find.gif) 100% -20px no-repeat;
 }
 
-#Item_List ul li .info .name a{
+/*  Button  */
+.button_1{
+	background:url('../img/red/button.gif') right -20px no-repeat;
+}
+.button_1 span{
+	background:url('../img/red/button.gif') 0 0 no-repeat;color:#fff;
+}
+.button_1:hover{
+	background:url('../img/red/button.gif') right -60px no-repeat;
+}
+.button_1:hover span{
+	background:url('../img/red/button.gif') 0 -40px no-repeat;color:#fff;
+}
+.button_2{
+	background:url('../img/red/button.gif') right -100px no-repeat;
+}
+.button_2 input{
+	background:url('../img/red/button.gif') 0 -80px no-repeat;border:none;color:#DB615F;
+}
+.button_3{
+	background:url('../img/red/button.gif') right -150px no-repeat;
+}
+.button_3 span{
+	background:url('../img/red/button.gif') 0 -120px no-repeat;color:#fff;
+}
+
+
+.dialog h4{
+	background:url('../img/red/dialog.gif') 0 0 repeat-x;border:none;color:#fff;
+}
+.dialog .box{
+	background:#fff;border-left:1px solid #CE928D;border-right:1px solid #CE928D;
+}
+.dialog .upleft{
+	background:url('../img/red/dialog.gif') 0 -22px no-repeat;
+}
+.dialog .upright{
+	background:url('../img/red/dialog.gif') -10px -22px no-repeat;
+}
+.dialog .downleft{
+	background:url('../img/red/dialog.gif') -20px -22px no-repeat;
+}
+.dialog .downright{
+	background:url('../img/red/dialog.gif') -30px -22px no-repeat;
+}
+.dialog .bottom{
+	background:#FFFFFF;border-bottom:1px solid #CE928D;
+}
+
+.Item_List .more a{
+	color:#9E2817;
+}
+.Item_List ul li .info .name a{
 	color:#9F1320;
 }
-#Item_List ul li .info .carts{color:#9F1320;}
-#Item_List ul li .info .carts a{color:#9F1320;}
-#Item_List ul li .info .Price{color:#6D6D6D;}
-#Item_List ul li .info .stow{color:#E36765;}
-#Item_List ul li .info .stow a{	color:#E36765;}
-#Item_List li.no_item p{color:#DC6563}
+.Item_List ul li .info .carts{color:#9F1320;}
+.Item_List ul li .info .carts a{color:#9F1320;}
+.Item_List ul li .info .Price{color:#6D6D6D;}
+.Item_List ul li .info .stow{color:#E36765;}
+.Item_List ul li .info .stow a{	color:#E36765;}
+.Item_List li.no_item p{color:#DC6563}
 #News p.text{color:#E36765;}
 #advanced_search .keywords dl dt{color:#E36765;}
 #User_Login .keywords dl dt{width:30%;text-align:right;margin:5px 0 0 0;color:#E36765;line-height:normal;white-space:nowrap;padding-right:5px;}
@@ -63,15 +126,15 @@ select.selects{border:1px solid #D11E1C;}
 #panel_login_message{color:#f00;}
 .keywords dl .forget_pass a{color:#E36765;}
 .View_item .select_view select{color:#9E2817;}
-#Item_ListBox .Title_Item .select_Territory select{color:#9E2817;}
-#Item_ListBox ul li .right .item_info{color:#9F1320;}
-#Item_ListBox ul li .right .brand-name{color:#9F1320;}
+.Item_ListBox .Title_Item .select_Territory select{color:#9E2817;}
+.Item_ListBox ul li .right .item_info{color:#9F1320;}
+.Item_ListBox ul li .right .brand-name{color:#9F1320;}
 .right .item_info .name{color:#9F1320;}
 .right .item_info .buy a{color:#fff;}
 .right .item_info .name a{	color:#9F1320;}
 .right .item_info .Price{color:#9F1320;}
-#Item_ListBox ul li .right .btn_list{color:#0756A3;}
-#Item_ListBox ul li .right .btn_list_a{color:#0756A3;}
+.Item_ListBox ul li .right .btn_list{color:#0756A3;}
+.Item_ListBox ul li .right .btn_list_a{color:#0756A3;}
 /*  ==================== ur_here ====================  */
 #ur_here{color:#9F1320;}
 #ur_here a{color:#9F1320;}
@@ -82,20 +145,19 @@ select.selects{border:1px solid #D11E1C;}
 #pager p a:hover{color:#9F1320;}
 .Brand_list p span a:hover{color:#9F1320;}
 .Brand_list p span a{color:#9F1320;}
-#globalMain #main_left h1{color:#9F1320;}
 .item_box ul li{color:#808080;}
 .item_box ul li.btn_list{color:#808080;}
 .item_box ul li.btn_list a,.item_box ul li.btn_list a:hover{color:#fff;}
 .item_box ul li .price{color:#FF6502;}
 .item_box h2{color:#9F1320;}
-#item_info h2{color:#9F1320;}
+.property h2{color:#9F1320;}
 #item_info .infos{color:#808080;}
 .user_comment dl{color:#808080;}
 #Products .ur_here{color:#40AAFE;}
 #Products .ur_here a{color:#40AAFE;}
 #Products .Title_list{color:#E36765;border-bottom:1px solid #CE928D;}
-#Item_box .Item_info{color:#9F1320;}
-#Item_box .Item_info a{color:#9F1320;}
+#Item_box .Item_title{color:#9F1320;}
+#Item_box .Item_title a{color:#9F1320;}
 #Item_box .Item_Price span{color:#9F1320;}
 #Item_box .Item_Price .Price{color:#E36765;}
 #Item_box .Item_Price .save{color:#FF9C01;}
@@ -112,6 +174,9 @@ select.selects{border:1px solid #D11E1C;}
 .main .comment_list p span,.infos .comment_list p span{color:#8A8B8B;}
 p.no_article{color:#D11E1C;}
 #globalBalance .buy_title,h5{color:#DC6563;}
+h5 .over_cont{color:#E36765;}
+h5{border-bottom:1px solid #CE928D;}
+
 #globalBalance .lists a{color:#E36765;}
 .address_table td.lan-name{color:#E36765;}
 .address_table td.lan-info{color:#E36765;}
@@ -121,27 +186,26 @@ p.no_article{color:#D11E1C;}
 .history ul li .price{color:#9F1320;}
 #buyshop_box .name a{color:#9F1320;}
 #buyshop_box p{color:#9F1320;}
-#Item_ListBox ul li .item_infos span a{color:#9F1320;}
+.Item_ListBox ul li .item_infos span a{color:#9F1320;}
 .item_infos span.marketprice{color:#8A8B8B;}
-#Item_ListBox ul.breviary li .info .Mart_Price{color:#6D6D6D;}
+.Item_ListBox ul.breviary li .info .Mart_Price{color:#6D6D6D;}
 .right .item_info .Territory a{color:#1FBD66;}
-#navigation li b{color:#9E2817;}
+.navigation li b{color:#9E2817;}
 .list_box .sorts h2 span{color:#DB615F;}
 .list_box .sorts p{color:#666;}
 .list_box .sorts p a:hover{color:#9F1320;}
 .list_box .sorts h2.title a{color:#15A95E;}
-#loginout h1 b{color:#fff;}
 #loginout .login-alettr{border-bottom:1px solid #E6E6E6;color:#DC6563;}
 #Balance_info_carts .item_price .sum_meny{color:#9F1320}
 .informations p.handdle a{color:#E36765;}
 #advanced_search_page a{color:#9E2817;}
 #advanced_search_page a:hover{color:#9F1320;}
 #reguser_gut01_01 {
-	color: #0b4b88;
+	color: #9E2817;
 	text-align:center;
 	margin:20px 0;
 }
-#reguser_gut01 p {color: #0B4B88;}
+#reguser_gut01 p {color: #9E2817;}
 
 #reguser_gut01 ul {color:#848389;}
 #reguser_gut01 ul .sorty{color:#9FA8AD;}
@@ -150,14 +214,14 @@ p.no_article{color:#D11E1C;}
 .ws_xx a{color:#0268CE; }
 #reguser_gut01 .Agreement p.text{color:#848389;}
 #reguser_gut01 #Title {color:#848389;}
-#Edit_info_01 {color: #0b4b88;}
-#Edit_info_username {color: #0b4b88;}
-#Edit_info p ,#article_info p{color: #0B4B88;}
+#Edit_info_01 {color: #9E2817;}
+#Edit_info_username {color: #9E2817;}
+#Edit_info p ,#article_info p{color: #9E2817;}
 #Edit_info ul {color:#848389;}
 #Edit_info ul .sorty{color:#9FA8AD;}
 #Edit_info ul li span.Pass_mantis select{color: #333333;}
 #Edit_info .Agreement p.text{color:#848389;}
-#Edit_info #Title {color: #0b4b88;}
+#Edit_info #Title {color: #9E2817;}
 #clew .clewtxt{color:#7F7F7F;}
 #clew .clewtxt span.bold{color:#f50;}
 #Edit_info .massege p.msg{color:#64765B;}
@@ -177,6 +241,9 @@ p.no_article{color:#D11E1C;}
 #header{
 	background:#fff;border-bottom:5px solid #9E2817;
 }
+.help_foot_article h6{
+	color:#9E2817;
+}
 #footer{
 	background:#fff;color:#B4B4B4;border-top:5px solid #9E2817;
 }
@@ -192,6 +259,17 @@ h1.headers span.r{
 }
 .clear_all a,.address a.amember{color:#ffffff;}
 
+.head{
+	background:url(../img/red/comment.gif) 0 -26px repeat-x;color:#fff;
+}
+.head .left{
+	background:url(../img/red/comment.gif) 0 0 no-repeat;
+}
+.head .right{
+	background:url(../img/red/comment.gif) 0 -52px no-repeat;
+}
+.head .action{color:#fff;}
+
 
 .category_box .box{
 	border-left:1px solid #E3B0AB;border-right:1px solid #E3B0AB;
@@ -199,7 +277,7 @@ h1.headers span.r{
 #search .enter_text{
 	border:1px solid #535353;
 }
-#Item_List ul li .pic img{
+.Item_List ul li .pic img{
 	border:1px solid #ccc;
 }
 #advanced_search .keywords dl .passbox img,#User_Login .keywords dl .passbox img{
@@ -211,7 +289,7 @@ h1.headers span.r{
 .View_item{
 	border:1px solid #CE928D;
 }
-#Item_ListBox ul li .pic img{
+.Item_ListBox ul li .pic img{
 	border:1px solid #E3E3E3;
 }
 #pager p span input{
@@ -220,23 +298,50 @@ h1.headers span.r{
 #globalBrand{
 	border:1px solid #909493;
 }
-#main_left .pic img{
+.product_infos{
+	border:1px solid #E3B0AB;
+}
+.property .colors img{
+	border:1px solid #336699;padding:1px;
+}
+.property .colors a:hover img,.property .color_hover img{
+	border:2px solid #336699;
+}
+.property .sizes a{
+	border:1px solid #909592;color:#909592;
+}
+.property .sizes a.hover{
+	background:#F2DAD8;border:2px solid #D11E1C;color:#D11E1C;
+}
+.property .sizes a:hover{
+	background:#F2DAD8;border:2px solid #D11E1C;color:#D11E1C;
+}
+
+.cont .box{
+	border:1px solid #E3B0AB;
+}
+.comments .msg_title{color:#9F1320;}
+.comments .message_cont{
+	border-bottom:1px solid #E3B0AB;color:#DC6563;
+}
+
+.products_show .pic img{
 	border:1px solid #CE928D;
 }
-#main_left .pic_select img{
+.products_show .pic_select img{
 	border:1px solid #CE928D;
 }
 #main_right #item_infos{
 	border:1px solid #CE928D;
 }
-#comment .box,#article_info{
+.comment .box,#article_info{
 	border:1px #CE928D solid;
 }
 #Right #Products{
 	border:1px solid #CE928D;
 }
-#Item_box .Item_info .pic img{
-	border:1px solid #eee;
+#Item_box .picture img{
+	border:1px solid #EEEEEE;
 }
 .information .infos{
 	border:1px solid #CE928D;
@@ -257,13 +362,13 @@ h1.headers span.r{
 	border:1px solid #eee;
 }
 .history img.hover{border:1px solid #9F1320;}
-#language li img{
+.language li img{
 	border:1px solid #e1e1e1;
 }
 #buyshop_box li.pic img{
 	border:1px solid #E1E1E1;
 }
-#navigation .list_box{
+.navigation .list_box{
 	border:1px solid #909493;
 }
 .home_main{
@@ -281,7 +386,7 @@ h1.headers span.r{
 .Agreement{
 	border:1px solid #DEDEDE;
 }
-#Edit_box #Edit_info,#article_info{
+.Edit_box #Edit_info,#article_info{
 	border:1px #CE928D solid;
 }
 #Edit_info li input {
@@ -309,14 +414,21 @@ h1.headers span.r{
 .category_box h3 .r{
 	background:url(../img/red/category.gif) 0 -58px no-repeat;
 }
+.category_box h3 .clearstatcache{
+	color:#fff;
+}
+.category_box h3 a{color:#fff;}
+.category_box .Help ul li{
+	background:url(../img/red/ico_28.gif) 0 5px no-repeat;
+}
 .category_box .Help ul li a{
 	background:none;color:#E36765;
 }
 #Item_List ul li .info .cart a{
 	background:url(../img/red/AddToCart.gif) no-repeat;color:#fff;
 }
-#advanced_search .title,#User_Login .title,#language .title{
-	background:url(../img/red/login_title.png) no-repeat;color:#fff;
+#advanced_search .title,#User_Login .title,.drag .title{
+	background:url(../img/red/login_title.gif) no-repeat;color:#fff;
 }
 #User_Login .keywords{
 	background:#FFFFFF;border-top:none;border-right:1px solid #CE928D;border-left:1px solid #CE928D;
@@ -327,23 +439,23 @@ h1.headers span.r{
 #User_Login .keywords dl .logon a{
 	background:url(../img/red/logon_img.gif) no-repeat;color:#fff;
 }
-#Item_ListBox{
+.Item_ListBox{
 	border-bottom:1px solid #CE928D;background:#fff url(../img/red/product-bg.gif) repeat-y;
 }
 .View_item{
-	color:#9F1320;background:#DB615F;
+	color:#ffffff;background:#DB615F;
 }
-#Item_ListBox .Title_Item{
-	color:#9F1320;background:#EFF8E1;border-top:1px solid #AAE59F
+.Item_ListBox .Title_Item{
+	color:#9F1320;background:#F7DDDD;border-top:1px solid #CE928D
 }
 .item_info .buy a span{
-	background:url(../img/red/btn_addfav.gif) 100% -24px no-repeat;
+	background:url('../img/red/stow_img.gif') 0 0 no-repeat;
 }
 .right .item_info .buy a.addtocart{
 	background:url(../img/red/btn_addcart.gif) no-repeat;
 }
 .right .item_info .buy a.fav{
-	background:url(../img/red/btn_addfav.gif) no-repeat;
+	background:url('../img/red/stow_img.gif') 100% -20px no-repeat;
 }
 #globalBrand h1{
 	background:#EAFFE0;color:#58CF71;
@@ -351,10 +463,10 @@ h1.headers span.r{
 #Right h1.global_title {
 	color:#fff;background:url(../img/red/infotitle_bg.gif) no-repeat;
 }
-#main_left .pic{
+.products_show .pic{
 	background:url(../img/red/Shadow_bg.gif) right bottom;
 }
-#main_left .picc{
+.products_show .picc{
 	background:url(../img/red/Shadow_bg.gif) no-repeat right bottom;
 }
 #globalMain #main_right h1{
@@ -377,7 +489,7 @@ h1.headers span.r{
 #main_right #Correlation .item_title,#main_right #Correlation_article .item_title{
 	background:#fff;color:#9F1320;
 }
-#Edit_box a#comments{
+.Edit_box a#comments{
 	color:#fff;
 }
 .comment_title{
@@ -387,10 +499,10 @@ h1.headers span.r{
 	color:#fff;background:url(../img/red/with_icon.gif) 0 14px no-repeat;
 }
 .comment_title .close{
-	background:url(../img/red/close.png) no-repeat;
+	background:url(../img/red/close.gif) no-repeat;
 }
 .comment_title .close:hover{
-	background:url(../img/red/close_over.png) no-repeat;
+	background:url(../img/red/close_over.gif) no-repeat;
 }
 .comment_title .l{
 	background:url(../img/red/comments.gif) 0 0 no-repeat;
@@ -398,7 +510,7 @@ h1.headers span.r{
 .comment_title .r{
 	background:url(../img/red/comments.gif) 0 -62px no-repeat;
 }
-#comment{background:#fff;}
+.comment{background:#fff;}
 .btn_liss .reset{
 	background:url(../img/red/submit-img.gif) no-repeat;color:#fff;
 }
@@ -430,14 +542,11 @@ h1.headers span.r{
 .activity_column h1.option{
 	background:url(../img/red/article-option.gif) no-repeat;
 }
-#globalBalance{
-	border-top:1px solid #CE928D;background:url(../img/red/Balance_bg.gif) repeat-y;
-}
 #globalBalance .list_title{
 	border-bottom:2px solid #CE928D;color:#E36765;
 }
 #globalBalance .buy_allmeny{
-	color:#E36765;border-top:2px solid #CE928D;
+	color:#E36765;border-top:1px solid #CE928D;
 }
 #globalBalance .lists{color:#E36765;border-bottom:none;}
 #Balance_info .address{
@@ -464,9 +573,6 @@ h1.headers span.r{
 #Balance_info .order_integral{
 	color:#CE928D;background:#FDEEF8;
 }
-#Balance_info table.address_list,#Balance_info .address_table{
-	border-top:1px solid #CE928D;
-}
 #Balance_info table.address_list td{
 	border-right:1px solid #CE928D;
 }
@@ -489,10 +595,16 @@ h1.headers span.r{
 .green_btns{
 	background:url(../img/red/green_btn.gif) left top no-repeat;
 }
+.total_box strong{color:#9E2817;}
+.total_box .border_line{
+	background:#CE928D;
+}
+
 .green_btns a{background:url(../img/red/green_btn.gif) right -27px no-repeat;color:#fff;}
 .edittitle{color:#E36765;}
-#language ul{
-	border-left:1px solid #CE928D;border-right:1px solid #CE928D;background:#fff;
+
+.drag .box{
+	border-left:1px solid #CE928D;border-right:1px solid #CE928D;background:#fff;color:#E36765;
 }
 #buyshop_box ul{border-bottom:1px solid #E1E1E1;}
 #buyshop_box .shops{
@@ -501,11 +613,11 @@ h1.headers span.r{
 #buyshop_box p.buy_btn a{
 	color:#fff;background:url(../img/red/checkout_btn.gif) no-repeat;
 }
-#navigation h1 span.l{background:url(../img/red/headers.gif) 0 -108px no-repeat;}
-#navigation ul li{
+.navigation h1 span.l{background:url(../img/red/headers.gif) 0 -108px no-repeat;}
+.navigation ul li{
 	background:url(../img/red/option_bg_over.gif) 100% -35px no-repeat;
 }
-#navigation ul li span{background:url(../img/red/option_bg_over.gif) 0 0 no-repeat;}
+.navigation ul li span{background:url(../img/red/option_bg_over.gif) 0 0 no-repeat;}
 ul.content_tab li{
 	color:#fff;background:url(../img/red/item_btn02.gif) 0 0 no-repeat;
 }
@@ -528,8 +640,8 @@ ul.article_tab li.hover span{
 #loginout .box{
 	border-left:1px solid #CE928D;border-right:1px solid #CE928D;background:#fff
 }
-#loginout h1{
-	background:url(../img/red/loginout.png) repeat-x;
+.loginout h1{
+	background:url(../img/red/loginout.gif) repeat-x;color:#fff;
 }
 #loginout .btns a{
 	background:url(../img/red/loginout-btn.gif) no-repeat;color:#fff;
@@ -555,6 +667,7 @@ ul.article_tab li.hover span{
 #globalBalance .order_description{
 	color:#666666;
 }
+.description {color:#909592}
 
 .bg_btns{
 	background:url(/user../img/red/stow_img.gif) no-repeat; color:#fff;
@@ -589,7 +702,7 @@ ul.article_tab li.hover span{
 #reguser_box .Agreement_box{
 	background:url(../img/red/Agreement_bg.gif) repeat-y;
 }
-#Edit_box .Agreement_box{
+.Edit_box .Agreement_box{
 	background:none;border-bottom:none;
 }
 #user_msg p.msg_title{background:#FAE7E7;}
@@ -611,6 +724,16 @@ ul.article_tab li.hover span{
 #Edit_info .article_title .title_bg{
 	background:#BBEBA5;
 }
+
+.categoryArticle .title{
+	color:#8A8B8B;
+}
+.categoryArticle a{color:#E36765;}
+.categoryArticle .meta{
+	border-bottom:1px dashed #E3B0AB;color:#8A8B8B;
+}
+.categoryArticle .last{border-bottom:none;}
+
 .btn_liss .submit_comment{
 	background:url(../img/red/submit-img.gif) no-repeat;border:none;color:#fff;
 }
@@ -651,13 +774,13 @@ ul.article_tab li.hover span{
 }
 
 .svcart-skin-g00 .container-close{
-	background:url(../img/red/close_img.png) no-repeat 100% top;
+	background:url(../img/red/close_img.gif) no-repeat 100% top;
 }
 .svcart-skin-g00 .container-close:hover{
-	background:url(../img/red/close_img_over.png) no-repeat right;
+	background:url(../img/red/close_img_over.gif) no-repeat right;
 }
 .svcart-skin-g00 .yui-simple-dialog .bd .yui-icon{
-	background:url(../img/red/close_img_over.png) no-repeat 0 0;
+	background:url(../img/red/close_img_over.gif) no-repeat 0 0;
 }
 
 

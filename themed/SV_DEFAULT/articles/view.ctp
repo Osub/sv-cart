@@ -9,13 +9,20 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: view.ctp 3225 2009-07-22 10:59:01Z huangbo $
+ * $Id: view.ctp 4433 2009-09-22 10:08:09Z huangbo $
 *****************************************************************************/
 ?>
-<?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
-<div id="Products_box">
+<cake:nocache>
+<? 	$session->check('Config.locale');
+	$locale = $session->read('Config.locale');
+	header('/articles/'.$this->data['article_detail']['Article']['id']."/".$locale);
+?>
+</cake:nocache>
+
+<div id="Products_box"><?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
+
 <h1 class="headers"><span class="l"></span><span class="r"></span><b><?php echo $article_detail['ArticleI18n']['title']; ?></b></h1>
-<div id="Edit_box">
+<div class="Edit_box">
 	<div id="article_info">
 		<div id="user_msg">
 			<p class="article_time"><span class="title">&nbsp;<?php echo $article_detail['ArticleI18n']['author']."  ".$article_detail['Article']['modified']; ?></span></p>
@@ -24,11 +31,11 @@
 
 		<div id="select_article">
 			<p><?php if($neighbours['next']){ ?>
-			 <?php echo $SCLanguages['next'];?><?php echo $SCLanguages['piece'];?>: 
+			 <?php echo $this->data['languages']['next'];?><?php echo $this->data['languages']['piece'];?>: 
 			  <?php echo $html->link("{$neighbours['next']['ArticleI18n']['title']}","{$neighbours['next']['Article']['id']}",array(),false,false); } ?>
 			<br />
 			 <?php if($neighbours['prev']){?>
-			 <?php echo $SCLanguages['previous'];?><?php echo $SCLanguages['piece'];?>: 
+			 <?php echo $this->data['languages']['previous'];?><?php echo $this->data['languages']['piece'];?>: 
 			 <?php echo $html->link("{$neighbours['prev']['ArticleI18n']['title']}","{$neighbours['prev']['Article']['id']}",array(),false,false); } ?>
 			</p>
 		</div>
@@ -36,21 +43,52 @@
 </div>
 <!--文章列表End-->
 
-	<!-- 加文章标签 -->
-		<?php if(isset($SVConfigs['use_tag']) && $SVConfigs['use_tag'] == 1){?>					
-<div id="Edit_box">
-    <div id="Edit_info">
-	  <p class="note article_title"><b><?php echo $SCLanguages['article']?><?php echo $SCLanguages['tags']?></b></p>
+<!--  相关文章 -->
+<?php if(isset($related_articles) && sizeof($related_articles)>0){?>
+<div class="Edit_box">
+    <div id="Edit_info" style="border-top:none;">
+	  <div class="head"><strong><?php echo $this->data['languages']['related_article']?></strong></div>
+		<div id="user_msg">
+		  	<p class="article_time article_title" style="display:none;">
+				<span class="title"><?php echo $SCLanguages['article'];?><?php echo $SCLanguages['list'];?></span>
+				<span class="add_time"><?php echo $SCLanguages['issue_time'];?></span></p>	
+			    <div id="article_box">
+					<?php foreach($related_articles as $key=>$v){ ?>    
+							<p class="list">
+								<span class="title"><?php echo $html->link($v['ArticleI18n']['title'],$svshow->article_link($v['Article']['id'],$dlocal,$v['ArticleI18n']['title'],$this->data['configs']['article_link_type']),array(),false,false);?></span>
+								<span class="time"><?php echo substr($v['Article']['created'],0,10);?></span>
+							</p>
+					<?php } ?>
+				</div>
+		</div>
+	</div>
+</div>
+<?php }?>
+<!--相关文章End-->
+
+<!-- 加文章标签 -->
+<?php if(isset($this->data['configs']['use_tag']) && $this->data['configs']['use_tag'] == 1){?>					
+<div class="Edit_box">
+    <div id="Edit_info" style="border-top:none;">
+	  <div class="head"><strong><?php echo $this->data['languages']['article']?><?php echo $this->data['languages']['tags']?></strong></div>
 	<br />
-		<span class="btn_list">
-	  <dd >&nbsp;&nbsp;&nbsp;<input type="text" name="tag" id="tag" class="text_input"  />&nbsp;</dd><dd><a href="javascript:add_tag(<?php echo $article_detail['Article']['id']?>,'A',<?=isset($_SESSION['User']['User']['id'])?1:0;?>)" class="addfav"><span><?php echo $SCLanguages['add_to_my_tags']?></span></a></dd>
-		</span>
+	<dl>
+	  <dd>&nbsp;&nbsp;&nbsp;<input type="text" name="tag" id="tag" class="text_input"  />&nbsp;</dd>
+	  <dd class="btn_list">
+		<a href="javascript:add_tag(<?php echo $article_detail['Article']['id']?>,'A',<?=isset($_SESSION['User']['User']['id'])?1:0;?>)" class="float_l"><span><?php echo $this->data['languages']['add_to_my_tags']?></span></a></dd>
+	</dl>
 	<br /><br />
 	<div id='update_tag' class="tags">
 	<?php if(isset($tags) && sizeof($tags)>0){?>
-		<?php foreach($tags as $k=>$v){?>
-		<span><?php echo $html->link($v['TagI18n']['name'],"/category_articles/tag/".$v['TagI18n']['name'],array('target'=>'_blank'),false,false)?></span>
-		<?php }}?>
+		<?php
+			$tag_arr = array();
+			foreach($tags as $k=>$v){?>
+		<?php if(!in_array($v['TagI18n']['name'],$tag_arr)){?>
+		<span class="float_l" style="white-space:nowrap;margin-top:5px;"><?php echo $html->link($v['TagI18n']['name'],"/articles/tag/".$v['TagI18n']['name'],array('target'=>'_blank'),false,false)?>&nbsp;&nbsp;</span>
+		
+		<?php 
+		}$tag_arr[] = $v['TagI18n']['name'];
+		}}?>
 		</div>	
 	</div>
 </div>
@@ -72,33 +110,33 @@
 	<?php }?> -->
 	<!-- 加文章标签end -->
 
-
-
-
-
-
-
-
 <!--相关商品-->
-<?php if(isset($product_list) && sizeof($product_list)>0){?>
-<div id="Edit_box">
-	<div id="Edit_info" style="padding-bottom:0;">
-	<p class="note article_title"><b><?php echo $SCLanguages['correlative_products'];?><?php echo $SCLanguages['previous'];?><?php echo $SCLanguages['piece'];?></b></p>
-    <div id="Item_List" style="border:none;">
+	<cake:nocache>
+<?php if(isset($this->data['cache_products']) && sizeof($this->data['cache_products'])>0){?>
+<div class="Edit_box">
+	<div id="Edit_info" style="padding-bottom:0;border-top:none;">
+	<div class="head"><strong><?php echo $this->data['languages']['correlative_products'];?><?//php echo $this->data['languages']['previous'];?><?//php echo $this->data['languages']['piece'];?></strong></div>
+    <div class="Item_List" style="border:none;">
 	<ul style="margin:0;">
 	<?php 
-		foreach($product_list as $key=>$v){
+		foreach($this->data['cache_products'] as $key=>$v){
 			if($v['Product']['img_thumb'] == ""){
-				$v['Product']['img_thumb'] = "/img/product_default.jpg";
+				if($this->data['configs']['products_default_image'] == ""){
+					$v['Product']['img_thumb'] = "/img/product_default.jpg";
+				}else{
+					$v['Product']['img_thumb'] = $this->data['configs']['products_default_image'];
+				}
 			}
 			echo $html->tag('li',$html->para('pic',
 				 $html->link(
-				 $html->image("{$v['Product']['img_thumb']}",array('width'=>'108','height'=>'108',))
-				 ,$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),'',false,false)
+				 $html->image("{$v['Product']['img_thumb']}",array('width'=>'108','height'=>'108','alt'=>$v['ProductI18n']['name']))
+				 ,$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$this->data['configs']['product_link_type']),'',false,false)
 				 ,array(),false)
 				 .$html->para('info',
-				 $html->tag('span',$html->link("{$v['ProductI18n']['name']}",$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false),'name')
-				 .$html->tag('span',$html->tag('font',"{$v['Product']['shop_price']}",array('color'=>'#F9630C')),'Price')		 		
+				 $html->tag('span',$html->link("{$v['ProductI18n']['name']}",$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$this->data['configs']['product_link_type']),array("target"=>"_blank"),false,false),'name')
+				 .$html->tag('span',$html->tag('font',
+				 	 (isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')]))?$svshow->price_format($v['Product']['shop_price']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']):$svshow->price_format($v['Product']['shop_price'],$this->data['configs']['price_format'])
+				 	 ,array('color'=>'#F9630C')),'Price')		 		
 				 ,array(),false),array('style'=>'padding:0;'));				
 			}
 	
@@ -106,63 +144,50 @@
 </ul>
 </div>
 	</div>
-</div><!--相关商品End-->
+</div>
+</cake:nocache><!--相关商品End-->
 <?php } ?>    		
-
+<div class="height_5">&nbsp;</div>
 <!--用户评论-->
-<div id="Edit_box">
-  <div id="Edit_info">
-	  <p class="note article_title">
-	  <b><?php echo $SCLanguages['user'];?><?php echo $SCLanguages['comments'];?></b>
-		<a id="comments" class="comments"><span><?php echo $SCLanguages['issue_comments'];?></span></a>
-	</p>
+<div class="cont" <?php if($this->data['article_detail']['Article']['comment'] == 0){?> style="display:none;"<?php }?>>
+  <div class="head"><strong><?php echo $this->data['languages']['user'];?><?php echo $this->data['languages']['comments'];?></strong><span <?php if($this->data['configs']['articles_comment_condition'] == '0'){?>style="display:none;"<?php }elseif($this->data['configs']['articles_comment_condition'] == '2' && (!($session->check('User.User.name')))){?> style="display:none;" <?php }?>><a id="comments" class="action"><?php echo $this->data['languages']['issue_comments'];?></a></span>
+  </div>
 	<?if(isset($_SESSION['User']['User']['id'])){?>
-	<?php echo $this->element('comment', array('cache'=>array('key' => 'article_view_'.$_SESSION['User']['User']['id'], 'time' => '+12 hour')));?>
+	<?php echo $this->element('comment', array('cache'=>array('key' => 'article_view_', 'time' => '+0 hour')));?>
 	<?}else{?>
-	<?php echo $this->element('comment', array('cache'=>array('key' => 'article_view_', 'time' => '+12 hour')));?>
+	<?php echo $this->element('comment', array('cache'=>array('key' => 'article_view_', 'time' => '+0 hour')));?>
 	<?}?>
 	<span id="waitcheck"></span>
-<?php 
-	//pr($comment_list);
-	if(isset($comment_list) && sizeof($comment_list)>0){
-		foreach($comment_list as $key=>$v){
-?>
-<div id="user_msg">
-		<p class="msg_title"><span class="title"><?php echo $SCLanguages['comments'];?>:<?php echo $v['Comment']['name'] ?> <font color="#A7A9A8">
-		<?php echo $v['Comment']['modified'] ?></font></span></p>
-		<div class="msg_txt"><?php echo $v['Comment']['content'] ?></div>
-	  </div>
-<?php 
-	if(isset($v['reply']) && sizeof($v['reply'])>0){
-		foreach($v['reply'] as $k=>$v){
-?>
-		<div id="user_msg">
-		<p class="msg_title"><span class="title"><?php echo $SCLanguages['reply'];?>:<?php echo $v['Comment']['name'] ?> <font color="#A7A9A8">
-		<?php echo $v['Comment']['modified'] ?></font></span></p>
-		<p class="msg_txt"><span><?php echo $v['Comment']['content'] ?></span></p>
-	   </div>
-<?php 
-	}
-}
-	}
-	}else{
-?>
-	  <div id="user_msg">
-		<p class="msg_txt" align="center"><br /><span><?php echo $SCLanguages['no_comments_now'];?></span></p>
+<?php if(isset($comment_list) && sizeof($comment_list)>0){?>
+<div class="box comments">
+<?php foreach($comment_list as $key=>$v){?>
+		<p class="msg_title"><?php echo $this->data['languages']['comments'];?>:<?php echo $v['Comment']['name'] ?>		<font color="#A7A9A8"><?php echo $v['Comment']['modified'] ?></font></p>
+		<div class="message_cont" <?php if($key==sizeof($comment_list)-1){?>style="border-bottom:none;padding-bottom:0;"<?php }?>><?php echo $v['Comment']['content'] ?></div>
+<?php if(isset($v['reply']) && sizeof($v['reply'])>0){
+		foreach($v['reply'] as $k=>$v){?>
+		<p class="msg_title"><?php echo $this->data['languages']['reply'];?>:<?php echo $v['Comment']['name'] ?> 		<font color="#A7A9A8"><?php echo $v['Comment']['modified'] ?></font></p>
+		<div class="message_cont"><?php echo $v['Comment']['content'] ?></div>
+<?php }}?>
+<?php }?>
+</div>
+<?php }else{?>
+	  <div class="not">
+		<br /><br />
+		<strong><?php echo $this->data['languages']['no_comments_now'];?>！</strong>
+		<br /><br />
 	  </div>
 <?php }?>
-	  
 	</div>
-</div><!--用户评论End-->
-    </div>
+<!--用户评论End-->
+</div>
     
-<?php echo $this->element('news', array('cache'=>array('time'=> "+24 hour",'key'=>'news'.$template_style)));?>
+<?php echo $this->element('news', array('cache'=>array('time'=> "+0 hour",'key'=>'news'.$template_style)));?>
 
 		
 		
-<!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+<!--BEGIN SOURCE CODE FOR EXAMPLE =============================== 
 
-<script>
+<script type="text/javascript">
 /*
 var div = document.getElementById('Edit_info');
 var commentSuccess = function(o){
@@ -247,3 +272,4 @@ function submitComment(frm){
 }
 */
 </script>
+-->

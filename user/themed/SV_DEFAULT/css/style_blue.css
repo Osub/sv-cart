@@ -29,8 +29,17 @@ hr{border:none;border-top:1px solid #6CB9DF;}
 .color_5{color:#535353;}
 .color_f9{color:#B9B8B9;}
 .color_53{color:#2B69B3;}
+.font_red{color:#ff0000;}
 
+h5 {
+	border-bottom:1px solid #6CB9DF;
+}
+
+.border{border:1px solid #A1D0EB}
 /*=========================header==========================*/
+.help_foot_article h6{
+	color:#2B69B3;
+}
 #header{
 	background:#fff;border-bottom:5px solid #1EBDF6;
 }
@@ -116,8 +125,8 @@ ul.left_menus .Nav a:hover{background:url(../img/blue/over_bg.gif) bottom no-rep
 	color:#6CB9DF;
 }
 /*  ==================== advaearch/login ====================  */
-#advanced_search .title,#User_Login .title,#language .title{
-	background:url(../img/blue/login_title.png) no-repeat;color:#2B69B3;
+#advanced_search .title,#User_Login .title,.drag .title{
+	background:url(../img/blue/login_title.gif) no-repeat;color:#2B69B3;
 }
 #User_Login .keywords{
 	background:#FFFFFF;border-right:1px solid #A1D0EB;border-left:1px solid #A1D0EB;
@@ -148,6 +157,14 @@ ul.left_menus .Nav a:hover{background:url(../img/blue/over_bg.gif) bottom no-rep
 .keywords dl .forget_pass a{
 	color:#6197C4;
 }
+
+.drag .box{
+	border-left:1px solid #A1D0EB;border-right:1px solid #A1D0EB;background:#fff;color:#6197C4;
+}
+.language li img{
+	border:1px solid #e1e1e1;
+}
+
 /*  ==================== catedory_products ====================  */
 #Right #Item_ListBox{
 	border:1px solid #2B69B3;
@@ -319,9 +336,6 @@ ul.left_menus .Nav a:hover{background:url(../img/blue/over_bg.gif) bottom no-rep
 	border-bottom:1px dashed #C6C6C6;
 }
 /*========================= carts checkout ==========================*/
-#globalBalance{
-	border-top:1px solid #2B69B3;background:url(../img/blue/Balance_bg.gif) repeat-y;
-}
 #globalBalance .buy_title{
 	color:#30A65D;
 }
@@ -383,13 +397,6 @@ ul.left_menus .Nav a:hover{background:url(../img/blue/over_bg.gif) bottom no-rep
 #globalBalance .back_home a:hover{
 	color:#60B7D1;
 }
-/*==================== Language =========================*/
-#language ul{
-	border-left:1px solid #6CB9DF;border-right:1px solid #6CB9DF;background:#fff;
-}
-#language li img{
-	border:1px solid #e1e1e1;
-}
 /*========================= Search-out ==========================*/
 #noproducts{
 	border:1px solid #2B69B3;
@@ -406,25 +413,30 @@ ul.left_menus .Nav a:hover{background:url(../img/blue/over_bg.gif) bottom no-rep
 	color:#2B69B3;
 }
 /*  ==================== Menber Center ====================  */
-#infos #wellcom_info{
+.infos #wellcom_info{
 	color:#6CB9DF;
 }
-#infos #wellcom_info p.atte{
+.infos #wellcom_info p.atte{
 	color:#2B69B3;
 }
-#infos #wellcom_info p.atte a{
+.infos #wellcom_info p.atte a{
 	color:#6CB9DF;
 }
-#infos #wellcom_info h2{
+.infos #wellcom_info h2{
 	color:#6CB9DF;
 }
-#infos .affiche{
+.member_infos .box,
+.member_infos .box a{color:#6CB9DF;}
+.member_infos .box ul{
+	border-bottom:1px solid #6CB9DF;
+}
+.infos .affiche{
 	color:#6CB9DF;background:#EEF7FB;border:1px solid #6CB9DF;border-left:none;border-right:none;
 }
-#infos #money_info{
+.infos #money_info{
 	color:#206EB0;
 }
-#Products_box #infos{
+#Products_box .infos{
 	border:1px solid #6CB9DF;
 }
 /*  ==================== Favorites ====================  */
@@ -467,28 +479,28 @@ ul.content_tab li.hover{
 	color:#09774E;background:url(../img/blue/collection_over.gif);
 }
 /*  ==================== my addresses ====================  */
-#reguser_gut01 ul li span.adrees textarea{
+.reguser_gut01 ul li span.adrees textarea{
 	border:1px solid #78828D;
 }
-#reguser_gut01 ul li span.addrees_territory select{
+.reguser_gut01 ul li span.addrees_territory select{
 	border:1px solid #78828D;
 }
-#reguser_gut01 .add_title{
+.reguser_gut01 .add_title{
 	color:#2B69B3;
 }
-#reguser_gut01 .aleter{
+.reguser_gut01 .aleter{
 	background:#B3CDE3;color:#2B69B3;
 }
-#reguser_gut01 table tr{
+.reguser_gut01 table tr{
 	color:#2B69B3;
 }
-#reguser_gut01 table tr td{
+.reguser_gut01 table tr td{
 	border-bottom:1px solid #6CB9DF;border-right:1px solid #6CB9DF;
 }
-#reguser_gut01 table tr td.btn_list{
+.reguser_gut01 table tr td.btn_list{
 	border-right:none;
 }
-#Right .addrees_box{
+.addrees_box{
 	border:1px solid #6CB9DF;
 }
 h2.add-addresses{
@@ -498,10 +510,10 @@ h2.add-addresses span{
 	color:#2B69B3;
 }
 h2.add-addresses a.close{
-	background:url(../img/blue/close_img.png) no-repeat;
+	background:url(../img/blue/close_img.gif) no-repeat;
 }
 h2.add-addresses a.close:hover{
-	background:url(../img/blue/close_img_over.png) no-repeat;
+	background:url(../img/blue/close_img_over.gif) no-repeat;
 }
 /*==================== 购买成功 =========================*/
 #buyshop_box ul{
@@ -523,16 +535,16 @@ h2.add-addresses a.close:hover{
 	color:#2B69B3;background:url(../img/blue/checkout_btn.gif) no-repeat;
 }
 /*===================Login out======================*/
-#loginout h1{
-	background:url(../img/blue/loginout.png) repeat-x;color:#2B69B3
+.loginout h1{
+	background:url(../img/blue/loginout.gif) repeat-x;color:#2B69B3
 }
-#loginout h1 b{
+.loginout h1 b{
 	 color:#fff;color:#2B69B3
 }
-#loginout .login-alettr{
+.loginout .login-alettr{
 	border-bottom:1px solid #E6E6E6; color:#2B69B3;
 }
-#loginout .btns a{
+.loginout .btns a{
 	background:url(../img/blue/loginout-btn.gif) no-repeat;color:#2B69B3;
 }
 /*=============My Friends==================*/
@@ -659,14 +671,14 @@ ul.products_text span.name a{color:#2B69B3;}
 .order_state dt{
 	color:#206EB0;
 }
-#Edit_info ul.already_shop li{
+.Edit_info ul.already_shop li{
 	color:#60A7DF;
 }
 }
 ul.already_shop li.name p.pic img{
 	border:1px solid #E3E3E3;
 }
-#Edit_info ul.already_shop li.name p.item_name{
+.Edit_info ul.already_shop li.name p.item_name{
 	color:#60A7DF
 }
 .cardnumber{border-bottom:1px dashed #909592}
@@ -682,13 +694,13 @@ ul.address_info li.lang_title{
 ul.address_info li.filed{
 	color:#60B7D1;
 }
-#Edit_info p.balances{
+.Edit_info p.balances{
 	color:#808080;
 }
 p.balances b{
 	color:#FC5F00;
 }
-#Edit_info p.saves_many{
+.Edit_info p.saves_many{
 	color:#60A7DF;
 }
 /*=========================Admin Iformations ==========================*/
@@ -714,6 +726,13 @@ p.balances b{
 .btn_list a:hover span{
 	background:url(../img/blue/stow_img_over.gif) left top no-repeat;
 }
+.btn_list a input{
+	background:url('../img/blue/stow_img.gif') left top no-repeat;border:none;color:#5086C4;
+}
+.btn_list a:hover input{
+	background:url('../img/blue/stow_img_over.gif') left top no-repeat;color:#fff;
+}
+
 .calendar{
 	border:0;background:none;
 }
@@ -725,10 +744,10 @@ p.balances b{
 }
 
 /*====================== 用户注册 =========================*/
-#reguser_gut01 {
+.reguser_gut01 {
 	background:url(../img/blue/reg_bg.gif) top repeat-y;
 }
-#reguser_gut01_01 ul.reg_flow li{
+.reguser_gut01_01 ul.reg_flow li{
 	color:#206EB0;
 }
 ul.reg_flow li.over{
@@ -742,16 +761,16 @@ ul.reg_flow li.normal span{
 	background:url(../img/blue/reg_flow.gif) 100% -153px no-repeat;
 }
 
-#reguser_gut01 ul {
+.reguser_gut01 ul {
 	color:#848389;
 }
-#reguser_gut01 ul .sorty{
+.reguser_gut01 ul .sorty{
 	mcolor:#9FA8AD;
 }
-#reguser_gut01 ul .sorty a{
+.reguser_gut01 ul .sorty a{
 	background:url(../img/blue/down_icon.gif) no-repeat;
 }
-#reguser_gut01 li input {
+.reguser_gut01 li input {
 	border: 1px solid #B3B3B3;color:#848389;
 }
 .z_c{
@@ -760,7 +779,7 @@ ul.reg_flow li.normal span{
 .Agreement{
 	border:1px solid #DEDEDE;
 }
-#reguser_gut01 .Agreement .text{
+.reguser_gut01 .Agreement .text{
 	color:#848389;
 }
 #reguser_box .Agreement_box{
@@ -769,31 +788,31 @@ ul.reg_flow li.normal span{
 #reguser_box_user .Agreement_box{
 	border-bottom:none;background:url(../img/blue/Agreement_bg.gif) repeat-y;
 }
-#reguser_gut01 #Title {
+.reguser_gut01 #Title {
 	color:#848389;
 }
 /*====================== 编辑个个人信息 =========================*/
 
-#Edit_box #Edit_info {
+.Edit_box .Edit_info {
 	border:1px #6CB9DF solid;
 }
-#Edit_info_01 {
+.Edit_info_01 {
 	color: #0b4b88;
 }
-#Edit_info_username {
+.Edit_info_username {
 	color: #0b4b88;
 }
 
-#Edit_info ul {
+.Edit_info ul {
 	color:#848389;
 }
-#Edit_info ul .sorty{
+.Edit_info ul .sorty{
 	color:#9FA8AD;
 }
-#Edit_info ul li span.Pass_mantis select{
+.Edit_info ul li span.Pass_mantis select{
 	color: #333333;
 }
-#Edit_info li input {
+.Edit_info li input {
 	border: 1px solid #B3B3B3;color:#848389;
 }
 .ws_xx a{
@@ -802,13 +821,13 @@ ul.reg_flow li.normal span{
 .Agreement{
 	border:1px solid #DEDEDE;
 }
-#Edit_info .Agreement p.text{
+.Edit_info .Agreement p.text{
 	color:#848389;
 }
-#Edit_box .Agreement_box{
+.Edit_box .Agreement_box{
 	background:none;border-bottom:none;
 }
-#Edit_info #Title {
+.Edit_info #Title {
 	color:#848389;
 }
 /*====================== 密码管理 =========================*/
@@ -819,33 +838,33 @@ ul.reg_flow li.normal span{
 	color:#f50;
 }
 /*  ==================== 用户中心留言 ====================  */
-#Edit_info .massege p.msg{
+.Edit_info .massege p.msg{
 	color:#64765B;
 }
-#user_msg p.msg_title{
+.user_msg p.msg_title{
 	background:#EEF7FB;
 }
-#user_msg p{
+.user_msg p{
 	color:#206EB0;
 }
-#Edit_info p.note,.amend_address,.sufficient{
+.Edit_info p.note,.amend_address,.sufficient{
 	color:#206EB0;
 }
 /*  ==================== 用户中心我的评论 ====================  */
-#Edit_info .comment p{
+.Edit_info .comment p{
 	color:#206EB0;
 }
-#Edit_info .comment{
+.Edit_info .comment{
 	background:#EAFFE0;
 }
 /*  ==================== 用户中心文章详细 ====================  */
-#user_msg p.article span{
+.user_msg p.article span{
 	color:#9D9D9D;
 }
-#user_msg p.article_time{
+.user_msg p.article_time{
 	background:#DDF4E6;
 }
-#user_msg p.article_time span{
+.user_msg p.article_time span{
 	color:#9D9D9D;
 }
 #select_article{
@@ -873,22 +892,19 @@ ul.reg_flow li.normal span{
 	background:none;color:#6197C4;
 }
 /*  ==================== 用户中心文章列表 ====================  */
-#user_msg p.article_title span{
+.user_msg p.article_title span{
 	color:#6197C4;border-bottom:1px solid #fff;border-right:1px solid #fff;
 }
-#user_msg p.article_title span.add_time{
+.user_msg p.article_title span.add_time{
 	border-right:none;
 }
-#user_msg #article_box p{
+.user_msg #article_box p{
 	color:#9D9D9D;
 }
 #article_box p.list .title a{
 	color:#9D9D9D;
 }
 /*  ====================  ====================  */
-#globalBalance{
-	border-top:1px solid #A1D0EB;background:url(../img/blue/Balance_bg.gif) repeat-y;
-}
 #globalBalance .buy_title{
 	color:#30A65D;
 }
@@ -952,10 +968,10 @@ ul.reg_flow li.normal span{
 	border:1px solid #7F9DB9;
 }
 .submits span{
-	background:url(../img/blue/submit.gif) no-repeat 100% -21px;
+	background:url(../img/blue/stow_img.gif) no-repeat 100% -20px;
 }
 .submits span input{
-	background:url(../img/blue/submit.gif) 0 0 no-repeat;border:0;color:#2B69B3;
+	background:url(../img/blue/stow_img.gif) 0 0 no-repeat;border:0;color:#2B69B3;
 }
 /*==================== Menber Login =========================*/
 #login-box h1{
@@ -998,13 +1014,13 @@ dd.vidata img{border:1px solid #949695;}
 }
 
 .svcart-skin-g00 .container-close{
-	background:url(../img/blue/close_img.png) no-repeat right;
+	background:url(../img/blue/close_img.gif) no-repeat right;
 }
 .svcart-skin-g00 .container-close:hover{
-	background:url(../img/blue/close_img_over.png) no-repeat right;
+	background:url(../img/blue/close_img_over.gif) no-repeat right;
 }
 .svcart-skin-g00 .yui-simple-dialog .bd .yui-icon{
-	background:url(../img/blue/close_img_over.png) no-repeat 0 0;
+	background:url(../img/blue/close_img_over.gif) no-repeat 0 0;
 }
 
 
@@ -1015,3 +1031,7 @@ body, h1 { margin:0;padding:0; } /* needed for known issue with Dom.getXY() in s
 #ysearchinput { position:static;width:20em; } /* to center, set static and explicit width: */
 #ysearchcontainer { text-align:left;width:20em;font-family:arial;} /* to center, set left-align and explicit width: */
 img, div, input,ul ,h1,span{behavior:url("/user/themed/SV_G00/css/iepngfix.htc")}
+.table_data{
+	background:#D0E7F3;color:#0167CC;
+}
+.table_data .rows{background:#ffffff;}

@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: advance_products_list.ctp 3124 2009-07-21 02:27:57Z huangbo $
+ * $Id: advance_products_list.ctp 3311 2009-07-24 12:16:27Z huangbo $
 *****************************************************************************/
 ?>
 <div class="products clearfix">
@@ -54,19 +54,15 @@
 <?php echo $svshow->price_format($v['Product']['shop_price'],$SVConfigs['price_format']);?>	
 <?php }?></p>
 	
-	<div class="buy">
+	<div class="action">
 	<?php if(isset($_SESSION['User'])){?>
 		<?php echo $html->link($SCLanguages['favorite'],$server_host.$user_webroot."favorites/add/p/".$v['Product']['id'],"",false,false)?>
 		<?php }?>
-		
-	<?php if($v['Product']['quantity'] == 0){?>
-		<?php echo $html->link($SCLanguages['booking'],'/products/add_booking_page/'.$v['Product']['id']);?>
-	<?php }else{?>
-		<?php echo $form->create('carts',array('action'=>'buy_now','name'=>'buy_nowproduct'.$v['Product']['id'],'type'=>'POST'));?>
+		<?php if($v['Product']['quantity'] == 0){?>
+		<?php echo $html->link($SCLanguages['booking'],'/products/add_booking_page/'.$v['Product']['id']);?><?php }else{?><?php echo $form->create('carts',array('action'=>'buy_now','name'=>'buy_nowproduct'.$v['Product']['id'],'type'=>'POST'));?><?php echo $html->link($SCLanguages['buy'],"javascript:buy_now_no_ajax({$v['Product']['id']},1,'product')","",false,false)?>
 		<input type="hidden" name="id" value="<?php echo $v['Product']['id']?>"/>
 		<input type="hidden" name="quantity" value="1"/>
 		<input type="hidden" name="type" value="product"/>
-		<?php echo $html->link($SCLanguages['buy'],"javascript:buy_now_no_ajax({$v['Product']['id']},1,'product')","",false,false)?>
 		<?php echo $form->end();?>
 	<?php }?>
 	</div>

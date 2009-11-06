@@ -22,6 +22,13 @@
 <?php if(isset($SVConfigs['memory_useage']) && $SVConfigs['memory_useage']=="1"){?>
 	<?php echo($SCLanguages['memory']." ".$memory_useage);?>MB
 	<?php } ?>
+	<?php echo $this->data['languages']['system_response_time']?> <?php echo round(getMicrotime() - $GLOBALS['TIME_START'], 4) . "s"?> <?// pr($GLOBALS['A_queriesTime']);?> 
+		
+	<?php if(Configure::read('Cache.disable')){	?>
+	<?php echo $this->data['languages']['sql_response_time']?> 	<?php if(isset($queriesCnt) && isset($queriesTime)){echo "(default) ".$queriesCnt." queries took ".$queriesTime. "ms";}?>
+	<?php }?>	
+	
+	
 	 Gzip <?echo (isset($gzip_is_start) && $gzip_is_start == 1)?$SCLanguages['enabled']:$SCLanguages['unused'];?> 
 	<?if($SVConfigs['icp_number'] !=""){?>
  	<?php echo $SVConfigs['icp_number'];?>

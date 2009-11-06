@@ -15,30 +15,39 @@
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 <div id="Products_box">
 <h1 class="headers"><span class="l"></span><span class="r"></span><b><?php echo $SCLanguages['tags']?></b></h1>
-        <div id="Edit_box">
+        <div class="Edit_box">
  			<?php if((isset($tags_a) && sizeof($tags_a)>0) || (isset($tags_p) && sizeof($tags_p)>0)){?>  
- 				<div id="Edit_info">
+ 				<div class="Edit_info">
  					<?if(isset($tags_p) && sizeof($tags_p)>0){?>
-						<div class="header_right">
-							<span class="nav"> &nbsp;<font class="green_3"><?=$SCLanguages['products'].$SCLanguages['tags']?>:</font>
-								<?foreach($tags_p as $k=>$v){?>
-							&nbsp;	<?=$html->link($v['TagI18n']['name'],"javascript:search_tag('".$v['TagI18n']['name']."')",array(),false,false);?> <?=$html->link($html->image('drop.gif'),"javascript:del_tag(".$v['Tag']['id'].");",array(),false,false);?> &nbsp;
+ 					<br />
+						<table cellpadding="8" cellspacing="0" width="100%">
+							<tr>
+							<td class="green_3" width="55" style="white-space:nowrap;padding-right:0;" valign="top"><?=$SCLanguages['products'].$SCLanguages['tags']?>:</td>
+							<td valign="top">
+							<?foreach($tags_p as $k=>$v){?>
+							<span class="float_l" style="margin-bottom:4px;white-space:nowrap;">
+<?=$html->link($v['TagI18n']['name'],"javascript:search_tag('".$v['TagI18n']['name']."')",array(),false,false);?> <?=$html->link($html->image('drop.gif'),"javascript:del_tag(".$v['Tag']['id'].");",array(),false,false);?>
+							&nbsp;</span>
 								<?}?>
-							</span>
-						</div>	<br />
+							</td>
+							</tr>
+						</table>
 					<?}?>
- 					<?if(isset($tags_a) && sizeof($tags_a)>0){?><br />
-						<div class="header_right">
-							<span class="nav"> &nbsp;<font class="green_3"><?=$SCLanguages['article'].$SCLanguages['tags']?>:</font>
-								<?foreach($tags_a as $k=>$v){?>
-							&nbsp;	<?=$html->link($v['TagI18n']['name'],"javascript:search_article_tag('".$v['TagI18n']['name']."')",array(),false,false);?> <?=$html->link($html->image('drop.gif'),"javascript:del_tag(".$v['Tag']['id'].");",array(),false,false);?> &nbsp;
-								<?}?>
-							</span>
-						</div>	
+ 					<?if(isset($tags_a) && sizeof($tags_a)>0){?>
+						<table cellpadding="8" cellspacing="0" width="100%">
+						<tr>
+							<td class="green_3" width="55" style="white-space:nowrap;padding-right:0;" valign="top"><?=$SCLanguages['article'].$SCLanguages['tags']?>:</td>
+							<td>
+							<?foreach($tags_a as $k=>$v){?>
+							<span class="float_l" style="margin-bottom:4px;white-space:nowrap;">
+<?=$html->link($v['TagI18n']['name'],"javascript:search_article_tag('".$v['TagI18n']['name']."')",array(),false,false);?> <?=$html->link($html->image('drop.gif'),"javascript:del_tag(".$v['Tag']['id'].");",array(),false,false);?> &nbsp;
+							</span><?}?>
+							</td>
+						</table>
 					<?}?>					
-				<br /></div>
+				</div>
  			<?}else{?>
- 				<div id="Edit_info">
+ 				<div class="Edit_info">
 		        <div class="not">
 				<br /><br /><br />
 				<?php echo $html->image(isset($img_style_url)?$img_style_url."/"."warning_img.gif":"warning_img.gif",array("alt"=>""))?><strong><?php echo $SCLanguages['not_add_any_label'];?></strong>
@@ -47,4 +56,5 @@
  			<?}?>
 		</div>
 </div>
-<?php echo $this->element('news', array('cache'=>array('time'=> "+24 hour",'key'=>'news'.$template_style)));?>
+<br />
+<?php echo $this->element('news', array('cache'=>array('time'=> "+0 hour",'key'=>'news'.$template_style)));?>

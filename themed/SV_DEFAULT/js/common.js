@@ -8,7 +8,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: common.js 3134 2009-07-21 06:45:45Z huangbo $
+ * $Id: common.js 5261 2009-10-21 08:30:19Z huangbo $
 *****************************************************************************/
 
 YAHOO.namespace("example.container");
@@ -55,22 +55,51 @@ var open_language = new YAHOO.util.KeyListener(document, { ctrl:true,alt:true, k
 open_language.enable();
 
 
+// 选择模版
+
+YAHOO.example.container.theme = new YAHOO.widget.Panel("theme", { xy:[540,35],visible:false,width:"266px",zIndex:1000,effect:[{effect:YAHOO.widget.ContainerEffect.FADE,duration:0.6},{effect:YAHOO.widget.ContainerEffect.SLIDE,duration:0.6}]});
+var close_theme = new YAHOO.util.KeyListener(document, { keys:27 },{fn:YAHOO.example.container.theme.hide,scope:YAHOO.example.container.theme,correctScope:true }, "keyup" ); 
+YAHOO.example.container.theme.cfg.queueProperty("keylisteners", close_theme);
+YAHOO.example.container.theme.render();
+
+var open_theme = new YAHOO.util.KeyListener(document, { ctrl:true,alt:true, keys:76 },{ fn:YAHOO.example.container.theme.show,scope:YAHOO.example.container.theme, correctScope:true }, "keyup" );
+open_theme.enable();
+
+// 选择货币
+
+YAHOO.example.container.currencie = new YAHOO.widget.Panel("currencie", { xy:[540,35],visible:false,width:"266px",zIndex:1000,effect:[{effect:YAHOO.widget.ContainerEffect.FADE,duration:0.6},{effect:YAHOO.widget.ContainerEffect.SLIDE,duration:0.6}]});
+var close_currencie = new YAHOO.util.KeyListener(document, { keys:27 },{fn:YAHOO.example.container.currencie.hide,scope:YAHOO.example.container.currencie,correctScope:true }, "keyup" ); 
+YAHOO.example.container.currencie.cfg.queueProperty("keylisteners", close_currencie);
+YAHOO.example.container.currencie.render();
+
+var open_currencie = new YAHOO.util.KeyListener(document, { ctrl:true,alt:true, keys:76 },{ fn:YAHOO.example.container.currencie.show,scope:YAHOO.example.container.currencie, correctScope:true }, "keyup" );
+open_currencie.enable();
+
+
+
+
 YAHOO.example.container.manager = new YAHOO.widget.OverlayManager();
-
-
 
 YAHOO.util.Event.addListener("login", "click", show_login, YAHOO.example.container.User_Login, true);
 YAHOO.util.Event.addListener("adv_search", "click", YAHOO.example.container.advanced_search.show, YAHOO.example.container.advanced_search, true);
 YAHOO.util.Event.addListener("locales", "click", YAHOO.example.container.language.show, YAHOO.example.container.language, true);
+YAHOO.util.Event.addListener("themes", "click", YAHOO.example.container.theme.show, YAHOO.example.container.theme, true);
+YAHOO.util.Event.addListener("currencies", "click", YAHOO.example.container.currencie.show, YAHOO.example.container.currencie, true);
 
-YAHOO.example.container.wait = new YAHOO.widget.Panel("wait",{ width:"240px", fixedcenter:true, close:false, draggable:false, modal:true,visible:false,effect:{effect:YAHOO.widget.ContainerEffect.FADE, duration:0.5}});
-YAHOO.example.container.wait.setHeader("<div style='background:#fff;position:absolute;width:100%;padding-top:5px;margin-top:15px;text-align:center'>"+wait_message+"</div>");//Loading, please wait...
+YAHOO.example.container.wait = new YAHOO.widget.Panel("wait",{ width:"240px",zIndex:1000,fixedcenter:true,close:false,draggable:false,modal:true,visible:false,effect:{effect:YAHOO.widget.ContainerEffect.FADE, duration:0.5}});
+YAHOO.example.container.wait.setHeader("<div style='background:#fff;position:absolute;width:100%;padding-top:5px;margin-top:-10px;text-align:center'>"+wait_message+"</div>");//Loading, please wait...
 YAHOO.example.container.wait.setBody("<object id='loading' data='"+root_all+themePath+"img"+style_js+"/loading.swf' type='application/x-shockwave-flash' width='240' height='40'><param name='movie' value='"+root_all+themePath+"img"+style_js+"/loading.swf' /><param name='wmode' value='Opaque'></object>");
 //alert(root_all+themePath+"img"+style_js+"/loading.swf");
 //alert(webroot_dir);alert(themePath);
 //首页的值 webroot_dir 	var webroot_dir = "/"; 
 //themePath  var themePath = "themed/SV_G00/";
+// 关键字
+YAHOO.example.container.Select_Header_Keyword = new YAHOO.widget.Panel("Select_Header_Keyword", { xy:[800,35],visible:false,width:"240px",position: "static",zIndex:1000,effect:[{effect:YAHOO.widget.ContainerEffect.FADE,duration:0.5},{effect:YAHOO.widget.ContainerEffect.SLIDE,duration:0.5}]});
+var close_select_header_keyword = new YAHOO.util.KeyListener(document, { keys:27 },{ fn:YAHOO.example.container.Select_Header_Keyword.hide,scope:YAHOO.example.container.Select_Header_Keyword,correctScope:true }, "keyup" );
+YAHOO.example.container.Select_Header_Keyword.cfg.queueProperty("keylisteners", close_select_header_keyword);
+YAHOO.example.container.Select_Header_Keyword.render();  
 
+YAHOO.util.Event.addListener("header_keyword", "click", YAHOO.example.container.Select_Header_Keyword.show, YAHOO.example.container.Select_Header_Keyword, true);
 	
 
 YAHOO.example.container.wait.render(document.body);
@@ -96,8 +125,8 @@ goleft("newscoll","newscoll_1","newscoll_2");
 YAHOO.util.Event.onDOMReady(init);
 
 function set_wait(wait_msg){
-	YAHOO.example.container.wait = new YAHOO.widget.Panel("wait",{ width:"240px", fixedcenter:true, close:false, draggable:false, modal:true,visible:false,effect:{effect:YAHOO.widget.ContainerEffect.FADE, duration:0.5}});
-	YAHOO.example.container.wait.setHeader("<div style='background:#fff;position:absolute;width:100%;padding-top:5px;margin-top:15px;text-align:center'>"+wait_msg+"</div>");
+	YAHOO.example.container.wait = new YAHOO.widget.Panel("wait",{ width:"240px",zIndex:1000,fixedcenter:true, close:false, draggable:false, modal:true,visible:false,effect:{effect:YAHOO.widget.ContainerEffect.FADE, duration:0.5}});
+	YAHOO.example.container.wait.setHeader("<div style='background:#fff;position:absolute;width:100%;padding-top:5px;margin-top:-10px;text-align:center'>"+wait_msg+"</div>");
 	YAHOO.example.container.wait.setBody("<object id='loading' data='"+root_all+themePath+"img"+style_js+"/loading.swf' type='application/x-shockwave-flash' width='240' height='40'><param name='movie' value='"+root_all+themePath+"img"+style_js+"/loading.swf' /><param name='wmode' value='Opaque'></object>");
 	YAHOO.example.container.wait.render(document.body);
 	
@@ -122,30 +151,36 @@ if(keywords == ''){
 }
 
 function ad_search(key){
-var type='SAD';
-var category_id=document.getElementById('category_id').value;
-var brand_id=document.getElementById('brand_id').value;
-var min_price=document.getElementById('min_price').value;
-var max_price=document.getElementById('max_price').value;
-    if(key == 'select_all_products'){
-		    var keywords = 'all';
-			window.location.href=webroot_dir+"products/advancedsearch/"+type+"/"+keywords+"/"+category_id+"/"+brand_id+"/"+min_price+"/"+max_price;
-		    return;
-    }else{
-	      var ysearchinput=document.getElementById('ysearchinput').value;
-	         if(ysearchinput != ''){
-	 	           var keywords = ysearchinput;
-	          }
-	          else{
-		           var keywords=document.getElementById('ad_keywords').value;
-	           }
-       }
-//alert(document.getElementById('act').value)
-	var ss = webroot_dir+"products/advancedsearch/"+type+"/"+keywords+"/"+category_id+"/"+brand_id+"/"+min_price+"/"+max_price;
-	if(keywords == ""){
-		keywords = "all";
+	var search_type = document.getElementById('search_type').value;
+	if(search_type == "A"){
+        var ysearchinput = document.getElementById('ysearchinput').value;
+		window.location.href=webroot_dir+"articles/search/"+ysearchinput;		
+	}else{
+		var type='SAD';
+		var category_id=document.getElementById('category_id').value;
+		var brand_id=document.getElementById('brand_id').value;
+		var min_price=document.getElementById('min_price').value;
+		var max_price=document.getElementById('max_price').value;
+		    if(key == 'select_all_products'){
+				    var keywords = 'all';
+					window.location.href=webroot_dir+"products/advancedsearch/"+type+"/"+keywords+"/"+category_id+"/"+brand_id+"/"+min_price+"/"+max_price;
+				    return;
+		    }else{
+			      var ysearchinput=document.getElementById('ysearchinput').value;
+			         if(ysearchinput != ''){
+			 	           var keywords = ysearchinput;
+			          }
+			          else{
+				           var keywords=document.getElementById('ad_keywords').value;
+			           }
+		       }
+		//alert(document.getElementById('act').value)
+			var ss = webroot_dir+"products/advancedsearch/"+type+"/"+keywords+"/"+category_id+"/"+brand_id+"/"+min_price+"/"+max_price;
+			if(keywords == ""){
+				keywords = "all";
+			}
+		window.location.href=webroot_dir+"products/advancedsearch/"+type+"/"+keywords+"/"+category_id+"/"+brand_id+"/"+min_price+"/"+max_price;
 	}
-window.location.href=webroot_dir+"products/advancedsearch/"+type+"/"+keywords+"/"+category_id+"/"+brand_id+"/"+min_price+"/"+max_price;
 }
 
 
@@ -201,7 +236,16 @@ window.location.href=webroot_dir+"products/advancedsearch/"+type+"/"+keywords+"/
 		con.style.display=i==cursel?"block":"none"; 
 		} 
 	}
-
+	
+	function overtabc(name,cursel,n,k){ 
+		for(i=1;i<=n;i++){ 
+		var menu=document.getElementById(name+i); 
+		var con=document.getElementById("con_"+name+"_"+i); 
+		menu.className=i==cursel?"hover":""; 
+		con.style.display=i==cursel?"block":"none"; 
+		} 
+	}	
+	
 
 	function show_pic(img){
 		//img = "/themed/SV_G00"+img;
@@ -218,9 +262,27 @@ window.location.href=webroot_dir+"products/advancedsearch/"+type+"/"+keywords+"/
 		document.getElementById('img1').src = img_dir+img;
 	}
 
-	function show_pic_original(){
-		var img_detail = document.getElementById('img1').src;
-		var img = img_detail.replace("detail","original");
+	function show_pic_original(img){
+	//	var img_detail = document.getElementById('img1').src;
+	//	var img = img_detail.replace("detail","original");
+		if(webroot_dir =="/" || webroot_dir =="/index.php/"){
+			var img_dir = "";
+		}else{
+			var img_test = webroot_dir.substring((webroot_dir.length)-11,(webroot_dir.length));						
+			if(img_test == "/index.php/"){
+				var img_dir = webroot_dir.substring(0,(webroot_dir.length)-11);
+			}else{
+				var img_dir = webroot_dir.substring(0,(webroot_dir.length)-1);
+			}
+		}
+	
+	
+		if(img.length >7){
+			var img_http = img.substring(0,7);	
+			if(img_http != "http://"){
+				img = img_dir+img;
+			}					
+		}
 		document.getElementById('message_img_content').innerHTML = "<div onclick='javascript:close_message_img();'><img src='"+img+"' onload='javascript:img_width(this);'/></div>";
 	}
 	
@@ -390,6 +452,9 @@ window.location.href=webroot_dir+"products/advancedsearch/"+type+"/"+keywords+"/
 // 登陆框特效开始
 
 	function show_login(){
+		if(use_captcha){
+			document.getElementById('captcha_inner').innerHTML = "<img id='login_captcha' alt='"+verify_code+"' title='"+not_clear+"' />";
+		}
 		show_login_captcha('login_captcha');
 		YAHOO.example.container.User_Login.show();
 	}
@@ -399,7 +464,7 @@ window.location.href=webroot_dir+"products/advancedsearch/"+type+"/"+keywords+"/
 	}
 	
 	function show_login_captcha(id){
-		if(document.getElementById(id).src != ''){
+		if(document.getElementById(id).src != '' && document.getElementById(id).src != window.location.href){
 			return;
 		}
 		
@@ -535,6 +600,10 @@ window.location.href=webroot_dir+"products/advancedsearch/"+type+"/"+keywords+"/
 			//alert("Invalid data");
 			YAHOO.example.container.wait.hide();
 		} 
+		if(result.header_msg != ""){
+			document.getElementById('header_cart_msg').innerHTML = result.header_msg;
+		}
+		
 		if(enable_one_step_buy == "1"){
 			window.location.href= webroot_dir+"carts/checkout";
 			return;
@@ -631,16 +700,35 @@ window.location.href=webroot_dir+"products/advancedsearch/"+type+"/"+keywords+"/
 	
 // 登陆页结束
 
+function Go_Page(pagecount,url1,url2){
+	var goPage=document.getElementById('go_page').value;
+	
+	if(goPage > pagecount || goPage == ''){
+		layer_dialog_show(page_number_expand_max,'',2,'','','','','');
+	}else{
+		window.location.href= url1+goPage+url2;
+	}
+}
 
 //分页问题
+function GoSearchPage(pagecount,url){
+	var goPage=document.getElementById('go_page').value;
+	
+	if(goPage > pagecount){
+		layer_dialog_show(page_number_expand_max,'',2,'','','','','');
+	}else{
+		window.location.href= url+goPage ;
+	}
+}
+
 function GoPage(pagecount){
-var goPage=document.getElementById('go_page').value;
-if(goPage > pagecount){
-	layer_dialog_show(page_number_expand_max,'',2,'','','','','');
-}
-else{
-window.location.href="?page="+goPage;
-}
+	var goPage=document.getElementById('go_page').value;
+	
+	if(goPage > pagecount){
+		layer_dialog_show(page_number_expand_max,'',2,'','','','','');
+	}else{
+		window.location.href="?page="+goPage;
+	}
 }
 function show_last5(){
   document.getElementById('last5').style.display="block";
@@ -995,10 +1083,10 @@ return;
 		} 
 		
 		
-		document.getElementById('message_content').innerHTML = result.message;
 		if(result.type == 0){
 			document.getElementById('update_tag').innerHTML = result.tag_con;
 		}else{
+			document.getElementById('message_content').innerHTML = result.message;
 			YAHOO.example.container.message.show();
 		}
 		
@@ -1046,8 +1134,8 @@ return;
 								visible:false,
 								draggable:false,
 								modal:true,
-								style:"margin 0 auto",
-								fixedcenter: true
+								width:"424px",
+								fixedcenter: true,zIndex:1000
 							} 
 						); 
 		layer_dialog_obj.render();
@@ -1057,22 +1145,25 @@ return;
 		var i = 0;
 		var option = "";		
 		if(type == 1){
+			var times = 1;
 			while(true){
-				if(document.getElementById(i)==null){
+				if(document.getElementById("vote_id"+i)==null){
 					break;
 				}
-				if(document.getElementById(i).checked){
-					option = document.getElementById(i).value;
+				if(document.getElementById("vote_id"+i).checked){
+					option = document.getElementById("vote_id"+i).value;
 				}
 				i++;
 			}
 		}else if(type == 0){
+			var times = 0;
 			while(true){
-				if(document.getElementById(i)==null){
+				if(document.getElementById("vote_id"+i)==null){
 					break;
 				}
-				if(document.getElementById(i).checked){
-					option += document.getElementById(i).value+",";
+				if(document.getElementById("vote_id"+i).checked){
+					option += document.getElementById("vote_id".i).value+",";
+					times ++;
 				}
 				i++;
 			}		
@@ -1083,7 +1174,7 @@ return;
 		set_wait(wait_message);
 		YAHOO.example.container.wait.show();
 		var sUrl = webroot_dir+"votes/save_vote/";
-		var postData = "vote_id="+vote_id+"&type="+type+"&option="+option+"&height="+window.screen.height+"&width="+window.screen.width;
+		var postData = "times="+times+"&vote_id="+vote_id+"&type="+type+"&option="+option+"&height="+window.screen.height+"&width="+window.screen.width;
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, savevote_callback,postData);
 	}
 
@@ -1096,7 +1187,8 @@ return;
 			YAHOO.example.container.wait.hide();
 		} 
 		if(result.type == 0){
-			document.getElementById('vote').innerHTML = result.message;
+		//	document.getElementById('vote').innerHTML = "22";
+			document.getElementById('vote_aa').innerHTML = result.message;
 			document.getElementById('message_content').innerHTML = result.msg;
 			YAHOO.example.container.message.show();
 		}else{
@@ -1180,13 +1272,16 @@ return;
 			YAHOO.example.container.wait.hide();
 			var result = YAHOO.lang.JSON.parse(o.responseText);   
 		}catch (e){ 
-				alert(o.responseText);
+		//		alert(o.responseText);
 			//	alert("Invalid data");
 		}
+			YAHOO.example.container.wait.hide();
 			document.getElementById('message_content').innerHTML = result.message;
 			YAHOO.example.container.message.show();
-		
-		
+			if(result.type == "0"){
+				layer_add_newsletter_obj.hide();
+			}
+			
 	}
 
 	var add_email_callback ={
@@ -1225,7 +1320,7 @@ return;
 								visible:false,
 								draggable:false,
 								modal:true,
-								style:"margin 0 auto",
+								zIndex:1000,
 								fixedcenter: true
 							} 
 						); 
@@ -1300,8 +1395,8 @@ function gears_init() {
 		document.getElementById('layer_gallery').style.display = "block";
 		document.getElementById('layer_gallery').style.width = width+"px";
 		document.getElementById('gallery_content').innerHTML = dialog_content;//对话框中的中文
-document.getElementById("layer_gallery").style.top=(document.documentElement.scrollTop+(document.documentElement.clientHeight-document.getElementById("layer_gallery").offsetHeight)/2)+"px";
-document.getElementById("layer_gallery").style.left=(document.documentElement.scrollLeft+(document.documentElement.clientWidth-document.getElementById("layer_gallery").offsetWidth)/2)+"px";
+		document.getElementById("layer_gallery").style.top=(document.documentElement.scrollTop+(document.documentElement.clientHeight-(document.getElementById("layer_gallery").offsetHeight))/2)+"px";
+		document.getElementById("layer_gallery").style.left=(document.documentElement.scrollLeft+(document.documentElement.clientWidth-(document.getElementById("layer_gallery").offsetWidth*2.5/2))/2)+"px";
 		}
 	
 
@@ -1316,10 +1411,245 @@ document.getElementById("layer_gallery").style.left=(document.documentElement.sc
 								visible:false,
 								draggable:false,
 								modal:true,
-								width: width+"px",
-								style:"margin 0 auto",
+								zIndex:1000,
 								fixedcenter: true
 							} 
 						); 
 		layer_gallery_obj.render();
+	}
+	
+	//推荐好友
+	function submit_recommend(){
+		var recommendUserName = document.getElementById('recommendName').value;
+		var recommendEmail = document.getElementById('recommendEmail').value;
+		var recommendTypeId = document.getElementById('recommendTypeId').value;
+		if(recommendUserName == ""){
+			document.getElementById('recommend_error_msg').innerHTML = real_name_not_empty;
+			return;
+		}else if(isEmail(recommendEmail)){
+			document.getElementById('recommend_error_msg').innerHTML = invalid_email;
+			return;
+		}else{
+			document.getElementById('recommend_error_msg').innerHTML = "";
+		}
+		document.getElementById('recommend_button').innerHTML = "<span class='green_3'>"+wait_message+"</span>";
+		
+		var sUrl = webroot_dir+"commons/commend_friend/";
+		var postData = 'username='+recommendUserName+"&email="+recommendEmail+"&product_id="+recommendTypeId;
+		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, recommendback,postData);		
+	}
+	
+		var recommendSuccess = function(o){
+	    try{   
+			var result = YAHOO.lang.JSON.parse(o.responseText);   
+		}catch (e){
+			alert(o.responseText);
+			//alert("Invalid data");
+			YAHOO.example.container.wait.hide();
+		} 
+		document.getElementById('message_content').innerHTML = result.message;
+		if(result.type == 0){
+			YAHOO.example.container.add_recommend.hide();
+		}
+		document.getElementById('recommend_button').innerHTML = "<a href='javascript:submit_recommend();' class='reset'>"+page_submit+"</a><a href='javascript:document.recommendForm.reset();' class='reset'>"+page_reset+"</a>";
+		
+		YAHOO.example.container.message.show();
+	}
+	
+	var recommendback =
+	{
+	  success:recommendSuccess,
+	  failure:failure_todo,
+	  timeout : 30000,
+	  argument:{}
+	};	
+	
+
+	function search_order(){
+		layer_search_order();
+		document.getElementById('search_order').style.display = "block";
+		layer_search_order_obj.show();
+	}
+	
+	function layer_search_order(){
+	//	tabView = new YAHOO.widget.TabView('contextPane'); 
+        layer_search_order_obj = new YAHOO.widget.Panel("search_order", 
+							{
+								visible:false,
+								draggable:false,
+								modal:true,
+								zIndex:800,
+								fixedcenter: true
+							} 
+						); 
+		layer_search_order_obj.render();
+	}		
+	
+	function add_newsletter(){
+		layer_add_newsletter();
+		document.getElementById('add_newsletter').style.display = "block";
+		layer_add_newsletter_obj.show();
+	}
+	
+	function layer_add_newsletter(){
+	//	tabView = new YAHOO.widget.TabView('contextPane'); 
+        layer_add_newsletter_obj = new YAHOO.widget.Panel("add_newsletter", 
+							{
+								visible:false,
+								draggable:false,
+								modal:true,
+								zIndex:800,
+								fixedcenter: true,
+								width:"260px"
+							} 
+						); 
+		layer_add_newsletter_obj.render();
 	}	
+	
+	//换模版 AJAX
+	function change_theme(theme,style){
+		set_wait(wait_message);
+		YAHOO.example.container.wait.show();
+		var sUrl = webroot_dir+"commons/change_theme/";
+		var postData = "theme="+theme+"&style="+style;
+		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, change_theme_callback,postData);
+		
+	}
+	
+	var change_theme_Success = function(o){
+		try{
+			var result = YAHOO.lang.JSON.parse(o.responseText);   
+		}catch (e){   
+		//	alert(o.responseText);
+			//alert("Invalid data");
+			YAHOO.example.container.wait.hide();
+		} 
+		window.location.reload();
+		YAHOO.example.container.wait.hide();
+	//	
+	}
+
+	var change_theme_callback ={
+		success:change_theme_Success,
+		failure:failure_todo,
+		timeout : 30000,
+		argument: {}
+	};
+	
+	function change_currencie(code){
+		set_wait(wait_message);
+		YAHOO.example.container.wait.show();
+		var sUrl = webroot_dir+"commons/currencie/";
+		var postData = "code="+code;
+		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, change_currencie_callback,postData);
+		
+	}
+	
+	var change_currencie_Success = function(o){
+		try{
+			var result = YAHOO.lang.JSON.parse(o.responseText);   
+		}catch (e){   
+		//	alert(o.responseText);
+			//alert("Invalid data");
+			YAHOO.example.container.wait.hide();
+		} 
+		window.location.reload();
+		YAHOO.example.container.wait.hide();
+	//	
+	}
+
+	var change_currencie_callback ={
+		success:change_currencie_Success,
+		failure:failure_todo,
+		timeout : 30000,
+		argument: {}
+	};
+
+	function product_upfile(){
+//		var file_div  = document.getElementById('upfile_id').style.display;
+	//	if(file_div == "none"){
+	//		document.getElementById('upfile_id').style.display = "";
+	//		document.form_upfile.photo.focus();
+	//	}else if(file_div == ""){
+			document.forms['form_upfile'].submit();
+	//		document.getElementById('upfile_id').style.display = "none";
+	//	}
+	}
+	
+	function select_attribute(key,id,attr_key){
+		document.getElementById("attributes_"+key).value = id;
+		document.getElementById("attributes_"+key+"_"+attr_key).className = "hover";
+		var i = 0 ;
+		while(true){
+			if(document.getElementById("attributes_"+key+"_"+i)==null){
+				break;
+			}
+			if(i != attr_key){
+				document.getElementById("attributes_"+key+"_"+i).className = "";
+			}
+			i++;
+ 		}		
+	}
+	
+	//  联系我们
+	function submit_contact(){
+		var ContactCompany = document.getElementById('ContactCompany').value;
+		var ContactCompanyType = document.getElementById('ContactCompanyType').value;
+		var ContactContactName = document.getElementById('ContactContactName').value;
+		var ContactEmail = document.getElementById('ContactEmail').value;
+		var ContactMobile = document.getElementById('ContactMobile').value;
+		var ContactContent = document.getElementById('ContactContent').value;
+		var ContactFrom = document.getElementById('ContactFrom').value;
+		document.getElementById('Contact_height').value = window.screen.height;
+		document.getElementById('Contact_width').value = window.screen.width;
+		
+		var error = false;
+		
+		if(ContactCompany == ""){
+			var msg = company_name_not_empty;
+			error = true;
+		}else if(ContactCompanyType == ""){
+			var msg = please_choose_company_type;
+			error = true;
+		}else if(ContactContactName == ""){
+			var msg = connect_person_can_not_empty;
+			error = true;
+		}else if(isEmail(ContactEmail)){
+			var msg = invalid_email;
+			error = true;
+		}else if(ContactMobile == ""){
+			var msg = mobile_can_not_empty;
+			error = true;
+		}else if(ContactContent == ""){
+			var msg = content_can_not_empty;
+			error = true;
+		}else if(ContactFrom == ""){
+			var msg = "请选择如何获知我们的";
+			error = true;
+		}
+		
+		if(error){
+			document.getElementById('comment_error_msg').innerHTML = msg;
+			return;
+		}else{
+			document.getElementById('comment_error_msg').innerHTML ="";
+			document.getElementById('comment_button').innerHTML = "提交中 请稍后...";
+		}
+		return;
+		document.forms['ContactForm'].submit();
+		
+	}
+	
+	function isTel( tel ){
+		 var reg = /^[\d|\-|\s|\_]+$/;
+		 return reg.test( tel );
+	}
+	
+	function onfocus_style(a,id){
+		document.getElementById(id).className = "";
+	}
+	
+	function onblur_style(a,id){
+		document.getElementById(id).className = "color_hover";
+	}	
+	

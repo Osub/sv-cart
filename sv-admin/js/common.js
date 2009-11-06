@@ -1,3 +1,6 @@
+
+
+
 YAHOO.namespace("example.container");
 
 function init() {
@@ -13,13 +16,45 @@ YAHOO.example.container.wait.setBody("<object data='"+root_all+'sv-admin/'+theme
 
 YAHOO.example.container.wait.render(document.body);
 
-YAHOO.example.container.message = new YAHOO.widget.Panel("message_show",{width:"422px",fixedcenter:true, close:false, draggable:false, modal:true,visible:false,effect:{effect:YAHOO.widget.ContainerEffect.FADE, duration:0.5}});
+
+YAHOO.example.container.message = new YAHOO.widget.Panel("message",{width:"640px", fixedcenter:true, close:false, draggable:false, modal:true,visible:false,effect:{effect:YAHOO.widget.ContainerEffect.FADE, duration:0.5}});
 YAHOO.example.container.message.setBody("<div id='message_content'></div>");
 YAHOO.example.container.message.render(document.body);
 
-
-
 YAHOO.util.Dom.setStyle('svcart-com', 'visibility', 'visible');
+
+//列表鼠标划动效果
+if (document.getElementById("listDiv")){
+	var this_bgcolor = "";
+	document.getElementById("listDiv").onmouseover = function(e){
+	    obj = Utils.srcElement(e);
+		if (obj){
+			if (obj.parentNode.tagName.toLowerCase() == "tr") row = obj.parentNode;
+				else if (obj.parentNode.parentNode.tagName.toLowerCase() == "tr") row = obj.parentNode.parentNode;
+				else return;
+				for (i = 0; i < row.cells.length; i++){
+		        	if (row.cells[i].tagName != "TH"){
+		        		this_bgcolor = row.cells[i].className;
+		        		row.cells[i].className = 'hover';
+		        	}
+		 		}
+		}
+	}
+	document.getElementById("listDiv").onmouseout = function(e){
+    	obj = Utils.srcElement(e);
+		if (obj){
+	      	if (obj.parentNode.tagName.toLowerCase() == "tr") row = obj.parentNode;
+		      	else if (obj.parentNode.parentNode.tagName.toLowerCase() == "tr") row = obj.parentNode.parentNode;
+		      	else return;
+				for (i = 0; i < row.cells.length; i++){
+		          	if (row.cells[i].tagName != "TH"){
+		          		row.cells[i].className= this_bgcolor;
+		          	}
+		      	}
+    	}
+  	}
+}
+//end
 }
 
 YAHOO.util.Event.onDOMReady(init);
@@ -234,9 +269,17 @@ function close_message(){
 	YAHOO.example.container.message.hide();
 }
 
+function change_captcha(){
+	GetId("authnum_img").src = webroot_dir+"authnums/get_authnums/?"+Math.random();
+}
+
+
 function show_login_captcha(){
 	GetId("authnum_img_span").style.display = "";
 	GetId("authnum").value = "";
+	if(GetId("authnum_img").src != ""){
+		return;
+	}
 	GetId("authnum_img").src = webroot_dir+"authnums/get_authnums/?"+Math.random();
 }
 
@@ -247,6 +290,16 @@ function check_input_num(obj){
 
 
 
+//关键字管理
+function keywords_check(){
+	var SeoKeywordname = GetId('SeoKeywordname');
+	if( Trim(SeoKeywordname.value,'g') == "" ){
+		layer_dialog();
+		layer_dialog_show("关键词不能为空!","",3);
+		return false;
+	}
+	
+}
 //用户信息管理
 function userinformations_check(){
 	var name = GetId('name'+now_locale);
@@ -786,6 +839,70 @@ function topics_check(){
 		return false;
 	}
 }
+
+//批次管理
+function batch_check(){
+	var batch_code = GetId('data[Batch][code]');
+	var batch_provider = GetId('data[Batch][provider_id]');
+	if( Trim( batch_code.value,'g' ) == "" ){
+		layer_dialog_show("批次号不能为空!","",3);
+		return false;
+	}
+	if( Trim( batch_provider.value,'g' ) == "-1" ){
+		layer_dialog_show("请选择供应商!","",3);
+		return false;
+	}
+}
+
+//仓库管理
+function warehouse_check(){
+	var warehouse_code = GetId('data[Warehouse][code]');
+	var warehouse_name = GetId('data[Warehouse][warehouse_name]');
+	var contact_name = GetId('data[Warehouse][contact_name]');
+	var contact_email = GetId('data[Warehouse][contact_email]');
+	var warehouse_address = GetId('data[Warehouse][address]');
+	var warehouse_zipcode = GetId('data[Warehouse][zipcode]');
+	var warehouse_telephone = GetId('data[Warehouse][telephone]');
+	
+	if( Trim( warehouse_code.value,'g' ) == "" ){
+		layer_dialog_show("仓库代码不能为空!","",3);
+		return false;
+	}
+	if( Trim( warehouse_name.value,'g' ) == "" ){
+		layer_dialog_show("仓库名称不能为空!","",3);
+		return false;
+	}
+	
+	if( Trim( contact_name.value,'g' ) == "" ){
+		layer_dialog_show("联系人姓名不能为空!","",3);
+		return false;
+	}
+	
+	if( Trim( contact_email.value,'g' ) == "" ){
+		layer_dialog_show("Email不能为空!","",3);
+		return false;
+	}
+	
+	if(isEmailFormat(contact_email.value)==0){
+		layer_dialog_show("Email地址不正确!","",3);
+		return false;
+	}
+	
+	if( Trim( warehouse_address.value,'g' ) == "" ){
+		layer_dialog_show("仓库地址不能为空!","",3);
+		return false;
+	}
+	
+	if( Trim( warehouse_zipcode.value,'g' ) == "" ){
+		layer_dialog_show("邮编不能为空!","",3);
+		return false;
+	}
+	
+	if( Trim( warehouse_telephone.value,'g' ) == "" ){
+		layer_dialog_show("电话不能为空!","",3);
+		return false;
+	}
+}
 /*********************************************************************************
 * 检查输入的Email
 * function	: 	isEmailFormat
@@ -817,7 +934,7 @@ function Trim(str,is_global){
 
 
 
-function check() { 
+function ajax_login_check() { 
 	var lee=document.forms["login_form"].cookie;
 	var cookie = GetId("cookie").value;
 	if (lee.checked == true){ 
@@ -901,19 +1018,12 @@ function break_config(){
 //分页回车
 function pagers_onkeypress(obj,e){
 	if(window.event){
-		keynum = e.keyCode
+		keynum = event.keyCode
 	}else if(e.which){
 		keynum = e.which
 	} 
 	if(keynum==13){
-	
-		YAHOO.example.container.wait.show();  
-		var input_obj = GetTag('input');
-		for( var i=0;i<input_obj.length;i++){
-			if(input_obj[i].type == "submit"){
-				input_obj[i].type = "button";
-			}
-		}
+		YAHOO.example.container.wait.show();
 		var sUrl = webroot_dir+"pages/pagers_num/"+obj.value;
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, ajax_pagers_callback);
 	}  
@@ -945,44 +1055,331 @@ function help_show_or_hide(text_id){
 	}
 }
 
+//Tab
+	function overtab(name,cursel,n){ 
+		for(i=1;i<=n;i++){ 
+		var menu=document.getElementById(name+i); 
+		var con=document.getElementById("con_"+name+"_"+i); 
+		menu.className=i==cursel?"hover":"normal"; 
+		con.className=i==cursel?"display":"none"; 
+		} 
+	}
 
-
-
-
-/*
-	function show_pic_original(img){
-		var width = img.clientWidth;
-		var height = img.clientHeight;
-		if(height > 500){
-			var num = 500 / height;
-			height = 500;
-			width = width * num;
+//后台关于svcart层
+function sys_about(){
+	YAHOO.example.container.wait.show();
+	var sUrl = webroot_dir+"pages/sys_about/?status=1";
+	var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, sys_about_callback);
+}
+var sys_about_Success = function(o){
+	//var sys_messages = YAHOO.lang.JSON.parse(o.responseText);
+	document.getElementById('message_content').innerHTML = o.responseText;
+	YAHOO.example.container.wait.hide();
+	YAHOO.example.container.message.show();
+}
+var sys_about_Failure = function(o){
+	YAHOO.example.container.wait.hide();
+}
+var sys_about_callback ={
+	success:sys_about_Success,
+	failure:sys_about_Failure,
+	timeout : 30000,
+	argument: {}
+};
+//后台账户设置
+function account_settings(){
+	YAHOO.example.container.wait.show();
+	var sUrl = webroot_dir+"pages/account_settings/?status=1";
+	var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, account_settings_callback);
+}
+var account_settings_Success = function(o){
+	//var sys_messages = YAHOO.lang.JSON.parse(o.responseText);
+	document.getElementById('message_content').innerHTML = o.responseText;
+	YAHOO.example.container.wait.hide();
+	YAHOO.example.container.message.show();
+}
+var account_settings_Failure = function(o){
+	YAHOO.example.container.wait.hide();
+}
+var account_settings_callback ={
+	success:account_settings_Success,
+	failure:account_settings_Failure,
+	timeout : 30000,
+	argument: {}
+};
+//修改密码确认
+function confirm_password(){
+		var old_pwd = document.getElementById('old_pwd');
+		var new_pwd = document.getElementById('new_pwd');
+		var new_pwd_confirm = document.getElementById('new_pwd_confirm');
+		
+		var pwd_information = document.getElementById('pwd_information');
+		var Operator_time_zone = document.getElementById('Operator_time_zone');
+		if(new_pwd.value!=new_pwd_confirm.value&&new_pwd_confirm.value!=""){
+			pwd_information.innerHTML = "两次密码输入不一样";
+			return false;
+		}else{
+			pwd_information.innerHTML = "";
 		}
-	    if(width > 800){
-			var num = 800 / width;
-			height = height * num;
+		if(old_pwd.value!=""&&new_pwd.value==""){
+			pwd_information.innerHTML = "新密码不能为空";
+			return false;
 		}
-		YAHOO.example.container.message_img_show = new YAHOO.widget.Panel("message_img_show",
-					{
-						width:width+"px",
-						zIndex:1000,
-						fixedcenter:false, 
-						close:false, 
-						draggable:false, 
-						modal:true,
-						visible:false,
-						effect:{
-							effect:YAHOO.widget.ContainerEffect.FADE, 
-							duration:0.5
-						}
-					}
-		);
-		YAHOO.example.container.message_img_show.setBody("<div id='message_img_show'></div>");
-		YAHOO.example.container.message_img_show.render(document.body);
-		GetId('message_img_show').innerHTML = "<div onclick='javascript:close_img_show();'><img src='"+img.src+"'/></div>";
-		YAHOO.example.container.message_img_show.show();
+		if(old_pwd.value!=""&&new_pwd_confirm.value==""){
+			pwd_information.innerHTML = "新密码不能为空";
+			return false;
+		}
+		
+		var sUrl = webroot_dir+"operators/ajax_amend_now_pwd/"+old_pwd.value+"/"+new_pwd.value+"/?Operator_time_zone="+Operator_time_zone.value;
+		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, confirm_password_callback);
+		
 
 	}
-	function close_img_show(){
-		YAHOO.example.container.message_img_show.hide();
-	}*/
+
+	var confirm_password_Success = function(o){
+		var new_pwd = document.getElementById('new_pwd');
+		var new_pwd_confirm = document.getElementById('new_pwd_confirm');
+		var pwd_information = document.getElementById('pwd_information');
+		var old_pwd = document.getElementById('old_pwd');
+		if(o.responseText==0){
+			old_pwd.value="";
+			new_pwd.value="";
+			new_pwd_confirm.value="";
+			pwd_information.innerHTML = "密码输入错误!"
+			
+		}else{
+			pwd_information.innerHTML = "";
+			old_pwd.value="";
+			new_pwd.value="";
+			new_pwd_confirm.value="";
+			document.getElementById('pwd_confirm').style.display = "block";
+			document.getElementById('pwd_text').style.display = "none";
+		}
+	}
+	
+	var confirm_password_Failure = function(o){
+		//alert("error");
+	}
+
+	var confirm_password_callback ={
+		success:confirm_password_Success,
+		failure:confirm_password_Failure,
+		timeout : 10000,
+		argument: {}
+	};
+
+//后台在线帮助快捷窗口
+function online_help_div(){
+	YAHOO.example.container.wait.show();
+	var sUrl = webroot_dir+"pages/online_help_div/?status=1";
+	var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, online_help_div_callback);
+}
+var online_help_div_Success = function(o){
+	//var sys_messages = YAHOO.lang.JSON.parse(o.responseText);
+	document.getElementById('message_content').innerHTML = o.responseText;
+	YAHOO.example.container.wait.hide();
+	YAHOO.example.container.message.show();
+}
+var online_help_div_Failure = function(o){
+	YAHOO.example.container.wait.hide();
+}
+var online_help_div_callback ={
+	success:online_help_div_Success,
+	failure:online_help_div_Failure,
+	timeout : 30000,
+	argument: {}
+};
+function online_help_go(){
+	document.getElementById('online_help_link').href = "http://www.seevia.cn/articles/search/" + document.getElementById('online_help_value').value;
+	oh_big_panel.hide();
+}
+
+//后台插件搜索
+function plugin_search(){
+	YAHOO.example.container.wait.show();
+	var sUrl = webroot_dir+"pages/plugin_search/?status=1";
+	var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, plugin_search_callback);
+}
+var plugin_search_Success = function(o){
+	//var sys_messages = YAHOO.lang.JSON.parse(o.responseText);
+	document.getElementById('message_content').innerHTML = o.responseText;
+	YAHOO.example.container.wait.hide();
+	YAHOO.example.container.message.show();
+}
+var plugin_search_Failure = function(o){
+	YAHOO.example.container.wait.hide();
+}
+var plugin_search_callback ={
+	success:plugin_search_Success,
+	failure:plugin_search_Failure,
+	timeout : 30000,
+	argument: {}
+};
+function plugin_search_go(){
+	var search_value = document.getElementById('plugin_search_value').value;
+	if(search_value == "")
+		search_value = "all";
+		document.getElementById('plugin_search_link').href = "http://www.seevia.cn/products/advancedsearch/SAD/" + search_value + "/82/";
+}
+//后台清除缓存
+function clear_cache_bt(){
+	YAHOO.example.container.wait.show();
+	var sUrl = webroot_dir+"pages/clear_cache_bt/?status=1";
+	var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, clear_cache_bt_callback);
+}
+var clear_cache_bt_Success = function(o){
+	//var sys_messages = YAHOO.lang.JSON.parse(o.responseText);
+	document.getElementById('message_content').innerHTML = o.responseText;
+	YAHOO.example.container.wait.hide();
+	YAHOO.example.container.message.show();
+}
+var clear_cache_bt_Failure = function(o){
+	YAHOO.example.container.wait.hide();
+}
+var clear_cache_bt_callback ={
+	success:clear_cache_bt_Success,
+	failure:clear_cache_bt_Failure,
+	timeout : 30000,
+	argument: {}
+};
+	function clear_cache(){
+	    var app_checkbox = document.getElementsByName('app_checkbox');
+	    if(app_checkbox.length > 0){
+	    	var sPost = Array();
+	    	var j = 0;
+			for(var i=0;i<app_checkbox.length;i++){
+				if(app_checkbox[i].checked === true){
+					sPost[j] = app_checkbox[j].value;
+					j++;
+				}
+			}
+			if(sPost.length>0){
+		    	var sUrl = webroot_dir+"pages/clear_cache";
+		   		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, clear_cache_callback, 'dir_name='+sPost.join(','));
+	    	}
+	    }
+	    
+	}
+
+	var clear_cache_Success = function(oResponse){
+		document.getElementById('clear_cache_msg').innerHTML = '共清除缓存文件:'+oResponse.responseText+'个';
+		document.getElementById('cc_confirm').style.display = "block";
+		document.getElementById('cc_text').style.display = "none";
+	}
+	var clear_cache_Failure = function(o){
+		alert("error");
+	}
+	var clear_cache_callback ={
+		success:clear_cache_Success,
+		failure:clear_cache_Failure,
+		timeout : 100000,
+		argument: {}
+	};
+	function app_checkAll(){
+		var app_checkbox = document.getElementsByName('app_checkbox');
+		if(document.getElementById('app_chkall').checked == true){
+			for(var i=0;i<app_checkbox.length;i++){
+				app_checkbox[i].checked = true;
+			}
+		}
+		else{
+			for(var i=0;i<app_checkbox.length;i++){
+				app_checkbox[i].checked = false;
+			}
+		}
+	}
+	function check_checked(){
+		var app_checkbox = document.getElementsByName('app_checkbox');
+		for(var i=0;i<app_checkbox.length;i++){
+			if(app_checkbox[i].checked == false){
+				document.getElementById('app_chkall').checked = false;
+				return ;
+			}
+				
+		}
+		document.getElementById('app_chkall').checked = true;
+	}
+//google翻译
+function google_shortcut(){
+	YAHOO.example.container.wait.show();
+	var sUrl = webroot_dir+"pages/google_shortcut/?status=1";
+	var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, google_shortcut_callback);
+}
+var google_shortcut_Success = function(o){
+	//var sys_messages = YAHOO.lang.JSON.parse(o.responseText);
+	document.getElementById('message_content').innerHTML = o.responseText;
+	YAHOO.example.container.wait.hide();
+	YAHOO.example.container.message.show();
+}
+var google_shortcut_Failure = function(o){
+	YAHOO.example.container.wait.hide();
+}
+var google_shortcut_callback ={
+	success:google_shortcut_Success,
+	failure:google_shortcut_Failure,
+	timeout : 30000,
+	argument: {}
+};
+   //实现google接口翻译功能
+   	function g_trans(){
+	
+	    var original_text = document.getElementById('original_text').value;
+   	    var lang_obj = document.getElementById("g_language");
+ 	    var google_translate_information = document.getElementById('google_translate_information');
+ 	    if(original_text.length <= 0){
+	   		google_translate_information.innerHTML = "请填写原文";
+	   		return false;
+	   }else{
+	   		google_translate_information.innerHTML = "";
+	   }
+	   var i=0;
+	   while(true){
+			if(document.getElementById('g_trans'+i) == null){
+				break;
+			}
+			var lang_value = document.getElementById('g_trans'+i).name;
+			var g_translation = document.getElementById('g_trans'+i);
+			var sUrl = webroot_dir+"pages/g_translate/"+lang_value+"/"+original_text+"/"+i;
+			var request = YAHOO.util.Connect.asyncRequest('GET', sUrl, g_trans_callback);
+			i++;
+ 		}
+	}
+	
+	var g_trans_Success = function(o){
+		var result = o.responseText;
+		result = result.split("|");
+		var g_trans = document.getElementById('g_trans'+result[1]);
+		g_trans.value = result[0];
+	}
+	
+	var g_trans_Failure = function(o){
+		alert("error:"+o.statusText);
+	}
+	
+	var g_trans_callback ={
+		success:g_trans_Success,
+		failure:g_trans_Failure,
+		timeout : 10000,
+		argument: {}
+	};
+//google翻译
+function back_gears(){
+	YAHOO.example.container.wait.show();
+	var sUrl = webroot_dir+"pages/back_gears/?status=1";
+	var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, back_gears_callback);
+}
+var back_gears_Success = function(o){
+	//var sys_messages = YAHOO.lang.JSON.parse(o.responseText);
+	document.getElementById('message_content').innerHTML = o.responseText;
+	YAHOO.example.container.wait.hide();
+	YAHOO.example.container.message.show();
+}
+var back_gears_Failure = function(o){
+	YAHOO.example.container.wait.hide();
+}
+var back_gears_callback ={
+	success:back_gears_Success,
+	failure:back_gears_Failure,
+	timeout : 30000,
+	argument: {}
+};

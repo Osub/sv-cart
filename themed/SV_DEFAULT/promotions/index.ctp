@@ -9,15 +9,14 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 3225 2009-07-22 10:59:01Z huangbo $
+ * $Id: index.ctp 4433 2009-09-22 10:08:09Z huangbo $
 *****************************************************************************/
 ?>
-<?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
-<div id="Products_box">
+<div id="Products_box"><?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 <h1 class="headers">
 <span class="l"></span><span class="r"></span>
 <b><?php echo $SCLanguages['promotion'];?><?php echo $SCLanguages['list'];?></b></h1>
-<div id="Edit_box"><!--促消列表-->
+<div class="Edit_box"><!--促消列表-->
 <div id="Edit_info">
 <div id="user_msg">
 <?php if(isset($promotions) && sizeof($promotions)>0){?>
@@ -26,7 +25,7 @@
 	<span class="user_name"><?php echo $SCLanguages['start'];?><?php echo $SCLanguages['time'];?></span>
 	<span class="add_time"><?php echo $SCLanguages['end'];?><?php echo $SCLanguages['time'];?></span>
 </p>
-<div id="article_box">
+<div id="article_box" style="margin-top:0;">
 <?php 	foreach($promotions as $key=>$v){ ?>    
     	<p class="list">
 			<span class="title"><?php echo $html->link($v['PromotionI18n']['title'],"/promotions/{$v['Promotion']['id']}",array(),false,false);?></span>
@@ -67,7 +66,9 @@
 
 ?> 
 <?php if(isset($promotions) && sizeof($promotions)>0){?>
-    <?php echo $SCLanguages['topage'];?><span><input type="text" name="go_page" id="go_page"/></span><?php echo $SCLanguages['pages'];?><a href="javascript:GoPage(<?php echo $paging['pageCount']?>);"><?php echo $html->image(isset($img_style_url)?$img_style_url."/".'to_page.gif':'to_page.gif')?></a>
+    <?php echo $SCLanguages['topage'];?><span><input type="text" name="go_page" id="go_page"/></span><?php echo $SCLanguages['pages'];?>
+	<a href="javascript:Go_Page(<?php echo $paging['pageCount']?>,'<?php echo $this->data['pages_url_1']?>','<?php echo $this->data['pages_url_2']?>');">
+    	<?php echo $html->image(isset($img_style_url)?$img_style_url."/".'to_page.gif':'to_page.gif')?></a>
 <?php }}?>
   </p></div>
 <script>
@@ -84,4 +85,4 @@ function show_last5(){
   document.getElementById('last5').style.display="block";
 }
 </script>
-<?php echo $this->element('news', array('cache'=>array('time'=> "+24 hour",'key'=>'news'.$template_style)));?>
+<?php echo $this->element('news', array('cache'=>array('time'=> "+0 hour",'key'=>'news'.$template_style)));?>

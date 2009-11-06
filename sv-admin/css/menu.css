@@ -99,7 +99,7 @@ version: 2.5.2
 .svcart-skin-g00 .svcartmenuitem-hassubmenu{}
 .svcart-skin-g00 .svcartmenuitem-checked{}
 .svcart-skin-g00 .yui-menu-shadow-visible{
-	background-color:#000;opacity:.05;*filter:alpha(opacity=5);
+	background-color:#000;opacity:.05;filter:alpha(opacity=5);
 }
 .svcart-skin-g00 .svcartmenuitemlabel-disabled{cursor:default;color:#A6A6A6;}.svcart-skin-g00 .svcartmenuitem-hassubmenu-disabled{background-image:url(menuitem_submenuindicator_disabled.png);}
 .svcart-skin-g00 .svcartmenuitem-checked-disabled{}

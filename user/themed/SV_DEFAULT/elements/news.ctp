@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: news.ctp 2550 2009-07-03 06:35:49Z tangyu $
+ * $Id: news.ctp 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 ?>
 <?php if(isset($SVConfigs['shop_notice']) && $SVConfigs['shop_notice'] != ''){?>
@@ -19,7 +19,7 @@
 	  <p class="text" id="newscoll_1"><?php echo $SVConfigs['shop_notice']?></p>
 	  <p class="text" id="newscoll_2"></p>
 	</div>
-<p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."New_img.gif":"New_img.gif")?></p>
+<p><?//php echo $html->image(isset($img_style_url)?$img_style_url."/"."New_img.gif":"New_img.gif")?></p>
     </div>
 
 <?php }?>

@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 2535 2009-07-02 11:34:51Z huangbo $
+ * $Id: index.ctp 4433 2009-09-22 10:08:09Z huangbo $
 *****************************************************************************/
 ?>
 <div id="globalRight" style="width:926px;margin:0 auto;">
@@ -18,7 +18,7 @@
 <!--End-->
 <?php   	if(isset($product_cat) && sizeof($product_cat)>0 ){
 ?>
-    <div id="navigation"><h1 class="headers"><span class="l"></span><span class="r"></span></h1>
+    <div class="navigation"><h1 class="headers"><span class="l"></span><span class="r"></span></h1>
     <ul><li><span><b><?php echo $SCLanguages['products'];?><?php echo $SCLanguages['classificatory'];?></b></span></li></ul>
     <div class="list_box">
 <!--商品类目-->
@@ -48,7 +48,7 @@
 <?php }?>
 <?php 		   	if(isset($brands) && sizeof($brands)>0 ){
 ?>
-<div id="navigation"><h1 class="headers"><span class="l"></span><span class="r"></span></h1>
+<div class="navigation"><h1 class="headers"><span class="l"></span><span class="r"></span></h1>
 <ul><li><span><b><?php echo $SCLanguages['brand'];?></b></span></li></ul>
     <div class="list_box">
  <!--品牌类目--> 
@@ -74,7 +74,7 @@
 				<?php }?>
 <?php   	if(isset($article_cat) && sizeof($article_cat)>0 ){
 ?>
-    <div id="navigation"><h1 class="headers"><span class="l"></span><span class="r"></span></h1>
+    <div class="navigation"><h1 class="headers"><span class="l"></span><span class="r"></span></h1>
     <ul><li><span><b><?php echo $SCLanguages['article'];?><?php echo $SCLanguages['classificatory'];?></b></span></li></ul>
     <div class="list_box">
 <?php 
@@ -82,7 +82,7 @@
  ?>
     	<div class="sorts">
         	<h2><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."right_icon02.gif":"right_icon02.gif",array("alt"=>'right_icon02.gif'))?><span>
-            <?php echo $html->link("{$v['CategoryI18n']['name']}","/category_articles/{$v['Category']['id']}",array(),false,false);?>
+            <?php echo $html->link("{$v['CategoryI18n']['name']}","/articles/category/{$v['Category']['id']}",array(),false,false);?>
      </span></h2>
      <p>
 <?php 
@@ -92,7 +92,7 @@
 	 	 ?>
 	 	 
 <?php if(!$first){ ?> <span>|</span><?php }?>
-            <?php echo $html->link("{$val['CategoryI18n']['name']}","/category_articles/{$val['Category']['id']}","",false,false);?>
+            <?php echo $html->link("{$val['CategoryI18n']['name']}","/articles/category/{$val['Category']['id']}","",false,false);?>
 <?php 
 	$first=0;
 	}}?>

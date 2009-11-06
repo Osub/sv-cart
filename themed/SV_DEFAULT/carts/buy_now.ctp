@@ -9,11 +9,11 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: buy_now.ctp 2571 2009-07-03 12:07:55Z zhengli $
+ * $Id: buy_now.ctp 4333 2009-09-17 10:46:57Z huangbo $
 *****************************************************************************/
 ob_start();?>
 <?php if($result['type'] == 5){?>
-<div id="loginout">
+<div id="loginout" class="loginout">
 	<h1><b style="font-size:14px">	<?php echo $SCLanguages['buy'];?></b></h1>
 	<div class="border_side">
 	<p class="login-alettr">
@@ -28,19 +28,13 @@ ob_start();?>
 	<p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."loginout-bottom.gif":"loginout-bottom.gif",array("align"=>"texttop"))?></p>
 </div>
 <?php }else if($result['type'] == 4){?>
-<div id="loginout">
-<h1 class="hd"><b>
-	<?php echo $SCLanguages['buy'];?>
-	</b></h1>
+<div id="loginout" class="loginout">
+<h1 class="hd"><b><?php echo $SCLanguages['buy'];?></b></h1>
 <div id="buyshop_box">
 <div class="shops">
 <ul>
 <li class="pic">
-	<?php if(isset($product_info['Product']['img_thumb']) && $product_info['Product']['img_thumb'] != ""){?>
-	<?php echo $html->image($product_info['Product']['img_thumb'],array("alt"=>$product_info['ProductI18n']['name'],"width"=>75,"height"=>75));?>
-	<?php }else{?>
-	<?php echo $html->image("/img/product_default.jpg",array("alt"=>$product_info['ProductI18n']['name'],"width"=>75,"height"=>75));?>
-	<?php }?>
+<?php echo $svshow->productimagethumb($product_info['Product']['img_thumb'],$svshow->sku_product_link($product_info['Product']['id'],$product_info['ProductI18n']['name'],$product_info['Product']['code'],$this->data['configs']['product_link_type']),array("alt"=>$product_info['ProductI18n']['name'],'width'=>75,'height'=>75),$this->data['configs']['products_default_image']);?>
 </li>
 <li>
 <p class="name"><?php echo $SCLanguages['products'].$SCLanguages['apellation']."：".$product_info['ProductI18n']['name'];?></p>
@@ -48,15 +42,33 @@ ob_start();?>
 <p class="buy_number"><?php echo $SCLanguages['quantity']."：".$product_info['quantity'];?></p>
 <p>
 <?php if(isset($SVConfigs['show_market_price']) && $SVConfigs['show_market_price'] >0){?>
-<?php echo $svshow->price_format($product_info['Product']['market_price'],$SVConfigs['price_format']);?>	
+<?//php echo $svshow->price_format($product_info['Product']['market_price'],$SVConfigs['price_format']);?>	
+
+<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+	<?php echo $svshow->price_format(round($product_info['Product']['market_price']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],2),$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+<?php }else{?>
+	<?php echo $svshow->price_format($product_info['Product']['market_price'],$this->data['configs']['price_format']);?>	
+<?php }?>
 
 <?php }else if(isset($product_info['is_promotion'])){?>
 <?php if($product_info['is_promotion'] == 1){ ?>
 <?php echo $SCLanguages['our_price']?>:
-<?php echo $svshow->price_format($product_info['Product']['promotion_price'],$SVConfigs['price_format']);?>	
+<?//php echo $svshow->price_format($product_info['Product']['promotion_price'],$SVConfigs['price_format']);?>	
+<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+	<?php echo $svshow->price_format(round($product_info['Product']['promotion_price']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],2),$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+<?php }else{?>
+	<?php echo $svshow->price_format($product_info['Product']['promotion_price'],$this->data['configs']['price_format']);?>	
+<?php }?>	
 <?php }else{ ?>
 <?php echo $SCLanguages['our_price']?>:
-<?php echo $svshow->price_format($product_info['Product']['shop_price'],$SVConfigs['price_format']);?>	
+<?//php echo $svshow->price_format($product_info['Product']['shop_price'],$SVConfigs['price_format']);?>
+<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+	<?php echo $svshow->price_format(round($product_info['Product']['shop_price']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],2),$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+<?php }else{?>
+	<?php echo $svshow->price_format($product_info['Product']['shop_price'],$this->data['configs']['price_format']);?>	
+<?php }?>	
+	
+	
 <?php }} ?>
 </p>
 <p>
@@ -64,7 +76,13 @@ ob_start();?>
 <?php if(isset($product_info['discount_price']) && $product_info['discount_price'] > 0){?>
 <?php echo $SCLanguages['discount'];?>:<?php echo $product_info['discount_rate']."%"; ?></p>
 <p><?php echo $SCLanguages['save_to_market_price'];?>：
-<?php echo $svshow->price_format($product_info['discount_price'],$SVConfigs['price_format']);?>	
+<?//php echo $svshow->price_format($product_info['discount_price'],$SVConfigs['price_format']);?>	
+<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+	<?php echo $svshow->price_format(round($product_info['discount_price']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],2),$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+<?php }else{?>
+	<?php echo $svshow->price_format($product_info['discount_price'],$this->data['configs']['price_format']);?>	
+<?php }?>		
+	
 </p>
 <?php }else{?>
 </p>
@@ -82,14 +100,14 @@ ob_start();?>
 <?php echo $html->link($SCLanguages['cancel'],"javascript:close_message();","",false,false);?>
 </p>
 </div>
-<p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."loginout-bottom.png":"loginout-bottom.png");?></p>
+<p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."loginout-bottom.gif":"loginout-bottom.gif");?></p>
 </div></div>
 <?php }else if(isset($result['page']) && $result['page']=="cart" && $result['type'] == 0 ){?>
 <?php echo $this->element('cart_products', array('cache'=>'+0 hour'));?>
 <?php }else{
 if($type == 'product'){
 ?>
-<div id="loginout">
+<div id="loginout" class="loginout">
 <h1 class="hd"><b>
 	<?php if($result['type']==0){?>
 	<?php echo $SCLanguages['buy'].$SCLanguages['successfully'];?>
@@ -103,11 +121,7 @@ if($type == 'product'){
 <div class="shops">
 	<ul>
 		<li class="pic">
-		<?php if(isset($product_info['Product']['img_thumb'])  && $product_info['Product']['img_thumb'] != "" ){?>
-		<?php echo $html->image($product_info['Product']['img_thumb'],array("alt"=>$product_info['ProductI18n']['name'],"width"=>108,"height"=>108));?>
-		<?php }else{?>
-		<?php echo $html->image("/img/product_default.jpg",array("alt"=>$product_info['ProductI18n']['name'],"width"=>108,"height"=>108));?>
-		<?php }?>
+<?php echo $svshow->productimagethumb($product_info['Product']['img_thumb'],$svshow->sku_product_link($product_info['Product']['id'],$product_info['ProductI18n']['name'],$product_info['Product']['code'],$this->data['configs']['product_link_type']),array("alt"=>$product_info['ProductI18n']['name'],'width'=>108,'height'=>108),$this->data['configs']['products_default_image']);?>
 		</li>
 		
 		<li class="right">
@@ -129,18 +143,48 @@ if($type == 'product'){
 		<dd class="l"><?php echo $SCLanguages['our_price']?>：</dd>
 		<dd class="r">
 		<?php if(isset($product_info['product_rank_price'])){?>
-<?php echo $svshow->price_format($product_info['product_rank_price'],$SVConfigs['price_format']);?>
+<?//php echo $svshow->price_format($product_info['product_rank_price'],$SVConfigs['price_format']);?>
+	
+		<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+			<?php echo $svshow->price_format(round($product_info['product_rank_price']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],2),$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+		<?php }else{?>
+			<?php echo $svshow->price_format($product_info['product_rank_price'],$this->data['configs']['price_format']);?>	
+		<?php }?>	
+	
+	
 	<?php }else if(isset($product_info['is_promotion']) && $product_info['is_promotion'] == 1){?>
-<?php echo $svshow->price_format($product_info['Product']['promotion_price'],$SVConfigs['price_format']);?>	
+<?//php echo $svshow->price_format($product_info['Product']['promotion_price'],$SVConfigs['price_format']);?>	
+		<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+			<?php echo $svshow->price_format(round($product_info['Product']['promotion_price']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],2),$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+		<?php }else{?>
+			<?php echo $svshow->price_format($product_info['Product']['promotion_price'],$this->data['configs']['price_format']);?>	
+		<?php }?>		
+	
+	
 		<?php }else{ ?>
-<?php echo $svshow->price_format($product_info['Product']['shop_price'],$SVConfigs['price_format']);?>	
+<?//php echo $svshow->price_format($product_info['Product']['shop_price'],$SVConfigs['price_format']);?>	
+		<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+			<?php echo $svshow->price_format(round($product_info['Product']['shop_price']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],2),$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+		<?php }else{?>
+			<?php echo $svshow->price_format($product_info['Product']['shop_price'],$this->data['configs']['price_format']);?>	
+		<?php }?>		
+	
+	
 		<?php } ?></dd>
 		</div>
 		
 		<?php if(isset($SVConfigs['show_market_price']) && $SVConfigs['show_market_price'] == 1){?>
 		<div class="profile">
 		<dd class="l"><?php echo $SCLanguages['market_price']."：";?></dd>
-		<dd class="r"><?php echo $svshow->price_format($product_info['Product']['market_price'],$SVConfigs['price_format']);?></dd>
+		<dd class="r">
+			<?//php echo $svshow->price_format($product_info['Product']['market_price'],$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format(round($product_info['Product']['market_price']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],2),$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($product_info['Product']['market_price'],$this->data['configs']['price_format']);?>	
+			<?php }?>					
+			
+			</dd>
 		</div>
 		<?php }?>
 		
@@ -151,7 +195,14 @@ if($type == 'product'){
 		</div>
 		<div class="profile">
 		<dd class="l"><?php echo $SCLanguages['save_to_market_price']?>：</dd>
-		<dd><?php echo $svshow->price_format($product_info['discount_price'],$SVConfigs['price_format']);?></dd>
+		<dd>
+			<?//php echo $svshow->price_format($product_info['discount_price'],$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($product_info['discount_price']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($product_info['discount_price'],$this->data['configs']['price_format']);?>	
+			<?php }?>			
+		</dd>
 		</div>
 		<?php }else{?>
 		
@@ -164,7 +215,7 @@ if($type == 'product'){
 <?php if(isset($result['page']) &&  $result['page']=="cart" && $result['type'] != 0 && $type != 'product'){?>
 	<?php echo $result['message']?>
 <p class="buy_btn"><?php echo $html->link($SCLanguages['confirm'],"javascript:close_message();");?></p>
-</div><p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."loginout-bottom.png":"loginout-bottom.png");?></p></div>
+</div><p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."loginout-bottom.gif":"loginout-bottom.gif");?></p></div>
 
 <?php }else{?>
 <p class="buy_btn">
@@ -174,7 +225,7 @@ if($type == 'product'){
 <?php }else{?>
 <?php echo $html->link($SCLanguages['confirm'],"javascript:close_message();");?>
 <?php }?>
-</p></div><p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."loginout-bottom.png":"loginout-bottom.png");?></p></div>
+</p></div><p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."loginout-bottom.gif":"loginout-bottom.gif");?></p></div>
 <?php }?>
 <?php }?>
 </div>
@@ -185,7 +236,7 @@ ob_start();
 ?>
 <?php if(isset($result['page']) && $result['page']=="cart" && $result['type'] == 0 ){?>
 
-<div id="loginout">
+<div id="loginout" class="loginout">
 	<h1><b><?php echo $SCLanguages['please_enter'];?><?php echo $SCLanguages['remark'];?></b></h1>
 	<div class="border_side" style="background:#fff;width:423px" id="buyshop_box">
 		<p class="login-alettr" style='border:0;padding-bottom:0;font-size:12px;'>
@@ -194,7 +245,7 @@ ob_start();
 		<p class="buy_btn"><?php echo $html->link($SCLanguages['confirm'],"javascript:add_note('".$result['buy_type']."','".$result['buy_id']."');");?>
 		<?php echo $html->link($SCLanguages['cancel'],"javascript:close_message();");?></p>
 	</div>
-	<p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."loginout-bottom.png":"loginout-bottom.png");?></p>
+	<p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."loginout-bottom.gif":"loginout-bottom.gif");?></p>
 </div>
 <?php }?>
 <?php 

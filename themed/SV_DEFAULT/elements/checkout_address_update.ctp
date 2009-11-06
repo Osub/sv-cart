@@ -9,11 +9,11 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: checkout_address_update.ctp 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: checkout_address_update.ctp 4661 2009-09-28 05:31:13Z huangbo $
 *****************************************************************************/
 ?>
 <h5><?php echo $SCLanguages['consignee'].$SCLanguages['information'];?>:</h5>
-<table cellpadding="0" cellspacing="0" class="address_table" border=0 align="center">
+<table cellpadding="0" cellspacing="0" class="address_table" width="100%" >
 <tr>
 <td class="lan-name">&nbsp;<?php echo $SCLanguages['address'];?><?php echo $SCLanguages['label'];?>:</td>
 <td class="lan-info"><input name="data['address']['name']" id="EditAddressName" value="<?php echo $address['UserAddress']['name']?>">&nbsp;<font id="edit_address_name" color="red">*</font></td>
@@ -40,10 +40,22 @@
 </tr>
 <tr>
 <td class="lan-name">&nbsp;<?php echo $SCLanguages['email'];?>:</td><td class="lan-info"><input name="data['address']['email']" id="EditAddressEmail" value="<?php echo $address['UserAddress']['email']?>">&nbsp;<font color="red" id="edit_address_email">*</font></td>
-<td class="lan-name"><?php echo $SCLanguages['best_shipping_time'];?>:</td><td class="lan-info"><input name="data['address']['best_time']" id="EditAddressBestTime" value="<?php echo $address['UserAddress']['best_time']?>"></td>
+<td class="lan-name"><?php echo $SCLanguages['best_shipping_time'];?>:</td><td class="lan-info">
+	<select name="data['address']['best_time']" id="EditAddressBestTime" style="width:130px;">	
+		<option value=""><?php echo $SCLanguages['please_choose']?></option>
+		<?php 
+			if(isset($information_info['best_time']) && sizeof($information_info['best_time'])>0){
+				foreach($information_info['best_time'] as $k=>$v){
+					if($k != ''){
+					?>
+				<option value="<?php echo $v?>"   <?if($address['UserAddress']['best_time'] == $v){?>selected<?}?>><?php echo $v?></option>
+		<?}}}?>
+	</select>		
+	
+	</td>
 <input type='hidden' name="data['address']['id']" id="EditAddressId" value="<?php echo $address['UserAddress']['id']?>">
 </tr>
 <tr>
-	<td colspan="4" class="btn_list" style="padding-left:415px;"><a href="javascript:edit_address_act();" class="amember float_l"><span><?php echo $SCLanguages['add']?></span></a></td>
+	<td colspan="4" class="btn_list" style="padding-left:415px;"><a href="javascript:edit_address_act();" class="amember float_l"><span><?php echo $SCLanguages['confirm']?></span></a></td>
 </tr>
 </table>

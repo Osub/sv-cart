@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 3225 2009-07-22 10:59:01Z huangbo $
+ * $Id: index.ctp 3949 2009-08-31 07:34:05Z huangbo $
 *****************************************************************************/
 ?>
 <div id="Right">
@@ -17,7 +17,7 @@
 	<div id="Products_box">
     	<h1><span><?php echo $SCLanguages['latest_comments'];?></span></h1>
         
-<div id="Edit_box"><!--文章列表-->
+<div class="Edit_box"><!--文章列表-->
   <div id="Edit_info">
   <p class="note article_title"><?php printf($SCLanguages['records_statistics'],$total);?></p>
   <div id="user_msg">
@@ -44,6 +44,6 @@
 </div><!--文章列表End-->
 </div>
 <?php echo $this->element('pagers', array('cache'=>'+0 hour'));?>
-<?php echo $this->element('news', array('cache'=>array('time'=> "+24 hour",'key'=>'news'.$template_style)));?>
+<?php echo $this->element('news', array('cache'=>array('time'=> "+0 hour",'key'=>'news'.$template_style)));?>
 
 </div>

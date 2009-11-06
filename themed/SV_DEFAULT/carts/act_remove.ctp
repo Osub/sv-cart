@@ -9,13 +9,13 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: act_remove.ctp 2525 2009-07-02 05:42:37Z shenyunfeng $
+ * $Id: act_remove.ctp 3779 2009-08-19 10:40:08Z huangbo $
 *****************************************************************************/
 ob_start();?>
 <?php if ($result['type'] == 0){?>
 <?php echo $this->element('cart_products', array('cache'=>'+0 hour'));?>
 <?php }else{?>
-<div id="loginout">
+<div id="loginout" class="loginout">
 	<h1><b><?php echo $SCLanguages['cart'];?><?php echo $SCLanguages['information'];?></b></h1>
 	<div class="box">
 		<p class="login-alettr"><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."icon-10.gif":"icon-10.gif",array("align"=>"middle"))?><b><?php echo $result['message']?></b></p>

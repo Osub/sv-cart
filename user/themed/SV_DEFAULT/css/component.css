@@ -24,7 +24,7 @@
 }
 #search img.go{margin-top:-3px;position:relative;vertical-align:middle;}
 #search span{
-	margin:0 10px;
+	margin:0 5px 0 3px;
 }
 #search .search_btn{
 	vertical-align:middle;
@@ -42,14 +42,17 @@
 	padding-top:13px;
 }
 .tools{
-	height:100%;overflow:hidden;margin-left:10px;position:relative;
+	min-height:60px;margin-left:10px;position:relative;
+}
+* html .tools{
+	height:100%;
 }
 .header_navs{
-	width:65%;padding:0 0 2px 5px;position:absolute;bottom:0;left:0;
+	width:68%;padding:0 0 2px 5px;position:absolute;bottom:0;left:6px;
 }
 .header_navs a{margin:0;font-weight:bold;}
 .header_navs span.nav{
-	margin:0 10px;
+	margin:0 4px;
 }
 /*================== Left ====================*/
 .category_box{height:100%;}
@@ -69,12 +72,12 @@
 	height:auto;position:relative;margin:0;padding:10px 0 5px 0;
 }
 ul.left_menus .Nav{height:100%;}
-ul.left_menus .Nav a{padding:1px 0 1px 40px;margin:0 2px;width:auto;}
+ul.left_menus .Nav a{padding:1px 0 1px 16px;margin:0 2px;width:auto;}
 .category_box .Help ul li img{
-	margin:0 20px 3px 0;
+	margin:0 10px 3px 0;
 }
 .category_box .Help ul li{
-	padding-left:34px;height:20px;line-height:20px;
+	padding-left:25px;height:20px;line-height:20px;
 }
 .brands ul li{
 	text-align:center;
@@ -83,47 +86,36 @@ ul.left_menus .Nav a{padding:1px 0 1px 40px;margin:0 2px;width:auto;}
 	margin-top:5px;
 	
 }
-.catmenus{margin-top:25px;}
 /*================== Home item_list ====================*/
 #container #Item_List{
-	width: 741px;padding-bottom:50px;overflow:auto;
+	padding-bottom:50px;overflow:auto;
 }
 #Item_List ul li{
-	width:132px;
+	width:18.3%;margin:0 6px 10px 6px;float:left;display:inline;
 }
 #Item_List ul{
-	float:left;
+	height:100%;overflow:hidden;
 }
 #Item_List ul li .pic{
 	text-align:center;
 	padding:6px 0 0 0;
 }
 #Item_List ul li .info{
-	text-align:center;
-	padding:3px 0 0 0;
+	text-align:center;padding:3px 0 0 0;
 }
 #Item_List ul li .info .name{
-	text-align:center;
-	margin:5px 0 0 0;
-	display:block;
+	text-align:center;margin:5px 0 0 0;display:block;
 	font-weight:bold;
 	font-size:13px
 }
 #Item_List ul li .info .Price{
-	display:block;
-	margin-top:7px;
+	display:block;margin-top:5px;
 }
 #Item_List ul li .info .stow{
-	display:block;
+	display:block;margin-top:5px;
 }
 #Item_List ul li .info .stow a{
 	margin:0 5px;
-}
-#Item_List ul li{
-	margin:0 6px 20px 6px;
-	float:left;
-	height:200px;
-
 }
 /*================== Home News ====================*/
 #News{
@@ -138,8 +130,8 @@ ul.left_menus .Nav a{padding:1px 0 1px 40px;margin:0 2px;width:auto;}
 #newscoll_2{top:0;width: 400px; left: 322px;}
 /*  ==================== advaearch/login ====================  */
 #advanced_search,#User_Login{width:240px;float:left;}
-#advanced_search .title,#User_Login .title,#language .title{height:23px;margin-right:30px;}
-#advanced_search .title b,#User_Login .title b,#language .title b{margin-left:15px;line-height:23px;}
+#advanced_search .title,#User_Login .title,.drag .title{height:23px;margin-right:30px;}
+#advanced_search .title strong,#User_Login .title strong,.drag .title strong{margin-left:15px;line-height:23px;}
 #User_Login .keywords{
 	margin:0;height:100%;overflow:hidden;
 }
@@ -237,9 +229,7 @@ ul.left_menus .Nav a{padding:1px 0 1px 40px;margin:0 2px;width:auto;}
 	margin:0 0 0 5px;
 }
 #Item_ListBox .Title_Item{
-	text-align:right;
-	height:23px;
-	padding-top:2px;
+	text-align:right;height:23px;padding-top:2px;
 }
 #Item_ListBox .Title_Item .select_Territory{
 	margin-right:50px;
@@ -248,17 +238,13 @@ ul.left_menus .Nav a{padding:1px 0 1px 40px;margin:0 2px;width:auto;}
 	margin-right:62px;
 }
 #Item_ListBox .Title_Item .select_Territory select{
-	height:17px;
-	width:75px;
-	font-size:10px;
-	vertical-align:bottom !important;vertical-align:middle;
+	height:17px;width:75px;font-size:10px;vertical-align:bottom !important;vertical-align:middle;
 }
 #Item_ListBox ul{
 	margin:20px 10px 20px 20px;
 }
 #Item_ListBox ul li{
-	height:145px;
-	margin-bottom:20px;
+	height:145px;margin-bottom:20px;
 }
 #Item_ListBox ul li .pic img{
 	width:108px;
@@ -277,10 +263,7 @@ ul.left_menus .Nav a{padding:1px 0 1px 40px;margin:0 2px;width:auto;}
 	margin:25px 0 0 40px;
 }
 .right .item_info .name{
-	font-weight:bold;
-	float:left;
-	width:173px;
-	margin-right:10px;
+	font-weight:bold;float:left;width:173px;margin-right:10px;
 }
 .right .item_info .Price{
 	margin:0 0 0 65px;
@@ -382,30 +365,24 @@ margin-top:5px;
 	text-align:center;
 }
 #Products #Item_box{
-	height:90px;
+	height:100%;overflow:hidden;padding-bottom:5px;
 }
 #Item_box .Item_info{
-	height:90px;
-	width:256px;
-	float:left;
+	width:256px;float:left;
 }
 #Item_box .Item_info .pic img{
-	height:72px;
-	width:72px;
-	margin:8px 0 0 8px;
+	height:72px;width:72px;margin:8px 0 0 8px;
 }
 #Item_box .Item_info .pic{
 	float:left;
 	
 }
 #Item_box .Item_info .info{
-	float:left;
-	margin:5px 0 0 24px;
+	float:left;margin:5px 0 0 24px;width:150px;
 	
 }
 #Item_box .Item_info .info span{
-	display:block;
-	margin-top:10px;
+	display:block;margin-top:10px;
 	
 }
 #Item_box .Item_Price{
@@ -467,14 +444,10 @@ margin-top:5px;
 	font-weight:bold;
 }
 #Item_box .btn_list{
-	float:left;
-	width:97px;
-	margin:5px 0;
+	float:left;width:97px;margin:5px 0;
 }
 #Item_box .btn_list span{
-	display:block;
-	text-align:center;
-	margin:5px 0;
+	display:block;text-align:center;
 }
 #Products #balance{
 	width:741px;
@@ -621,10 +594,6 @@ margin-top:5px;
 	margin-left:25px;
 }
 /*========================= carts checkout ==========================*/
-#globalBalance{
-	width:894px;
-	margin:0 auto;
-}
 #globalBalance .buy_title{
 	height:33px;
 	line-height:33px;
@@ -795,7 +764,7 @@ table .list .selece_input{
 	margin:40px 0;text-align:center;
 }
 .Balance_alltitle{
-	width:894px;margin:10px auto 5px;height:36px;
+	width:894px;margin:10px auto 5px;
 }
 #Balance_info .address_list .address_title td{
 	padding:5px 0;
@@ -803,39 +772,76 @@ table .list .selece_input{
 #Balance_info .address_list .list .bewrite{
 	padding-left:25px;text-align:left;
 }
+
+
 #globalBalance .succeed{
-	text-align:center;margin:75px 0 15px 0;font-size:116.67%;
+	margin:10px 0 5px 0;font-size:1.5em;padding-left:200px;padding-right:200px;
 }
 #globalBalance .succeed img{
-	margin:-15px 15px 0 0;vertical-align:middle;position:relative;zoom:1;
+	margin:-15px 15px 0 0;vertical-align:middle;position:relative;zoom:1
+}
+#globalBalance .order_description{
+	margin:0 0 5px 0;padding-left:268px;padding-right:200px;
 }
 #globalBalance .back_home{
-	text-align:center;margin:0 0 10px 25px;font-size:116.67%;
+	text-align:center;
 }
 #globalBalance .back_home a{text-decoration:underline;}
-/*==================== Language =========================*/
-#language{
-	width:266px;
-	
+
+#globalBalance .back_home .green_btns{
+	width:108px;margin:0 auto;
 }
-#language h1{
+/*==================== Language =========================*/
+.drag{
+	width:auto;
+}
+.drag h1{
 	position:relative;
 }
-#language ul{
+.drag .box{
 	padding:15px 15px 5px;height:100%;overflow:hidden;
 }
-#language li{
+.drag ul{
+	height:100%;overflow:hidden;
+}
+.language li{
 	width:117px;float:left;margin-bottom:10px;
 }
-#language li a:hover{
+.language li a:hover{
 	font-weight:bold;text-decoration:none;
 }
 
-#language li img{
+.language li img{
 	width:37px;height:27px;margin-right:10px;
 }
 .close{
 	position:absolute;top:0;right:0px;z-index:-1px;
+}
+
+.theme .box{
+	padding:5px 15px 0;
+}
+.theme li{float:left;width:69%;padding:5px 0;}
+.theme li.lang{width:30%;}
+
+.currencie .box{
+	padding:10px 15px 0;
+}
+.currencie li{
+	float:left;padding-right:10px;text-align:nowrap;height:20px;
+}
+.currencie a:hover{
+	text-decoration:underline;
+}
+
+.hotkeyword .box{
+	padding:10px 15px 0;
+}
+.hotkeyword li{
+	float:left;padding-right:10px;text-align:nowrap;height:20px;
+}
+.hotkeyword a:hover{
+	text-decoration:underline;
 }
 /*========================= Search-out ==========================*/
 #noproducts{
@@ -873,54 +879,66 @@ table .list .selece_input{
 	margin:5px 0 10px 0;
 }
 /*  ==================== Menber Center ====================  */
-#infos #wellcom_info{
-	margin:15px 0 15px 84px;
+.infos #wellcom_info{
+	padding:10px 0 15px 16px;float:left;width:50%;
 }
-#infos #wellcom_info p{
+.member_infos{
+	overflow:hidden;height:100%;
+}
+.infos #wellcom_info p{
 	line-height:18px;
 }
-#infos #wellcom_info h2{
-	font-size:18px;
-	font-weight:bold;
-	line-height:30px;
+.infos #wellcom_info p.atte{
+	padding-top:22px;
 }
-#infos .affiche{
-	padding:14px 20px 14px 84px;
+.infos #wellcom_info h2{
+	font-size:18px;font-weight:bold;line-height:30px;
 }
-#infos #money_info{
-	padding:14px 20px 50px 84px;
+.infos .affiche{
+	padding:14px 20px 14px 16px;
 }
-#infos #money_info h3{
-	font-weight:bold;
+.infos #money_info{
+	padding:14px 0 0 0;float:right;width:46%;
 }
-#infos #money_info h3.menber{
+.infos #money_info h3.menber{
 	line-height:20px;font-size:12px;
 }
-#infos #money_info h3 span{
-	font-weight:normal;margin-left:91px;
+.infos #money_info ul{
+	height:100%;overflow:hidden;padding:0 0 5px;
 }
-#infos #money_info p{
-	line-height:27px;height:27px;
+#money_info li{float:left;width:58%;}
+#money_info li.lang{
+	width:41%;
 }
-#infos #money_info h3.remind{
-	margin-top:20px;font-size:12px;
+.infos #money_info .remind{
+	margin-top:8px;
 }
-#infos #money_info p span.title{
-	float:left;
-	width:140px;
+.member_infos .box{
+	width:30%;float:left;padding:0 0 0 18px;
 }
-#Products_box #infos{
+.member_infos .box ul{
+	height:100%;overflow:hidden;padding:7px 0 5px;
+}
+.member_infos .box li{
+	float:left;width:53.5%;padding-left:5px;overflow:hidden;
+}
+.member_infos .box li.lang{
+	width:44%;padding-left:0;
+}
+.member_infos .box li.lang .comment_img{padding-top:8px;}
+.member_infos .box .reply{padding-top:8px;}
+.member_infos .box li.reply{
+	padding-top:8px;float:none;clear:both;width:auto;zoom:1;padding-left:20px;
+}
+#Products_box .infos{
 	height:auto;margin-top:5px;height:100%;overflow:hidden;
 }
 /*  ==================== Favorites ====================  */
 #Item_box .Item_info .info span.item_name{
-	text-align:center;
-	margin:34px 0;
-	font-weight:bold;
+	margin:10px 0 0;font-weight:bold;
 }
 #Item_box .mart .Products_Price{
-	font-weight:normal;
-	width:150px;
+	font-weight:normal;width:150px;
 }
 #Item_box .Number_select .goodprice{
 	margin-top:39px;
@@ -932,8 +950,7 @@ table .list .selece_input{
 	float:left;
 }
 .collection .nonts{
-	margin-left:20px;
-	width:370px;
+	margin-left:20px;width:370px;
 }
 .collection .Mart_prices{
 	width:110px;
@@ -942,8 +959,7 @@ table .list .selece_input{
 	width:130px;
 }
 .collection .handels{
-	width:100px;
-	text-align:center;
+	width:100px;text-align:center;
 }
 #Item_box .mart{
 	float:left;
@@ -953,10 +969,7 @@ table .list .selece_input{
 
 }
 #Item_box .good_price{
-	float:left;
-	width:126px;
-	margin:34px 0;
-	margin-left:10px;
+	float:left;width:126px;margin:34px 0;margin-left:10px;
 }
 #Item_box .collection_btn{
 	padding-top:10px;margin-left:8px;
@@ -1021,28 +1034,28 @@ ul.content_tab li.hover{
 	font-weight:bold;
 }
 /*  ==================== my addresses ====================  */
-#reguser_gut01 ul li span.adrees textarea{
+.reguser_gut01 ul li span.adrees textarea{
 	width:320px;height:30px;vertical-align:middle;
 }
-#reguser_gut01 ul li span.addrees_territory select{
+.reguser_gut01 ul li span.addrees_territory select{
 	width:118px;height:20px;
 }
-#reguser_gut01 .add_title{
+.reguser_gut01 .add_title{
 	text-align:center;text-indent:0;font-size:14px;margin-top:20px;
 }
-#reguser_gut01 .aleter{
+.reguser_gut01 .aleter{
 	padding:2px 0;font-weight:normal;
 }
-#reguser_gut01 table .adrees_list td{
-	padding:10px 0;
+.reguser_gut01 table td{
+	padding:3px 5px;
 }
-#reguser_gut01 table tr td.btn_list img{
+.reguser_gut01 table tr td.btn_list img{
 	margin:0 1px;
 }
 #Right .addrees_box{
 	width:auto;padding-top:0px;margin-top:3px;
 }
-#reguser_gut01 .add_btn{
+.reguser_gut01 .add_btn{
 	text-align:center;margin-bottom:10px;
 }
 h2.add-addresses{
@@ -1054,7 +1067,7 @@ h2.add-addresses span{
 h2.add-addresses a.close{position:absolute;right:0;margin-right:-8px;top:0;height:23px;width:30px;}
 h2.add-addresses a.close:hover{position:absolute;right:0;margin-right:-8px;top:0;height:23px;width:30px;}
 h2.add-addresses span.left{position:absolute;margin-left:-8px;top:0}
-h2.add-addresses span.right{position:absolute;right:0;margin-right:-8px;top:0}
+h2.add-addresses span.right{position:absolute;right:0;margin-right:-7px;top:0}
 /*==================== 购买成功 =========================*/
 #buyshop_box{
 	width:424px;
@@ -1090,37 +1103,40 @@ h2.add-addresses span.right{position:absolute;right:0;margin-right:-8px;top:0}
 	float:right;width:74px;height:22px;line-height:21px;*line-height:23px;text-align:center;margin-left:3px;
 }
 /*===================Login out======================*/
-#loginout{
+.loginout{
 	width:424px;
 }
-#loginout h1{
+.loginout h1{
 	position:relative; height:23px;font-size:13px;
 }
-#loginout h1 b{
+.loginout h1 b{
 	line-height:23px; margin-left:25px;
 }
-#loginout h1 img.close{
+.loginout h1 img.close{
 	top:0;right:0;position:absolute; cursor:pointer;
 }
-#loginout .login-alettr{
-	width:383px; margin:0 auto;text-align:center; font-size:16px;padding:25px 0;
+.loginout .login-alettr{
+	width:383px; margin:0 auto;text-align:center;font-size:16px;padding:25px 0;
+}
+.loginout .login-alettr input{
+	font-size:12px;
 }
 .login-alettr img{
  	margin-right:25px;vertical-align:middle;
 }
-#loginout .btns{
+.loginout .btns{
 	padding:18px 20px 15px 0; height:100%; overflow:hidden;
 }
-#loginout .btns a{
+.loginout .btns a{
 	float:right;width:86px; height:22px; text-align:center;line-height:22px; position:relative; margin-left:5px;
 }
-#loginout .btns a img{
+.loginout .btns a img{
 	position:absolute; right:0; top:0;
 }
-#loginout .btns a:hover{
+.loginout .btns a:hover{
 	text-decoration:none;
 }
-#loginout .btns a.to_login{
+.loginout .btns a.to_login{
 	width:98px;
 }
 /*=============My Friends==================*/
@@ -1158,7 +1174,7 @@ ul.friend_list{
 	font-weight:normal;position:relative; height:32px;padding-left:1.6em;line-height:30px;margin-top:10px;
 }
 .note_sum{
-	font-weight:normal;position:relative; height:30px;padding-left:1.6em;line-height:30px;
+	font-weight:normal;position:relative;padding:0 0 0 1.6em;height:30px;overflow:hidden;
 }
 .myfriends{
 	position:relative;
@@ -1173,7 +1189,7 @@ ul.friend_list{
 	position:absolute; top:0px; right:25px;
 }
 .note_sum .add_friend{
-	position:absolute; top:0px;*top:5px; right:25px;
+	position:absolute;top:5px; right:25px;
 }
 .note_sum .amenber{
 	position:absolute; top:2px; right:25px;
@@ -1233,10 +1249,10 @@ p.droup_bg b{margin-left:20px;}
 .addgroup_box ul.list dd.l{width:30%;*padding-top:5px;}
 /*==================== Points ======================*/
 ul.integral_title{
-	height:25px;
+	height:100%;overflow:hidden;padding:4px 0;
 }
 ul.integral_title li{
-	float:left; line-height:25px; text-align:center; margin-left:5px;
+	float:left;text-align:center; margin-left:5px;
 }
 ul.integral_title li.integral{
 	width:160px;
@@ -1350,10 +1366,10 @@ ul.products_list li.sum{
 	margin-top:0;
 }
 ul.products_list .pic{
-	float:left;padding-left:20px;
+	float:left;padding-left:0;
 }
 ul.products_list .cat_name{
-	float:left;padding-left:10px;font-weight:bold;margin-top:30px;
+	float:left;padding-left:10px;font-weight:bold;margin-top:30px;width:212px;
 }
 ul.products_list li.handel{
 	margin-top:10px;
@@ -1372,10 +1388,10 @@ ul.products_text a:hover{text-decoration:underline;}
 .order_state dt b{
 	position:absolute;right:0;top:6px;
 }
-#Edit_info ul.already_shop{
+.Edit_info ul.already_shop{
 	margin:0;height:100%;overflow:hidden;
 }
-#Edit_info ul.already_shop li{
+.Edit_info ul.already_shop li{
 	float:left;padding:5px 0; line-height:normal; text-align:center; margin-right:4px;
 }
 ul.already_shop li.name{
@@ -1399,24 +1415,24 @@ ul.already_shop li.number{
 ul.already_shop li.subtotal{
 	width:100px; margin-right:0;
 }
-#Edit_info ul.already_shop li.name p{
+.Edit_info ul.already_shop li.name p{
 	float:left; text-indent:0;
 }
-#Edit_info ul.already_shop li.name p.pic{
+.Edit_info ul.already_shop li.name p.pic{
 	padding-left:8px;
 }
-#Edit_info ul.already_shop li.name p.pic img{
+.Edit_info ul.already_shop li.name p.pic img{
 	width:108px;height:108px;
 }
-#Edit_info ul.already_shop li.name p.item_name{
+.Edit_info ul.already_shop li.name p.item_name{
 	margin-left:10px; margin-top:28px;width:95px;text-align:left;
 }
 .cardnumber{margin:-4px 0 10px;}
 .cardnumber div{margin:4px 10px;}
-#Edit_info ul.already_list li{
+.Edit_info ul.already_list li{
 	margin-top:35px;
 }
-#Edit_info ul.already_list li.name{
+.Edit_info ul.already_list li.name{
 	margin-top:0;
 }
 .already_box{
@@ -1426,7 +1442,7 @@ ul.address_info{
 	padding:0 18px 15px;height:100%;overflow:hidden;
 }
 ul.address_info li{
-	float:left;margin:5px 0;margin-right:8px;
+	float:left;margin:3px 0;margin-right:8px;
 }
 ul.address_info li.lang_title{
 	width:120px;
@@ -1438,10 +1454,10 @@ p.amend_address{
 	overflow:hidden;height:100%;padding:10px 15px;
 }
 p.amend_address a{text-decoration:underline;}
-#Edit_info p.balances{
+.Edit_info p.balances{
 	line-height:22px; text-indent:0; padding:0 20px 0;font-weight:normal;
 }
-#Edit_info p.saves_many{
+.Edit_info p.saves_many{
 	text-indent:0;padding:10px 15px;
 }
 /*=========================Admin Iformations ==========================*/
@@ -1484,3 +1500,11 @@ p.amend_address a{text-decoration:underline;}
 button{cursor:pointer;}
 .big_buttons input{height:38px;font-weight:bold;padding:0 1px 0 10px;cursor:pointer;position:relative;}
 .big_buttons span{padding-right:9px;height:38px;display:block;}
+
+.btn_list input{
+	height:20px;font-weight:bold;padding:0 7px 0 10px;cursor:pointer;position:relative;margin-right:3px;
+}
+/*========================= flash ==========================*/
+.checkout_box{
+	padding:0 28px 0 26px;
+}

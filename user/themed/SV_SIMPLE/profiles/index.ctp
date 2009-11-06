@@ -17,33 +17,33 @@
 <div class="profile">
 	<h3><span><?php echo $SCLanguages['my_information'];?></span></h3>
 	<?php echo $form->create('profiles',array('action'=>'edit_profiles','name'=>'edit_profiles','type'=>'POST'));?>
-	<input type="hidden" id="UserId" name="data[User][id]" value="<?php echo $this->data['User']['id'];?>" />
-	<input type="hidden" id="UserAddressId" name="data[UserAddress][id]" value="<?php if(isset($this->data['UserAddress']['id'])){echo $this->data['UserAddress']['id'];}?>"/>
+	<input type="hidden" id="UserId" name="data[User][id]" value="<?php echo $this->data['profiles']['User']['id'];?>" />
+	<input type="hidden" id="UserAddressId" name="data[UserAddress][id]" value="<?php if(isset($this->data['profiles']['UserAddress']['id'])){echo $this->data['profiles']['UserAddress']['id'];}?>"/>
 
 	<dl>
-		<dt><strong><?php echo $SCLanguages['member'];?></strong></dt><dd><?php echo $this->data['User']['name'];?></dd>
+		<dt><strong><?php echo $SCLanguages['member'];?></strong></dt><dd><?php echo $this->data['profiles']['User']['name'];?></dd>
 	</dl>
 	<dl>
-		<dt><strong><?php echo $SCLanguages['email'];?></strong></dt><dd><?php echo $this->data['User']['email'];?></dd>
+		<dt><strong><?php echo $SCLanguages['email'];?></strong></dt><dd><?php echo $this->data['profiles']['User']['email'];?></dd>
 	</dl>
 	<dl>
 		<dt class="pass"><strong><?php echo $SCLanguages['gender'];?></strong></dt>
         <dd>
           <select id="UserSex" name="data[User][sex]">
-            <option value="0" <?php if($this->data['User']['sex'] == 0){?>selected<?php }?>><?php echo $SCLanguages['confidence'];?></option>
-            <option value="1" <?php if($this->data['User']['sex'] == 1){?>selected<?php }?>><?php echo $SCLanguages['male'];?></option>
-            <option value="2" <?php if($this->data['User']['sex'] == 2){?>selected<?php }?>><?php echo $SCLanguages['female'];?></option>
+            <option value="0" <?php if($this->data['profiles']['User']['sex'] == 0){?>selected<?php }?>><?php echo $SCLanguages['confidence'];?></option>
+            <option value="1" <?php if($this->data['profiles']['User']['sex'] == 1){?>selected<?php }?>><?php echo $SCLanguages['male'];?></option>
+            <option value="2" <?php if($this->data['profiles']['User']['sex'] == 2){?>selected<?php }?>><?php echo $SCLanguages['female'];?></option>
           </select>
          </dd>
 	</dl>
 	<dl>
-		<dt><strong>电话</strong></dt><dd><input type="text" name="Utel1" id="Utel1" onKeyUp="is_int(this);" maxLength="30" size="10" <?php if(isset($this->data['UserAddress']['telephone_str'])){?>value="<?php echo $this->data['UserAddress']['telephone_str'];?>"<?php }else{?>value=""<?php }?>/><font color="red" id="user_telephone"></font></dd>
+		<dt><strong>电话</strong></dt><dd><input type="text" name="Utel1" id="Utel1" onKeyUp="is_int(this);" maxLength="30" size="10" <?php if(isset($this->data['profiles']['UserAddress']['telephone'])){?>value="<?php echo $this->data['profiles']['UserAddress']['telephone'];?>"<?php }else{?>value=""<?php }?>/><font color="red" id="user_telephone"></font></dd>
 	</dl>
 	<dl>
-		<dt><strong>手机</strong></dt><dd><input type="text" id="UserAddressMobile" name="data[UserAddress][mobile]" value="<?php if(isset($this->data['UserAddress']['mobile'])){echo $this->data['UserAddress']['mobile'];}?>"/><font color="red" id="user_mobile"></font></dt></dd>
+		<dt><strong>手机</strong></dt><dd><input type="text" id="UserAddressMobile" name="data[UserAddress][mobile]" value="<?php if(isset($this->data['profiles']['UserAddress']['mobile'])){echo $this->data['profiles']['UserAddress']['mobile'];}?>"/><font color="red" id="user_mobile"></font></dt></dd>
 	</dl>
 	<dl>
-		<dt><strong>生日</strong></dt><dd><input type="text" id="date" name="data[User][birthday]" value="<?php echo $this->data['User']['birthday'];?>"/></dd>
+		<dt><strong>生日</strong></dt><dd><input type="text" id="date" name="data[User][birthday]" value="<?php echo $this->data['profiles']['User']['birthday'];?>"/></dd>
 	</dl>
 	<?php if(isset($user_infoarr) && sizeof($user_infoarr)>0){?>
 
@@ -107,13 +107,13 @@
 <?php }?>
 	
 	<dl>
-		<dt><strong>注册时间</strong></dt><dd><?php echo $this->data['User']['created'];?></dd>
+		<dt><strong>注册时间</strong></dt><dd><?php echo $this->data['profiles']['User']['created'];?></dd>
 	</dl>
 	<dl>
-		<dt><strong>上次登录IP</strong></dt><dd><?php echo $this->data['User']['login_ipaddr'];?></dd>
+		<dt><strong>上次登录IP</strong></dt><dd><?php echo $this->data['profiles']['User']['login_ipaddr'];?></dd>
 	</dl>
 	<dl>
-		<dt><strong>上次登录时间</strong></dt><dd><?php echo $this->data['User']['last_login_time'];?></dd>
+		<dt><strong>上次登录时间</strong></dt><dd><?php echo $this->data['profiles']['User']['last_login_time'];?></dd>
 	</dl>
 	<dl class="submitform"><dt>&nbsp;&nbsp;&nbsp;&nbsp;</dt>
 	<dd>

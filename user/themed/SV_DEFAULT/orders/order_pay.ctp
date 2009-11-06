@@ -9,30 +9,26 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: order_pay.ctp 2550 2009-07-03 06:35:49Z tangyu $
+ * $Id: order_pay.ctp 3779 2009-08-19 10:40:08Z huangbo $
 *****************************************************************************/
 ob_start();
 ?>
-<div id="loginout">
+<div id="loginout" class="loginout">
 	<h1><b style="font-size:14px"><?php echo $SCLanguages['pay'];?></b></h1>
 	<div style="border-left:1px solid #909592;border-right:1px solid #909592;background:#fff">
 	<p class="login-alettr">
-	
 	<?php echo $html->image(isset($img_style_url)?$img_style_url."/".'icon-10.gif':'icon-10.gif',array("align"=>"middle"));?>
 	
-	<b>
 	<?php echo $result['msg']?>
 	<?php if(isset($pay_button)){?>
-	<p class="succeed">
 	<input type="button" onclick="window.open('<?php echo $pay_button; ?>')" value="<?php echo $SCLanguages['alipay_pay_immedia']?>" />
-	</p>
 	<?php }?>
 	<?php if(isset($pay_form)){?>
-		<?php echo $pay_form?>
+		<b><?php echo $pay_form?></b>
 	<?php }?>
 	<?php if(isset($pay_message)){?>
-		<br/><?php echo $pay_message?>
-	<?php }?></b></p>
+		<br/><br/><b><?php echo $pay_message?></b>
+	<?php }?></p>
 		<br/>
 		<p class="btns">
 		<?php echo $html->link($html->image(isset($img_style_url)?$img_style_url."/".'loginout-btn_right.gif':'loginout-btn_right.gif').$SCLanguages['confirm'],"javascript:window.location.reload();",array(),false,false);?>

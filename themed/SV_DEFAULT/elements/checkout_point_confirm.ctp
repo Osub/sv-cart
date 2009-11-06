@@ -9,17 +9,20 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: checkout_point_confirm.ctp 3113 2009-07-20 11:14:34Z huangbo $
+ * $Id: checkout_point_confirm.ctp 3674 2009-08-17 10:05:24Z huangbo $
 *****************************************************************************/
 ?>
-<table cellpadding="0" cellspacing="0" class="address_list" id="checkout_shipping_choice">
-<tr class="list">
-<td width="29%" height="25" valign="middle" class="selece_input">
-<?php printf($SCLanguages['avliable_point'],$svcart['point']['point']);?>  ， <?php printf($SCLanguages['can_offset_fee'],$svcart['point']['fee']);?>
-</td>
-<td width="41%" height="25" valign="middle" class="bewrite"><?php printf($SCLanguages['can_use_point'],$user_info['User']['point']);?>,<?php printf($SCLanguages['order_max_point'],$can_use_point);?></td>
-<td width="14%" height="25" align="center" valign="middle" class="addrees"><?php printf($SCLanguages['hundred_point'],$SVConfigs['conversion_ratio_point']);?>
-</td>
-</tr>
-</table>
-<br />
+	
+<h5>
+<a href="javascript:change_point()" class="amember"><span><?php echo $SCLanguages['mmodify']?></span></a>
+<?php echo $SCLanguages['use'].$SCLanguages['point'];?>: 
+<span class="over_cont">
+	<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+<?php printf($SCLanguages['avliable_point'],$svcart['point']['point']);?>  ， <?php printf($SCLanguages['can_offset_fee'],$svshow->price_format($svcart['point']['fee']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']));?>
+	<?php }else{?>
+<?php printf($SCLanguages['avliable_point'],$svcart['point']['point']);?>  ， <?php printf($SCLanguages['can_offset_fee'],$svshow->price_format($svcart['point']['fee'],$this->data['configs']['price_format']));?>
+	<?php }?>			
+&nbsp;&nbsp;&nbsp;<?//php echo $svcart['payment']['payment_description'];?>
+</span>
+
+</h5>

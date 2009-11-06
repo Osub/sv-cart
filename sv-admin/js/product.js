@@ -19,7 +19,7 @@ var dropImg_callback ={
 function searchArticles(){
         var Article_keywords=document.getElementById('keywords_id').value;
         var Article_cat=document.getElementById('article_cat').value;
-		var sUrl = webroot_dir+"articles/searcharticles/"+Article_cat+"/"+Article_keywords;
+		var sUrl = webroot_dir+"articles/searcharticles/"+Article_cat+"/?Article_keywords="+encodeURIComponent(Article_keywords);
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, searchArticles_callback);
 	}
 
@@ -27,7 +27,7 @@ function searchArticles(){
 		try{
 			var result = YAHOO.lang.JSON.parse(o.responseText);
 		}catch (e){   
-			alert("Invalid data");
+			alert(o.responseText);
 		}
 		 var sel = document.getElementById('source_select2');
 		 sel.innerHTML = "";
@@ -59,11 +59,7 @@ function searchProducts(){
         var catId=document.getElementById('category_id').value;
         var brandId=document.getElementById('brand_id').value;
         var products_id=document.getElementById('products_id').value;
-		if(keywords==""){
-			keywords = "all";
-		}
-		var sUrl = webroot_dir+"products/searchproducts/"+keywords+"/"+catId+"/"+brandId+'/'+products_id;
-		//alert(sUrl);
+		var sUrl = webroot_dir+"products/searchproducts/"+catId+"/"+brandId+'/'+products_id+"/?keywords="+encodeURIComponent(keywords);
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, searchProducts_callback);
 	}
 
@@ -71,7 +67,7 @@ function searchProducts(){
 		try{
 			var result = YAHOO.lang.JSON.parse(o.responseText);
 		}catch (e){   
-			alert("Invalid data");
+			alert(o.responseText);
 		}
 		 var sel = document.getElementById('source_select1');
 		 sel.innerHTML = "";
@@ -120,6 +116,35 @@ function addOtherCat(){
       var conObj=document.getElementById('other_cats');
       conObj.appendChild(sel);
       sel.name = "other_cat[]";
+      sel.onChange = function() {checkIsLeaf(this);};
+  }
+function addother_provider(){
+     var sel = document.createElement("SELECT");
+      var selCat = document.getElementById('ProductproviderId');
+
+      for (i = 0; i < selCat.length; i++)
+      {
+          var opt = document.createElement("OPTION");
+          opt.text = selCat.options[i].text;
+          opt.value = selCat.options[i].value;
+          if (Browser.isIE)
+          {
+              sel.add(opt);
+          }
+          else
+          {
+              sel.appendChild(opt);
+          }
+      }
+      var input = document.createElement("input");
+      input.name = "proprice[]";
+      input.size = "10";
+      input.classname = "proprice[]";
+
+      var conObj=document.getElementById('other_provider');
+      conObj.appendChild(sel);
+      //conObj.appendChild(input);
+      sel.name = "other_provider[]";
       sel.onChange = function() {checkIsLeaf(this);};
   }
   //检查input框输入数据
@@ -242,7 +267,7 @@ function getnum(f,c)
     return Math.round(f * t) / t;
 }
 function getAttrList(productId){
-       var selProductsType = document.forms['ProAttrForm'].elements['product_type'];
+       var selProductsType = GetId('product_type');
        if (selProductsType != undefined){
            var ProductsType = selProductsType.options[selProductsType.selectedIndex].value;
            //ajax处理
@@ -256,9 +281,7 @@ var getAttrList_Success = function(o){
 		try{   
 			var result = YAHOO.lang.JSON.parse(o.responseText);
 		}catch (e){
-			alert("Invalid data");
-			alert(o.responseText);
-			//YAHOO.example.container.wait.hide();
+			document.getElementById('productsAttr').innerHTML="";
 		} 
          //显示属性和规格
          document.getElementById('productsAttr').innerHTML=result.attr_html;
@@ -356,3 +379,4 @@ var getAttrList_Success = function(o){
 
       tbl.deleteRow(row);
   }
+  

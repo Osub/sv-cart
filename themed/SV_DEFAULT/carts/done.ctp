@@ -9,14 +9,13 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: done.ctp 3225 2009-07-22 10:59:01Z huangbo $
+ * $Id: done.ctp 4433 2009-09-22 10:08:09Z huangbo $
 *****************************************************************************/
 ?>
-<div class="Balance_alltitle">
-	<h1 class="headers"><span class="l"></span><span class="r"></span><b><?php echo $SCLanguages['checkout_center'];?></b></h1>
-</div>
+<div class="checkout_box">
+<h1 class="headers"><span class="l"></span><span class="r"></span><b><?php echo $SCLanguages['checkout_center'];?></b></h1>
     <!--您购买的商品-->
-	<div id="globalBalance">
+	<div id="globalBalance" class="border" style="border-bottom:none;margin-top:3px;">
 	<?php if(isset($fail)){?>
 	<br /><br /><br />
 	<p class="succeed">
@@ -45,9 +44,17 @@
     </p>
 	<?php }else{?>
     <br /><br /><br />
+    	<?php echo $this->data['configs']['order_conversion'];?>
     <p class="succeed"> 
     <?php echo $html->image(isset($img_style_url)?$img_style_url."/"."icon-10.gif":"icon-10.gif",array("align"=>"middle","alt"=>$SCLanguages['order_generated'].$SCLanguages['successfully']))?><?php echo $html->link($order_code,$server_host.$user_webroot.'orders/'.$order_id,array("target"=>"_blank"),false,false)?>
-    <b><?php echo $SCLanguages['order_generated'].$SCLanguages['successfully'];?></b><br/><br/>
+    <b><?php echo $SCLanguages['order_generated'].$SCLanguages['successfully'];?> <?php if(isset($order_info['Order']['total']) && $order_info['Order']['total'] >0){?>
+    			您需要支付
+	    <?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+			<?php echo $svshow->price_format(round($order_info['Order']['total']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],2),$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+		<?php }else{?>
+			<?php echo $svshow->price_format($order_info['Order']['total'],$this->data['configs']['price_format']);?>	
+		<?php }?>
+    <?php }?></b><br/><br/>
    <?php if(isset($is_show_virtual_msg) && $is_show_virtual_msg == 1){?>
      <b><?php echo $SCLanguages['no_stock']?>,<?php echo $SCLanguages['send_after_products_arrived']?> <b>
     <?php }?></p>
@@ -87,6 +94,7 @@
     </div>	
     <?php }?>
     <br />
-    <p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."succeed02_img.gif":"succeed02_img.gif")?></p>
 </div>
+<p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."succeed02_img.gif":"succeed02_img.gif",array("width"=>"100%","height"=>"58"))?></p>
 <!--您购买的商品End-->
+</div>

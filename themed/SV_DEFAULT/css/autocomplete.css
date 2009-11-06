@@ -7,9 +7,25 @@ version: 2.5.2
 .svcart-skin-g00 .yui-ac{position:relative;font-size:100%;}
 .svcart-skin-g00 .yui-ac-input{position:absolute;width:100%;}
 .svcart-skin-g00 .yui-ac-container{position:absolute;top:1.6em;width:100%;}
-.svcart-skin-g00 .yui-ac-content{position:absolute;width:100%;border:1px solid #808080;background:#fff;overflow:hidden;z-index:9050;}
-.svcart-skin-g00 .yui-ac-shadow{position:absolute;margin:.3em;width:100%;background:#000;-moz-opacity:0.10;opacity:.10;filter:alpha(opacity=10);z-index:9049;}
-.svcart-skin-g00 .yui-ac-content ul{margin:0;padding:0;width:100%;}
-.svcart-skin-g00 .yui-ac-content li{margin:0;padding:2px 5px;cursor:default;white-space:nowrap;}
+.svcart-skin-g00 .yui-ac-content{
+	position:absolute;width:100%;border:1px solid #808080;background:#fff;overflow:hidden;z-index:9050;
+}
+.svcart-skin-g00 .yui-ac-shadow{
+	position:absolute;margin:.3em;width:100%;background:#000;-moz-opacity:0.10;opacity:.10;filter:alpha(opacity=10);z-index:9049;
+}
+.svcart-skin-g00 .yui-ac-content ul{margin:0;padding:0 0 4px;width:100%;}
+.svcart-skin-g00 .yui-ac-content li{margin:0;padding:2px 5px;cursor:default;}
 .svcart-skin-g00 .yui-ac-content li.yui-ac-prehighlight{background:#B3D4FF;}
 .svcart-skin-g00 .yui-ac-content li.yui-ac-highlight{background:#426FD9;color:#FFF;}
+.autocomplete{
+	height:100%;overflow:hidden;border-bottom:1px dashed #ccc;
+}
+.autocomplete li.name{
+	float:left;width:145px;
+}
+.autocomplete li.name p{
+	margin-top:5px;
+}
+.autocomplete li.thumd{
+	width:60px;text-align:right;float:right;
+}

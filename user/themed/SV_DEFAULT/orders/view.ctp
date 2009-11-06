@@ -9,13 +9,13 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: view.ctp 3261 2009-07-23 05:38:53Z huangbo $
+ * $Id: view.ctp 4887 2009-10-11 09:05:21Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?><div id="Products_box">
 <h1 class="headers"><span class="l"></span><span class="r"></span><b><?php echo $SCLanguages['order'].$SCLanguages['detail']?></b></h1>
 <!--订单状态-->
-<div id="infos">
+<div class="infos">
 <dl class="order_state">
 				<dt><?php echo $SCLanguages['order_code']?><b>：</b></dt><dd><?php echo $order_info['Order']['order_code']?> [
 	<?php echo $html->link($SCLanguages['send'],'/messages/'.$order_info['Order']['id'],array(),false,false);?>
@@ -84,17 +84,17 @@
 
 <!-- 留言-->
 <?php if(isset($my_messages) && sizeof($my_messages)>0){?>
-<div id="Edit_box">
-<div id="Edit_info" style="margin-top:5px;*margin-top:0;">
+<div class="Edit_box">
+<div class="Edit_info" style="margin-top:5px;*margin-top:0;">
 	  <p class="note article_title"><b><?php echo $SCLanguages['message']?></b></p>
   <?php foreach($my_messages as $k=>$v){?>
-  <div id="user_msg">
+  <div class="user_msg">
   	<p class="msg_title"><span class="title"><?php echo $v['UserMessage']['type']?>： <?php echo $v['UserMessage']['msg_title']?> <font color="#A7A9A8"><?php echo $v['UserMessage']['created']?></font></span></p>
     <p class="msg_txt"><span><?php echo $v['UserMessage']['msg_content']?></span></p>
   </div>
   <?php if(isset($v['Reply']) && sizeof($v['Reply'])>0){?>
      <?php foreach($v['Reply'] as $key=>$val){?>
-  <div id="user_msg">
+  <div class="user_msg">
   	<p class="msg_title"><span class="title"><?php echo $SCLanguages['reply'];?>：<?php echo $val['UserMessage']['msg_title']?><font color="#A7A9A8"><?php echo $val['UserMessage']['created']?></font></span></p>
     <p class="msg_txt"><span><?php echo $val['UserMessage']['msg_content']?></span></p>
   </div>
@@ -106,8 +106,8 @@
 <?php }?>	
 <!-- 留言end-->	
 <!--已购买的商品-->	
-<div id="Edit_box">
-<div id="Edit_info" style="margin-top:5px;*margin-top:0;">
+<div class="Edit_box">
+<div class="Edit_info" style="margin-top:5px;*margin-top:0;">
 <p class="note article_title"><b><?php echo $SCLanguages['purchased_products']?></b></p>
 <ul class="already_shop">
 	<li class="name" style="text-align:right;"><span><?php echo $SCLanguages['products'].$SCLanguages['apellation']?></span></li>
@@ -123,24 +123,41 @@
 	  <ul class="already_shop already_list">
 	  <li class="name">
 	  <p class="pic">
-		<?php if($v['Product']['img_thumb'] != ""){?>
-<?php echo $html->link($html->image("/../".$v['Product']['img_thumb'],array("width"=>"108","height"=>"108")),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku'],$server_host,$cart_webroot),array("target"=>"_blank"),false,false);?>
-		<?php }else{?>
-       	  <?php echo $html->link($html->image("/../img/product_default.jpg",array("width"=>"108","height"=>"108")),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku'],$server_host,$cart_webroot),array("target"=>"_blank"),false,false);?>
-		<?php }?>	  	  
+			<?php echo $svshow->productimagethumb($v['Product']['img_thumb'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$this->data['configs']['use_sku'],$server_host,$cart_webroot),array("alt"=>$v['ProductI18n']['name'],'width'=>$this->data['configs']['thumbl_image_width'],'height'=>$this->data['configs']['thumb_image_height']),$this->data['configs']['products_default_image'],$server_host.$cart_webroot);?>
+ 	  
 	  </p>
 	  <p class="item_name">
        	  <?php echo $html->link($v['ProductI18n']['name'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku'],$server_host,$cart_webroot),array("target"=>"_blank"),false,false);?>
 	  </p>
 	  </li>
 	  <li class="profile"><?php echo $v['OrderProduct']['product_attrbute']?></li>
-	  <li class="marke_price"><?php echo $svshow->price_format($v['Product']['market_price'],$SVConfigs['price_format']);?></li>
+	  <li class="marke_price">
+	  	  <?//php echo $svshow->price_format($v['Product']['market_price'],$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($v['Product']['market_price']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($v['Product']['market_price'],$this->data['configs']['price_format']);?>	
+			<?php }?>    		  	  
+	  </li>
 	  <li class="shop_price">
 	  <?php //if($v['Product']['promotion_status'] == 1){?><?php //echo $v['Product']['promotion_price']?><?php //}else{?><?php //echo $v['Product']['shop_price']?><?php //}?>
-	  <?php echo $svshow->price_format($v['OrderProduct']['product_price'],$SVConfigs['price_format']);?>
+	  <?//php echo $svshow->price_format($v['OrderProduct']['product_price'],$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($v['OrderProduct']['product_price']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($v['OrderProduct']['product_price'],$this->data['configs']['price_format']);?>	
+			<?php }?>   	  	  
+	  	  
 	  </li>
 	  <li class="number"><?php echo $v['OrderProduct']['product_quntity']?></li>
-	  <li class="subtotal"><?php echo $svshow->price_format($v['OrderProduct']['one_pro_subtotal'],$SVConfigs['price_format']);?></li>
+	  <li class="subtotal"><?//php echo $svshow->price_format($v['OrderProduct']['one_pro_subtotal'],$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($v['OrderProduct']['one_pro_subtotal']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($v['OrderProduct']['one_pro_subtotal'],$this->data['configs']['price_format']);?>	
+			<?php }?>  	  	  
+	  	  
+	  	  </li>
 	</ul>
 	<?php if(isset($virtual_card[$v['Product']['id']])){?>
 	<div class="cardnumber color_67">
@@ -195,13 +212,34 @@
 	  <p class="item_name"><?php echo $html->link($v['CardI18n']['name'],"#",array(),false,false);?></p>
 	  </li>
 	  <li class="profile"><?php echo $v['Card']['note']?></li>
-	  <li class="marke_price"><?php echo $svshow->price_format($v['Card']['fee'],$SVConfigs['price_format']);?></li>
+	  <li class="marke_price"><?//php echo $svshow->price_format($v['Card']['fee'],$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($v['Card']['fee']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($v['Card']['fee'],$this->data['configs']['price_format']);?>	
+			<?php }?>  		  	  
+	  	  
+	  	  </li>
 	  <li class="shop_price">
 	  <?php //if($v['Product']['promotion_status'] == 1){?><?php //echo $v['Product']['promotion_price']?><?php //}else{?><?php //echo $v['Product']['shop_price']?><?php //}?>
-	  	  <?php echo $svshow->price_format($v['Card']['fee'],$SVConfigs['price_format']);?>
+	  	  <?//php echo $svshow->price_format($v['Card']['fee'],$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($v['Card']['fee']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($v['Card']['fee'],$this->data['configs']['price_format']);?>	
+			<?php }?>  	  	  	  
+	  	  	  
+	  	  	  
 	  </li>
 	  <li class="number"><?php echo $v['Card']['quntity']?></li>
-	 <li class="subtotal"><?php echo $svshow->price_format($v['Card']['fee']*$v['Card']['quntity'],$SVConfigs['price_format']);?></li>
+	 <li class="subtotal"><?//php echo $svshow->price_format($v['Card']['fee']*$v['Card']['quntity'],$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($v['Card']['fee']*$v['Card']['quntity']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($v['Card']['fee']*$v['Card']['quntity'],$this->data['configs']['price_format']);?>	
+			<?php }?>  	 	  
+	 	  
+	 	  </li>
 	</ul>
   <?php }?>
 <?php }?>
@@ -219,25 +257,65 @@
 	  <p class="item_name"><?php echo $html->link($v['PackagingI18n']['name'],"#",array(),false,false);?></p>
 	  </li>
 	  <li class="profile"><?php echo $v['Packaging']['note']?></li>
-	  <li class="marke_price"><?php echo $svshow->price_format($v['Packaging']['fee'],$SVConfigs['price_format']);?></li>
+	  <li class="marke_price"><?//php echo $svshow->price_format($v['Packaging']['fee'],$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($v['Packaging']['fee']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($v['Packaging']['fee'],$this->data['configs']['price_format']);?>	
+			<?php }?>  	  	  
+	  	  
+	  	  </li>
 	  <li class="shop_price">
 	  <?php //if($v['Product']['promotion_status'] == 1){?><?php //echo $v['Product']['promotion_price']?><?php //}else{?><?php //echo $v['Product']['shop_price']?><?php //}?>
-	  <?php echo $svshow->price_format($v['Packaging']['fee'],$SVConfigs['price_format']);?>
+	  <?//php echo $svshow->price_format($v['Packaging']['fee'],$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($v['Packaging']['fee']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($v['Packaging']['fee'],$this->data['configs']['price_format']);?>	
+			<?php }?>  		  	  
 	  </li>
 	  <li class="number"><?php echo $v['Packaging']['quntity']?></li>
-	  <li class="subtotal"><?php echo $svshow->price_format($v['Packaging']['fee']*$v['Packaging']['quntity'],$SVConfigs['price_format']);?></li>
+	  <li class="subtotal">
+	  	  <?//php echo $svshow->price_format($v['Packaging']['fee']*$v['Packaging']['quntity'],$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($v['Packaging']['fee']*$v['Packaging']['quntity']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($v['Packaging']['fee']*$v['Packaging']['quntity'],$this->data['configs']['price_format']);?>	
+			<?php }?>  		  	
+	  	
+	  	</li>
 	 </ul>
   <?php }?>
 <?php }?>
 </div>
 <p class="saves_many"><?php echo $SCLanguages['amount'].$SCLanguages['subtotal']?>
 	<?php //echo $order_info['Order']['subtotal']?>
-	<?php echo $svshow->price_format($shop_subtotal,$SVConfigs['price_format']);?>
+	<?//php echo $svshow->price_format($shop_subtotal,$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($shop_subtotal*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($shop_subtotal,$this->data['configs']['price_format']);?>	
+			<?php }?>  		
+	
 	<?php if($order_info['Order']['save_price'] >0){?>
 	，<font color="#FE5F01"><?php echo $SCLanguages['market_price']?>
-	<?php echo $svshow->price_format($order_info['Order']['market_subtotal'],$SVConfigs['price_format']);?>
+	<?//php echo $svshow->price_format($order_info['Order']['market_subtotal'],$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($order_info['Order']['market_subtotal']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($order_info['Order']['market_subtotal'],$this->data['configs']['price_format']);?>	
+			<?php }?>  		
+		
 	<?php echo $SCLanguages['saved']?> 
-	<?php echo $svshow->price_format($order_info['Order']['save_price'],$SVConfigs['price_format']);?>
+	<?//php echo $svshow->price_format($order_info['Order']['save_price'],$SVConfigs['price_format']);?>
+		
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($order_info['Order']['save_price']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($order_info['Order']['save_price'],$this->data['configs']['price_format']);?>	
+			<?php }?>  			
+		
+		
 	(<?php echo (100-$order_info['Order']['discount_price'])?>%)
 	<?php }?></font>
 </p>
@@ -245,25 +323,27 @@
 </div>
 </div>
 <!--已购买的商品 End-->
-
+<div class="clear">&nbsp;</div>
 <!--收货人信息-->
-<div id="infos">
-		<p class="amend_address"><a href="#" class="float_r"><?php echo $SCLanguages['edit']?></a><b><?php echo $SCLanguages['consignee'].$SCLanguages['information']?></b></p>
+<div class="infos">
+		<p class="amend_address"><strong><?php echo $SCLanguages['consignee'].$SCLanguages['information']?></strong></p>
         	<ul class="address_info">
-			<li class="lang_title"><?php echo $SCLanguages['consignee']?>:</li><li class="filed"><?php if($order_info['Order']['consignee']) echo $order_info['Order']['consignee']; else echo "&nbsp;";?></li>
+			<li class="lang_title"><?php echo $SCLanguages['consignee']?>:</li><li class="filed"><?php if($order_info['Order']['consignee']) echo $order_info['Order']['consignee']; else echo "&nbsp;";?>&nbsp;</li>
     		<?php if(empty($all_virtual)){?>
     			<li class="lang_title"><?php echo $SCLanguages['region']?>:</li><li class="filed"><?php echo $order_info['Order']['regions']?>&nbsp;</li>
     		<?php }?>
-			<li class="lang_title"><?php echo $SCLanguages['email']?>:</li><li class="filed"><?php if($order_info['Order']['email']) echo $order_info['Order']['email'];else echo "&nbsp;"; ?></li>
+			<li class="lang_title"><?php echo $SCLanguages['email']?>:</li><li class="filed"><?php if($order_info['Order']['email']) echo $order_info['Order']['email'];else echo "&nbsp;"; ?>&nbsp;</li>
 			<?php if(empty($all_virtual)){?>
-			<li class="lang_title"><?php echo $SCLanguages['address']?>:</li><li class="filed"><?php if($order_info['Order']['address'])echo $order_info['Order']['address'];else echo "&nbsp;";?></li>
-			<li class="lang_title"><?php echo $SCLanguages['post_code']?>:</li><li class="filed"><?php if($order_info['Order']['zipcode']) echo $order_info['Order']['zipcode'];else echo "&nbsp;";?></li>
+			<li class="lang_title"><?php echo $SCLanguages['address']?>:</li><li class="filed"><?php if($order_info['Order']['address'])echo $order_info['Order']['address'];else echo "&nbsp;";?>&nbsp;</li>
 			<?php }?>
-			<li class="lang_title"><?php echo $SCLanguages['telephone']?>:</li><li class="filed"><?php if($order_info['Order']['telephone']) echo $order_info['Order']['telephone'];else echo "&nbsp;";?></li>
-			<li class="lang_title"><?php echo $SCLanguages['mobile']?>:</li><li class="filed"><?php if($order_info['Order']['mobile']) echo $order_info['Order']['mobile'];else echo "&nbsp;";?></li>
+			<li class="lang_title"><?php echo $SCLanguages['telephone']?>:</li><li class="filed"><?php if($order_info['Order']['telephone']) echo $order_info['Order']['telephone'];else echo "&nbsp;";?>&nbsp;</li>
 			<?php if(empty($all_virtual)){?>
-			<li class="lang_title"><?php echo $SCLanguages['marked_building']?>:</li><li class="filed"><?php if($order_info['Order']['sign_building']) echo $order_info['Order']['sign_building'];else echo "&nbsp;";?></li>
-			<li class="lang_title"><?php echo $SCLanguages['best_shipping_time']?>:</li><li class="filed"><?php if($order_info['Order']['best_time']) echo $order_info['Order']['best_time'];else echo "&nbsp;";?></li>
+			<li class="lang_title"><?php echo $SCLanguages['post_code']?>:</li><li class="filed"><?php if($order_info['Order']['zipcode']) echo $order_info['Order']['zipcode'];else echo "&nbsp;";?>&nbsp;</li>
+			<?php }?>
+			<li class="lang_title"><?php echo $SCLanguages['mobile']?>:</li><li class="filed"><?php if($order_info['Order']['mobile']) echo $order_info['Order']['mobile'];else echo "&nbsp;";?>&nbsp;</li>
+			<?php if(empty($all_virtual)){?>
+			<li class="lang_title"><?php echo $SCLanguages['marked_building']?>:</li><li class="filed"><?php if($order_info['Order']['sign_building']) echo $order_info['Order']['sign_building'];else echo "&nbsp;";?>&nbsp;</li>
+			<li class="lang_title"><?php echo $SCLanguages['best_shipping_time']?>:</li><li class="filed"><?php if($order_info['Order']['best_time']) echo $order_info['Order']['best_time'];else echo "&nbsp;";?>&nbsp;</li>
 			<?php }?>
 			</ul>
         </div>
@@ -273,8 +353,8 @@
 
 <!-- 其他 -->
 <?php if(isset($show_note) && $show_note == 1){?>
-<div id="Edit_box">
-<div id="Edit_info" style="margin-top:5px;*margin-top:0;">
+<div class="Edit_box">
+<div class="Edit_info" style="margin-top:5px;*margin-top:0;">
 <p class="note article_title btn_list"><b><?php echo $SCLanguages['others']?></b></p>
 <p class="balances"><span class="color_4">
 <?php if($order_info['Order']['note']){?>
@@ -299,105 +379,255 @@
 <?php }?>
 
 <!--订单小计-->	
-<div id="Edit_box">
-<div id="Edit_info" style="margin-top:5px;*margin-top:0;">
+<div class="Edit_box">
+<div class="Edit_info" style="margin-top:5px;*margin-top:0;">
 <p class="note article_title"><b><?php echo $SCLanguages['amount']?><?php echo $SCLanguages['subtotal']?></b></p>
-<p class="balances">
-	  <span class="color_4">
-	  	<?php echo $SCLanguages['total_order_value']?>:
-	  	<?php echo $svshow->price_format($order_info['Order']['total'],$SVConfigs['price_format']);?>
-		<br />
-	  	<?php echo $SCLanguages['products']?><?php echo $SCLanguages['subtotal']?>:
-	  	<?php echo $svshow->price_format($shop_subtotal,$SVConfigs['price_format']);?>
-		<br />
+	<table cellpadding="4" cellspacing="0" class="color_4" style="margin-left:15px;">
+		<tr>
+		<td><?php echo $SCLanguages['total_order_value']?>:</td>
+		<td>
+	  	<?//php echo $svshow->price_format($order_info['Order']['total'],$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($order_info['Order']['total']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($order_info['Order']['total'],$this->data['configs']['price_format']);?>	
+			<?php }?>  				
+	
+		</td>
+		</tr>
+		<tr>
+		<td><?php echo $SCLanguages['products']?><?php echo $SCLanguages['subtotal']?>:</td>
+		<td>
+	  	<?//php echo $svshow->price_format($shop_subtotal,$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($shop_subtotal*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($shop_subtotal,$this->data['configs']['price_format']);?>	
+			<?php }?> 	  	  	  		
+			
+		</td>
+		</tr>
 		<?php $fee=0;?>
 		<?php if($order_info['Order']['card_fee'] > 0){?>
 		<?php $fee=1;?>
-		<?php echo $SCLanguages['card_fee']?>: 
-	  	  <?php echo $svshow->price_format($order_info['Order']['card_fee'],$SVConfigs['price_format']);?>
+		<tr>
+		<td><?php echo $SCLanguages['card_fee']?>: </td>
+	  	  <td><?//php echo $svshow->price_format($order_info['Order']['card_fee'],$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($order_info['Order']['card_fee']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($order_info['Order']['card_fee'],$this->data['configs']['price_format']);?>	
+			<?php }?>  		  	    
+		</td>
+		</tr>
 		<?php }?>
+		
 		<?php if($order_info['Order']['pack_fee'] > 0){?>
 		<?php $fee=1;?>
-		<?php echo $SCLanguages['package_fee']?>:
-	  	  <?php echo $svshow->price_format($order_info['Order']['pack_fee'],$SVConfigs['price_format']);?>
+		<tr>
+			<td><?php echo $SCLanguages['package_fee']?>:</td>
+	  	  	<td><?//php echo $svshow->price_format($order_info['Order']['pack_fee'],$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($order_info['Order']['pack_fee']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($order_info['Order']['pack_fee'],$this->data['configs']['price_format']);?>	
+			<?php }?> 
+			</td> 	
+		</tr>		  	    
 		<?php }?>
+
+		
 		<?php if($fee > 0){?>
-			<br />
 		<?php }?>
 		<?php if($order_info['Order']['payment_fee'] > 0){?>
+		<tr>
 		<?php $fee=1;?>
-		<?php echo $SCLanguages['payment_fee']?>: 
-	  	  <?php echo $svshow->price_format($order_info['Order']['payment_fee'],$SVConfigs['price_format']);?>
+		<td><?php echo $SCLanguages['payment_fee']?>: </td>
+	  	<td><?//php echo $svshow->price_format($order_info['Order']['payment_fee'],$SVConfigs['price_format']);?>
+	  	    
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($order_info['Order']['payment_fee']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($order_info['Order']['payment_fee'],$this->data['configs']['price_format']);?>	
+			<?php }?>
+	  	    </td>
+	  	   </tr>
 		<?php }?>
 		<?php if(isset($order_info['Order']['shipping_fee'])){?>
+		<tr>
 		<?php $fee=1;?>
-		<?php echo $SCLanguages['shipping_fee']?>: 
-	  	  <?php echo $svshow->price_format($order_info['Order']['shipping_fee'],$SVConfigs['price_format']);?>
+		<td><?php echo $SCLanguages['shipping_fee']?>: </td>
+	  	  <td><?//php echo $svshow->price_format($order_info['Order']['shipping_fee'],$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($order_info['Order']['shipping_fee']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($order_info['Order']['shipping_fee'],$this->data['configs']['price_format']);?>	
+			<?php }?> 
+			</td>
+		</tr> 		  	    
+	  	    
+	  	    
 	  	    <?php if($order_info['Order']['insure_fee'] >0){?>
-	  	    <?php echo $SCLanguages['support_value_fee']?>:<?php echo $svshow->price_format($order_info['Order']['insure_fee'],$SVConfigs['price_format']);?>
+	  	    <tr>
+	  	    	<td><?php echo $SCLanguages['support_value_fee']?>:<?//php echo $svshow->price_format($order_info['Order']['insure_fee'],$SVConfigs['price_format']);?></td>
+	  	    	<td>
+	  	    	<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($order_info['Order']['insure_fee']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($order_info['Order']['insure_fee'],$this->data['configs']['price_format']);?>	
+			<?php }?>  		  	    	
+	  	    	</td>
+	  	    </tr>
 	  	    <?php }?>
-	  	<br />
+	  		
 		<?php }?>
+			
+		<?php if($order_info['Order']['tax'] > 0){?>
+		<tr>
+		<?php $fee=1;?>
+		<td><?php echo $SCLanguages['invoice_fee']?>: </td>
+	  	<td><?//php echo $svshow->price_format($order_info['Order']['payment_fee'],$SVConfigs['price_format']);?>
+	  	    
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($order_info['Order']['tax']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($order_info['Order']['tax'],$this->data['configs']['price_format']);?>	
+			<?php }?>
+	  	    </td>
+	  	   </tr>
+		<?php }?>			
+			
+			
+			
+			
+			
 		<?php $fee1=0;?>
 		<?php if(isset($order_info['Order']['point_use']) && $order_info['Order']['point_use']>0){?>
+			<tr>
 		<?php $fee1=1;?>
-		<?php echo $SCLanguages['use']?><?php echo $SCLanguages['point']?>: 
-	  	  <?php echo $order_info['Order']['point_use'];?><?php echo $SCLanguages['point_unit'];?><?php echo $SCLanguages['save_to_market_price'];?><?php echo $svshow->price_format($order_info['Order']['point_fee'],$SVConfigs['price_format']);?>
+			<td><?php echo $SCLanguages['use']?><?php echo $SCLanguages['point']?>: </td>
+	  	  	<td><?php echo $order_info['Order']['point_use'];?><?php echo $SCLanguages['point_unit'];?><?php echo $SCLanguages['save_to_market_price'];?>
+	  	    <?//php echo $svshow->price_format($order_info['Order']['point_fee'],$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($order_info['Order']['point_fee']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($order_info['Order']['point_fee'],$this->data['configs']['price_format']);?>	
+			<?php }?> 
+		</td>
+		</tr> 		  	    
 		<?php }?>
+		
 		<?php if(isset($coupon_fee)){?>
+		<tr>
 		<?php $fee1=1;?>
-		<?php echo $SCLanguages['use']?><?php echo $SCLanguages['coupon']?>: 
-	  	  <?php echo $svshow->price_format($coupon_fee,$SVConfigs['price_format']);?>
+		<td><?php echo $SCLanguages['use']?><?php echo $SCLanguages['coupon']?>: </td>
+	  	  <?//php echo $svshow->price_format($coupon_fee,$SVConfigs['price_format']);?>
+		<td><?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($coupon_fee*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($coupon_fee,$this->data['configs']['price_format']);?>	
+			<?php }?>
+			</td>
+			</tr>  	  	    
+	  	    
 	  	   <?php if(isset($coupon_discount) && $coupon_discount <100){?>
-	  	   <?php echo $SCLanguages['coupon']?><?php echo $SCLanguages['discount']?>: <?php echo (100- $coupon_discount)?>%&nbsp;
+	  	   <tr>
+	  	   <td><?php echo $SCLanguages['coupon']?><?php echo $SCLanguages['discount']?>:</td>
+	  	   <td><?php echo (100- $coupon_discount)?>%&nbsp;</td>
+	  	   </tr>
 	  	   <?php }?>
 		<?php }?>
+		
 		<?php if($order_info['Order']['discount'] > 0){?>
+		<tr>
 		<?php $fee1=1;?>
-		<?php echo $SCLanguages['order']?><?php echo $SCLanguages['discount']?>: 
-	  	  <?php echo $svshow->price_format($order_info['Order']['discount'],$SVConfigs['price_format']);?>
-		<?php }?>			
-		<?php if(isset($balance_log['UserBalanceLog']['amount'])){?>
+			<td><?php echo $SCLanguages['order']?><?php echo $SCLanguages['discount']?>: </td>
+	  	  	<?//php echo $svshow->price_format($order_info['Order']['discount'],$SVConfigs['price_format']);?>
+			<td><?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($order_info['Order']['discount']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($order_info['Order']['discount'],$this->data['configs']['price_format']);?>	
+			<?php }?>
+			</td>  	  	  	    
+	  	    
+	  	    </tr>
+		<?php }?>
+					
+		<?php if(isset($balance_log['UserBalanceLog']['amount']) && $balance_log['UserBalanceLog']['amount'] >0){?>
+		<tr>
 		<?php $fee1=1;?>
-		<?php echo $SCLanguages['use']?><?php echo $SCLanguages['balance']?>:
-	  	  <?php echo $svshow->price_format(($balance_log['UserBalanceLog']['amount']*-1),$SVConfigs['price_format']);?>
-		<?php }else{?>
+		<td><?php echo $SCLanguages['use']?><?php echo $SCLanguages['balance']?>:</td>
+	  	<td><?//php echo $svshow->price_format(($balance_log['UserBalanceLog']['amount']*-1),$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format(($balance_log['UserBalanceLog']['amount']*-1)*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format(($balance_log['UserBalanceLog']['amount']*-1),$this->data['configs']['price_format']);?>	
+			<?php }?>  
+			</td>
+			</tr>	 	  	    
+	  	    
+	  	    
+		<?php }elseif(false){?>
+		<tr>
 		<?php $fee1=1;?>		
-		<?php echo $SCLanguages['use']?><?php echo $SCLanguages['balance']?>:
-		  <?php echo $svshow->price_format('0.00',$SVConfigs['price_format']);?>
+		<td><?php echo $SCLanguages['use']?><?php echo $SCLanguages['balance']?>:</td>
+		  <td><?//php echo $svshow->price_format('0.00',$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format('0.00',$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format('0.00',$this->data['configs']['price_format']);?>	
+			<?php }?>  
+			</td>			    
+		    </tr>
 		<?php }?>
 		<?php if($fee1 == 1){?>	
-		<br />
+		
 		<?php }?>
 		<?php if($order_info['Order']['money_paid'] >0){?>
-		- <?php echo $SCLanguages['paid'].$SCLanguages['amount']?>:
-	  	  <?php echo $svshow->price_format($order_info['Order']['money_paid'],$SVConfigs['price_format']);?><br/>
+		<tr>
+		<td>- <?php echo $SCLanguages['paid'].$SCLanguages['amount']?>:</td>
+	  	<td><?//php echo $svshow->price_format($order_info['Order']['money_paid'],$SVConfigs['price_format']);?>
+		<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($order_info['Order']['money_paid']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($order_info['Order']['money_paid'],$this->data['configs']['price_format']);?>	
+			<?php }?>
+			</td>
+		</tr>  		  	    
+	  	    
+	  	  
 		<?php }?>
-		<?php echo $SCLanguages['payable_amount']?>: 
-	  	  <?php echo $svshow->price_format($order_info['Order']['need_paid'],$SVConfigs['price_format']);?><br />
-		</span>
+		<tr>
+		<td><?php echo $SCLanguages['payable_amount']?>: </td>
+	  	  <td><?//php echo $svshow->price_format($order_info['Order']['need_paid'],$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($order_info['Order']['need_paid']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($order_info['Order']['need_paid'],$this->data['configs']['price_format']);?>	
+			<?php }?> 
+		</td>
+		</tr>	  	    
+	  	    
+	  	    
 			<?php if($order_info['Order']['status'] < 2 && $order_info['Order']['payment_status'] != 2  && $order_info['Order']['payment_status'] != 2){?>
-            <p class="title order_list">
-            <span class="handel btn_list">
+		<tr>
+            <td colspan="2"><p class="title order_list">
+            <span class="btn_list">
             <a href="javascript:order_pay(<?php echo $order_info['Order']['id']?>,<?php echo $order_info['Order']['status']?>,'<?php echo $SCLanguages['order_not_paid'];?>');">
             <span><?php echo $SCLanguages['pay']?></span>
             </a></span></p>
             <br />
+           </td>
+            </tr>
             <?php }?>
-		</p>
+    </table>      
 	</div>
 </div>
 <!--订单小计 End-->
 
-
-
-
-
-
-
 <!--支付方式-->	
-<div id="Edit_box" style="display:none">
-<div id="Edit_info" style="margin-top:5px;*margin-top:0;">
+<div class="Edit_box" style="display:none">
+<div class="Edit_info" style="margin-top:5px;*margin-top:0;">
 <p class="note article_title btn_list"><b><?php echo $SCLanguages['payment']?></b>
 <?php if ($order_info['Order']['status'] == 0){?>	  
 <span class="amenber_balances"><!--cite style="cursor:pointer;"><a id="editpayment"><?php echo $SCLanguages['edit']?></a></cite--></span></p>
@@ -411,7 +641,7 @@
 <!--修改支付方式-->
 <?php if(isset($is_show) && $is_show == 1){?>
 <div id="edit_payment" style="border:1px solid #fff">
-  <div id="Edit_info" style="width:588px;background:#fff;border:1px solid #fff">
+  <div class="Edit_info" style="width:588px;background:#fff;border:1px solid #fff">
 	  <p class="balances">
 	  <?php foreach($payment_list as $k=>$v){?>
 	  <?php if($v['Payment']['id'] != $order_info['Order']['payment_id'] && $v['PaymentI18n']['status'] == 1){?>
@@ -426,11 +656,18 @@
 <?php }}?>	  
 	  <p class="balances"><?php echo $SCLanguages['payment']?>:<b><?php echo $order_info['Order']['payment_name']?></b>。<?php echo $SCLanguages['payable_amount']?>:
 	  	  <b>
-	  	  <?php echo $svshow->price_format($order_info['Order']['total'],$SVConfigs['price_format']);?></b>
+	  	  <?//php echo $svshow->price_format($order_info['Order']['total'],$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($order_info['Order']['total']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($order_info['Order']['total'],$this->data['configs']['price_format']);?>	
+			<?php }?> 	  	  
+	  	  
+	  	  </b>
 	  	  <br /><?php //=$SCLanguages['delivery_versus_payment']?></p>
 	</div>
 </div>
 <!--支付方式 End-->
   </div>
 
-<?php echo $this->element('news', array('cache'=>array('time'=> "+24 hour",'key'=>'news'.$template_style)));?>
+<?php echo $this->element('news', array('cache'=>array('time'=> "+0 hour",'key'=>'news'.$template_style)));?>

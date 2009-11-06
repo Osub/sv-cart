@@ -9,10 +9,10 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: checkout_remark_confirm.ctp 2703 2009-07-08 11:54:52Z huangbo $
+ * $Id: checkout_remark_confirm.ctp 3949 2009-08-31 07:34:05Z huangbo $
 *****************************************************************************/
 ?>
-<table cellpadding="0" cellspacing="0" class="address_list" id="checkout_shipping_choice">
+<table cellpadding="0" cellspacing="0" class="address_list" width="100%">
 <tr class="list">
 <td width="34%" height="25" valign="middle" class="bewrite">
 <div class="btn_list" style="padding-top:10px;">

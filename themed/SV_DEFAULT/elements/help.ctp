@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: help.ctp 2535 2009-07-02 11:34:51Z huangbo $
+ * $Id: help.ctp 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 ?>
 <!--帮助中心显示开始-->
@@ -21,7 +21,7 @@
 <ul>
 <?php if(isset($navigations_help) && sizeof($navigations_help)>0){?>
 <?php foreach($navigations_help as $key=>$help){?>
-<li><?php echo $html->image(isset($img_style_url)?$img_style_url."/".'ico_28.gif':'ico_28.gif',array("alt"=>"SV-Cart"));?><?php echo $html->link($help['NavigationI18n']['name']." <font face='宋体'>&gt;&gt;</font>","{$help['NavigationI18n']['url']}","",false,false);?></li>
+<li <?php if($key==sizeof($navigations_help)-1){?>style="margin-bottom:0;"<?php }?>><?php echo $html->link($help['NavigationI18n']['name']." <font face='宋体'>&gt;&gt;</font>","{$help['NavigationI18n']['url']}","",false,false);?></li>
 <?php }?>
 <?php }?>
 </ul></div>

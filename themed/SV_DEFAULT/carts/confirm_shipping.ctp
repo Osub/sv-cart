@@ -9,16 +9,13 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: confirm_shipping.ctp 3195 2009-07-22 07:15:51Z huangbo $
+ * $Id: confirm_shipping.ctp 3779 2009-08-19 10:40:08Z huangbo $
 *****************************************************************************/
 ob_start();?>
 <?php if($result['type'] == 0 ){?>
-<h5 id="address_btn_list">
-<a href="javascript:change_shipping();" class="amember"><span><?php echo $SCLanguages['mmodify']?></span></a>
-<?php echo $SCLanguages['shipping_method'];?>:</h5>
 <?php echo $this->element('checkout_shipping_confirm', array('cache'=>'+0 hour'));?>
 <?php }else{?>
-<div id="loginout">
+<div id="loginout" class="loginout">
 	<h1><b style="font-size:14px"><?php echo $SCLanguages['shipping_method'];?></b></h1>
 	<div class="border_side">
 	<p class="login-alettr"> 	<?php echo $html->image(isset($img_style_url)?$img_style_url."/".'icon-10.gif':'icon-10.gif',array("align"=>"middle"));?>

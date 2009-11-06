@@ -9,12 +9,12 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: send_verify_email.ctp 3053 2009-07-17 11:59:14Z huangbo $
+ * $Id: send_verify_email.ctp 3779 2009-08-19 10:40:08Z huangbo $
 *****************************************************************************/
 	ob_start();
 ?>
 
-<div id="loginout">
+<div id="loginout" class="loginout">
 	<h1><b style="font-size:14px"><?php echo $SCLanguages['send_confirm_mail']?></b></h1>
 	<div style="border-left:1px solid #909592;border-right:1px solid #909592;background:#fff">
 		<p class="login-alettr">

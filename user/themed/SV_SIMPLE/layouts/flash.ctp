@@ -27,7 +27,6 @@ $style_css = (isset($template_style) && $template_style != "")?"style_".$templat
 <script type="text/javascript">
 	var root_all = "<?php echo $root_all;?>";
 	var webroot_dir = "<?php echo $user_webroot;?>";
-	var admin_webroot = "<?php echo $admin_webroot;?>";
 	var user_webroot = "<?php echo $user_webroot;?>";
 	var cart_webroot = "<?php echo $cart_webroot;?>";
 	var server_host = "<?php echo $server_host;?>";
@@ -56,7 +55,11 @@ $style_css = (isset($template_style) && $template_style != "")?"style_".$templat
 	<?php echo $html->link($SCLanguages['return'].$SCLanguages['previous'].$SCLanguages['page'],$_SESSION['cart_back_url'],array(),false,false);?>
 	<?php unset($_SESSION['cart_back_url']);?>		
 	<?php }else{?>
-	<?php echo $html->link($message,$url,array(),false,false);?>		
+	<?if(isset($url_format)){?>
+		<?php echo $url_format;?>
+	<?}else{?>
+		<?php echo $html->link($message,$url,array(),false,false);?>
+	<?}?>			
 	<?php }?>
 </p>
 </div>

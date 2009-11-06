@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: login.ctp 3233 2009-07-22 11:41:02Z huangbo $
+ * $Id: login.ctp 4105 2009-09-07 07:54:16Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
@@ -17,7 +17,7 @@
 <div id="login-box">
     	<div class="menber-login">
 			<h1>· <?php echo $SCLanguages['member'].$SCLanguages['login']?></h1>
-			<?php echo $html->image(isset($img_style_url)?$img_style_url."/".'login-top.gif':'login-top.gif',array('align'=>'absbottom'))?>
+			<?php echo $html->image(isset($img_style_url)?$img_style_url."/".'login-top.gif':'login-top.gif',array())?>
 			<div class="box">
 			<form action="">
 			<dl>
@@ -31,7 +31,7 @@
 			<dt><?php echo $SCLanguages['verify_code']?></dt>
 			<dd class="vidata"><input type="text"  name="data[User][captcha]" id="UserCaptcha_page" value="<?php echo $SCLanguages['obtain_verification_code']?>" onfocus="javascript:get_captcha('login_captcha_page');"  tabindex="3" /> 
 		    <span id="authnum_img_span" style="display:none">
-				<a href="javascript:show_login_captcha('login_captcha_page');"><img id="login_captcha_page"  /></a>
+				<a href="javascript:show_login_captcha('login_captcha_page');"><img id="login_captcha_page" src="" alt="Captcha" /></a>
 			</span>
 		    </dd>
 			</dl>	
@@ -54,4 +54,4 @@
 			</ul>
 		</div>
     </div>
-<?php echo $this->element('news', array('cache'=>array('time'=> "+24 hour",'key'=>'news'.$template_style)));?>
+<?php echo $this->element('news', array('cache'=>array('time'=> "+0 hour",'key'=>'news'.$template_style)));?>

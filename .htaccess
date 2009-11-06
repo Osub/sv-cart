@@ -6,6 +6,15 @@
 
 </IfModule>
 
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/gif "access plus 10 days"
+  ExpiresByType image/png "access plus 10 days"
+  ExpiresByType image/jpeg "access plus 10 days"
+  ExpiresByType image/x-icon "access plus 10 days"
+</IfModule>
+
+
 <FilesMatch (.*)\.(ctp)$>  
     order allow,deny   
     deny from all   

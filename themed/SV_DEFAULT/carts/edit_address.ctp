@@ -9,16 +9,16 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: edit_address.ctp 2863 2009-07-15 04:57:00Z shenyunfeng $
+ * $Id: edit_address.ctp 4433 2009-09-22 10:08:09Z huangbo $
 *****************************************************************************/
 ob_start();?>
 <?php if ($result['type'] == 0){?>
 	<?php if(empty($result['all_virtual'])){?>
 <div class="Balance_alltitle" style="margin-bottom:0;"><h1 class="headers"><span class="l"></span><span class="r"></span><b><?php echo $SCLanguages['mmodify']?></b></h1></div>
-<div id="Balance_info" style='background:#fff;margin-top:0;width:892px;'>
+<div id="Balance_info" style='background:#fff;margin-top:0;'>
 <p class="edittitle"><strong><?php echo $SCLanguages['mmodify'].$SCLanguages['consignee'].$SCLanguages['information'];?>:</strong></p>
 
-<table cellpadding="0" cellspacing="0" class="address_table" border=0 align="center">
+<table cellpadding="0" cellspacing="0" class="address_table" width="100%" >
 <tr>
 <td class="lan-name">&nbsp;<?php echo $SCLanguages['address'];?><?php echo $SCLanguages['label'];?>:</td>
 <td class="lan-info"><input name="data['address']['name']" id="EditAddressName" value="<?php echo $address['UserAddress']['name']?>">&nbsp;<font id="edit_address_name" color="red">*</font></td>
@@ -38,13 +38,27 @@ ob_start();?>
 <tr>
 <td class="lan-name">&nbsp;<?php echo $SCLanguages['telephone'];?>:
 </td><td class="lan-info">
-<input type="text" name="user_tel0" id="tel_0"  onKeyUp="is_int(this);" value="<?php if(isset($address['UserAddress']['sign_building'])){echo $address['UserAddress']['telephone'];}?>"/>
+<input type="text" name="user_tel0" id="tel_0"  value="<?php if(isset($address['UserAddress']['sign_building'])){echo $address['UserAddress']['telephone'];}?>"/>
 <font color="red" id="edit_address_telephone">*</font>&nbsp;</td>
 <td class="lan-name"><?php echo $SCLanguages['post_code'];?>:</td><td class="lan-info"><input name="data['address']['zipcode']" id="EditAddressZipcode" value="<?php echo $address['UserAddress']['zipcode']?>">&nbsp;</td>
 </tr>
 <tr>
 <td class="lan-name">&nbsp;<?php echo $SCLanguages['email'];?>:</td><td class="lan-info"><input name="data['address']['email']" id="EditAddressEmail" value="<?php echo $address['UserAddress']['email']?>">&nbsp;<font color="red" id="edit_address_email">*</font></td>
-<td class="lan-name"><?php echo $SCLanguages['best_shipping_time'];?>:</td><td class="lan-info"><input name="data['address']['best_time']" id="EditAddressBestTime" value="<?php echo $address['UserAddress']['best_time']?>"></td>
+<td class="lan-name"><?php echo $SCLanguages['best_shipping_time'];?>:</td><td class="lan-info">
+	<!-- input name="data['address']['best_time']" id="EditAddressBestTime" value="" -->
+	<select name="data['address']['best_time']" id="EditAddressBestTime" style="width:130px;">	
+		<option value=""><?php echo $SCLanguages['please_choose']?></option>
+		<?php 
+			if(isset($information_info['best_time']) && sizeof($information_info['best_time'])>0){
+				foreach($information_info['best_time'] as $k=>$v){
+					if($k != ''){
+					?>
+				<option value="<?php echo $v?>"   <?if($address['UserAddress']['best_time'] == $v){?>selected<?}?>><?php echo $v?></option>
+		<?}}}?>
+	</select>	
+	
+	
+	</td>
 <input type='hidden' name="data['address']['id']" id="EditAddressId" value="<?php echo $address['UserAddress']['id']?>">
 </tr>
 <tr class='btn_list'>
@@ -55,7 +69,7 @@ ob_start();?>
 </tr>
 </table>
 <p class="edittitle"><strong><?php echo $SCLanguages['add'];?><?php echo $SCLanguages['consignee'];?><?php echo $SCLanguages['information'];?>:</strong></p>
-<table cellpadding="0" cellspacing="0" class="address_table" border=0 align="center">
+<table cellpadding="0" cellspacing="0" class="address_table" width="100%" >
 <tr>
 <td class="lan-name">&nbsp;<?php echo $SCLanguages['address'];?><?php echo $SCLanguages['label'];?>:</td>
 <td class="lan-info"><input name="data['address']['name']" id="AddressName" value="">&nbsp;<font id="add_address_name" color="red">*</font></td>
@@ -76,13 +90,27 @@ ob_start();?>
 <tr>
 <td class="lan-name">&nbsp;<?php echo $SCLanguages['telephone'];?>:</td><td class="lan-info">
 <!--input name="data['address']['telephone']" id="AddressTelephone" value=""-->
-<input  type="text" name="user_tel0" id="add_tel_0" onKeyUp="is_int(this);"  />
+<input  type="text" name="user_tel0" id="add_tel_0"  />
 <font id="add_address_telephone" color="red">*</font></td>
 <td class="lan-name"><?php echo $SCLanguages['post_code'];?>:</td><td class="lan-info"><input name="data['address']['zipcode']" id="AddressZipcode" value=""></td>
 </tr>
 <tr>
 <td class="lan-name">&nbsp;<?php echo $SCLanguages['email'];?>:</td><td class="lan-info"><input name="data['address']['email']" id="AddressEmail" value="">&nbsp;<font id="add_address_email" color="red">*</font></td>
-<td class="lan-name"><?php echo $SCLanguages['best_shipping_time'];?>:</td><td class="lan-info"><input name="data['address']['best_time']" id="AddressBestTime" value=""></td>
+<td class="lan-name"><?php echo $SCLanguages['best_shipping_time'];?>:</td>
+<td class="lan-info">
+	<!--input name="data['address']['best_time']" id="AddressBestTime" value=""-->
+	<select name="data['address']['best_time']" id="AddressBestTime" style="width:130px;">	
+		<option value=""><?php echo $SCLanguages['please_choose']?></option>
+		<?php 
+			if(isset($information_info['best_time']) && sizeof($information_info['best_time'])>0){
+				foreach($information_info['best_time'] as $k=>$v){
+					if($k != ''){
+					?>
+				<option value="<?php echo $v?>"><?php echo $v?></option>
+		<?}}}?>
+	</select>
+		
+</td>
 </tr>
 <tr class='btn_list'>
 <td colspan="2" align="right" style="*padding-top:8px;">
@@ -115,7 +143,7 @@ ob_start();?>
 <td width="50%">
 	<p class="edittitle"><strong><?php echo $SCLanguages['mmodify'].$SCLanguages['consignee'].$SCLanguages['information'];?>:</strong></p>
 
-	<table cellpadding="0" cellspacing="0" class="address_table" border="0" align="center" style="width:97%;margin:0 auto;border:none">
+	<table cellpadding="0" cellspacing="0" class="address_table" width="100%" style="border:none">
 	<tr>
 	<td class="lan-name">&nbsp;<?php echo $SCLanguages['address'];?><?php echo $SCLanguages['label'];?>:</td>
 	<td class="lan-info"><input name="data['address']['name']" id="EditAddressName" value="<?php echo $address['UserAddress']['name']?>">&nbsp;<font id="edit_address_name" color="red">*</font></td>
@@ -129,7 +157,7 @@ ob_start();?>
 	<tr>
 	<td class="lan-name">&nbsp;<?php echo $SCLanguages['telephone'];?>:
 	</td><td class="lan-info">
-	<input style="width:30px;" type="text" name="user_tel0" id="tel_0"  onKeyUp="is_int(this);" value="<?php if(isset($address['UserAddress']['sign_building'])){echo $address['UserAddress']['sign_building'];}?>"/>
+	<input style="width:30px;" type="text" name="user_tel0" id="tel_0"   value="<?php if(isset($address['UserAddress']['sign_building'])){echo $address['UserAddress']['sign_building'];}?>"/>
 <font color="red" id="edit_address_telephone">*</font>&nbsp;</td>
 	</tr>
 	<tr>
@@ -151,7 +179,7 @@ ob_start();?>
 	<p class="edittitle">
 	<strong><?php echo $SCLanguages['add'];?><?php echo $SCLanguages['consignee'];?><?php echo $SCLanguages['information'];?>:</strong>
 	</p>
-	<table cellpadding="0" cellspacing="0" class="address_table" border=0 style="width:97%;margin:0 auto;border:none">
+	<table cellpadding="0" cellspacing="0" class="address_table" width="100%" style="border:none">
 	<tr>
 	<td class="lan-name">&nbsp;<?php echo $SCLanguages['address'];?><?php echo $SCLanguages['label'];?>:</td>
 	<td class="lan-info"><input name="data['address']['name']" id="AddressName" value="">&nbsp;<font id="add_address_name" color="red">*</font></td>
@@ -167,7 +195,7 @@ ob_start();?>
 	<tr>
 	<td class="lan-name">&nbsp;<?php echo $SCLanguages['telephone'];?>:</td><td class="lan-info">
 
-	<input style="width:30px;" type="text" name="user_tel0" id="add_tel_0" onKeyUp="is_int(this);" />
+	<input style="width:30px;" type="text" name="user_tel0" id="add_tel_0" />
 
 	<font id="add_address_telephone" color="red">*</font></td>
 	</tr>

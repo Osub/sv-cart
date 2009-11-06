@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: brand.ctp 2525 2009-07-02 05:42:37Z shenyunfeng $
+ * $Id: brand.ctp 3949 2009-08-31 07:34:05Z huangbo $
 *****************************************************************************/
 ?>
 <!--Brands-->
@@ -19,8 +19,8 @@
 <ul>
 <?php if(isset($brands) && sizeof($brands)>0){?>	
 <?php foreach($brands as $k=>$v){
-if(isset($v['Brand']['img01']) && !empty($v['Brand']['img01'])){?>
-<li><?php echo $html->link($html->image($v['Brand']['img01'],array('alt'=>$v['BrandI18n']['name'])),"/brands/".$v['Brand']['id'],"",false,false);?></li>
+if(isset($v['BrandI18n']['img01']) && !empty($v['BrandI18n']['img01']) && trim($v['BrandI18n']['img01']) !=""){?>
+<li><?php echo $html->link($html->image($v['BrandI18n']['img01'],array('alt'=>$v['BrandI18n']['name'])),"/brands/".$v['Brand']['id'],"",false,false);?></li>
 <?php }else{?>
 <li class="text"><?php echo $html->link($v['BrandI18n']['name'],"/brands/".$v['Brand']['id'],array("class"=>"color_083"),"",false,false);?></li>
 <?php }?>

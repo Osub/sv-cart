@@ -9,39 +9,39 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 3233 2009-07-22 11:41:02Z huangbo $
+ * $Id: index.ctp 3949 2009-08-31 07:34:05Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $javascript->link(array('profiles','calendar'));?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 <div id="Editinfo_title">
 <h1 class="headers"><span class="l"></span><span class="r"></span><b><?php echo $SCLanguages['my_information']?></b></h1></div>
-<div id="Edit_box">
-  <div id="Edit_info">
+<div class="Edit_box">
+  <div class="Edit_info">
 <?php echo $form->create('profiles',array('action'=>'edit_profiles','name'=>'edit_profiles','type'=>'POST'));?>
-<input type="hidden" id="UserId" name="data[User][id]" value="<?php echo $this->data['User']['id']?>">
-<?php if(isset($this->data['UserAddress'])){?>
-<input type="hidden" id="UserAddressId" name="data[UserAddress][id]" value="<?php echo $this->data['UserAddress']['id']?>">
+<input type="hidden" id="UserId" name="data[User][id]" value="<?php echo $this->data['profiles']['User']['id']?>">
+<?php if(isset($this->data['profiles']['UserAddress'])){?>
+<input type="hidden" id="UserAddressId" name="data[UserAddress][id]" value="<?php echo $this->data['profiles']['UserAddress']['id']?>">
 <?php }?>
 <ul>
   <li>
     <dd id="span_usertype"><?php echo $SCLanguages['member']?>：</dd>
-    <dt class="name"><?php echo $this->data['User']['name']?></dt></li>
+    <dt class="name"><?php echo $this->data['profiles']['User']['name']?></dt></li>
   <li>
     <dd><?php echo $SCLanguages['email']?>：</dd>
-    <dt><input name="data[User][email]" id="UserEmail" maxLength="200" style="width:216px;" type="text" size="55" <?php if(isset($this->data['User']['email'])){?>value="<?php echo $this->data['User']['email']?>"<?php }else{?>value=""<?php }?>/>&nbsp;<font color="red" id="user_email">*</font></dt></li>
+    <dt><input name="data[User][email]" id="UserEmail" maxLength="200" style="width:216px;" type="text" size="55" <?php if(isset($this->data['profiles']['User']['email'])){?>value="<?php echo $this->data['profiles']['User']['email']?>"<?php }else{?>value=""<?php }?>/>&nbsp;<font color="red" id="user_email">*</font></dt></li>
   <li>
         <dd class="pass"><?php echo $SCLanguages['gender']?>：</dd>
         <dt>
           <select id="UserSex" name="data[User][sex]">
-            <option value="0" <?php if($this->data['User']['sex'] == 0){?>selected<?php }?>><?php echo $SCLanguages['confidence']?></option>
-            <option value="1" <?php if($this->data['User']['sex'] == 1){?>selected<?php }?>><?php echo $SCLanguages['male']?></option>
-            <option value="2" <?php if($this->data['User']['sex'] == 2){?>selected<?php }?>><?php echo $SCLanguages['female']?></option>
+            <option value="0" <?php if($this->data['profiles']['User']['sex'] == 0){?>selected<?php }?>><?php echo $SCLanguages['confidence']?></option>
+            <option value="1" <?php if($this->data['profiles']['User']['sex'] == 1){?>selected<?php }?>><?php echo $SCLanguages['male']?></option>
+            <option value="2" <?php if($this->data['profiles']['User']['sex'] == 2){?>selected<?php }?>><?php echo $SCLanguages['female']?></option>
         </select></dt></li>
   <li>
         <dd><?php echo $SCLanguages['birthday']?>：</dd>
         <dt>
-          <label id="show"><input type="text" id="date" name="data[User][birthday]" value="<?php echo $this->data['User']['birthday']?>" Readonly/><button type="button" class="calendar" title="Show Calendar"><?php echo $html->image(isset($img_style_url)?$img_style_url."/".'calendar.png':'calendar.png',array('width'=>'18' ,'height'=>'18' ,'alt'=>'Calendar'))?></button></label>
+          <label id="show"><input type="text" id="date" name="data[User][birthday]" value="<?php echo $this->data['profiles']['User']['birthday']?>" Readonly/><button type="button" class="calendar" title="Show Calendar"><?php echo $html->image(isset($img_style_url)?$img_style_url."/".'calendar.png':'calendar.png',array('width'=>'18' ,'height'=>'18' ,'alt'=>'Calendar'))?></button></label>
        	</dt>
    </li>
  <li>
@@ -51,17 +51,17 @@
   <li class="reguser_gut01_height01">
     <dd><?php echo $SCLanguages['address']?>：</dd>
     <dt>
-      <input name="data[UserAddress][address]" id="UserAddressAddress" maxLength="200" style="width:216px;" type="text" size="55" <?php if(isset($this->data['UserAddress']['address'])){?>value="<?php echo $this->data['UserAddress']['address']?>"<?php }else{?>value=""<?php }?>/>&nbsp;<font color="red" id="user_address">*</font></dt>
+      <input name="data[UserAddress][address]" id="UserAddressAddress" maxLength="200" style="width:216px;" type="text" size="55" <?php if(isset($this->data['profiles']['UserAddress']['address'])){?>value="<?php echo $this->data['profiles']['UserAddress']['address']?>"<?php }else{?>value=""<?php }?>/>&nbsp;<font color="red" id="user_address">*</font></dt>
   </li>
   <li>
   <dd><?php echo $SCLanguages['mobile']?>：</dd>
-  <dt><input type="text" name="data[UserAddress][mobile]" id="UserAddressMobile" onKeyUp="is_int(this);" maxLength="40" size="27" <?php if(isset($this->data['UserAddress']['mobile'])){?>value="<?php echo $this->data['UserAddress']['mobile']?>"<?php }else{?>value=""<?php }?>/>&nbsp;<font color="red" id="user_mobile">*</font></dt>
+  <dt><input type="text" name="data[UserAddress][mobile]" id="UserAddressMobile" onKeyUp="is_int(this);" maxLength="40" size="27" <?php if(isset($this->data['profiles']['UserAddress']['mobile'])){?>value="<?php echo $this->data['profiles']['UserAddress']['mobile']?>"<?php }else{?>value=""<?php }?>/>&nbsp;<font color="red" id="user_mobile">*</font></dt>
   </li>
     <li>
         <dd><?php echo $SCLanguages['telephone']?>：</dd>
         <dt>
         <span>
-          <input type="text" name="Utel0" id="Utel0"  onKeyUp="is_int(this);" maxLength="40" size="27"  <?php if(isset($this->data['UserAddress']['telephone'])){?>value="<?php echo $this->data['UserAddress']['telephone']?>"<?php }else{?>value=""<?php }?>/></span>&nbsp;<font color="red" id="user_telephone">*</font><span><?php echo $SCLanguages['zone_telephone_extension']?></span>
+          <input type="text" name="Utel0" id="Utel0"  onKeyUp="is_int(this);" maxLength="40" size="27"  <?php if(isset($this->data['profiles']['UserAddress']['telephone'])){?>value="<?php echo $this->data['profiles']['UserAddress']['telephone']?>"<?php }else{?>value=""<?php }?>/></span>&nbsp;<font color="red" id="user_telephone">*</font><span><?php echo $SCLanguages['zone_telephone_extension']?></span>
           </dt>
           </li>
 
@@ -105,7 +105,7 @@
  <label><input type="radio" class="radio" id="ValueValue<?php echo $k?><?php echo $kk?>"   name="info_value[<?php if(isset($v['value']['user_info_id'])){echo $v['value']['user_info_id'];}?>]" value="<?php echo $text[0];?>" <?php if(isset($v['value']['value']) && @$text[0]==$v['value']['value']) echo 'checked';?>/><?php if(@$text[1]){ echo $text[1];}?></label>
  <?php }}?>		
 <?php }?></p><?php }?>
-<?php if($v['UserInfo']['type'] == 'checkbox'){?>
+<?php if($v['UserInfo']['type'] == 'checkbox'){?><p style="padding-top:3px;">
  <?php if(isset($v['UserInfo']['user_info_values'])&&!empty($v['UserInfo']['user_info_values'])){
  	 if(isset($v['value']['value'])){
  	 	$checkoptions = explode(';',$v['value']['value']);
@@ -115,8 +115,8 @@
 	<input id="ValueInfoTimes<?php echo $k?>" name="ValueInfoTimes[<?php if(isset($v['value']['user_info_id'])){echo $v['value']['user_info_id'];}?>]" type="hidden" value="<?php echo $times?>">
  	 <?php foreach($options as $kkk=>$option){
  	 $text =explode(":",$option);if(@$text[1]!=""){?>
- <label><input type="checkbox" id="ValueValue<?php echo $k?><?php echo $kkk?>"   name="info_value[<?php if(isset($v['value']['user_info_id'])){echo $v['value']['user_info_id'];}?>][<?php echo $kkk?>]" value="<?php echo $text[0];?>" <?php if(isset($checkoptions) && in_array($text[0],$checkoptions)) echo 'checked';?>/><?php if(@$text[1]){ echo $text[1];}?></label>
- <?php } ?><?php }}?>
+ <label><input type="checkbox" class="checkbox" id="ValueValue<?php echo $k?><?php echo $kkk?>"   name="info_value[<?php if(isset($v['value']['user_info_id'])){echo $v['value']['user_info_id'];}?>][<?php echo $kkk?>]" value="<?php echo $text[0];?>" <?php if(isset($checkoptions) && in_array($text[0],$checkoptions)) echo 'checked';?> /><?php if(@$text[1]){ echo $text[1];}?></label>
+ <?php } ?><?php }}?></p>
 <?php }?>
 <?php if($v['UserInfo']['type'] == 'textarea'){?>
 <textarea id="ValueValue<?php echo $k?>"   name="info_value[<?php if(isset($v['value']['user_info_id'])){echo $v['value']['user_info_id'];}?>]"><?php if(isset($v['value']['value']))echo $v['value']['value']; ?></textarea>
@@ -132,15 +132,16 @@
 <span class="float_l" style="text-indent:0;">
 	<input type="button" name="Submit2" value="<?php echo $SCLanguages['confirm']?>"  onclick="view_profiles()" />
 </span>
+<span class="float_l" style="text-indent:0;"><input type="button" onclick="javascript:document.edit_profiles.reset();" name="Submit1" id="Submit1" value="<?php echo $SCLanguages['cancel']?>" /></span></p>
 <?php echo $form->end();?>
-<span class="float_l" style="text-indent:0;"><input type="reset" onclick="javascript:document.EditUserInfoForm.reset();" name="Submit1" id="Submit1" value="<?php echo $SCLanguages['cancel']?>" /></span></p>
 </div>
 
-
 </div>
 </div>
-<?php echo $this->element('news', array('cache'=>array('time'=> "+24 hour",'key'=>'news'.$template_style)));?>
+<?php echo $this->element('news', array('cache'=>array('time'=> "+0 hour",'key'=>'news'.$template_style)));?>
 <?php echo $this->element('calendar', array('cache'=>'+0 hour'));?>
 <script type="text/javascript">
-show_regions("<?php echo (!empty($this->data['UserAddress']['regions']))?$this->data['UserAddress']['regions']:'';?>");
+show_regions("<?php echo (!empty($this->data['profiles']['UserAddress']['regions']))?$this->data['profiles']['UserAddress']['regions']:'';?>");
 </script>
+	<!-- 不加第二个日历 页面上会多一个表格 -->
+<div style="display:none;"><button class="calendar" id="show2" title="Show Calendar"></button></div>	

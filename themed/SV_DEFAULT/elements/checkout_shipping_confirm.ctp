@@ -9,18 +9,31 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: checkout_shipping_confirm.ctp 3113 2009-07-20 11:14:34Z huangbo $
+ * $Id: checkout_shipping_confirm.ctp 3949 2009-08-31 07:34:05Z huangbo $
 *****************************************************************************/
 ?>
-<table cellpadding="0" cellspacing="0" class="address_list" id="checkout_shipping_choice">
-<tr class="list bgcolor_e">
-<td width="29%" height="25" valign="middle" class="handel"><span class="select_input"><b><?php echo $svcart['shipping']['shipping_name'];?></b>&nbsp;&nbsp;&nbsp;
-</span>
-<?php echo $SCLanguages['shipping_fee'];?>:<?php echo $svshow->price_format($svcart['shipping']['shipping_fee'],$SVConfigs['price_format']);?>&nbsp;&nbsp;&nbsp;
-<?php echo $SCLanguages['free'].$SCLanguages['limit'];?>:<?php echo $svshow->price_format($svcart['shipping']['free_subtotal'],$SVConfigs['price_format']);?>&nbsp;&nbsp;&nbsp;
-<?php echo $SCLanguages['support_value_fee'];?>:<span id="shipping_insure_fee">
-	<?php if($svcart['shipping']['insure_fee']>0){?>
-	<?php echo $svshow->price_format($svcart['shipping']['insure_fee'],$SVConfigs['price_format']);?>	
+<h5>
+<?php if(!isset($svcart['shipping']['not_show_change']) || $svcart['shipping']['not_show_change'] == '0'){?><a href="javascript:change_shipping();" class="amember"><span><?php echo $SCLanguages['mmodify']?></span></a><?php }?>
+<?php echo $SCLanguages['shipping_method'];?>:
+<span class="over_cont">
+<strong><?php echo $svcart['shipping']['shipping_name'];?></strong>&nbsp;&nbsp;
+<?php echo $SCLanguages['shipping_fee'];?>:<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+		<?php echo $svshow->price_format($svcart['shipping']['shipping_fee']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+	<?php }else{?>
+		<?php echo $svshow->price_format($svcart['shipping']['shipping_fee'],$this->data['configs']['price_format']);?>	
+	<?php }?>
+&nbsp;&nbsp;&nbsp;<?php echo $SCLanguages['free'].$SCLanguages['limit'];?>:<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+		<?php echo $svshow->price_format($svcart['shipping']['free_subtotal']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+	<?php }else{?>
+		<?php echo $svshow->price_format($svcart['shipping']['free_subtotal'],$this->data['configs']['price_format']);?>	
+	<?php }?>
+&nbsp;&nbsp;&nbsp;<?php echo $SCLanguages['support_value_fee'];?>:<span id="shipping_insure_fee"><?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+		<?php echo $svshow->price_format($svcart['shipping']['insure_fee']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+	<?php }else{?>
+		<?php echo $svshow->price_format($svcart['shipping']['insure_fee'],$this->data['configs']['price_format']);?>	
+	<?php }?>		
+&nbsp;&nbsp;&nbsp;<?php if($svcart['shipping']['insure_fee']>0){?>
+	<?//php echo $svshow->price_format($svcart['shipping']['insure_fee'],$SVConfigs['price_format']);?>	
 		<?if(isset($svcart['shipping']['insure_fee_confirm']) && $svcart['shipping']['insure_fee_confirm'] > 0){?>
 		<a href="javascript:confirm_insure_fee(<?=$svcart['shipping']['shipping_id']?>,<?=$svcart['shipping']['insure_fee']?>,2);"><?=$html->image('no.gif',array('title'=>'取消保价','alt'=>'取消保价'))?></a>
 		<?}else{?>
@@ -29,11 +42,6 @@
 	<?php }else{?>
 		-
 	<?php }?><span id="insure_fee_loading" style="display:none;"><?php echo $html->image('regions_loader.gif',array('class'=>'vmiddle'));?></span>
-	</span>
-</td>
-</tr>
-<tr class="list">
-	<td width="58%" height="25" valign="middle" class="bewrite handel"><?php echo $svcart['shipping']['shipping_description'];?></td>
-</tr>
-</table>
-<br />
+<?//php echo $svcart['shipping']['shipping_description'];?>
+</span>
+</h5>

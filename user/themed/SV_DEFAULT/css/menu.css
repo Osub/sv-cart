@@ -1,8 +1,5 @@
-div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote{
 	margin:0;padding:0;
-}
-table{
-	border-collapse:collapse;border-spacing:0;
 }
 fieldset,img{
 	border:0;
@@ -131,7 +128,7 @@ version: 2.5.2
 	margin:0 1px;
 }
 .svcart-skin-g00 .svcartmenuitemlabel{
-	padding:0 0 0 40px;*padding:1px 0 0 40px;
+	padding:0 0 0 16px;*padding:1px 0 0 16px;
 	color:#60A7DF;
 	/*text-decoration:none;
 	height:26px;*/
@@ -160,17 +157,8 @@ version: 2.5.2
 .svcartmenuitem .No_bg img{
 	margin-left:20px;
 }
-#doc h3{
-	background:url(../img/category_titlebg.gif) no-repeat;
-	height:29px;
-	line-height:29px;
-	white-space:nowrap;
-	padding:0 0 0 20px;
-	color:#fff;
-}
 .svcartmenuitem .yuimenu{
-	width:112px;
-	white-space:nowrap;
+	width:112px;white-space:nowrap;
 }
 .svcartmenuitem .yuimenu img{
 	-moz-opacity: 0.7;
@@ -181,7 +169,6 @@ version: 2.5.2
 }
 .svcartmenuitem .yuimenu .svcartmenuitemlabel{
 	padding:0;
-	text-align:center;
 }
 .svcartmenuitem .yuimenu .svcartmenuitemlabel_pd{
 	padding-top:6px;
@@ -189,8 +176,7 @@ version: 2.5.2
 	height:18px;
 }
 .svcartmenuitem .yuimenu .svcartmenuitemlabel{
-	color:#60A7DF;
-	margin-right:1px;
+	color:#60A7DF;margin-right:1px;
 }
 .svcartmenuitem .svcartmenuitemlabel:hover{
 	color:#2F71AF;text-decoration:none;

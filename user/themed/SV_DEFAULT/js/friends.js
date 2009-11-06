@@ -172,28 +172,28 @@ function modify_cat(CatId){
 	}
 	
 	function submit_edit_friend(id){
-		var address = document.getElementById("UserFriendAddress"+id).value;
-		var mobile = document.getElementById("UserFriendContactMobile"+id).value;
-		var name = document.getElementById("UserFriendContactName"+id).value;
-		var email = document.getElementById("UserFriendContactEmail"+id).value;
-		var other_email = document.getElementById("UserFriendContactOtherEmail"+id).value;
+		var address = document.getElementById("EditUserFriendAddress"+id).value;
+		var mobile = document.getElementById("EditUserFriendContactMobile"+id).value;
+		var name = document.getElementById("EditUserFriendContactName"+id).value;
+		var email = document.getElementById("EditUserFriendContactEmail"+id).value;
+		var other_email = document.getElementById("EditUserFriendContactOtherEmail"+id).value;
 		var err = false;
-			document.getElementById("friendname"+id).innerHTML = "*";
-			document.getElementById("friendemail"+id).innerHTML = "";
-			document.getElementById("ortherfriendemail"+id).innerHTML = "";
-			document.getElementById("address"+id).innerHTML = "";
-			document.getElementById('mobile'+id).innerHTML = "";
+			document.getElementById("Editfriendname"+id).innerHTML = "*";
+			document.getElementById("Editfriendemail"+id).innerHTML = "";
+			document.getElementById("Editortherfriendemail"+id).innerHTML = "";
+			document.getElementById("Editaddress"+id).innerHTML = "";
+			document.getElementById('Editmobile'+id).innerHTML = "";
 		if(name == ""){
-			document.getElementById("friendname"+id).innerHTML = friend_name_not_empty;
+			document.getElementById("Editfriendname"+id).innerHTML = friend_name_not_empty;
 			err = true;
 		}
 		if(email !="" &&  isEmail(email)){
-			document.getElementById("friendemail"+id).innerHTML = invalid_email;
+			document.getElementById("Editfriendemail"+id).innerHTML = invalid_email;
 			err = true;
 		}
 		if(other_email != ""){
 			if(isEmail(other_email)){
-			document.getElementById("ortherfriendemail"+id).innerHTML = invalid_email;
+			document.getElementById("Editortherfriendemail"+id).innerHTML = invalid_email;
 			err = true;
 			}
 		}
@@ -204,12 +204,12 @@ function modify_cat(CatId){
 		if(mobile != ""){
 			if(mobile != parseInt(mobile))  
 				{  
-			  		document.getElementById('mobile'+id).innerHTML = invalid_tel_number;
+			  		document.getElementById('Editmobile'+id).innerHTML = invalid_tel_number;
 					err = true;
 				}else{
 					telephone = parseInt(mobile);
 					if(parseInt(telephone) < 0){
-			  		document.getElementById('mobile'+id).innerHTML = invalid_tel_number;
+			  		document.getElementById('Editmobile'+id).innerHTML = invalid_tel_number;
 						err = true;
 					}
 				}

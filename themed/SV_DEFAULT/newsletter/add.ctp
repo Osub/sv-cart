@@ -1,5 +1,5 @@
 <?ob_start();?>
-<div id="loginout">
+<div id="loginout" class="loginout">
 	<h1><b><?//=$SCLanguages['subscribe']?></b></h1>
 	<div class="border_side" id="buyshop_box">
 		<p class="login-alettr">

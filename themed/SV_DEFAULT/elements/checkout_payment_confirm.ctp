@@ -9,19 +9,24 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: checkout_payment_confirm.ctp 3113 2009-07-20 11:14:34Z huangbo $
+ * $Id: checkout_payment_confirm.ctp 4808 2009-10-09 10:05:22Z huangbo $
 *****************************************************************************/
 ?>
-<table cellpadding="0" cellspacing="0" class="address_list" width="874">
-<tbody>
-<tr class="bgcolor_e">
-<td height="25" valign="middle" class="handel">
-	<span class="select_input"><b><?php echo $svcart['payment']['payment_name'];?></b></span>&nbsp;&nbsp;&nbsp;
-	<?php echo $SCLanguages['cost'];?>:<?php echo $svshow->price_format($svcart['payment']['payment_fee'],$SVConfigs['price_format']);?>
-	</td>
-</tr>
-<tr class="list">
-	<td height="25" valign="middle" class="bewrite handel"><?php echo $svcart['payment']['payment_description'];?></td>
-</tr>
-</tbody>
-</table>
+
+<h5 style="border-bottom:1px solid;">
+<?php if(!isset($svcart['payment']['not_show_change']) || $svcart['payment']['not_show_change'] == '0'){?>
+<a href="javascript:change_payment()" class="amember"><span><?php echo $SCLanguages['mmodify']?></span></a>
+<?php }?>
+<?php echo $SCLanguages['payment'];?>:
+<span class="over_cont" >
+<strong><?php echo $svcart['payment']['payment_name'];?></strong>
+&nbsp;&nbsp;&nbsp;<?php echo $SCLanguages['procedure_fee'];?>:
+	<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+		<?php echo $svshow->price_format($svcart['payment']['payment_fee']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+	<?php }else{?>
+		<?php echo $svshow->price_format($svcart['payment']['payment_fee'],$this->data['configs']['price_format']);?>	
+	<?php }?>				
+&nbsp;&nbsp;&nbsp;<?//php echo $svcart['payment']['payment_description'];?>
+</span>
+
+</h5>

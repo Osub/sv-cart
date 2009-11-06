@@ -13,7 +13,7 @@
 *****************************************************************************/
 	ob_start();
 ?>
-<div id="loginout">
+<div id="loginout" class="loginout">
 	<h1><b style="font-size:14px"><?php echo $SCLanguages['add']?><?php echo $SCLanguages['coupon']?></b></h1>
 	<div style="border-left:1px solid #909592;border-right:1px solid #909592;background:#fff">
 		<p class="login-alettr">

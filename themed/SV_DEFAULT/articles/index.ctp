@@ -9,9 +9,17 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 3225 2009-07-22 10:59:01Z huangbo $
+ * $Id: index.ctp 4578 2009-09-25 10:21:49Z huangbo $
 *****************************************************************************/
 ?>
+<cake:nocache>
+<? 	$session->check('Config.locale');
+	$locale = $session->read('Config.locale');
+	header("/articles/index/".$locale);
+?>
+</cake:nocache>
+
+
 <script type="text/javascript"> 
 <!-- 
 /*第一种形式 第二种形式 更换显示样式*/ 
@@ -39,10 +47,12 @@
 	<dd><?php echo $SCLanguages['issue_time'];?></dd>
 </dl>
 <?php foreach($news['Article_list'] as $key=>$v){ ?>
-<p>
-	<span class="title"><?php echo $html->link($v['ArticleI18n']['title'],"/articles/{$v['Article']['id']}",array(),false,false)."</span><span>".$v['Article']['modified'];
-	?></span>
-</p>
+	<?php if(isset($v['ArticleI18n'])){?>
+	<p>
+		<span class="title"><?php echo $html->link($v['ArticleI18n']['title'],$svshow->article_link($v['Article']['id'],$dlocal,$v['ArticleI18n']['title'],$this->data['configs']['article_link_type']),array(),false,false)."</span><span>".$v['Article']['modified'];
+		?></span>
+	</p>
+	<?php }?>
 <?php }?>
 </div>
 </div>
@@ -61,7 +71,7 @@
 	  	foreach($hot_list as $key=>$v){ 
 ?>
 <p><span class="title">
-<?php echo $html->link($v['ArticleI18n']['title'],"/articles/{$v['Article']['id']}",array(),false,false);?>
+<?php echo $html->link($v['ArticleI18n']['title'],$svshow->article_link($v['Article']['id'],$dlocal,$v['ArticleI18n']['title'],$this->data['configs']['article_link_type']),array(),false,false);?>
 </span><span>
 <?php echo $v['Article']['modified'];?>
 </span></p>
@@ -93,33 +103,35 @@
 <!--精彩专题-->
 <div id="con_one_1">
 <sub><?php echo $html->image(isset($img_style_url)?$img_style_url."/".'pic_30.jpg':'pic_30.jpg')?></sub>
-<div class="subject">
+<div class="subject" style="padding-bottom:4px;">
+<?php if(isset($wondeful_news['Article_list']) && sizeof($wondeful_news['Article_list'])>0){?>
 <ul>
 <?php if(isset($wondeful_news['Article_list']) && sizeof($wondeful_news['Article_list'])>0){
-		if(isset($wondeful_news['Article_list']['0']['Article'])){
 	  	foreach($wondeful_news['Article_list'] as $key=>$v){ ?>
 <li>
-<?php echo $html->image(isset($img_style_url)?$img_style_url."/".'right_icon02.gif':'right_icon02.gif').$html->link($v['ArticleI18n']['title'],"/articles/{$v['Article']['id']}",array(),false,false)."&nbsp;&nbsp;&nbsp;&nbsp;".$v['Article']['modified'];?>
+<?php echo $html->image(isset($img_style_url)?$img_style_url."/".'right_icon02.gif':'right_icon02.gif').$html->link($v['ArticleI18n']['title'],$svshow->article_link($v['Article']['id'],$dlocal,$v['ArticleI18n']['title'],$this->data['configs']['article_link_type']),array(),false,false)."&nbsp;&nbsp;&nbsp;&nbsp;".$v['Article']['modified'];?>
 </li>
-<?php }}else{echo '<br /><p align="center" class="no_article">$SCLanguages[no_article] </p><br />';}}?>
+<?php }}else{echo '<br /><p align="center" class="no_article">$SCLanguages[no_article] </p><br />';}?>
 </ul>
+<?php }?>
 </div>
 </div>
 <!--精彩专题 End-->
 <!--活动看板-->
 <div id="con_one_2" style="display:none;">
-<div class="subject" style="border:0;">
+<div class="subject" style="border:none;padding-bottom:4px;">
 <p class="pic"><?php echo $html->link($html->image(isset($img_style_url)?$img_style_url."/".'item02.gif':'item02.gif'),"#","",false,false);?></p>
+<?php if(isset($actives_news['Article_list']) && sizeof($actives_news['Article_list'])>0){?>
 <ul>
-<?php if(isset($actives_news['Article_list']) && sizeof($actives_news['Article_list'])>0){
-	if(isset($actives_news['Article_list'])){
+	<?php if(isset($actives_news['Article_list'])){
 	  	foreach($actives_news['Article_list'] as $key=>$v){ ?>
 <li>
-<?php echo $html->image(isset($img_style_url)?$img_style_url."/".'right_icon02.gif':'right_icon02.gif').$html->link($v['ArticleI18n']['title'],"/articles/{$v['Article']['id']}",array(),false,false)."&nbsp;&nbsp;&nbsp;&nbsp;".$v['Article']['modified'];
+<?php echo $html->image(isset($img_style_url)?$img_style_url."/".'right_icon02.gif':'right_icon02.gif').$html->link($v['ArticleI18n']['title'],$svshow->article_link($v['Article']['id'],$dlocal,$v['ArticleI18n']['title'],$this->data['configs']['article_link_type']),array(),false,false)."&nbsp;&nbsp;&nbsp;&nbsp;".$v['Article']['modified'];
 ?>
 </li>
-<?php }}}?>                	
+<?php }}?>
 </ul>
+<?php }?>
 </div>
 <!--活动看板 End-->
 </div>
@@ -133,27 +145,20 @@
 <div class="comment_list">
 <?php 
 if(isset($comment_list) && sizeof($comment_list)>0){
+		$comment_type_ids = array();
 	  	foreach($comment_list as $key=>$v){ 
+	  		if((!in_array($v['Comment']['type_id'],$comment_type_ids)) && isset($comment_articles_list[$v['Comment']['type_id']])){
 ?>
 <p><span class="title">
-<?php echo $html->link($v['Comment']['content'],"/articles/{$v['Comment']['type_id']}",array(),false,false);?>
+<?php echo $html->link($comment_articles_list[$v['Comment']['type_id']]['ArticleI18n']['title'],"/articles/{$v['Comment']['type_id']}",array(),false,false);?>
 </span><span>
 <?php echo $v['Comment']['name'];?>
 </span></p>
-<?php }}?>
+<?php 
+	$comment_type_ids[] = $v['Comment']['type_id'];
+	}}}?>
 </div>
 </div>
 </div>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 </div></div></div> 
-<?php echo $this->element('news', array('cache'=>array('time'=> "+24 hour",'key'=>'news'.$template_style)));?>
+<?php echo $this->element('news', array('cache'=>array('time'=> "+0 hour",'key'=>'news'.$template_style)));?>

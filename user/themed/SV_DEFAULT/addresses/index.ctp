@@ -9,21 +9,21 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 3233 2009-07-22 11:41:02Z huangbo $
+ * $Id: index.ctp 4482 2009-09-24 03:35:50Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?><div id="Products_box">
 <h1 class="headers"><span class="l"></span><span class="r"></span><b><?php echo $SCLanguages['address_book']?></b></h1>
   
-  <div id="reguser_gut01" class="addrees_box" style="padding-bottom:0;margin-left:0;">
-  <?php if(isset($this->data) && sizeof($this->data)>0){?>
+  <div class="reguser_gut01 addrees_box" style="padding-bottom:0;margin-left:0;">
+  <?php if(isset($this->data['user_address']) && sizeof($this->data['user_address'])>0){?>
   <p class="aleter">&nbsp;&nbsp;<?php echo $SCLanguages['preset_delivery_address'];?>。</p>
   <table width="100%" cellspacing="0" cellpadding="2">
     
-    <?php foreach($this->data as $k=>$v){?>
+    <?php foreach($this->data['user_address'] as $k=>$v){?>
     <tr bgcolor="#ffffff" height="25" class="adrees_list">
-    	<td align="center" width="10%" rowspan="2"><?php echo $v['UserAddress']['name']?></td>
-    	<td align="center" width="20%"><?php echo $v['UserAddress']['consignee']?></td>
+    	<td align="center" width="10%" rowspan="2">&nbsp;<?php echo $v['UserAddress']['name']?></td>
+    	<td align="center" width="20%">&nbsp;<?php echo $v['UserAddress']['consignee']?></td>
     	<td align="center" width="35%">&nbsp;<?php echo $v['UserAddress']['email']?></td>
         <td align="center" width="20%"><?php echo $v['UserAddress']['telephone_all']?>/<?php echo $v['UserAddress']['mobile']?></td>
         <td align="center" width="15%">&nbsp;<?php echo $v['UserAddress']['zipcode']?></td>
@@ -35,8 +35,8 @@
         </div>
         </td>
     </tr>
-    	<td align="center" ><?php echo $v['UserAddress']['regions']?></td>
-    	<td align="center" ><?php echo $v['UserAddress']['address']?></td>
+    	<td align="center" >&nbsp;<?php echo $v['UserAddress']['regions']?></td>
+    	<td align="center" >&nbsp;<?php echo $v['UserAddress']['address']?></td>
     	<td align="center" >&nbsp;<?php echo $v['UserAddress']['sign_building']?></td>
         <td align="center">&nbsp;<?php echo $v['UserAddress']['best_time']?></td>
     <?php }?>
@@ -62,7 +62,7 @@
 
         
 </div>
-<?php echo $this->element('news', array('cache'=>array('time'=> "+24 hour",'key'=>'news'.$template_style)));?>
+<?php echo $this->element('news', array('cache'=>array('time'=> "+0 hour",'key'=>'news'.$template_style)));?>
 
 <!--展开增加编辑框-->	
 <script type="text/JavaScript">
@@ -231,38 +231,39 @@ function show_lower(RegionId,Level,Target){
 <div id="add_address_show" style="display:none;">
 <div class="hd" style='height:auto;'>
 <h2 class="add-addresses">
-<span class="left"><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."title_l.png":"title_l.png")?></span><span class="right"><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."title_r.png":"title_r.png")?></span>
+<span class="left"><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."title_l.gif":"title_l.gif")?></span><span class="right"><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."title_r.gif":"title_r.gif")?></span>
 <span><?php echo $SCLanguages['add'].$SCLanguages['consignee'].$SCLanguages['information'];?></span></h2></div>
-<div id="reguser_gut01" class="addrees_box" style="margin-top:0;border-top:0;overflow:hidden;height:100%;margin-left:0;width:740px;">
+<div class="addrees_box reguser_gut01" style="margin-top:0;border-top:0;overflow:hidden;height:100%;margin-left:0;width:auto;">
   
 <form action="" method="post" name="InsertAddressForm" onsubmit="return check_insert_address();">
    	<input type="hidden" name="action_type" value="insert_address">
-   	<input type="hidden" name="data[UserAddress][user_id]" id="UserAddressUserId" value="<?=$_SESSION['User']['User']['id'];?>">
+   	<input type="hidden" name="data[UserAddress][user_id]" id="AddUserAddressUserId" value="<?=$_SESSION['User']['User']['id'];?>">
 <ul>
   <li>
   <dd class="l"><?php echo $SCLanguages['address'];?><?php echo $SCLanguages['label'];?>：</dd>
-  <dt style="white-space:nowrap;"><input type="text" name="data[UserAddress][name]" id="UserAddressName" maxLength="40" size="27" />&nbsp;<font color="red" id="name_msg">*</font>    </dt></li>
+  <dt style="white-space:nowrap;"><input type="text" name="data[UserAddress][name]" id="AddUserAddressName" maxLength="40" size="27" />&nbsp;<font color="red" id="add_name_msg">*</font>    </dt></li>
   <li>
   <li>
   <dd class="l"><?php echo $SCLanguages['consignee'].$SCLanguages['name']?>：</dd>
-  <dt style="white-space:nowrap;"><input type="text" name="data[UserAddress][consignee]" id="UserAddressConsignee" maxLength="40" size="27" />&nbsp;<font color="red" id="consignee_msg">*</font>    </dt></li>
+  <dt style="white-space:nowrap;"><input type="text" name="data[UserAddress][consignee]" id="AddUserAddressConsignee" maxLength="40" size="27" />&nbsp;<font color="red" id="add_consignee_msg">*</font>    </dt></li>
   <li>
 <dd class="l"><?php echo $SCLanguages['email']?>：</dd>
-<dt style="white-space:nowrap;"><input type="text" name="data[UserAddress][email]" id="UserAddressEmail" maxLength="40" size="27" />&nbsp;<font color="red" id="email_msg">*</font></dt></li>
+<dt style="white-space:nowrap;"><input type="text" name="data[UserAddress][email]" id="AddUserAddressEmail" maxLength="40" size="27" />&nbsp;<font color="red" id="add_email_msg">*</font></dt></li>
   <li>
     <dd class="l"><span id="span_Uname"><?php echo $SCLanguages['region']?>：</span></dd>
-    <dt style="white-space:nowrap;"><span id="regionsupdate"></span><span id="region_t_loading" style='display:none'><?php echo $html->image('regions_loader.gif',array('class'=>'vmiddle'));?></span>&nbsp;<font color="red" id="regions_msg">*</font> </dt>
+    <dt style="white-space:nowrap;"><span id="regionsupdate"></span><span id="region_t_loading" style='display:none'><?php echo $html->image('regions_loader.gif',array('class'=>'vmiddle'));?></span>&nbsp;<font color="red" id="add_regions_msg">*</font> </dt>
  </li>
 <script type="text/javascript">
 show_two_regions("");
 </script>
   <li>
     <dd class="l"><?php echo $SCLanguages['street'];?>：</dd>
-    <dt class="adrees" style="width:auto;"><textarea name="data[UserAddress][address]" id="UserAddressAddress"  style="width:250px;overflow-y:scroll" rows="4"></textarea></dt><dd>&nbsp;<font color="red" id="address_msg">*</font><br/><br/><br/><br/><?php echo $SCLanguages['duplicate_fill_province_city_district'];?>。</dd>  </li>
+    <dt class="adrees" style="width:auto;"><textarea name="data[UserAddress][address]" id="AddUserAddressAddress"  style="width:250px;overflow-y:scroll" rows="4"></textarea>&nbsp;<font color="red" id="add_address_msg">*</font>
+    <p ><?php echo $SCLanguages['duplicate_fill_province_city_district'];?>。</p></dt></li>
 
   <li>
   <dd class="l"><?php echo $SCLanguages['marked_building']?>：</dd>
-  <dt style="white-space:nowrap;"><input type="text" name="data[UserAddress][sign_building]" id="UserAddressSignBuilding" maxLength="40" size="27" value="" />
+  <dt style="white-space:nowrap;"><input type="text" name="data[UserAddress][sign_building]" id="AddUserAddressSignBuilding" maxLength="40" size="27" value="" />
   </dt></li>
 
 
@@ -270,20 +271,36 @@ show_two_regions("");
 
 <li>
     <dd class="l"><?php echo $SCLanguages['post_code']?>：</dd>
-    <dt style="white-space:nowrap;"><input name="data[UserAddress][zipcode]" id="UserAddressZipcode" onKeyUp="is_int(this);" size="27" /></dt></li>
+    <dt style="white-space:nowrap;"><input name="data[UserAddress][zipcode]" id="AddUserAddressZipcode" onKeyUp="is_int(this);" size="27" /></dt></li>
     <li>
         <dd class="l"><span id="span_phone"><?php echo $SCLanguages['telephone']?>：</span></dd>
-        <dt><input type="text" name="user_tel0" id="tel_0"  onKeyUp="is_int(this);" /></dt>
-        <dd style="display:none;"><font color="red" id="tel_msg">*</font><?php echo $SCLanguages['zone_telephone_extension']?></dd></li>
+        <dt><input type="text" name="user_tel0" id="Addtel_0"  onKeyUp="is_int(this);" /></dt>
+        <dd style="display:none;"><font color="red" id="add_tel_msg">*</font><?php echo $SCLanguages['zone_telephone_extension']?></dd></li>
   
       <li>
         <dd class="l"><span id="span_phone"><?php echo $SCLanguages['mobile']?>：</span></dd>
-        <dt style="white-space:nowrap;"><input type="text" name="data[UserAddress][mobile]" id="UserAddressMobile" maxLength="30" onKeyUp="is_int(this);" size="27" />&nbsp;<font color="red" id="mobile_msg">*</font> </dt></li>
+        <dt style="white-space:nowrap;"><input type="text" name="data[UserAddress][mobile]" id="AddUserAddressMobile" maxLength="30" onKeyUp="is_int(this);" size="27" />&nbsp;<font color="red" id="add_mobile_msg">*</font> </dt></li>
 
 	  <li>
 	  <dd class="l"><?php echo $SCLanguages['best_shipping_time']?>：</dd>
-	  <dt style="white-space:nowrap;"><input type="text" name="data[UserAddress][best_time]" id="UserAddressBestTime" maxLength="40" size="27" value="" />
+	  <dt style="white-space:nowrap;">
+	<select name="data[UserAddress][best_time]" id="AddUserAddressBestTime" style="width:130px;">	
+		<option value="" selected='selected'><?php echo $SCLanguages['please_choose']?></option>
+		<?php 
+			if(isset($information_info['best_time']) && sizeof($information_info['best_time'])>0){
+				foreach($information_info['best_time'] as $k=>$v){
+					if($k != ''){
+					?>
+				<option value="<?php echo $v?>"><?php echo $v?></option>
+		<?}}}?>
+	</select>		  	  
+	  </dt></li>		
+	  <li>
+	  <dd class="l"><?php echo $SCLanguages['if_set_default']?>：</dd>
+	  <dt style="white-space:nowrap;"><input type="checkbox" name="data[UserAddress][is_default]" id="add_is_default" style="width:auto" value="1" />
 	  </dt></li>		  
+	  	  
+	  	    
 </ul>
 
 <ul id="ul_company" style="display:none;">

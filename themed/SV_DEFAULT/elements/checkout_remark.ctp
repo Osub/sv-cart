@@ -9,22 +9,24 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: checkout_remark.ctp 2703 2009-07-08 11:54:52Z huangbo $
+ * $Id: checkout_remark.ctp 3732 2009-08-18 12:01:02Z huangbo $
 *****************************************************************************/
 ?>
-<table cellpadding="0" cellspacing="0" class="address_list" id="checkout_shipping_choice" style="width:97.5%;">
-<tr class="list">
-<td width="34%" height="25" valign="middle" class="bewrite">
-<div class="btn_list" style="padding-top:10px;">
-<span id="order_note_value" style="display:none"></span>
-<span id="order_note_textarea">
-<textarea name="order_note" rows="3" id="order_note_add" class="green_border" style="width:90%;overflow-y:scroll;vertical-align:top" onblur="javascript:add_remark();" ></textarea>
+<h5 id="checkout_shipping_choice_remark">
+<span id="change_remark" style="display:none">
+<a href="javascript:change_remark()" class="amember"><span><?php echo $SCLanguages['mmodify']?></span></a>
 </span>
 
-<p id="remark_msg" style='padding:1px 4px 0 20px;*margin-top:-2px;color:red'><br /></p>
-</div>
-</td>
-<td width="36%" height="25" valign="middle" class="handel">
-	<div valign="middle"  style="padding-left:20px;"><?php echo $SCLanguages['if_requirements_in_orders']?><br/><?php echo $SCLanguages['remark_here']?></div></td>
-</tr>
-</table>
+<dl>
+	<dt style="width:80px;"><strong><?php echo $SCLanguages['order'].$SCLanguages['remark'];?>:</strong></dt>
+	<dt class="over_cont">
+	<p style="padding-bottom:4px;"><?php echo $SCLanguages['if_requirements_in_orders']?><?php echo $SCLanguages['remark_here']?></p>
+<span id="order_note_value" style="display:none"></span>
+<span id="order_note_textarea">
+<textarea name="order_note" rows="3" id="order_note_add" class="green_border" style="width:430px;overflow-y:scroll;vertical-align:top" onblur="javascript:add_remark();" ></textarea>
+</span>
+	<p id="remark_msg" style='padding:1px 4px 0 20px;*margin-top:-2px;color:red'></p>
+	</dt>
+</dl>
+
+</h5>

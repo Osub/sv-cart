@@ -9,15 +9,15 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: change_address.ctp 3195 2009-07-22 07:15:51Z huangbo $
+ * $Id: change_address.ctp 4909 2009-10-12 05:12:39Z huangbo $
 *****************************************************************************/
 ob_start();?>
 <?php if($result['type'] == 0 ){?>
 <h5>
-<?php echo $html->link("<span>".$SCLanguages['mmodify']."</span>","javascript:show_address_edit('null')",array("class"=>"amember"),false,false);?>
+<?//php echo $html->link("<span>".$SCLanguages['mmodify']."</span>","javascript:show_address_edit('null')",array("class"=>"amember"),false,false);?>
 <?php echo $SCLanguages['please_choose']?><?php echo $SCLanguages['consignee']?><?php echo $SCLanguages['information']?>:
 </h5>
-<table cellpadding="0" cellspacing="0" class="address_table" border=0 align=center id="checkout_shipping_choice">
+<table cellpadding="0" cellspacing="0" class="address_table" width="100%">
 
 <tr>
 <td class="lan-name first"><?php echo $SCLanguages['address'];?><?php echo $SCLanguages['label'];?></td>
@@ -43,13 +43,8 @@ ob_end_clean();
 ob_start();
 ?>
 <?php if($result['type'] == 0 ){?>
-<h5 id="address_btn_list"><?php echo $SCLanguages['shipping_method'];?>:</h5>
-<p class="border_b" style='margin:0 10px;' align='center'><br /><br />
-	<b>
-	<?php echo $SCLanguages['edit_region_or_contact_cs'];?>
-	</b>
-<br /><br /><br /></p>
-
+<h5><?php echo $SCLanguages['shipping_method'];?>:</h5>
+<p class="border_b" style='margin:0 10px;' align='center'><br /><br /><strong><?php echo $SCLanguages['edit_region_or_contact_cs'];?></strong><br /><br /><br /></p>
 <?php }else{?>
 <?php echo $result['message'];?>
 <?php }?>

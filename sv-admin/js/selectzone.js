@@ -23,6 +23,7 @@ function add_relation_product(act,relation_id,source,type,isdouble){
     	var sUrl = webroot_dir+"products/"+act+"/"+relation_id+"/"+product_id+"/"+type+"/"+isdouble;
     	
 	}
+
 	var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, add_relation_product_callback);
 }
 //删除专题，文章 关联商品
@@ -47,16 +48,16 @@ var add_relation_Success = function(o){
         for(i=0;i < result.msg.length;i++){
             if(result.type=='T'){
                 var Objhtml=document.getElementById('target_select1');
-                newhtml+="<p class='rel_list'><span class='handle'>排序:<input size='2' value='"+result.msg[i]['TopicProduct']['orderby']+"' onblur='update_orderby("+result.msg[i]['TopicProduct']['id']+",this.value,\"T\");'><img src='"+root_all+"sv-admin/img/delete1.gif' onMouseout='onMouseout_deleteimg(this);' onmouseover='onmouseover_deleteimg(this);' onclick=\"drop_relation_product('drop_link_topic_products',"+result.msg[i]['TopicProduct']['topic_id']+", "+result.msg[i]['TopicProduct']['product_id']+",'T');\"/></span>"+result.msg[i]['Product'].name+"</p>";
+                newhtml+="<p class='rel_list'><span class='handle'>排序:<span onclick='javascript:listTable.edit(this, \"products/update_orderby/T/\","+result.msg[i]['TopicProduct']['id']+")'>"+result.msg[i]['TopicProduct']['orderby']+"</span><img src='"+root_all+"sv-admin/img/delete1.gif' onMouseout='onMouseout_deleteimg(this);' onmouseover='onmouseover_deleteimg(this);' onclick=\"drop_relation_product('drop_link_topic_products',"+result.msg[i]['TopicProduct']['topic_id']+", "+result.msg[i]['TopicProduct']['product_id']+",'T');\"/></span>"+result.msg[i]['Product'].name+"</p>";
             }else if(result.type=='A'){
                 var Objhtml=document.getElementById('target_select1');
-                newhtml+="<p class='rel_list'><span class='handle'>排序:<input size='2' value='"+result.msg[i]['ProductArticle']['orderby']+"' onblur='update_orderby("+result.msg[i]['ProductArticle']['id']+",this.value,\"A\");'><img src='"+root_all+"sv-admin/img/delete1.gif' onMouseout='onMouseout_deleteimg(this);' onmouseover='onmouseover_deleteimg(this);' onclick=\"drop_relation_product('drop_link_article_products',"+result.msg[i]['ProductArticle']['article_id']+", "+result.msg[i]['ProductArticle']['product_id']+",'A');\"/></span>"+result.msg[i]['ProductI18n'].name+"</p>";
+                newhtml+="<p class='rel_list'><span class='handle'>排序:<span onclick='javascript:listTable.edit(this, \"products/update_orderby/A/\","+result.msg[i]['ProductArticle']['id']+")'>"+result.msg[i]['ProductArticle']['orderby']+"</span><img src='"+root_all+"sv-admin/img/delete1.gif' onMouseout='onMouseout_deleteimg(this);' onmouseover='onmouseover_deleteimg(this);' onclick=\"drop_relation_product('drop_link_article_products',"+result.msg[i]['ProductArticle']['article_id']+", "+result.msg[i]['ProductArticle']['product_id']+",'A');\"/></span>"+result.msg[i]['ProductI18n'].name+"</p>";
             }else if(result.type=='P'){
                 var Objhtml=document.getElementById('target_select1');
-                newhtml+="<p class='rel_list'><span class='handle'>排序:<input size='2' value='"+result.msg[i]['ProductRelation']['orderby']+"' onblur='update_orderby("+result.msg[i]['ProductRelation']['id']+",this.value,\"A\");'><img src='"+root_all+"sv-admin/img/delete1.gif' onMouseout='onMouseout_deleteimg(this);' onmouseover='onmouseover_deleteimg(this);' onclick=\"drop_relation_product('drop_link_products',"+result.msg[i]['ProductRelation']['product_id']+", "+result.msg[i]['ProductRelation']['related_product_id']+",'P');\"/></span>"+result.msg[i]['ProductI18n'].name+"</p>";
+                newhtml+="<p class='rel_list'><span class='handle'>排序:<span onclick='javascript:listTable.edit(this, \"products/update_orderby/P/\","+result.msg[i]['ProductRelation']['id']+")'>"+result.msg[i]['ProductRelation']['orderby']+"</span><img src='"+root_all+"sv-admin/img/delete1.gif' onMouseout='onMouseout_deleteimg(this);' onmouseover='onmouseover_deleteimg(this);' onclick=\"drop_relation_product('drop_link_products',"+result.msg[i]['ProductRelation']['product_id']+", "+result.msg[i]['ProductRelation']['related_product_id']+",'P');\"/></span>"+result.msg[i]['ProductI18n'].name+"</p>";
             }else if(result.type=='PA'){
                 Objhtml=document.getElementById('target_select2');
-                newhtml+="<p class='rel_list'><span class='handle'>排序:<input size='2' value='"+result.msg[i]['ProductArticle']['orderby']+"' onblur='update_orderby("+result.msg[i]['ProductArticle']['id']+",this.value,\"PA\");'><img src='"+root_all+"sv-admin/img/delete1.gif' onMouseout='onMouseout_deleteimg(this);' onmouseover='onmouseover_deleteimg(this);' onclick=\"drop_relation_product('drop_product_articles',"+result.msg[i]['ProductArticle']['product_id']+", "+result.msg[i]['ProductArticle']['article_id']+",'PA');\"/></span>"+result.msg[i]['Article'].title+"</p>";
+                newhtml+="<p class='rel_list'><span class='handle'>排序:<span onclick='javascript:listTable.edit(this, \"products/update_orderby/PA/\","+result.msg[i]['ProductArticle']['id']+")'>"+result.msg[i]['ProductArticle']['orderby']+"</span><img src='"+root_all+"sv-admin/img/delete1.gif' onMouseout='onMouseout_deleteimg(this);' onmouseover='onmouseover_deleteimg(this);' onclick=\"drop_relation_product('drop_product_articles',"+result.msg[i]['ProductArticle']['product_id']+", "+result.msg[i]['ProductArticle']['article_id']+",'PA');\"/></span>"+result.msg[i]['Article'].title+"</p>";
             }
         }
         Objhtml.innerHTML=newhtml;

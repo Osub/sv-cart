@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: default_full.ctp 3113 2009-07-20 11:14:34Z huangbo $
+ * $Id: default_full.ctp 4808 2009-10-09 10:05:22Z huangbo $
 *****************************************************************************/
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -26,9 +26,10 @@ $style_css = (isset($template_style) && $template_style != "")?"style_".$templat
 $style_js = (isset($template_style) && $template_style != "")?"/".$template_style:"/green";
 
 ?>
-
-
 <script type="text/javascript">
+	var use_captcha = "<?php echo $this->data['configs']['use_captcha'];?>";
+	var verify_code = "<?php echo $SCLanguages['verify_code'];?>";
+	var not_clear = "<?php echo $SCLanguages['not_clear'];?>";	
 	var time_out_relogin_js = "<?php echo $SCLanguages['time_out_relogin'];?>";
 	var style_js = "<?php echo $style_js;?>";
 	var wait_message = "<?php echo $SCLanguages['wait_for_operation'];?>";
@@ -36,7 +37,6 @@ $style_js = (isset($template_style) && $template_style != "")?"/".$template_styl
 	var page_confirm = "<?php echo $SCLanguages['confirm'];?>";
 	var root_all = "<?php echo $root_all;?>";
 	var webroot_dir = "<?php echo $cart_webroot;?>";
-	var admin_webroot = "<?php echo $admin_webroot;?>";
 	var user_webroot = "<?php echo $user_webroot;?>";
 	var cart_webroot = "<?php echo $cart_webroot;?>";
 	var server_host = "<?php echo $server_host;?>";
@@ -63,27 +63,27 @@ var <?php echo $k;?> = "<?php echo $v;?>";
 	<?php echo $this->element('header', array('cache'=>'+0 hour','languages'=>(isset($languages))?$languages:array(),'navigations_top'=>(isset($navigations['T']))?$navigations['T']:array()));?>
 </div>
 <div id="container">
-	<div id="content"><?php echo $content_for_layout; ?></div>
+	<?php echo $content_for_layout; ?>
 </div>
 <div id="footer">
-	<?php echo $this->element('footer', array('cache'=>'+0 hour','categories_tree'=>(isset($categories_tree))?$categories_tree:array(),'brands'=>(isset($brands))?$brands:array(),'navigations_footer'=>(isset($navigations['F']))?$navigations['F']:array()));?>
+	<?php echo $this->element('footer', array('cache'=>'+0 hour','categories_tree'=>(isset($categories_tree))?$categories_tree:array(),'brands'=>(isset($brands))?$brands:array(),'navigations_footer'=>(isset($navigations['F']))?$navigations['F']:array(),'navigations_footer'=>(isset($navigations['B']))?$navigations['B']:array()));?>
 </div>
 <?php echo $cakeDebug; ?>
 	
 <!--对话框-->
-<input type="hidden" value="" id="img_src_text_number">
-<input type="hidden" value="" id="assign_dir">
-<div id="layer_dialog"  style="display:none;background:#fff;">
-<div id="loginout" >
-	<h1><b></b></h1>
-	<div id="buyshop_box">
+<input type="hidden" value="" id="img_src_text_number" />
+<input type="hidden" value="" id="assign_dir" />
+<div id="layer_dialog"  style="display:none;">
+<div class="loginout">
+	<h1 class="hd"><b>&nbsp;</b></h1>
+	<div id="buyshop_box" style="background:#ffffff;">
 		<p class="login-alettr">
-		<?php echo $html->image(isset($img_style_url)?$img_style_url."/"."msg.gif":"msg.gif",array('align'=>'absmiddle','class'=>'sub_icon'));?>
+		<?php echo $html->image(isset($img_style_url)?$img_style_url."/"."msg.gif":"msg.gif",array('class'=>'sub_icon'));?>
 		<b>
 		<span id="dialog_content"></span>
 		</b>
 		</p>
-		<br /><input type="hidden" id="confirm">
+		<br /><input type="hidden" id="confirm" />
 
 		<p class="buy_btn mar" ><span id="button_replace">
 		<a href='javascript:layer_dialog_obj.hide();'><?php echo $SCLanguages['cancel']?></a>
@@ -93,53 +93,29 @@ var <?php echo $k;?> = "<?php echo $v;?>";
 	<p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."loginout-bottom.gif":"loginout-bottom.gif");?></p>
 </div>
 </div>
-<!--End 对话框-->		
-	
-<!-- gears对话框 -->
-<div id="layer_gears"  style="display:none;background:#fff;">
-<div id="loginout" >
-	<h1><b><?=$SCLanguages['google_gears']?></b></h1>
-	<div id="buyshop_box">
-		<p class="login-alettr">
-		<b>
-		<span id="dialog_content">
-			<font id="no_gears" style="display:none;">
-			<?=$SCLanguages['not_yet_been_installed']?><?=$SCLanguages['google_gears']?>
-			</font>
-			<font id="error_gears" style="display:none;">
-			<?=$SCLanguages['google_gears']?><?=$SCLanguages['run_error_may_reinstall']?>
-			</font>		
-			<font id="msg_gears" style="display:none;">
-			<?=$SCLanguages['speed_up_for_website']?><?=$SCLanguages['successfully']?>
-			</font>					
-		</span>
-		</b>
-		</p>
-		<br />
-			
-		<p class="buy_btn mar" ><span id="button_replace">
-		<font id="no_gears_a" style="display:none;">
-		<a class="cursor" onclick="window.location = 'http://gears.google.com/?action=install';" ><?=$SCLanguages['install_now']?> <?=$SCLanguages['google_gears']?></a>
-		</font>
-		<font id="error_gears_a" style="display:none;">
-		<a class="cursor" onclick="window.location = 'http://gears.google.com/?action=install';"><?=$SCLanguages['reinstall']?> <?=$SCLanguages['google_gears']?></a>
-		</font>
-		<a href='javascript:layer_gears_obj.hide();'><?php echo $SCLanguages['cancel']?></a>
-		</span></p>
-	</div>
+<!--End 对话框-->			
+<!--订单查询对话框-->
+<div id="search_order" style="display:none;">
+<div class="loginout" >
+	<h1><b><?=$SCLanguages['order']?><?=$SCLanguages['search']?></b></h1>
+		<?php echo $this->element('order', array('cache'=>array('time'=> "+0 hour",'key'=>'order'.$template_style)));?>
 	<p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."loginout-bottom.gif":"loginout-bottom.gif");?></p>
 </div>
 </div>
-<!--End gears对话框-->		
+<!--End 订单查询对话框-->	
+<!--订阅对话框-->
+<div id="add_newsletter" style="display:none;">
+<div class="loginout" >
+	<h1><b><?=$SCLanguages['subscribe']?></b></h1>
+		<?php echo $this->element('newsletter', array('cache'=>array('time'=> "+0 hour",'key'=>'newsletter'.$template_style)));?>
+	<p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."loginout-bottom.gif":"loginout-bottom.gif");?></p>
+</div>
+</div>
+<!--End 订阅对话框-->
 <!--相册弹出 对话框-->
-<div id="layer_gallery"  style="display:none;background:#fff;">
-<div id="loginout" >
-	<h1><b></b></h1>
-
-		<span id="gallery_content"></span>
-
-	<p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."loginout-bottom.gif":"loginout-bottom.gif");?></p>
-</div>
+<div id="layer_gallery">
+<?=$html->link($html->image("closelabel.gif"),"javascript:layer_gallery_hide();",array("class"=>"close"),false,false);?>
+<p id="gallery_content"></p>
 </div>
 <!--End 相册弹出 对话框-->		
 </body>

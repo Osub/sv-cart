@@ -1,5 +1,5 @@
 	function show_regions(str){
-		var sUrl = webroot_dir+"regions/choice/";
+		var sUrl = webroot_dir+"regions/choice/"+str;
 		var postData ="str="+str;
 	//	alert(sUrl);
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, show_regions_callback,postData);
@@ -258,7 +258,7 @@
 	};
 //编辑地址---------add--liying
 	function edit_regions(AddressId,str){
-		var sUrl = webroot_dir+"regions/choice/";
+		var sUrl = webroot_dir+"regions/choice/"+str+"/"+AddressId
 		var postData ="str="+str+"&address_id="+AddressId;
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, edit_regions_callback,postData);
 	}
@@ -339,7 +339,7 @@
 	
 //显示2个地区选者框
 	function show_two_regions(str){
-		var sUrl = webroot_dir+"regions/twochoice/";
+		var sUrl = webroot_dir+"regions/twochoice/"+str;
 		var postData ="str="+str;
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, show_two_regions_callback,postData);
 	}
@@ -383,7 +383,7 @@
 
 //编辑两地址---------
 	function edit_two_regions(AddressId,str){
-		var sUrl = webroot_dir+"regions/twochoice/";
+		var sUrl = webroot_dir+"regions/twochoice/"+str+"/"+AddressId;
 		var postData ="str="+str+"&updateaddress_id="+AddressId;
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, edit_two_regions_callback,postData);
 	}

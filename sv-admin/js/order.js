@@ -488,13 +488,13 @@ function order_fee_information(){
 	var card_fee = GetId('card_fee').value;//贺卡费用
 	var discount = GetId('discount').value;//折扣
 	//var tax = GetId('tax').value;//使用红包
-	
+	var coupon_sn_code = GetId('coupon_sn_code').value;//使用红包
 	var subtotal = GetId('subtotal').value;//商品总价
-	var coupon_fee_id = GetId('coupon_fee_id').value;//使用红包
+	//var coupon_fee_id = GetId('coupon_fee_id').value;//使用红包
 
 	YAHOO.example.container.wait.show();
 	var sUrl = webroot_dir+"orders/edit_order_info/?status=1";
-	var postData = "order_id="+order_id+"&tax="+tax+"&shipping_fee="+shipping_fee+"&insure_fee="+insure_fee+"&payment_fee="+payment_fee+"&pack_fee="+pack_fee+"&card_fee="+card_fee+"&discount="+discount+"&order_id="+order_id+"&act_type=money&subtotal="+subtotal+"&coupon_fee_id="+coupon_fee_id;
+	var postData = "order_id="+order_id+"&tax="+tax+"&shipping_fee="+shipping_fee+"&insure_fee="+insure_fee+"&payment_fee="+payment_fee+"&pack_fee="+pack_fee+"&card_fee="+card_fee+"&discount="+discount+"&order_id="+order_id+"&act_type=money&subtotal="+subtotal+"&coupon_sn_code="+coupon_sn_code;//+"&coupon_fee_id="+coupon_fee_id;
 	var request = YAHOO.util.Connect.asyncRequest('POST', sUrl,baseinfo_submit_callback,postData);
 		
 }

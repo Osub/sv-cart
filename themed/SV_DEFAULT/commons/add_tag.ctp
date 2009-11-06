@@ -9,10 +9,10 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: add_tag.ctp 2845 2009-07-14 10:58:39Z shenyunfeng $
+ * $Id: add_tag.ctp 3779 2009-08-19 10:40:08Z huangbo $
 *****************************************************************************/
 ob_start();?>
-<div id="loginout">
+<div id="loginout" class="loginout">
 	<h1><b><?php echo $SCLanguages['add'];?><?php echo $SCLanguages['tags']?></b></h1>
 	<div class="border_side" id="buyshop_box">
 		<p class="login-alettr">
@@ -30,20 +30,16 @@ ob_start();?>
 	$result['message'] = ob_get_contents();
 	ob_end_clean();ob_start();
 	?>
-	<?php if(isset($result['tag_type']) && $result['tag_type'] == 'P'){
-		?>		<li><dd class="l">-<?php echo $SCLanguages['products']?><?php echo $SCLanguages['tags']?>-</dd><dd></li>
-<?
-			if(isset($tags) && sizeof($tags)>0){ 
-			foreach($tags as $k=>$v){?>
-				<li>
-				<dd class="l"><a href="javascript:search_tag('<?php echo $v['TagI18n']['name']?>');"><?php echo $v['TagI18n']['name']?></a></dd><dd>
-				</dd>
-				</li>
-		<?php }}
+	<?php if(isset($result['tag_type']) && $result['tag_type'] == 'P'){?>	
+	<?	if(isset($tags) && sizeof($tags)>0){ ?>
+		<div class="tags">
+			<?php foreach($tags as $k=>$v){?>
+				<span class="float_l"><a href="javascript:search_tag('<?php echo $v['TagI18n']['name']?>');"><?php echo $v['TagI18n']['name']?></a></span>
+			<?php }?>
+		</div>
+		<?php }
 		}elseif(isset($result['tag_type']) && $result['tag_type'] == 'A'){if(isset($tags) && sizeof($tags)>0){ foreach($tags as $k=>$v){?>
-						<div id="user_msg">
-			<p class="msg_title"><span class="title"><?php echo $html->link($v['TagI18n']['name'],"/category_articles/tag/".$v['TagI18n']['name'],array('target'=>'_blank'),false,false)?></span></p>
-		</div>	
+		<span><?php echo $html->link($v['TagI18n']['name'],"/category_articles/tag/".$v['TagI18n']['name'],array('target'=>'_blank'),false,false)?></span>
 				<?}}}?>	
 	<?
 	$result['tag_con'] = ob_get_contents();

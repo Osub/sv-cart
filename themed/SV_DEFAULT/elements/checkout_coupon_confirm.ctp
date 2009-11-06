@@ -9,18 +9,27 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: checkout_coupon_confirm.ctp 3143 2009-07-21 07:47:27Z huangbo $
+ * $Id: checkout_coupon_confirm.ctp 3674 2009-08-17 10:05:24Z huangbo $
 *****************************************************************************/
 ?>
-<table cellpadding="0" cellspacing="0" class="address_list" id="checkout_shipping_choice">
-<tr class="list">
-<td height="25" valign="middle" class="bewrite handel">
+<h5>
+<a href="javascript:change_coupon()" class="amember"><span><?php echo $SCLanguages['mmodify']?></span></a>
+<?php echo $SCLanguages['use'].$SCLanguages['coupon'];?>:
+<span class="over_cont">
+<?php echo $SCLanguages['use']?><?php echo $SCLanguages['coupon']?> :<?php echo $svcart['coupon']['sn_code']?>， 
 	
-<?php echo $SCLanguages['use']?><?php echo $SCLanguages['coupon']?> :<?php echo $svcart['coupon']['sn_code']?>， <?php printf($SCLanguages['can_offset_fee'],$svcart['coupon']['fee']);?>
+	
+	<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+		<?php printf($SCLanguages['can_offset_fee'],$svshow->price_format(round($svcart['coupon']['fee']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],2),$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']));?>
+	<?php }else{?>
+		<?php printf($SCLanguages['can_offset_fee'],$svshow->price_format($svcart['coupon']['fee'],$this->data['configs']['price_format']));?>
+	<?php }?>	
+	
+	
 <?php if($svcart['coupon']['discount'] < 100){?>
 <?php echo $SCLanguages['coupon']?><?php echo $SCLanguages['discount']?>:<?php echo $svcart['coupon']['discount']?>
 <?php }?>
-</td>
-</tr>
-</table>
-<br />
+			
+&nbsp;&nbsp;&nbsp;<?//php echo $svcart['payment']['payment_description'];?>
+</span>
+</h5>

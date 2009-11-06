@@ -128,8 +128,8 @@
 	  <tr class="rows">
 	  <td align="center">
 	  <p class="pic">
-		<?php if($v['Product']['img_thumb'] != ""){?>
-<?php echo $html->link($html->image("/../".$v['Product']['img_thumb'],array("width"=>"108","height"=>"108")),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?>
+		<?php if($v['Product']['img_thumb'] != "" && $v['Product']['img_thumb'] != " "){?>
+		<?php echo $html->link($html->image("/..".$v['Product']['img_thumb'],array("width"=>"108","height"=>"108","alt"=>" ")),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?>
 		<?php }else{?>
        	  <?php echo $html->link($html->image("/../img/product_default.jpg",array("width"=>"108","height"=>"108")),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false);?>
 		<?php }?>	  	  
@@ -393,7 +393,8 @@
 	<?php echo $form->end();?>
 	<?php }else{?>
 	<span class="button float_left">             
-	<a href="javascript:order_pay(<?php echo $order_info['Order']['id']?>,<?php echo $order_info['Order']['status']?>,'<?php echo $SCLanguages['order_not_paid'];?>');"><?php echo $SCLanguages['pay']?></a></span>
+           	<?php echo $html->link('<span>'.$SCLanguages['pay'].'<span>','/orders/order_pay/'.$order_info['Order']['id'],array(),false,false)?>            	
+	</span>
 	<?php }?>
 	</td>
 </tr>

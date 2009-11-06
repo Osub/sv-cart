@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: home.ctp 3225 2009-07-22 10:59:01Z huangbo $
+ * $Id: home.ctp 3296 2009-07-24 07:19:59Z huangbo $
 *****************************************************************************/
 ?>
 
@@ -18,7 +18,7 @@
 <h3><span><?php echo $SCLanguages['new_arrival'];?></span></h3>
 <!--NewProduct-->
 <?php foreach($products_newarrival as $k=>$v){?>
-<?php if($k==0){?><ul class="home-products"><?php }?>
+<?php if($k==0){?><ul><?php }?>
 	<li>
 	<p class="picture">
 	<?php echo $svshow->productimagethumb($v['Product']['img_thumb'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("alt"=>$v['ProductI18n']['name']));?></p>
@@ -38,10 +38,10 @@
 	<?php }?>
 	</p>
 
-	<div class="buy">
+	<div class="action">
 	<?php if(isset($_SESSION['User'])){?>
-		<?php echo $html->link($SCLanguages['favorite'],$server_host.$user_webroot."favorites/add/p/".$v['Product']['id'],"",false,false)?>
-		<?php }?>
+	<?php echo $html->link($SCLanguages['favorite'],$server_host.$user_webroot."favorites/add/p/".$v['Product']['id'],"",false,false)?>
+	<?php }?>
 		
 	<?php if($v['Product']['quantity'] == 0){?>
 		<?php echo $html->link($SCLanguages['booking'],'/products/add_booking_page/'.$v['Product']['id']);?>
@@ -59,7 +59,7 @@
 	<?php if($k == 0){?>
 	<?php }else{?>
 	</ul>
-	<ul class="home-products">
+	<ul>
 	<?php }?>
 	<?php }else if($k==sizeof($products_newarrival)-1){?>
 	</ul><?php }else{?><?php }?>
@@ -112,7 +112,7 @@ $home_category_products=$this->requestAction("commons/get_cat_products/");
 <?php echo $svshow->price_format($vv['Product']['shop_price'],$SVConfigs['price_format']);?>	
 <?php }?></p>
 	
-	<div class="buy">
+	<div class="action">
 	<?php if(isset($_SESSION['User'])){?>
 			<?php echo $html->link($SCLanguages['favorite'],$server_host.$user_webroot."favorites/add/p/".$vv['Product']['id'],"",false,false)?> |
 	<?php }?>

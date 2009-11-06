@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: edit_password.ctp 2485 2009-06-30 11:33:00Z huangbo $
+ * $Id: edit_password.ctp 4366 2009-09-18 09:49:37Z huangbo $
 *****************************************************************************/
 ?>
 
@@ -43,26 +43,26 @@
 	   <div id="container">
   <!--header-->
     <!--headerEnd-->
-<div class="Balance_alltitle"><span><?php echo $SCLanguages['retrieve_password'];?></span></div>
+<div class="Balance_alltitle"><h1 class="headers"><span class="l"></span><span class="r"></span><?php echo $SCLanguages['retrieve_password'];?></h1></div>
 <div id="reguser_box" style="border:1px solid #909592;margin-top:0;width:892px;">
 <div id="reguser_gut01" style=" background:#fff;width:892px;">
-
 <FORM name="form1" method="post" action="" >
 <input name="edit_user_id" id="edit_user_id" type="hidden" size="37" value="<?php echo $id?>"/>
 
 <ul id="need_username" style="padding-top:15px;margin-top:0;">
   <li>
-    <dd><span id="span_usertype" style="margin-left:36px;"><?php echo $SCLanguages['enter_new_password']?>：</span></dd>
+    <dd style="padding-top:3px;"><span id="span_usertype" style="margin-left:36px;"><?php echo $SCLanguages['enter_new_password']?>：</span></dd>
     <dt><input name="new_password" id="new_password" type="password" size="37" /></dt>
         <dd><span id="span_usertype" style="margin-left:36px;"><?php echo $SCLanguages['reenter_new_password']?>：</span></dd>
     <dt><input name="confirm_password" id="confirm_new_password" type="password" size="37" /></dt>
-      <dd class="gray_btn" style="padding-top:0;">
+      <dd class="btn_list" style="padding:0 0 0 4px;">
       <a class="float_l green_8" href="javascript:confirm_edit_password();"><span id="<?php echo $SCLanguages['confirm']?>" style="width:auto;float:left"><?php echo $SCLanguages['confirm']?></span></a>
       </dd> 
        </li>
   </ul>
 </form>
-<br />
+<br /><br />
+
 </div>
 </div>
 </div>

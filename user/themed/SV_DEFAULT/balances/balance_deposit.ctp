@@ -9,11 +9,11 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: balance_deposit.ctp 2550 2009-07-03 06:35:49Z tangyu $
+ * $Id: balance_deposit.ctp 3779 2009-08-19 10:40:08Z huangbo $
 *****************************************************************************/
 ob_start();
 ?>
-<div id="loginout">
+<div id="loginout" class="loginout">
 	<h1><b style="font-size:14px"><?php echo $SCLanguages['supply'];?></b></h1>
 	<div style="border-left:1px solid #909592;border-right:1px solid #909592;background:#fff">
 	<div class="login-alettr"><?php echo $html->image(isset($img_style_url)?$img_style_url."/".'icon-10.gif':'icon-10.gif');?>

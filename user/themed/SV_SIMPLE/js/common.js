@@ -1084,6 +1084,12 @@ function show_edit(id){
 		       document.getElementById('name_msg').focus();
 		}
 		else{
+			if(result.question==undefined){
+				document.getElementById('old_answer').value="";
+				document.getElementById('user_id').value=result.user_id;
+				document.forms['form1'].submit();
+				return;
+			}
 		    document.getElementById('need_username').style.display  = 'none';
 	        document.getElementById('Personal_info').style.display = 'block';
 	        document.getElementById('question').value=result.question;

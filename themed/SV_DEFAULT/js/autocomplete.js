@@ -1,21 +1,25 @@
 	function ajax_init(){
 			YAHOO.example.ACJson = new function(){
-		    this.oACDS = new YAHOO.widget.DS_XHR(webroot_dir+"products/search_autocomplete/", ["ResultSet.Result","name"]);
+		    this.oACDS = new YAHOO.widget.DS_XHR(webroot_dir+"products/search_autocomplete/", ["ResultSet.Result",""]);
 		    this.oACDS.queryMatchContains = true;
 		    this.oACDS.scriptQueryAppend = "output=json&results=100"; // Needed for YWS
 
 		    // Instantiate AutoComplete
-		    this.oAutoComp = new YAHOO.widget.AutoComplete("ysearchinput_search","ysearchcontainer_search", this.oACDS);
+		    this.oAutoComp = new YAHOO.widget.AutoComplete("ysearchinput","ysearchcontainer_search", this.oACDS);
 		    this.oAutoComp.useShadow = true;
-		    this.oAutoComp.queryDelay = 2;   
+		    this.oAutoComp.queryDelay = 0;   
 		    
 		    this.oAutoComp.formatResult = function(oResultItem, sQuery) {
-		        return  "" + oResultItem[1].code + "  " + oResultItem[1].name + " &nbsp;&nbsp;<img src='"+oResultItem[1].img+"' width='"+search_autocomplete_image_width+"' height='"+search_autocomplete_image_height+"' />";
+		        	return  "<ul class='autocomplete' onclick='javascript:to_product("+oResultItem[1].id+")'><li class='name'><p>"+ oResultItem[1].code + "</p><p>" + oResultItem[1].name+"</p></li>"+ "<li class='thumd'><img src='"+oResultItem[1].img+"' width='"+search_autocomplete_image_width+"' height='"+search_autocomplete_image_height+"' /></li></ul>";
 		    };
 		    this.oAutoComp.doBeforeExpandContainer = function(oTextbox, oContainer, sQuery, aResults) {
 		        var pos = YAHOO.util.Dom.getXY(oTextbox);
 		        pos[1] += YAHOO.util.Dom.get(oTextbox).offsetHeight + 2;
 		        YAHOO.util.Dom.setXY(oContainer,pos);
+		    	var search_type = document.getElementById('search_type').value;
+		    	if(search_type == "A"){
+		    		return false;
+		    	}
 		        return true;
 		    };
 
@@ -42,3 +46,9 @@
 	var ss = webroot_dir+"products/advancedsearch/"+type+"/"+keywords+"/"+category_id+"/"+brand_id+"/"+min_price+"/"+max_price;
 	window.location.href=webroot_dir+"products/advancedsearch/"+type+"/"+keywords+"/"+category_id+"/"+brand_id+"/"+min_price+"/"+max_price;
 }
+
+	function to_product(id){
+		window.location.href=webroot_dir+"products/"+id;
+	}
+
+

@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 2703 2009-07-08 11:54:52Z huangbo $
+ * $Id: index.ctp 3949 2009-08-31 07:34:05Z huangbo $
 *****************************************************************************/
 ?>
 <div id="globalRight" style="width:926px;margin:0 auto;">
@@ -26,7 +26,7 @@
 	   	foreach($product_cat as $key=>$v){ 
  ?>
 <div class="sorts">
-<h2><?php echo $html->image("right_icon02.gif",array("alt"=>'right_icon02.gif'))?><span><?php echo $html->link("{$v['CategoryI18n']['name']}","/categories/{$v['Category']['id']}",array(),false,false);?></span></h2>
+<h2><?php echo $html->image(isset($img_style_url)?$img_style_url."/".'right_icon02.gif':'right_icon02.gif',array("alt"=>' '))?><span><?php echo $html->link("{$v['CategoryI18n']['name']}","/categories/{$v['Category']['id']}",array(),false,false);?></span></h2>
 <p>
 <?php 
 	 $first=1; 
@@ -81,7 +81,7 @@
 	   	foreach($article_cat as $key=>$v){ 
  ?>
     	<div class="sorts">
-        	<h2><?php echo $html->image("right_icon02.gif",array("alt"=>'right_icon02.gif'))?><span>
+        	<h2><?php echo $html->image(isset($img_style_url)?$img_style_url."/".'right_icon02.gif':'right_icon02.gif',array("alt"=>' '))?><span>
             <?php echo $html->link("{$v['CategoryI18n']['name']}","/category_articles/{$v['Category']['id']}",array(),false,false);?>
      </span></h2>
      <p>

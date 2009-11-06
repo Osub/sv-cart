@@ -60,7 +60,7 @@ class PaginationHelper extends Helper
                 { 
                     if($OriginalValue == $value) 
                     { 
-                        $t .= '<em>'.$value.'</em>'.$separator; 
+                        $t .= '<strong>'.$value.'</strong>'.$separator; 
                     } 
                     else 
                     { 
@@ -116,7 +116,7 @@ class PaginationHelper extends Helper
 
     function pageNumbers($separator=null,$escapeTitle=true,$spacerLower="...",$spacerUpper="...") 
     { 
-        if (empty($this->_pageDetails) || $this->_pageDetails['pageCount'] == 1) { return "<em>1</em>"; } 
+        if (empty($this->_pageDetails) || $this->_pageDetails['pageCount'] == 1) { return "<strong>1</strong>"; } 
         $total = $this->_pageDetails['pageCount']; 
         $max = $this->maxPages; 
         $span = $this->pageSpan; 
@@ -167,7 +167,7 @@ class PaginationHelper extends Helper
         { 
              if($i == $this->_pageDetails['page']) 
              { 
-                $text = '<em>'.$i.'</em>'; 
+                $text = '<strong>'.$i.'</strong>'; 
              } 
              else 
              { 

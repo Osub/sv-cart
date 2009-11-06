@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: checkout_address_confirm.ctp 3184 2009-07-22 06:09:42Z huangbo $
+ * $Id: checkout_address_confirm.ctp 3674 2009-08-17 10:05:24Z huangbo $
 *****************************************************************************/
 ?>
 <h5>
@@ -20,7 +20,7 @@
 <?php echo $SCLanguages['consignee'].$SCLanguages['information'];?>:
 </h5>
 <?php if(empty($all_virtual)){?>
-<table cellpadding="0" cellspacing="0" class="address_table" border="0" align="center">
+<table cellpadding="0" cellspacing="0" class="address_table" width="100%" >
 <tr>
 	<td class="lan-name first"><?php echo $SCLanguages['address'];?><?php echo $SCLanguages['label'];?>:</td><td class="lan-info"><?php echo $svcart['address']['name'];?></td><td class="lan-name" ><?php echo $SCLanguages['region'];?>:</td><td class="lan-info" colspan="3">
 	<?php if(isset($svcart['address']['regionI18n'])){?>
@@ -52,7 +52,7 @@
 
 
 <?php }else{?>
-<table cellpadding="0" cellspacing="0" class="address_table" border=0 align=center>
+<table cellpadding="0" cellspacing="0" class="address_table" width="100%" >
 <tr>
 	<td class="lan-name first" width="15%"><?php echo $SCLanguages['address'];?><?php echo $SCLanguages['label'];?>:</td>
 	<td class="lan-info" width="85%"><?php echo $svcart['address']['name'];?></td>

@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: consignee.ctp 3053 2009-07-17 11:59:14Z huangbo $
+ * $Id: consignee.ctp 3051 2009-07-17 11:51:50Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $minify->js(array('/js/yui/yahoo-dom-event.js','/js/yui/container_core-min.js','/js/yui/element-beta-min.js','/js/yui/connection-min.js','/js/yui/json-min.js','/js/yui/yahoo-min.js',$this->themeWeb.'js/regions.js',$this->themeWeb.'js/common.js'));?>

@@ -9,7 +9,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ===========================================================================
  * $开发: 上海实玮$
- * $Id: index.php 517 2009-04-14 01:18:28Z huangbo $
+ * $Id: index.php 3428 2009-07-31 11:48:18Z huangbo $
 *****************************************************************************/
 
 	if (!defined('DS')) {
@@ -46,10 +46,14 @@
 	if (!include(CORE_PATH . 'cake' . DS . 'bootstrap.php')) {
 		trigger_error("CakePHP core could not be found.  Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/index.php.  It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
 	}
+	if (!include(ROOT . 'sv_dispatcher.php')) {
+		trigger_error("SV-Cart Business core could not be found. Contact SV-Cart Official. http://www.seevia.cn");
+	}
+	
 	if (isset($_GET['url']) && $_GET['url'] === 'favicon.ico') {
 		return;
 	} else {
-		$Dispatcher = new Dispatcher();
+		$Dispatcher = new SV_Dispatcher();
 		$Dispatcher->dispatch($url);
 	}
 	if (Configure::read() > 0) {

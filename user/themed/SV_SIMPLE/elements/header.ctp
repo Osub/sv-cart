@@ -49,7 +49,8 @@ $header_cart=$this->requestAction("commons/header_cart/");
 	<a href="<?php echo $server_host.$cart_webroot.'carts'?>"><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."carticon.gif":"carticon.gif",array("class"=>"vmiddle"))?>
 	<!--您的购物车中有 <span class="font_red"><?php echo isset($header_cart['quantity'])?$header_cart['quantity']:0;?></span> 件商品，总计-->
 	<?php $header_cart_quantity = empty($header_cart['quantity'])?0:$header_cart['quantity'];
-	printf($SCLanguages['cart_total_product'],"<span class='font_red'>".$header_cart_quantity."</span>");?> 
+		 $header_cart_sizeof = empty($header_cart['sizeof'])?0:$header_cart['sizeof'];
+	printf($SCLanguages['cart_total_product'],"<span class='font_red'>".$header_cart_sizeof."</span>","<span class='font_red'>".$header_cart_quantity."</span>");?> 
 	<span class="font_red"><?php echo $svshow->price_format(isset($header_cart['total'])?$header_cart['total']:0,$SVConfigs['price_format']);?>
 </span> </a>
 	</p>

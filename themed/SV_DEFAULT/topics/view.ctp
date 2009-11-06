@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: view.ctp 3225 2009-07-22 10:59:01Z huangbo $
+ * $Id: view.ctp 4433 2009-09-22 10:08:09Z huangbo $
 *****************************************************************************/
 ?>
 <style type="text/css">
@@ -19,13 +19,11 @@
 <?php }?>
 -->
 </style>
-<?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
-	<div id="Products_box">
-    	<h1><b><?php echo $topic['TopicI18n']['title']; ?></b></h1>
-        <div id="Edit_box">
-  <div id="article_info">
+<div id="Products_box"><?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
+<h1 class="headers"><span class="l"></span><span class="r"></span><?php echo $topic['TopicI18n']['title']; ?></h1>
+  <div class="Edit_box">
+  <div id="article_info" style="border:none;">
     
-  <p class="note article_title">
   <div id="user_msg">
   	<p class="article_time">
   	  <span class="title">&nbsp;<?php echo $topic['Topic']['start_time']." - ".$topic['Topic']['end_time']; ?></span></p><br />
@@ -35,44 +33,56 @@
     	</span>
     </p>
   </div>
-  <div id="select_article"> <p><?php if($neighbours['next']){ ?>
- <?php echo $SCLanguages['next'].$SCLanguages['piece'];?>: 
-  <?php echo $html->link("{$neighbours['next']['TopicI18n']['title']}","{$neighbours['next']['Topic']['id']}",array(),false,false); } ?>
-<br />
- <?php if($neighbours['prev']){?>
- <?php echo $SCLanguages['previous'].$SCLanguages['piece'];?>: 
- <?php echo $html->link("{$neighbours['prev']['TopicI18n']['title']}","{$neighbours['prev']['Topic']['id']}",array(),false,false); } ?>
-</p></div> </div>
-</div><!--文章列表End-->
+  <div id="select_article">
+  	  <p><?php if($neighbours['next']){ ?>
+	 <?php echo $this->data['languages']['next'].$this->data['languages']['piece'];?>: 
+	  <?php echo $html->link("{$neighbours['next']['TopicI18n']['title']}","{$neighbours['next']['Topic']['id']}",array(),false,false); } ?>
+	<br />
+	 <?php if($neighbours['prev']){?>
+	 <?php echo $this->data['languages']['previous'].$this->data['languages']['piece'];?>: 
+	 <?php echo $html->link("{$neighbours['prev']['TopicI18n']['title']}","{$neighbours['prev']['Topic']['id']}",array(),false,false); } ?>
+	</p>
+	</div>
+</div>
+</div>
+<!--文章列表End-->
 <!--相关商品-->
 <?php 
-	if(isset($products) && sizeof($products)>0){?>
-<div id="Correlation" class="article_items">
-        	<h1 class="title_nobg"><span><?php echo $html->image(isset($img_style_url)?$img_style_url."/".'icon_08.gif':'icon_08.gif')?></span><?php echo $SCLanguages['correlative_products'];?></h1>
-        <div id="Item_List" style="border:none;">
+	if(isset($this->data['cache_products']) && sizeof($this->data['cache_products'])>0){?>
+<div id="Correlation" class="article_items" style="width:auto;border-top:none;">
+    <div class="head"><strong><?php echo $this->data['languages']['correlative_products'];?></strong></div>
+    <div class="Item_List" style="border:none;width:auto">
 	<ul id="content1" class="Relevancy">
+	<cake:nocache>
 	<?php 
-		foreach($products as $key=>$v){
+		foreach($this->data['cache_products'] as $key=>$v){
 			if($v['Product']['img_thumb'] == ""){
-				$v['Product']['img_thumb'] = "/img/product_default.jpg";
+				if($this->data['configs']['products_default_image'] == ""){
+					$v['Product']['img_thumb'] = "/img/product_default.jpg";
+				}else{
+					$v['Product']['img_thumb'] = $this->data['configs']['products_default_image'];
+				}
 			}
 			echo $html->tag('li',$html->para('pic',
 				 $html->link(
-				 $html->image("{$v['Product']['img_thumb']}",array('width'=>'108','height'=>'108',))
-				 ,$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),'',false,false)
+				 $html->image("{$v['Product']['img_thumb']}",array('width'=>'108','height'=>'108','alt'=>$v['ProductI18n']['name']))
+				 ,$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$this->data['configs']['product_link_type']),'',false,false)
 				 ,array(),false)
 				 .$html->para('info',
-				 $html->tag('span',$html->link("{$v['ProductI18n']['name']}",$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku']),array("target"=>"_blank"),false,false),'name')
-				 .$html->tag('span',$html->tag('font',"{$v['Product']['shop_price']}",array('color'=>'#F9630C')),'Price')		 		
-				 ,array(),false),'');				
+				 $html->tag('span',$html->link("{$v['ProductI18n']['name']}",$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$this->data['configs']['product_link_type']),array("target"=>"_blank"),false,false),'name')
+				 .$html->tag('span',$html->tag('font',
+				 	 (isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')]))?$svshow->price_format($v['Product']['shop_price']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']):$svshow->price_format($v['Product']['shop_price'],$this->data['configs']['price_format'])
+				 	 ,array('color'=>'#F9630C')),'Price')		 		
+				 ,array(),false),array("style"=>"width:12.9%"));				
 			}
-?>
+?>	</cake:nocache>
+
 </ul>
 </div>
 </div><!--相关商品End-->
 <?php } ?>    		
 </div>
-<?php echo $this->element('news', array('cache'=>array('time'=> "+24 hour",'key'=>'news'.$template_style)));?>
+<?php echo $this->element('news', array('cache'=>array('time'=> "+0 hour",'key'=>'news'.$template_style)));?>
 
 <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
 

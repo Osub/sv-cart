@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: links.ctp 2703 2009-07-08 11:54:52Z huangbo $
+ * $Id: links.ctp 3949 2009-08-31 07:34:05Z huangbo $
 *****************************************************************************/
 ?>
 <!--帮助中心显示开始-->
@@ -21,9 +21,9 @@
 <?php foreach($link_info as $key=>$link){?>
 
 <?php if(isset($link['LinkI18n']['img01']) && $link['LinkI18n']['img01'] != ""){?>
-<li><?php echo $html->link($html->image($link['LinkI18n']['img01'],array("alt"=>$link['LinkI18n']['name'],'width'=>'165','title'=>$link['LinkI18n']['name'])),$link['LinkI18n']['url'],array("target"=>"_blank"),false,false);?></li>
+<li><?php echo $html->link($html->image($link['LinkI18n']['img01'],array("alt"=>$link['LinkI18n']['name'],'width'=>'165','title'=>$link['LinkI18n']['description'])),$link['LinkI18n']['url'],array("target"=>"_blank","title"=>$link['LinkI18n']['description']),false,false);?></li>
 <?php }else{?>
-<li class="text"><?php echo $html->link($link['LinkI18n']['name'],$link['LinkI18n']['url'],array("class"=>"color_083","target"=>"_blank"),false,false);?></li>
+<li class="text"><?php echo $html->link($link['LinkI18n']['name'],$link['LinkI18n']['url'],array("class"=>"color_083","target"=>"_blank","title"=>$link['LinkI18n']['description']),false,false);?></li>
 <?php }?>	
 <?php }?>
 </ul>

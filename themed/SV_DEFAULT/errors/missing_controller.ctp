@@ -9,27 +9,12 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: missing_controller.ctp 2535 2009-07-02 11:34:51Z huangbo $
+ * $Id: missing_controller.ctp 3949 2009-08-31 07:34:05Z huangbo $
 *****************************************************************************/
 ?>
-<?php //pr($this->name);?>
-<div id="ur_here">错误信息</div>
-<!--Main Start-->
-<div class="home_main" >
-	<div class="informations">
-	<br /><br /><Br /><br /><Br /><br />
-	<p><?php echo $html->image(isset($img_style_url)?$img_style_url."/".'msg.gif':'msg.gif',array('align'=>'middle'))?> &nbsp;&nbsp;<strong>
-	<?php echo $html->link("网页不存在","/",array(),false,false);?>
-	</strong></p>
-	<br /><br /><Br /><br /><Br /><br /><Br /><br />
-	<p class="handdle"><span>
-	<?php echo $html->link("返回首页","/",array(),false,false);?>
-	</span></p>
-	<br /><Br /><br /><Br /><br /><Br /><br />
-	</div>
-
-</div>
-<!--Main Start End-->
-
-</body>
-</html>
+<?php
+	// 获得路径
+	//$url_arr = $this->requestAction("commons/get_web_url/");
+	header("Location:".$_SESSION['server_host'].$_SESSION['cart_webroot']."commons/is_error");
+	exit;
+?>

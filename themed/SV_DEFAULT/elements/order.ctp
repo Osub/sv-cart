@@ -9,23 +9,22 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: order.ctp 2923 2009-07-16 06:25:53Z zhangshisong $
+ * $Id: order.ctp 3732 2009-08-18 12:01:02Z huangbo $
 *****************************************************************************/
 ?>
-<div id="vote">
-<?php echo $form->create('commons',array('action'=>'/view_order','name'=>'view_order','type'=>'POST'));?>
+<div id="load_order"  style="background:#fff;width:auto;">
+<?php echo $form->create('commons',array('action'=>'view_order','name'=>'view_order','type'=>'POST'));?>
 <div class="category_box brand_box">
-<h3><span class="l"></span><span class="r"></span><?=$SCLanguages['order']?><?=$SCLanguages['search']?></h3>
 <div class="category homeorderlist box green_3">
 <ul>
 <li><?=$SCLanguages['order']?><?=$SCLanguages['code']?>: </li>
-<li><input type="text" name="order_code" id="order_code" value="" size="22"/></li>
+<li><input type="text" name="order_code" id="order_code" value="" style="width:145px" /></li>
 <li class="query"><span class="find-btns"><input type="button" class="find" onclick="javascript:get_order();" value="<?=$SCLanguages['search']?>" /></span></li>
-<div id="order_callback_div">
+<li><div id="order_callback_div">
 
-</div>
+</div></li>
 </ul>
 </div>
-<p><?php echo $html->image(isset($img_style_url)?$img_style_url."/".'category_ulbt.gif':'category_ulbt.gif',array("alt"=>""))?></p>
+<p></p>
 </div>
 <?php echo $form->end();?></div>

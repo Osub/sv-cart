@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 3261 2009-07-23 05:38:53Z huangbo $
+ * $Id: index.ctp 4333 2009-09-17 10:46:57Z huangbo $
 *****************************************************************************/
 ?>
 <div id="Products_box" style="border:0;">
@@ -21,7 +21,7 @@
     	 	<?php if(isset($fav_products) && sizeof($fav_products)>0){?>
 
 <p class="View_item">
-       	  <span class="view"><?php echo $SCLanguages['display_mode'];?>：</span>
+       	  <span class="view"><?php echo $SCLanguages['show'];?>：</span>
        	  <?php if(isset($SVConfigs['show_L']) &&  $SVConfigs['show_L'] == 1){?><span class="View_img">
        	  <?php if ($showtype == 'L'){?>
        	  <?php echo $html->link($html->image(isset($img_style_url)?$img_style_url."/".'btn_display_mode_list_act_over.gif':'btn_display_mode_list_act_over.gif',array('title'=>sprintf($SCLanguages['order_by'],$SCLanguages['products']))),"/favorites/index/".$rownum."/L",array(),false,false);?>
@@ -60,9 +60,15 @@
           <?php }else{?>
        	  <?php echo $html->link($html->image(isset($img_style_url)?$img_style_url."/".'number_3.gif':'number_3.gif',array('title'=>sprintf($SCLanguages['page_show_number'],80))),"/favorites/index/80/".$showtype,array(),false,false);?>
           <?php }?>
+          <?php if ($rownum == 'all'){?>
+       	  <?php echo $html->link($html->image(isset($img_style_url)?$img_style_url."/".'number_4_over.gif':'number_4_over.gif',array('title'=>sprintf($SCLanguages['page_show_number'],'all'))),"/favorites/index/all/".$showtype,array(),false,false);?>
+          <?php }else{?>
+       	  <?php echo $html->link($html->image(isset($img_style_url)?$img_style_url."/".'number_4.gif':'number_4.gif',array('title'=>sprintf($SCLanguages['page_show_number'],'all'))),"/favorites/index/all/".$showtype,array(),false,false);?>
+          <?php }?>          	  
+          	  
           </span>
           
-        <span class="Mode"><?php echo $SCLanguages['sort_by'];?>：</span><span class="Mode_img">
+        <span class="Mode"><?php echo $SCLanguages['sort'];?>：</span><span class="Mode_img">
         <?php if ($orderby == 'shop_price DESC'){?>
        	  <?php echo $html->link($html->image(isset($img_style_url)?$img_style_url."/".'view_ivo01_over_down.gif':'view_ivo01_over_down.gif',array('title'=>sprintf($SCLanguages['order_by'],$SCLanguages['market_price']))),"/favorites/index/".$rownum."/".$showtype."/shop_price ASC",array(),false,false);?>
           <?php }else if($orderby == 'shop_price ASC'){?>
@@ -112,12 +118,9 @@
       <?php foreach ($fav_products as $k=>$v){?>
         <div id="Item_box" <?php if((sizeof($fav_products)-1) == $k){?>style="border:none;"<?php }?>>
         	<div class="Item_info">
-            	<p class="pic">            
-			<?php if($v['Product']['img_thumb'] != ""){?>
-       	  <?php echo $html->link($html->image("/../".$v['Product']['img_thumb'],array("width"=>"108","height"=>"108")),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku'],$server_host,$cart_webroot),array(),false,false);?>
-			<?php }else{?>
-       	  <?php echo $html->link($html->image("/../img/product_default.jpg",array("width"=>"108","height"=>"108")),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku'],$server_host,$cart_webroot),array(),false,false);?>
-			 <?php }?>            </p>
+                <p class="pic">            
+					<?php echo $svshow->productimagethumb($v['Product']['img_thumb'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$this->data['configs']['use_sku'],$server_host,$cart_webroot),array("alt"=>$v['ProductI18n']['name'],'width'=>$this->data['configs']['thumbl_image_width'],'height'=>$this->data['configs']['thumb_image_height']),$this->data['configs']['products_default_image'],$server_host.$cart_webroot);?>
+			    </p>
                 <p class="info">
                 	<span class="item_name">
 			<?php echo $html->link($v['ProductI18n']['name'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku'],$server_host,$cart_webroot),array("target"=>"_blank"),false,false);?>
@@ -127,14 +130,29 @@
             <div class="mart">
             <span class="Products_Price">&nbsp;
 <?php if($v['Product']['market_price'] > $v['Product']['shop_price'] && isset($SVConfigs['show_market_price']) && $SVConfigs['show_market_price'] == 1){?>
-			<strike><?php echo $svshow->price_format($v['Product']['market_price'],$SVConfigs['price_format']);?></strike>	
+			<strike><?//php echo $svshow->price_format($v['Product']['market_price'],$SVConfigs['price_format']);?>
+			
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($v['Product']['market_price']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($v['Product']['market_price'],$this->data['configs']['price_format']);?>	
+			<?php }?>				
+				
+			</strike>	
 <?php }?>
             </span>
                 
             </div>
             <div class="good_price">
                 <span class="goodprice">
-<?php echo $svshow->price_format($v['Product']['shop_price'],$SVConfigs['price_format']);?>	
+<?//php echo $svshow->price_format($v['Product']['shop_price'],$SVConfigs['price_format']);?>	
+				
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($v['Product']['shop_price']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($v['Product']['shop_price'],$this->data['configs']['price_format']);?>	
+			<?php }?>				
+				
                	</span>
             </div>
             <div class="btn_list collection_btn">
@@ -151,11 +169,8 @@
 	<?php if(isset($fav_products) && sizeof($fav_products)>0){?>			  
   	<?php foreach ($fav_products as $k=>$v){?>
 	<li><p class="pic">
-			<?php if($v['Product']['img_thumb'] != ""){?>
-       	  <?php echo $html->link($html->image("/../".$v['Product']['img_thumb'],array("width"=>"108","height"=>"108")),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku'],$server_host,$cart_webroot),array(),false,false);?>
-			<?php }else{?>
-       	  <?php echo $html->link($html->image("/../img/product_default.jpg",array("width"=>"108","height"=>"108")),$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku'],$server_host,$cart_webroot),array(),false,false);?>
-			 <?php }?>	</p>
+		<?php echo $svshow->productimagethumb($v['Product']['img_thumb'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$this->data['configs']['use_sku'],$server_host,$cart_webroot),array("alt"=>$v['ProductI18n']['name'],'width'=>$this->data['configs']['thumbl_image_width'],'height'=>$this->data['configs']['thumb_image_height']),$this->data['configs']['products_default_image'],$server_host.$cart_webroot);?>
+		</p>
 	<p class="info">
 	<span class="name">
 			<?php echo $html->link($v['ProductI18n']['name'],$svshow->sku_product_link($v['Product']['id'],$v['ProductI18n']['name'],$v['Product']['code'],$SVConfigs['use_sku'],$server_host,$cart_webroot),array("target"=>"_blank"),false,false);?>
@@ -166,11 +181,25 @@
 <?php }?>
 		<font  color="#ff0000">
 <?php if($v['Product']['market_price'] > $v['Product']['shop_price'] && isset($SVConfigs['show_market_price']) && $SVConfigs['show_market_price'] == 1){?>
-<?php echo $svshow->price_format($v['Product']['market_price'],$SVConfigs['price_format']);?>	
+<?//php echo $svshow->price_format($v['Product']['market_price'],$SVConfigs['price_format']);?>	
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($v['Product']['market_price']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($v['Product']['market_price'],$this->data['configs']['price_format']);?>	
+			<?php }?>	
+	
 <?php }?>
 		</font></strike></span>
 	<span class="Price"><?php echo $SCLanguages['our_price'];?>：<font color="#ff0000">
-<?php echo $svshow->price_format($v['Product']['shop_price'],$SVConfigs['price_format']);?>	
+<?//php echo $svshow->price_format($v['Product']['shop_price'],$SVConfigs['price_format']);?>
+			
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($v['Product']['shop_price']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($v['Product']['shop_price'],$this->data['configs']['price_format']);?>	
+			<?php }?>			
+			
+				
 		</font></span>
 	<span class="stow"><?php echo $html->link($SCLanguages['delete'],"javascript:del_fav_products(".$v['Product']['id'].",'$user_id','p')",array(),false,false)?>|<?php echo $html->link($SCLanguages['purchase'],"javascript:buy_now({$v['Product']['id']},1)","",false,false)?></span>
 	</p>
@@ -196,7 +225,7 @@
           	  	  
           	  	  
             <?php foreach ($fav_products as $k=>$v){?>
-            <div id="Item_box" style="height:60px;*height:50px;overflow:hidden;padding-bottom:10px;<?php if((sizeof($fav_products)-1) == $k){?>border:none;<?php }?>">
+            <div id="Item_box" style="padding-bottom:10px;<?php if((sizeof($fav_products)-1) == $k){?>border:none;<?php }?>">
         	<div class="Item_info">
                 <p class="info">
                 	<span class="" style="margin-top:15px;">
@@ -207,14 +236,26 @@
             <div class="mart" style="margin-top:15px;">
             	<span class=""><strike>
 <?php if($v['Product']['market_price'] > $v['Product']['shop_price'] && isset($SVConfigs['show_market_price']) && $SVConfigs['show_market_price'] == 1){?>
-<?php echo $svshow->price_format($v['Product']['market_price'],$SVConfigs['price_format']);?>	
+<?//php echo $svshow->price_format($v['Product']['market_price'],$SVConfigs['price_format']);?>	
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($v['Product']['market_price']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($v['Product']['market_price'],$this->data['configs']['price_format']);?>	
+			<?php }?>		
+	
 <?php }?>
             		</strike></span>
                 
             </div>
             <div class="good_price" style="margin-top:15px;">
                 <span class="">
-<?php echo $svshow->price_format($v['Product']['shop_price'],$SVConfigs['price_format']);?>	
+<?//php echo $svshow->price_format($v['Product']['shop_price'],$SVConfigs['price_format']);?>	
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($v['Product']['shop_price']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($v['Product']['shop_price'],$this->data['configs']['price_format']);?>	
+			<?php }?>					
+				
                 </span>
             </div>
             <div class="btn_list collection_btn">
@@ -239,7 +280,7 @@
 <?php }?>
         
    </div>
-<?php echo $this->element('news', array('cache'=>array('time'=> "+24 hour",'key'=>'news'.$template_style)));?>
+<?php echo $this->element('news', array('cache'=>array('time'=> "+0 hour",'key'=>'news'.$template_style)));?>
 
 <script>
 function del_fav_products(type_id,user_id,type){

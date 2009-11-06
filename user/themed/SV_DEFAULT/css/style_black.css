@@ -29,8 +29,18 @@ hr{border:none;border-top:1px solid #909592;}
 .color_5{color:#535353;}
 .color_f9{color:#848383;}
 .color_53{color:#231815;}
+.font_red{color:#ff0000;}
+
+h5 {
+	border-bottom:1px solid #909592;
+}
+
+.border{border:1px solid #8F9593}
 
 /*=========================header==========================*/
+.help_foot_article h6{
+	color:#000000;
+}
 #header{
 	background:#fff;border-bottom:5px solid #424242;
 }
@@ -111,8 +121,8 @@ ul.left_menus .Nav a:hover{background:url(../img/black/over_bg.gif) bottom no-re
 #advanced_search,#User_Login{
 	width:240px;float:left;
 }
-#advanced_search .title,#User_Login .title,#language .title{
-	background:url(../img/black/login_title.png) no-repeat;color:#fff;
+#advanced_search .title,#User_Login .title,.drag .title{
+	background:url(../img/black/login_title.gif) no-repeat;color:#fff;
 }
 #advanced_search .keywords,#User_Login .keywords{
 	background:#FFFFFF;border-right:1px solid #909592;border-left:1px solid #909592;
@@ -171,9 +181,6 @@ ul.left_menus .Nav a:hover{background:url(../img/black/over_bg.gif) bottom no-re
 }
 #pager span.totally{color:#000;}
 /*========================= carts checkout ==========================*/
-#globalBalance{
-	border-top:1px solid #000000;background:url(../img/black/Balance_bg.gif) repeat-y;
-}
 #globalBalance .buy_title{
 	color:#000000;
 }
@@ -257,13 +264,6 @@ ul.left_menus .Nav a:hover{background:url(../img/black/over_bg.gif) bottom no-re
 #buyshop_btn a.checkout{
 	background:url(../img/black/btn_addfav.gif) no-repeat left top;color:#fff;
 }
-/*==================== Language =========================*/
-#language ul{
-	border-left:1px solid #909592;border-right:1px solid #909592;background:#fff;
-}
-#language li img{
-	border:1px solid #e1e1e1;
-}
 /*========================= Search-out ==========================*/
 #noproducts{
 	border:1px solid #000000;
@@ -272,25 +272,25 @@ ul.left_menus .Nav a:hover{background:url(../img/black/over_bg.gif) bottom no-re
 	color:#0CB152;
 }
 /*  ==================== Menber Center ====================  */
-#infos #wellcom_info{
+.infos #wellcom_info{
 	color:#999;
 }
-#infos #wellcom_info p.atte{
+.infos #wellcom_info p.atte{
 	color:#000;
 }
-#infos #wellcom_info p.atte a{
+.infos #wellcom_info p.atte a{
 	color:#656565;
 }
-#infos #wellcom_info h2{
+.infos #wellcom_info h2{
 	color:#231815;
 }
-#infos .affiche{
+.infos .affiche{
 	color:#494949;background:#EEEEEE;border:1px solid #909592;border-left:none;border-right:none;
 }
-#infos #money_info{
+.infos #money_info{
 	color:#231815;
 }
-#Products_box #infos{
+#Products_box .infos{
 	border:1px solid #909592;
 }
 /*  ==================== Favorites ====================  */
@@ -338,28 +338,28 @@ ul.content_tab li.hover{
 	color:#09774E;background:url(../img/black/collection_over.gif);
 }
 /*  ==================== my addresses ====================  */
-#reguser_gut01 ul li span.adrees textarea{
+.reguser_gut01 ul li span.adrees textarea{
 	border:1px solid #78828D;
 }
-#reguser_gut01 ul li span.addrees_territory select{
+.reguser_gut01 ul li span.addrees_territory select{
 	border:1px solid #78828D;
 }
-#reguser_gut01 .add_title{
+.reguser_gut01 .add_title{
 	color:#000;
 }
-#reguser_gut01 .aleter{
+.reguser_gut01 .aleter{
 	background:#D3D3D3;color:#000;
 }
-#reguser_gut01 table tr{
+.reguser_gut01 table tr{
 	color:#848383;
 }
-#reguser_gut01 table tr td{
+.reguser_gut01 table tr td{
 	border-bottom:1px solid #909592;border-right:1px solid #909592;
 }
-#reguser_gut01 table tr td.btn_list{
+.reguser_gut01 table tr td.btn_list{
 	border-right:none;
 }
-#Right .addrees_box{
+.addrees_box{
 	border:1px solid #909592;
 }
 h2.add-addresses{
@@ -369,11 +369,19 @@ h2.add-addresses span{
 	color:#fff;
 }
 h2.add-addresses a.close{
-	background:url(../img/black/close_img.png) no-repeat;
+	background:url(../img/black/close_img.gif) no-repeat;
 }
 h2.add-addresses a.close:hover{
-	background:url(../img/black/close_img_over.png) no-repeat;
+	background:url(../img/black/close_img_over.gif) no-repeat;
 }
+
+.drag .box{
+	border-left:1px solid #909592;border-right:1px solid #909592;background:#fff;
+}
+.language li img{
+	border:1px solid #e1e1e1;
+}
+
 /*==================== 购买成功 =========================*/
 #buyshop_box ul{
 	border-bottom:1px solid #E1E1E1;
@@ -394,16 +402,16 @@ h2.add-addresses a.close:hover{
 	color:#fff;background:url(../img/black/checkout_btn.gif) no-repeat;
 }
 /*===================Login out======================*/
-#loginout h1{
-	background:url(../img/black/loginout.png) repeat-x;
+.loginout h1{
+	background:url(../img/black/loginout.gif) repeat-x;
 }
-#loginout h1 b{
+.loginout h1 b{
 	color:#fff;
 }
-#loginout .login-alettr{
+.loginout .login-alettr{
 	border-bottom:1px solid #E6E6E6;color:#231815;
 }
-#loginout .btns a{
+.loginout .btns a{
 	background:url(../img/black/loginout-btn.gif) no-repeat; color:#fff;
 }
 /*=============My Friends==================*/
@@ -529,13 +537,13 @@ ul.products_text span.name a{color:#000;}
 .order_state dt{
 	color:#231815;
 }
-#Edit_info ul.already_shop li{
+.Edit_info ul.already_shop li{
 	color:#848383;
 }
 ul.already_shop li.name p.pic img{
 	border:1px solid #E3E3E3;
 }
-#Edit_info ul.already_shop li.name p.item_name{
+.Edit_info ul.already_shop li.name p.item_name{
 	color:#000
 }
 .cardnumber{border-bottom:1px dashed #909592}
@@ -551,13 +559,13 @@ ul.address_info li.lang_title{
 ul.address_info li.filed{
 	color:#666;
 }
-#Edit_info p.balances{
+.Edit_info p.balances{
 	color:#808080;
 }
 p.balances b{
 	color:#FC5F00;
 }
-#Edit_info p.saves_many{
+.Edit_info p.saves_many{
 	color:#000000;
 }
 /*=========================Admin Iformations ==========================*/
@@ -583,6 +591,13 @@ p.balances b{
 .btn_list a:hover span{
 	background:url(../img/black/stow_img_over.gif) left top no-repeat;
 }
+.btn_list a input{
+	background:url('../img/black/stow_img.gif') left top no-repeat;border:none;color:#fff;
+}
+.btn_list a:hover input{
+	background:url('../img/black/stow_img_over.gif') left top no-repeat;color:#fff;
+}
+
 .calendar{border:0;background:none;}
 .big_buttons input{
 	background:url(../img/black/add_adrees.gif) left top no-repeat;border:0;color:#fff;
@@ -592,10 +607,10 @@ p.balances b{
 }
 
 /*====================== 用户注册 =========================*/
-#reguser_gut01 {
+.reguser_gut01 {
 	background:url(../img/black/reg_bg.gif) top repeat-y;
 }
-#reguser_gut01_01 ul.reg_flow li{
+.reguser_gut01_01 ul.reg_flow li{
 	color:#666666;
 }
 ul.reg_flow li.over{background:url(../img/black/reg_flow.gif) left top no-repeat;}
@@ -608,16 +623,16 @@ ul.reg_flow li.normal{
 ul.reg_flow li.normal span{
 	background:url(../img/black/reg_flow.gif) 100% -153px no-repeat;
 }
-#reguser_gut01 ul {
+.reguser_gut01 ul {
 	color:#848389;
 }
-#reguser_gut01 ul .sorty{
+.reguser_gut01 ul .sorty{
 	color:#9FA8AD;
 }
-#reguser_gut01 ul .sorty a{
+.reguser_gut01 ul .sorty a{
 	background:url(../img/black/down_icon.gif) no-repeat;
 }
-#reguser_gut01 li input {
+.reguser_gut01 li input {
 	border: 1px solid #B3B3B3;color:#848389;
 }
 .z_c{
@@ -626,7 +641,7 @@ ul.reg_flow li.normal span{
 .Agreement{
 	border:1px solid #DEDEDE;
 }
-#reguser_gut01 .Agreement .text{
+.reguser_gut01 .Agreement .text{
 	color:#848389;
 }
 #reguser_box .Agreement_box{
@@ -635,7 +650,7 @@ ul.reg_flow li.normal span{
 #reguser_box_user .Agreement_box{
 	border-bottom:none;background:url(../img/black/Agreement_bg.gif) repeat-y;
 }
-#reguser_gut01 #Title {
+.reguser_gut01 #Title {
 	color: #0b4b88;color:#848389;
 }
 .datefield button{
@@ -643,25 +658,25 @@ ul.reg_flow li.normal span{
 }
 /*====================== 编辑个个人信息 =========================*/
 
-#Edit_box #Edit_info {
+.Edit_box .Edit_info {
 	border:1px #909592 solid;
 }
-#Edit_info_01 {
+.Edit_info_01 {
 	color: #0b4b88;
 }
-#Edit_info_username {
+.Edit_info_username {
 	color: #0b4b88;
 }
-#Edit_info ul {
+.Edit_info ul {
 	color:#848389;
 }
-#Edit_info ul .sorty{
+.Edit_info ul .sorty{
 	color:#9FA8AD;
 }
-#Edit_info ul li span.Pass_mantis select{
+.Edit_info ul li span.Pass_mantis select{
 	color: #333333;
 }
-#Edit_info li input {
+.Edit_info li input {
 	border: 1px solid #B3B3B3;color:#848389;
 }
 .ws_xx a{
@@ -670,13 +685,13 @@ ul.reg_flow li.normal span{
 .Agreement{
 	border:1px solid #DEDEDE;
 }
-#Edit_info .Agreement p.text{
+.Edit_info .Agreement p.text{
 	color:#848389;
 }
-#Edit_box .Agreement_box{
+.Edit_box .Agreement_box{
 	background:none;border-bottom:none;
 }
-#Edit_info #Title {
+.Edit_info #Title {
 	color:#848389;
 }
 /*====================== 密码管理 =========================*/
@@ -687,33 +702,33 @@ ul.reg_flow li.normal span{
 	color:#f50;
 }
 /*  ==================== 用户中心留言 ====================  */
-#Edit_info .massege p.msg{
+.Edit_info .massege p.msg{
 	color:#64765B;
 }
-#user_msg p.msg_title{
+.user_msg p.msg_title{
 	background:#eee;
 }
-#user_msg p{
+.user_msg p{
 	color:#000;
 }
-#Edit_info p.note,.sufficient{
+.Edit_info p.note,.sufficient{
 	color:#000000;
 }
 /*  ==================== 用户中心我的评论 ====================  */
-#Edit_info .comment p{
+.Edit_info .comment p{
 	color:#231815;
 }
-#Edit_info .comment{
+.Edit_info .comment{
 	background:#eee;
 }
 /*  ==================== 用户中心文章详细 ====================  */
-#user_msg p.article span{
+.user_msg p.article span{
 	color:#9D9D9D;
 }
-#user_msg p.article_time{
+.user_msg p.article_time{
 	background:#DDF4E6;
 }
-#user_msg p.article_time span{
+.user_msg p.article_time span{
 	color:#9D9D9D;
 }
 #select_article{
@@ -741,19 +756,16 @@ ul.reg_flow li.normal span{
 	background:none;color:#16A45A;
 }
 /*  ==================== 用户中心文章列表 ====================  */
-#user_msg p.article_title span{
+.user_msg p.article_title span{
 	color:#16A45A;border-bottom:1px solid #fff;border-right:1px solid #fff;
 }
-#user_msg #article_box p{
+.user_msg #article_box p{
 	color:#9D9D9D;
 }
 #article_box p.list .title a{
 	color:#9D9D9D;
 }
 /*  ====================  ====================  */
-#globalBalance{
-	border-top:1px solid #999;background:url(../img/black/Balance_bg.gif) repeat-y;
-}
 #globalBalance .buy_title{
 	color:#000000;
 }
@@ -817,10 +829,10 @@ ul.reg_flow li.normal span{
 	border:1px solid #7F9DB9;
 }
 .submits span{
-	background:url(../img/black/submit.gif) no-repeat 100% -21px;
+	background:url('../img/black/stow_img.gif') no-repeat 100% -20px;
 }
 .submits span input{
-	background:url(../img/black/submit.gif) 0 0 no-repeat;border:0;color:#000;
+	background:url('../img/black/stow_img.gif') 0 0 no-repeat;border:0;color:#fff;
 }
 /*==================== Menber Login =========================*/
 #login-box{
@@ -864,13 +876,13 @@ ul.reg_flow li.normal span{
 }
 
 .svcart-skin-g00 .container-close{
-	background:url(../img/black/close_img.png) no-repeat right;
+	background:url(../img/black/close_img.gif) no-repeat right;
 }
 .svcart-skin-g00 .container-close:hover{
-	background:url(../img/black/close_img_over.png) no-repeat right;
+	background:url(../img/black/close_img_over.gif) no-repeat right;
 }
 .svcart-skin-g00 .yui-simple-dialog .bd .yui-icon{
-	background:url(../img/black/close_img_over.png) no-repeat 0 0;
+	background:url(../img/black/close_img_over.gif) no-repeat 0 0;
 }
 
 
@@ -882,3 +894,7 @@ body, h1 { margin:0;padding:0; } /* needed for known issue with Dom.getXY() in s
 #ysearchinput { position:static;width:20em; } /* to center, set static and explicit width: */
 #ysearchcontainer { text-align:left;width:20em;font-family:arial;} /* to center, set left-align and explicit width: */
 img, div, input,ul ,h1,span{behavior:url("/user/themed/SV_G00/css/iepngfix.htc")}
+.table_data{
+	background:#D8D8D8;
+}
+.table_data .rows{background:#ffffff;}

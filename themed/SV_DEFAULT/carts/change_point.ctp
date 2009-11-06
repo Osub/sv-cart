@@ -9,11 +9,10 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: change_point.ctp 3195 2009-07-22 07:15:51Z huangbo $
+ * $Id: change_point.ctp 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 ob_start();?>
 <?php if($result['type'] == 0 ){?>
-<h5><?php echo $SCLanguages['use'].$SCLanguages['point'];?>:</h5>
 <?php echo $this->element('checkout_point', array('cache'=>'+0 hour'));?>
 <?php }else{?>
 <?php echo $result['msg'];?>

@@ -13,8 +13,8 @@
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?><div id="Products_box">
-<h1 class="headers"><span class="l"></span><span class="r"></span><b><?php echo $SCLanguages['coupon']?></b></h1>
-<div id="infos">
+<h1 class="headers"><span class="l"></span><span class="r"></span><b><?php echo $SCLanguages['coupons']?></b></h1>
+<div class="infos">
 <?php if(isset($coupons) && sizeof($coupons)>0){?>
 	<ul class="integral_title"><strong>
     <li class="integral" style="width:8%"><?php echo $SCLanguages['coupon']?><?php echo $SCLanguages['code']?></li>
@@ -59,16 +59,16 @@
 <?php }?>
 
 <div id="Products_box">
-<div id="infos" style="background:#fff;">
+<div class="infos" style="background:#fff;">
 <p class="sufficient"><b><?php echo $SCLanguages['add'];?><?php echo $SCLanguages['coupon'];?></b>:</p>
 <br />
 <ul class="integral_title" style="background:#fff;border:none;">
-	<li class="time" style="width:auto;padding-left:50px;"><?php echo $SCLanguages['please_enter'].$SCLanguages['coupon']." ".strtolower($SCLanguages['code']);?>: <input type="text" style="width:150px;" name="sn_code" id="sn_code" /></li>
-	<li class="handel btn_list" style="padding-top:2px;width:auto;"><a href="javascript:add_coupon()" class="float_l"><span><?php echo $SCLanguages['confirm']?></span></a></li>
+	<li class="time" style="width:auto;padding-left:220px;padding-top:1px"><?php echo $SCLanguages['please_enter'].$SCLanguages['coupon'].strtolower($SCLanguages['code']);?>: <input type="text" style="width:150px;" name="sn_code" id="sn_code" /></li>
+	<li class="handel btn_list" style="width:auto;"><a href="javascript:add_coupon()" class="float_l"><span><?php echo $SCLanguages['confirm']?></span></a></li>
 	<li class="msg"><span style="color:red;" id="sn_code_msg"></span></li>
 </ul>
 <br />	
 </div>
 </div>  	  
 
-<?php echo $this->element('news', array('cache'=>array('time'=> "+24 hour",'key'=>'news'.$template_style)));?>
+<?php echo $this->element('news', array('cache'=>array('time'=> "+0 hour",'key'=>'news'.$template_style)));?>

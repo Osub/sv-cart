@@ -17,7 +17,7 @@ function to_checkout(){
 		try{
 			var result = YAHOO.lang.JSON.parse(o.responseText);   
 		}catch (e){   
-			//alert(o.responseText);
+			alert(o.responseText);
 			//alert("Invalid data");
 			YAHOO.example.container.wait.hide();
 		}
@@ -97,6 +97,10 @@ function to_checkout(){
 			//alert("Invalid data");
 			YAHOO.example.container.wait.hide();
 		} 
+	
+		if(result.header_msg != ""){
+			document.getElementById('header_cart_msg').innerHTML = result.header_msg;
+		}
 		
 		if(result.type == "0"){
 			if(result.no_product == "0" || result.is_refresh == "1"){
@@ -153,7 +157,9 @@ function to_checkout(){
 			//alert("Invalid data");
 			YAHOO.example.container.wait.hide();
 		} 
-			
+		if(result.header_msg != ""){
+			document.getElementById('header_cart_msg').innerHTML = result.header_msg;
+		}
 		if(result.type == "0"){
 			document.getElementById('my_cart').innerHTML = result.message;
 		}else{	
@@ -173,7 +179,7 @@ function to_checkout(){
 //购买数量的改变-end
 
 	function show_regions(str){
-		var sUrl = webroot_dir+"regions/choice/";
+		var sUrl = webroot_dir+"regions/choice/"+str;
 		var postData ="str="+str;
 		document.getElementById('add_region_loading').style.display = "";
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, show_regions_callback,postData);
@@ -220,6 +226,7 @@ function to_checkout(){
 	function show_address_edit(id){
 		set_wait(wait_message);
 		YAHOO.example.container.wait.show();
+	//	ajax_order_price();
 		var sUrl = webroot_dir+"carts/edit_address/";
 		var postData = "id="+id;
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, show_address_edit_callback,postData);
@@ -263,6 +270,9 @@ function to_checkout(){
 			Region +=document.getElementById('AddressRegionUpdate'+i).value + " ";
 			i++;
  		}
+ 		//alert(i);
+ 		var is_region = document.getElementById('AddressRegionUpdate'+(i*1-1)).value;
+ 		//alert(test);return;
 		var Address = new Object();
  		Address.regions = Region;
  		Address.id =document.getElementById('EditAddressId').value;
@@ -307,34 +317,34 @@ function to_checkout(){
 		  	document.getElementById('edit_address_telephone').innerHTML = telephone_or_mobile;
 			//document.getElementById('edit_address_mobile').innerHTML = mobile_phone_not_empty;
 		    err = true;
-		  }else
+		  }else if(Address.telephone != ""  && !isTel(Address.telephone)){
+			document.getElementById('edit_address_telephone').innerHTML = invalid_tel;
+		    err = true;
+		  }else 
 		 /* else if (tel_0 == "" || tel_1 == "")
 		  {
 			//document.getElementById('edit_address_telephone').innerHTML = tel_number_not_empty;
 		    err = true;
 		  }	else 
-		  */if (isEmail(Address.email))
+		  */
+		  	  
+		  //    AddressRegionUpdate0
+		  	  
+		  	  
+		 if (isEmail(Address.email))
 		  {
 			document.getElementById('edit_address_email').innerHTML = invalid_email;
 		    err = true;
-		  }else if(regions_arr[2] == "")
-  		 {
-		document.getElementById('edit_address_regions').innerHTML = choose_area;
-		    err = true;
-  		 }else if(regions_arr[2] == please_choose){
-		document.getElementById('edit_address_regions').innerHTML = choose_area;
-		    	err = true;
-  		 }else if(Address.regions == please_choose){
-		document.getElementById('edit_address_regions').innerHTML = choose_area;
-		    	err = true;  		 	
+		  }else if(Address.regions == '请选择'){
+			document.getElementById('edit_address_regions').innerHTML = choose_area;
+		   	err = true;  		 	
   		 }else if(Address.regions == ""){
-		document.getElementById('edit_address_regions').innerHTML = choose_area;
+			document.getElementById('edit_address_regions').innerHTML = choose_area;
 		    err = true;  		 	
-  		 }else if(regions_arr[0] == please_choose){
-		document.getElementById('edit_address_regions').innerHTML = choose_area;
+  		 }else if(is_region == '请选择' || is_region == ""){
+			document.getElementById('edit_address_regions').innerHTML = choose_area;
   		 	 err = true;  
-  		 }else if (Address.address == "")
-		  {
+  		 }else if (Address.address == ""){
 		    document.getElementById('edit_address_address').innerHTML = address_detail_not_empty;
 		    err = true;
 		  }else if(Address.address.length < 8){
@@ -375,6 +385,7 @@ function to_checkout(){
 		document.getElementById('address_loading').style.display = "none";
 			
 		if(result.type == "0"){
+			document.getElementById('checkout_info').style.display="";
 			if(document.getElementById('checkout_total') != null){
 			document.getElementById('checkout_total').innerHTML = result.checkout_total;
 			}
@@ -480,8 +491,8 @@ function to_checkout(){
 	};
 	
 	function checkout_new_address(){
-		set_wait(wait_message);
-		YAHOO.example.container.wait.show();
+	//	set_wait(wait_message);
+	//	YAHOO.example.container.wait.show();
 		var i=0;
 		var Region="";
 		while(true){
@@ -491,6 +502,7 @@ function to_checkout(){
 			Region +=document.getElementById('AddressRegion'+i).value + " ";
 			i++;
  		}
+ 		var is_region = document.getElementById('AddressRegion'+(i*1-1)).value;
  		var Address = new Object();
  		Address.regions =Region;
  		Address.name =document.getElementById('AddressName').value;
@@ -509,6 +521,7 @@ function to_checkout(){
  	//	if(tel_2 != ""){
  	//	Address.telephone +="-"+tel_2;
 	//	}
+	
  		document.getElementById('add_address_name').innerHTML = "*";
 		document.getElementById('add_address_consignee').innerHTML = "*";
 		document.getElementById('add_address_mobile').innerHTML = "*";
@@ -532,30 +545,26 @@ function to_checkout(){
 		  {
 			document.getElementById('add_address_consignee').innerHTML = consignee_name_not_empty;
 		    err = true;
-		  }else if (Address.mobile == "" )
+		  }else if (Address.mobile == "" && Address.telephone == "")
 		  {
 			document.getElementById('add_address_mobile').innerHTML = telephone_or_mobile;
+		    err = true;
+		  }	else if(Address.telephone != ""  && !isTel(Address.telephone)){
+			document.getElementById('add_address_telephone').innerHTML = invalid_tel;
 		    err = true;
 		  }else if (isEmail(Address.email))
 		  {
 		    msg.push(invalid_email);
 			document.getElementById('add_address_email').innerHTML = invalid_email;
 		    err = true;
-		  }else if(regions_arr[2] == "")
-  		 {
-		document.getElementById('add_address_regions').innerHTML = choose_area;
-		    err = true;
-  		 }else if(regions_arr[2] == please_choose){
-		document.getElementById('add_address_regions').innerHTML = choose_area;
-		    	err = true;
-  		 }else if(Address.regions == please_choose+" "){
-		document.getElementById('add_address_regions').innerHTML = choose_area;
+		  }else if(Address.regions == '请选择'+" "){
+			document.getElementById('add_address_regions').innerHTML = choose_area;
 		    	err = true;  		 	
   		 }else if(Address.regions == ""){
-		document.getElementById('add_address_regions').innerHTML = choose_area;
+			document.getElementById('add_address_regions').innerHTML = choose_area;
 		    err = true;  		 	
-  		 }else if(regions_arr[0] == please_choose){
-		document.getElementById('add_address_regions').innerHTML = choose_area;
+  		 }else if(is_region == '请选择' || is_region == ""){
+			document.getElementById('add_address_regions').innerHTML = choose_area;
   		 	 err = true;  
   		 }else if (Address.address == "")
 		  {
@@ -575,6 +584,7 @@ function to_checkout(){
 		    YAHOO.example.container.wait.hide();
 		    return;
 		  }
+		document.getElementById('address_loading').style.display = "none";
  		var sUrl = webroot_dir+"carts/checkout_address_add/";
 		var postData ="address="+ YAHOO.lang.JSON.stringify(Address)+"&is_ajax=1";
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, checkout_new_address_callback,postData);
@@ -591,6 +601,7 @@ function to_checkout(){
 		//YAHOO.example.container.wait.hide();
 		YAHOO.example.container.message_width.hide();	
 		if(result.type == "0"){
+			document.getElementById('checkout_info').style.display="";
 			if(document.getElementById('checkout_total') != null){
 			document.getElementById('checkout_total').innerHTML = result.checkout_total;
 			}
@@ -819,7 +830,7 @@ function to_checkout(){
 	};
 //编辑地址---------add--liying
 	function edit_regions(AddressId,str){
-		var sUrl = webroot_dir+"regions/choice/";
+		var sUrl = webroot_dir+"regions/choice/"+str+"/"+AddressId;
 		var postData ="str="+str+"&address_id="+AddressId;
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, edit_regions_callback,postData);
 	}
@@ -905,7 +916,7 @@ function to_checkout(){
 	
 	function show_two_regions(str){
 		document.getElementById('update_region_loading').style.display = "";
-		var sUrl = webroot_dir+"regions/twochoice/";
+		var sUrl = webroot_dir+"regions/twochoice/"+str;
 		var postData ="str="+str;
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, show_two_regions_callback,postData);
 	}
@@ -949,7 +960,7 @@ function to_checkout(){
 
 //编辑两地址---------
 	function edit_two_regions(AddressId,str){
-		var sUrl = webroot_dir+"regions/twochoice/";
+		var sUrl = webroot_dir+"regions/twochoice/"+str+"/"+AddressId;
 		var postData ="str="+str+"&updateaddress_id="+AddressId;
 		var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, edit_two_regions_callback,postData);
 	}
@@ -1077,8 +1088,6 @@ function to_checkout(){
 	};
 	
 	function add_note(type,id){
-		set_wait(wait_message);
-		YAHOO.example.container.wait.show();
 		var note = document.getElementById('note').value;
 		var sUrl = webroot_dir+"carts/add_note/";
 		var postData ="note="+note+"&type="+type+"&id="+id;
@@ -1097,7 +1106,7 @@ function to_checkout(){
 		YAHOO.example.container.wait.hide();
 		YAHOO.example.container.message.hide();
 		if(result.type == "0" || result.type == "1"){
-		
+			document.getElementById('my_cart').innerHTML = result.message;
 		}else{
 			document.getElementById('message_content').innerHTML = result.message;
 			YAHOO.example.container.message.show();
@@ -1260,11 +1269,14 @@ function confirm_promotion(type,id,type_ext,title,meta_description){
         }
 		document.getElementById('address_loading').style.display = "none";
         if(result.type == "0" || result.type == "1"){
+        	document.getElementById('checkout_shipping').style.display = "none";
+        	document.getElementById('payment').style.display = "none";
+        	
             document.getElementById('checkout_shipping').innerHTML = result.checkout_shipping;
             document.getElementById('checkout_address').innerHTML = result.checkout_address;
           //  change_shipping();
 			if(document.getElementById('checkout_total') != null){
-            document.getElementById('checkout_total').innerHTML = result.checkout_total;
+            	document.getElementById('checkout_total').innerHTML = result.checkout_total;
             }
         }else if(result.type == "3"){
         	
@@ -1286,11 +1298,20 @@ function confirm_promotion(type,id,type_ext,title,meta_description){
     //选择结算的促销商品
     function add_promotion_product(promotion_id,product_id,now_fee,product_name){
     	set_wait(wait_message);
-        YAHOO.example.container.wait.show();
+      //  YAHOO.example.container.wait.show();
         document.getElementById('promotions').style.display = "none";
-        document.getElementById('promotion_loading').style.display = "";         
+        document.getElementById('promotion_loading').style.display = "";
+        var i= 0;
+        var attr = "";
+		while(true){
+			if(document.getElementById('attr_'+promotion_id+"_"+product_id+"_"+i)==null){
+				break;
+			}
+			attr += document.getElementById('attr_'+promotion_id+"_"+product_id+"_"+i).value + "<br/>";
+			i++;
+ 		}        
         var sUrl = webroot_dir+"carts/add_promotion_product/";
-        var postData ="promotion_id="+promotion_id+"&product_id="+product_id+"&now_fee="+now_fee+"&product_name="+product_name;
+        var postData ="promotion_id="+promotion_id+"&product_id="+product_id+"&now_fee="+now_fee+"&product_name="+product_name+"&attr="+attr;
         var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, add_promotion_product_callback,postData);
     }
     var add_promotion_product_Success = function(o){
@@ -1745,3 +1766,178 @@ function confirm_promotion(type,id,type_ext,title,meta_description){
 						); 
 		layer_dialog_obj.render();
 	}*/
+	
+    function ajax_order_price(){
+        var sUrl = webroot_dir+"carts/ajax_order_price/";
+        var postData = "";
+        var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, ajax_order_price_callback,postData);		
+	}
+	
+	var ajax_order_price_Success = function(o){
+        try{
+           var result = YAHOO.lang.JSON.parse(o.responseText);
+        }catch (e){  
+            //alert(o.responseText);
+            //alert("Invalid data");
+        }
+		
+         document.getElementById('checkout_total').innerHTML = result.checkout_total;		
+    }
+   
+    var ajax_order_price_callback ={
+        success:ajax_order_price_Success,
+        failure:failure_todo,
+        timeout : 30000,
+        argument: {}
+    };	
+	
+	function confirm_invoice(){
+		var invoice_id = document.getElementById('confirm_invoice').value;
+		var invoice_title = document.getElementById('invoice_title').value;
+		if(invoice_id == ""){
+			document.getElementById('invoice_error_msg').innerHTML = please_choose_invoice_type;
+			return;
+		}
+		document.getElementById('invoice_error_msg').innerHTML = "";
+		set_wait(please_wait_invoice);
+		//YAHOO.example.container.wait.show();	
+		document.getElementById('invoice').style.display = "none";	
+		document.getElementById('invoice_loading').style.display = "";      
+        var sUrl = webroot_dir+"carts/confirm_invoice/";
+        var postData = "invoice_id="+invoice_id+"&invoice_title="+invoice_title; 
+        var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, confirm_invoice_callback,postData);		
+	}
+	
+	var confirm_invoice_Success = function(o){
+        try{
+           var result = YAHOO.lang.JSON.parse(o.responseText);
+        }catch (e){  
+           // alert(o.responseText);
+            //alert("Invalid data");
+        }
+		document.getElementById('invoice').style.display = "";	
+		document.getElementById('invoice_loading').style.display = "none";      
+        YAHOO.example.container.wait.hide();
+        if(result.type == "0" ){
+			document.getElementById('invoice').innerHTML = result.checkout_invoice;
+			if(document.getElementById('checkout_total') != null){
+            	document.getElementById('checkout_total').innerHTML = result.checkout_total;
+            }
+        }else{
+            document.getElementById('message_content').innerHTML = result.checkout_invoice;
+            YAHOO.example.container.message.show();
+        }		 
+    }
+   
+    var confirm_invoice_callback ={
+        success:confirm_invoice_Success,
+        failure:failure_todo,
+        timeout : 30000,
+        argument: {}
+    };
+	
+	function change_invoice(){
+		document.getElementById('invoice').style.display = "none";	
+		document.getElementById('invoice_loading').style.display = "";			
+        var sUrl = webroot_dir+"carts/change_invoice/";
+        var postData = "";
+        var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, change_invoice_callback,postData);
+	}
+	var change_invoice_Success = function(o){
+        try{
+           var result = YAHOO.lang.JSON.parse(o.responseText);
+        }catch (e){  
+            //alert(o.responseText);
+            //alert("Invalid data");
+            YAHOO.example.container.wait.hide();
+        }
+       	document.getElementById('invoice').style.display = "";	
+		document.getElementById('invoice_loading').style.display = "none";
+       // YAHOO.example.container.wait.hide();
+        if(result.type == "0" ){
+			document.getElementById('invoice').innerHTML = result.checkout_invoice;
+			if(document.getElementById('checkout_total') != null){
+            	document.getElementById('checkout_total').innerHTML = result.checkout_total;
+            }
+        }else{
+            document.getElementById('message_content').innerHTML = result.checkout_invoice;
+            YAHOO.example.container.message.show();
+        }
+    }
+   
+    var change_invoice_callback ={
+        success:change_invoice_Success,
+        failure:failure_todo,
+        timeout : 30000,
+        argument: {}
+    };
+
+	function confirm_stock(stock){
+		document.getElementById('stock_handle').style.display = "none";	
+		document.getElementById('stock_handle_loading').style.display = "";      
+        var sUrl = webroot_dir+"carts/confirm_stock/";
+        var postData = "is_ajax=1&stock="+stock; 
+        var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, confirm_stock_callback,postData);		
+	}
+	
+	var confirm_stock_Success = function(o){
+        try{
+           var result = YAHOO.lang.JSON.parse(o.responseText);
+        }catch (e){  
+           // alert(o.responseText);
+            //alert("Invalid data");
+        }
+		document.getElementById('stock_handle').style.display = "";	
+		document.getElementById('stock_handle_loading').style.display = "none";
+		
+        if(result.type == "0" ){
+			document.getElementById('stock_handle').innerHTML = result.checkout_stock_handle;
+        }else{
+            document.getElementById('message_content').innerHTML = result.checkout_stock_handle;
+            YAHOO.example.container.message.show();
+        }
+    }
+   
+    var confirm_stock_callback ={
+        success:confirm_stock_Success,
+        failure:failure_todo,
+        timeout : 30000,
+        argument: {}
+    };	
+	
+	function change_stock(){
+		document.getElementById('stock_handle').style.display = "none";	
+		document.getElementById('stock_handle_loading').style.display = "";			
+        var sUrl = webroot_dir+"carts/change_stock/";
+        var postData = "";
+        var request = YAHOO.util.Connect.asyncRequest('POST', sUrl, change_stock_callback,postData);
+	}
+	var change_stock_Success = function(o){
+        try{
+           var result = YAHOO.lang.JSON.parse(o.responseText);
+        }catch (e){  
+            //alert(o.responseText);
+            //alert("Invalid data");
+            YAHOO.example.container.wait.hide();
+        }
+       	document.getElementById('stock_handle').style.display = "";	
+		document.getElementById('stock_handle_loading').style.display = "none";
+       // YAHOO.example.container.wait.hide();
+        if(result.type == "0" ){
+			document.getElementById('stock_handle').innerHTML = result.checkout_stock_handle;
+        }else{
+            document.getElementById('message_content').innerHTML = result.checkout_stock_handle;
+            YAHOO.example.container.message.show();
+        }
+    }
+   
+    var change_stock_callback ={
+        success:change_stock_Success,
+        failure:failure_todo,
+        timeout : 30000,
+        argument: {}
+    };	
+	
+	
+	
+	

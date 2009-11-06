@@ -9,14 +9,14 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: save_vote.ctp 2703 2009-07-08 11:54:52Z huangbo $
+ * $Id: save_vote.ctp 3779 2009-08-19 10:40:08Z huangbo $
 *****************************************************************************/
 ob_start();?>
 <?php if($result['type']==0){?>
 <?php echo $form->create('votes',array('action'=>'/save_vote','name'=>'save_vote','type'=>'POST'));?>
 <div class="category_box brand_box">
 <h3><span class="l"></span><span class="r"></span><?php echo $SCLanguages['site_survey']?></h3>
-<div class="category brands box green_3">
+<div class="category homeorderlist box green_3">
 <ul>
 <?php if(isset($vote_list) && sizeof($vote_list)>0){?>
 <?php foreach($vote_list as $k=>$v){?>
@@ -26,21 +26,21 @@ ob_start();?>
 			<?php $num = 0;?>
 		<?php foreach($v['options'] as $kk=>$vv){?>
 			<?php if($v['Vote']['can_multi'] == 1){?>
-				<li class="text"><input type="radio" name="option[<?php echo $v['Vote']['id']?>]" id="<?php echo $num?>" value="<?php echo $vv['VoteOption']['id']?>"/>
+				<li class="text"><input type="radio" name="option[<?php echo $v['Vote']['id']?>]" id="vote_id<?php echo $num?>" value="<?php echo $vv['VoteOption']['id']?>"/>
 			<?php }else if($v['Vote']['can_multi'] == 0){?>
-				<li class="text"><input type="checkbox" name="option[<?php echo $v['Vote']['id']?>]" id="<?php echo $num?>" value="<?php echo $vv['VoteOption']['id']?>" />
+				<li class="text"><input type="checkbox" name="option[<?php echo $v['Vote']['id']?>]" id="vote_id<?php echo $num?>" value="<?php echo $vv['VoteOption']['id']?>" />
 			<?php }?>
 			<?php echo $vv['VoteOptionI18n']['name']?> (<?php if(isset($vv['VoteOption']['dis'])){echo $vv['VoteOption']['dis'];}else{echo '0';}?>%)</li>	<?php $num++;?>
 		<?php }?>
 	<?php }?>	
 
-<li class="text">
-<?php if(isset($SVConfigs['use_ajax']) && $SVConfigs['use_ajax'] == 0){?>
-<input type="submit" value="<?php echo $SCLanguages['vote']?>" />
-<?php }else{?>
-<input type="button" onclick="javascript:savevote(<?php echo $v['Vote']['id']?>,<?php echo $v['Vote']['can_multi']?>);" value="<?php echo $SCLanguages['vote']?>" />
-<?php }?>
-<input value="<?php echo $SCLanguages['reelect']?>" type="reset"/>
+<li class="query">
+<?//php if(isset($SVConfigs['use_ajax']) && $SVConfigs['use_ajax'] == 0){?>
+<!-- input type="submit" value="" /-->
+<?//php }else{?>
+<span class="find-btns"><input type="button" class="find" onclick="javascript:savevote(<?php echo $v['Vote']['id']?>,<?php echo $v['Vote']['can_multi']?>);" value="<?php echo $SCLanguages['vote']?>" /></span>
+<?//php }?>
+<span class="find-btns"><input class="find" value="<?php echo $SCLanguages['reelect']?>" type="reset"/></span>
 </li>
 <?php }?>
 <?php }?></ul>
@@ -49,7 +49,7 @@ ob_start();?>
 <?php echo $form->end();?>
 
 <?php }else{?>
-<div id="loginout">
+<div id="loginout" class="loginout">
 	<h1><b><?=$SCLanguages['site_survey']?></b></h1>
 	<div class="border_side" id="buyshop_box">
 		<p class="login-alettr">
@@ -73,7 +73,7 @@ ob_start();?>
 ?><?php if($result['type']==0){?>
 
 <?php ob_start();?>
-<div id="loginout">
+<div id="loginout" class="loginout">
 	<h1><b><?php echo $SCLanguages['site_survey']?></b></h1>
 	<div class="border_side" id="buyshop_box">
 		<p class="login-alettr">

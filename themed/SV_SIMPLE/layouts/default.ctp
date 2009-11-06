@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: default.ctp 2807 2009-07-13 09:55:56Z shenyunfeng $
+ * $Id: default.ctp 4808 2009-10-09 10:05:22Z huangbo $
 *****************************************************************************/
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -30,7 +30,6 @@ $style_css = (isset($template_style) && $template_style != "")?"style_".$templat
 	var page_confirm = "<?php echo $SCLanguages['confirm'];?>";
 	var root_all = "<?php echo $root_all;?>";
 	var webroot_dir = "<?php echo $cart_webroot;?>";
-	var admin_webroot = "<?php echo $admin_webroot;?>";
 	var user_webroot = "<?php echo $user_webroot;?>";
 	var cart_webroot = "<?php echo $cart_webroot;?>";
 	var server_host = "<?php echo $server_host;?>";

@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: header.ctp 3225 2009-07-22 10:59:01Z huangbo $
+ * $Id: header.ctp 3987 2009-09-02 09:28:48Z huangbo $
 *****************************************************************************/
 ?>
 <div class="header">
@@ -30,7 +30,25 @@
 	<?php }else{ ?>
 		<a class="cursor" id="locales"><?php //echo $SCLanguages['switch_languages'];?></a>
 	<?php }?>
-				
+	
+	<?php 	if(isset($can_select_template) && sizeof($can_select_template)>0){?>
+	<!--Theme-->
+	<?php echo $form->create('commons',array('action'=>'change_theme','name'=>'change_theme','type'=>'POST'));?>
+		<select name="select_theme" onchange="javascript:document.change_theme.submit();"   autocomplete="off">
+		<?php foreach($can_select_template as $k=>$v){?>
+			<?php if(isset($v['style']) && sizeof($v['style'])>0){?>
+				<?php foreach($v['style'] as $theme){?>
+				<option value="<?php echo $v['name'].'_|_'.$theme;?>" <?php if($template_use==$v['name'] && $theme == $template_style){?>selected<?php }?>><?php echo $v['description']." ".$theme;?></option>
+				<?php }?>
+			<?php }?>
+		<?php }?>
+		</select>
+			<input type="hidden" name="no_ajax" value="1" />
+	<?php echo $form->end();?>|
+	<!--Theme End-->
+	<?php }?>	
+	
+	
 	<?php if(isset($_SESSION['User']['User']['id'])){ ?>
 	<?php echo $SCLanguages['welcome'];?><b>&nbsp;<?php echo $html->link($_SESSION['User']['User']['name'],$server_host.$user_webroot,array("title"=>$SCLanguages['user_center'],"class"=>"name color_f9"));?></b>
 		<?php echo $html->link($SCLanguages['log_out'],$server_host.$user_webroot."logout/",array("class"=>""));?>	
@@ -50,7 +68,8 @@ $header_cart=$this->requestAction("commons/header_cart/");
 	<a href="<?php echo $server_host.$cart_webroot.'carts'?>"><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."carticon.gif":"carticon.gif",array("class"=>"vmiddle"))?>
 	<!--您的购物车中有 <span class="font_red"><?php echo isset($header_cart['quantity'])?$header_cart['quantity']:0;?></span> 件商品，总计 -->
 	<?php $header_cart_quantity = empty($header_cart['quantity'])?0:$header_cart['quantity'];
-	printf($SCLanguages['cart_total_product'],"<span class='font_red'>".$header_cart_quantity."</span>");?>
+		 $header_cart_sizeof = empty($header_cart['sizeof'])?0:$header_cart['sizeof'];
+	printf($SCLanguages['cart_total_product'],"<span class='font_red'>".$header_cart_sizeof."</span>","<span class='font_red'>".$header_cart_quantity."</span>");?>
 	<span class="font_red"><?php echo $svshow->price_format(isset($header_cart['total'])?$header_cart['total']:0,$SVConfigs['price_format']);?></span> </a>
 	</p>
 </div>
@@ -93,13 +112,18 @@ window.onload=headerNav;
 	<ul class="navs" id="categories">
 	<div class="home"><?php echo $html->link($SCLanguages['home'],"/",array(),false,false);?></div>
 	<?php if(isset($categories_tree) && sizeof($categories_tree)>0){?>
+		<? if($this->params['controller'] == 'articles' || $this->params['controller'] == 'category_articles'){
+			$head_category_url = "category/";
+		}else{
+			$head_category_url = "categories/";
+		}?>
 	<?php foreach($categories_tree as $first_k=>$first_v){?>
 	<li>
-		<?php echo $html->link($first_v['CategoryI18n']['name'],"/categories/".$first_v['Category']['id']."/",false,false);?>
+		<?php echo $html->link($first_v['CategoryI18n']['name'],"/".$head_category_url.$first_v['Category']['id']."/",false,false);?>
 		<?php if(isset($first_v['SubCategory']) && sizeof($first_v['SubCategory'])>0){?>
 		<ul class="font_white">
 		<?php foreach($first_v['SubCategory'] as $second_k=>$second_v){?>
-		<?php echo $html->link($second_v['CategoryI18n']['name'],"/categories/".$second_v['Category']['id']."/",array("class"=>"font_white"),false,false);?> |<?php }?>
+		<?php echo $html->link($second_v['CategoryI18n']['name'],"/".$head_category_url.$second_v['Category']['id']."/",array("class"=>"font_white"),false,false);?> |<?php }?>
 		</ul>
 		<?php }?>
 		</li>

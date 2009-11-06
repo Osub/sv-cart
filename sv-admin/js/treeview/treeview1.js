@@ -44,7 +44,7 @@ function loadNodeData(node, fnLoadComplete){
  				oResponse.argument.fnLoadComplete(); 
 		},
 		failure: function(oResponse){
-			alert("异步请求失败!");
+			alert("异步请求失败1!");
 		},
 		argument: {
 			"node": node,
@@ -97,15 +97,17 @@ function buildTree(){
 	}else{
 		var productcode = "";
 	}
+	
 	swfuploadimg();//创建上传图片按钮
 	//商品页end 
 	var urlimg = webroot_dir+"images/treeview/?path="+productcode;
+	//alert(urlimg);
 	YAHOO.util.Connect.asyncRequest('POST', urlimg, root_directory_callback);
 }
 
 /***********************取文件夹第一层菜单并设置成为中文start**********************************************************/
 	var root_directory_Success = function(oResponse){
-		
+		//alert(oResponse.responseText);
 		var oResults = eval("(" + oResponse.responseText + ")");
 		tree = new YAHOO.widget.TreeView("treeDiv1");//取节点对像
 		tree.setDynamicLoad(loadNodeData);//load加载事件
@@ -114,58 +116,52 @@ function buildTree(){
 		var tempNode 									= 		new Array();//第一层各节点原名
 		var china_dir_name								=		img_dir_china_config();//调用中文设置函数
 		
-		//创造节点
-		for(var i=0;i<=oResults.message.length-1; i++){
-			var name 									=  		oResults.message[i];//取各节点的名称
-			
-			//跟据菜单创造指定目录
-			if( assign_dir != "" ){
-				//创造指定
-				if( name == assign_dir ){
-					tempNode[i] 						= 		new YAHOO.widget.MenuNode(name, root, false); 
-					tempNode[i].onLabelClick 			= 		load_show_img;//节点ONCLICK事件..重载图片
-					tempNode.editable 					= 		true;//增编节点
-					oTextNodeMap[tempNode[i].labelElId]	=		tempNode[i];//增节点
-	   			}
-	   			//商品定位在货号目录
-	   			if(window_option_status != ""){
-					if(assign_dir == "products"){
-			   			if( name == Trim(window.opener.document.getElementById('ProductCode').value,'g') ){
-							tempNode[i] 				= 		new YAHOO.widget.MenuNode(name, root, false); 
-							tempNode[i].onLabelClick 	= 		load_show_img;//节点ONCLICK事件..重载图片
-							tempNode[i].editable 		= 		true;//增编节点
-							oTextNodeMap[tempNode[i].labelElId]=tempNode[i];//增节点
-			   			}
-	   				}
-	   				if(assign_dir == "product_categories"){
-			   			if( name == Trim(window.opener.document.getElementById('categoryid').value,'g') ){
-			   				
-							tempNode[i] 				= 		new YAHOO.widget.MenuNode(name, root, false); 
-							tempNode[i].onLabelClick 	= 		load_show_img;//节点ONCLICK事件..重载图片
-							tempNode[i].editable 		= 		true;//增编节点
-							oTextNodeMap[tempNode[i].labelElId]=tempNode[i];//增节点
-			   			}
-			   			
-	   				}
-	   				if(assign_dir == "article_categories"){
-			   			if( name == Trim(window.opener.document.getElementById('categoryid').value,'g') ){
-			   				
-							tempNode[i] 				= 		new YAHOO.widget.MenuNode(name, root, false); 
-							tempNode[i].onLabelClick 	= 		load_show_img;//节点ONCLICK事件..重载图片
-							tempNode[i].editable 		= 		true;//增编节点
-							oTextNodeMap[tempNode[i].labelElId]=tempNode[i];//增节点
-			   			}
-			   			
-	   				}
-	   			}
-	   		}else{
-	   			//图片管理时创造全部节点
-	   			tempNode[i] 							= 		new YAHOO.widget.MenuNode(name, root, false); 
+		if( assign_dir != "" ){
+			//商品定位在货号目录
+			if(window_option_status != ""){
+				if(assign_dir == "products"){
+						tempNode[i] 				= 		new YAHOO.widget.MenuNode(Trim(window.opener.document.getElementById('ProductCode').value,'g'), root, false); 
+						tempNode[i].onLabelClick 	= 		load_show_img;//节点ONCLICK事件..重载图片
+						tempNode[i].editable 		= 		true;//增编节点
+						oTextNodeMap[tempNode[i].labelElId]=tempNode[i];//增节点
+	   			}else if(assign_dir == "product_categories"){
+			   			tempNode[i] 				= 		new YAHOO.widget.MenuNode(Trim(window.opener.document.getElementById('categoryid').value,'g'), root, false); 
+						tempNode[i].onLabelClick 	= 		load_show_img;//节点ONCLICK事件..重载图片
+						tempNode[i].editable 		= 		true;//增编节点
+						oTextNodeMap[tempNode[i].labelElId]=tempNode[i];//增节点
+	   			}else if(assign_dir == "article_categories"){
+			   			tempNode[i] 				= 		new YAHOO.widget.MenuNode(Trim(window.opener.document.getElementById('categoryid').value,'g'), root, false); 
+						tempNode[i].onLabelClick 	= 		load_show_img;//节点ONCLICK事件..重载图片
+						tempNode[i].editable 		= 		true;//增编节点
+						oTextNodeMap[tempNode[i].labelElId]=tempNode[i];//增节点
+			 	}
+			 	else{
+					for(var i=0;i<=oResults.message.length-1; i++){
+						if(assign_dir == oResults.message[i] || assign_dir == "" ){
+							var name 								=  		oResults.message[i];//取各节点的名称
+					   		//图片管理时创造全部节点
+					   		tempNode[i] 							= 		new YAHOO.widget.MenuNode(name, root, false); 
+							tempNode[i].onLabelClick 				= 		load_show_img;//节点ONCLICK事件..重载图片
+							tempNode[i].editable 					= 		true;//增编节点
+							oTextNodeMap[tempNode[i].labelElId]		=		tempNode[i];//增节点
+						}
+					}
+			 	}
+	   		}
+		}
+		else{ 
+			for(var i=0;i<=oResults.message.length-1; i++){
+				var name 								=  		oResults.message[i];//取各节点的名称
+				//图片管理时创造全部节点
+				tempNode[i] 							= 		new YAHOO.widget.MenuNode(name, root, false); 
 				tempNode[i].onLabelClick 				= 		load_show_img;//节点ONCLICK事件..重载图片
 				tempNode[i].editable 					= 		true;//增编节点
 				oTextNodeMap[tempNode[i].labelElId]		=		tempNode[i];//增节点
-	   		}
+			}
 	   	}
+
+		
+		
 		tree.draw();//显示创造出来的节点
 		
 		//第一层菜单设置中文名称
@@ -177,7 +173,9 @@ function buildTree(){
 				if( tempNode[j]){
 					var tempnode 						=  		tempNode[j];
 					var tempnode_name 					= 		tempnode.label;
-					tempnode.getLabelEl().innerHTML 	= 		china_dir_name[tempnode_name];//根椐对应节点替换成中文
+					if(typeof(china_dir_name[tempnode_name])!="undefined"){
+						tempnode.getLabelEl().innerHTML 	= 		china_dir_name[tempnode_name];//根椐对应节点替换成中文
+					}
 				}else{
 					//tempnode.getLabelEl().innerHTML 	= 		"未知";//根椐对应节点替换成中文
 				}
@@ -185,10 +183,10 @@ function buildTree(){
 		} 
 	}
 	var root_directory_Failure = function(o){
-		alert("异步请求失败");
+		alert("异步请求失败2");
 	}
 
-	var root_directory_callback ={success:root_directory_Success,failure:root_directory_Failure,timeout : 10000,argument: {}};
+	var root_directory_callback ={success:root_directory_Success,failure:root_directory_Failure,timeout : 100000,argument: {}};
 	
 
 var init=function(){  
@@ -232,7 +230,7 @@ var load_show_img_Success = function(oResponse){
 	}
 
 	var load_show_img_Failure = function(o){
-		alert("异步请求失败");
+		alert("异步请求失败3");
 	}
 
 	var load_show_img_callback ={
@@ -433,6 +431,7 @@ function img_dir_china_config(){
 	china_dir_name.packs     						= "包装";
 	china_dir_name.topics  	    					= "专题";
 	china_dir_name.links	 						= "友情链接";
+	china_dir_name.temp	 							= "temp";
 	china_dir_name.others	 						= "其他";
 	
 
@@ -469,7 +468,7 @@ function remove_img(result){
 	var img_hide_show		= document.getElementsByName('img_hide_show[]');
 	image_src			= document.getElementById('img_address').value;
 	//alert(img_src);
-	img_src= result.value;
+	img_src= result;
 	var arr = img_src.split('/');
 	layer_dialog();
 	layer_dialog_show("确定删除图片"+arr[arr.length-1]+"?","remove_img_confirm()",5);
@@ -488,7 +487,7 @@ var load_show_remove_img_Success = function(oResponse){
 	}
 
 	var load_show_remove_img_Failure = function(o){
-		alert("异步请求失败");
+		alert("异步请求失败4");
 	} //
 
 	var load_show_remove_img_callback ={

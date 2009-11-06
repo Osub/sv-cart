@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: category_A.ctp 2535 2009-07-02 11:34:51Z huangbo $
+ * $Id: category_A.ctp 3507 2009-08-06 10:52:06Z tangyu $
 *****************************************************************************/
 ?>
 <!--文章分类显示开始-->
@@ -28,9 +28,9 @@
 <?php }?>
 <?php }else{?>
 <?php if(isset($first_v['SubCategory']) && sizeof($first_v['SubCategory'])>0){?>	
-<?php echo $html->link($first_v['CategoryI18n']['name'],"/articles/".$first_v['Category']['id'],array("class"=>"over"),false,false);?>
+<?php echo $html->link($first_v['CategoryI18n']['name'],"/articles/category/".$first_v['Category']['id'],array("class"=>"over"),false,false);?>
 <?php }else{?>
-<?php echo $html->link($first_v['CategoryI18n']['name'],"/articles/".$first_v['Category']['id'],array("class"=>"normal"),false,false);?>
+<?php echo $html->link($first_v['CategoryI18n']['name'],"/articles/category/".$first_v['Category']['id'],array("class"=>"normal"),false,false);?>
 <?php }?>
 <?php }?>
 <?php if(isset($first_v['SubCategory']) && sizeof($first_v['SubCategory'])>0){?>
@@ -38,14 +38,14 @@
 <?php foreach($first_v['SubCategory'] as $second_k=>$second_v){?>
 <li class="svcartmenuitem No_bg">
 <?php if(!empty($second_v['Category']['link'])){?>
-<?php echo $html->link($first_v['CategoryI18n']['name'],"/articles/".$second_v['Category']['link'],"",false,false);?>
+<?php echo $html->link($first_v['CategoryI18n']['name'],"/articles/category/".$second_v['Category']['link'],"",false,false);?>
 <?php }else{?>
-<?php echo $html->link($second_v['CategoryI18n']['name'],"/category_articles/".$second_v['Category']['id'],"",false,false);?>
+<?php echo $html->link($second_v['CategoryI18n']['name'],"/articles/category/".$second_v['Category']['id'],"",false,false);?>
 <?php }?>
 <?php if(isset($second_v['SubCategory']) && sizeof($second_v['SubCategory'])>0){?>
 <div class="svcartmenu"><div class="bd"><ul class="first-of-type">
 <?php foreach($second_v['SubCategory'] as $third_k=>$third_v){?>
-<li class="svcartmenuitem"><?php echo $html->link($third_v['CategoryI18n']['name'],"/category_articles/".$third_v['Category']['id'],"",false,false);?></li>
+<li class="svcartmenuitem"><?php echo $html->link($third_v['CategoryI18n']['name'],"/articles/category/".$third_v['Category']['id'],"",false,false);?></li>
 <?php }?></ul></div></div>
 <?php }?></li>
 <?php }?></ul></div><?php echo $html->image(isset($img_style_url)?$img_style_url."/".'LeftsubNav_bottom.gif':'LeftsubNav_bottom.gif',array("alt"=>"","align"=>"top"))?></div>

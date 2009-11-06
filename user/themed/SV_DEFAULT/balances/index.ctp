@@ -9,12 +9,12 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 3261 2009-07-23 05:38:53Z huangbo $
+ * $Id: index.ctp 5414 2009-10-26 01:45:58Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?><div id="Products_box">
 <h1 class="headers"><span class="l">&nbsp;</span><span class="r">&nbsp;</span><b><?php echo $SCLanguages['my_balance'];?></b></h1>
-	<div id="infos">
+	<div class="infos">
     		<?php if(isset($my_balance_list) && sizeof($my_balance_list)>0){?>
         	<p class="last_integral" style="margin:5px 10px;"><?php echo $SCLanguages['current'].sprintf($SCLanguages['remaining_balance'],"：<span>".$my_balance."</span>");?><cite><?php echo sprintf($SCLanguages['today_consumer'],"： <font>".$all_fee."</font>");?></cite></p>
             <ul class="integral_title">
@@ -24,12 +24,17 @@
             	<li class="handel"><?php echo $SCLanguages['operation'];?></li>
             </ul>
             <div class="integral_list">
-   
+   			
             <?php foreach($my_balance_list as $k=>$v){?>
-				<ul class="integral_title">
+				<ul class="integral_title" <?php if($k==sizeof($my_balance_list)-1){?>style="border-bottom:none;"<?php }?>>
 				<li class="integral">&nbsp;&nbsp;
-			<?php echo $svshow->price_format($v['UserBalanceLog']['amount'],$SVConfigs['price_format']);?>	
-						</li>
+			<?//php echo $svshow->price_format($v['UserBalanceLog']['amount'],$SVConfigs['price_format']);?>	
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($v['UserBalanceLog']['amount']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($v['UserBalanceLog']['amount'],$this->data['configs']['price_format']);?>	
+			<?php }?>
+				</li>
 				<li class="time"><?php echo $v['UserBalanceLog']['created']?></li>
 				<li class="gift" style="text-align:center">&nbsp;&nbsp;
 				<?php if($v['UserBalanceLog']['log_type'] == 'O'){?><?php echo $systemresource_info['balance_log_type']['O'];?>
@@ -45,7 +50,7 @@
 					<?php if($v['UserBalanceLog']['is_paid'] == 1){?>
 						<?php echo $SCLanguages['has_paied']?>
 					<?php }else{?>
-				<?php echo $html->link("<span>".$SCLanguages['supply']."</span>","javascript:pay_balance(".$v['UserBalanceLog']['type_id'].");",array(),false,false);?>
+				<?php echo $html->link("<span>".$SCLanguages['supply']."</span>","javascript:pay_point(".$v['UserBalanceLog']['type_id'].");",array(),false,false);?>
 					<?php }?>
 				<?php }?>
 				</li></ul>
@@ -68,7 +73,7 @@
 <?php }?>
 
     	<?php if(isset($user_account) && sizeof($user_account)>0){?>
-        <div id="infos">
+        <div class="infos">
         	<p class="sufficient"><b><?php echo $SCLanguages['supply'];?><?php echo $SCLanguages['record'];?></b>:</p>
         	<br />
             <ul class="integral_title"><strong>
@@ -82,7 +87,15 @@
             <?php foreach($user_account as $k=>$v){?>
 				<ul class="integral_title" <?php if((sizeof($user_account)-1) == $k){?>style="border:none;"<?php }?>>
 				<li class="time" style="width:20%;"><?php echo $v['UserAccount']['created']?></li>
-				<li class="integral" style="width:12%;">&nbsp;&nbsp;<?php echo $svshow->price_format($v['UserAccount']['amount'],$SVConfigs['price_format']);?></li>
+				<li class="integral" style="width:12%;">&nbsp;&nbsp;
+					<?//php echo $svshow->price_format($v['UserAccount']['amount'],$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($v['UserAccount']['amount']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($v['UserAccount']['amount'],$this->data['configs']['price_format']);?>	
+			<?php }?>						
+						
+						</li>
 				<li class="pay_name" style="width:20%;"><?php echo $v['UserAccount']['pay_name'];?></li>
 				<li class="gift"  style="width:20%;text-align:center"><?php echo $SCLanguages['supply'];?></li>
 				
@@ -105,7 +118,7 @@
 		<?php if(isset($payment_list) && sizeof($payment_list)>0){?> 
 <!--充值/配送方式-->
 <form  action="javascript:;" onsubmit="ActAmount(this);"method="post" name="ActAmountForm">
-        <div id="infos">
+        <div class="infos">
         	<p class="sufficient"><b><?php echo $SCLanguages['supply'];?></b>:</p>
             <p class="many_input"><?php echo $SCLanguages['please_enter'].$SCLanguages['recharge_amount'];?>：<input type="text" name="amount_num" id="amount_num"  onkeyup="clearNoNum(this)"/> <?php echo $SCLanguages['yuan'];?></p>
             <p class="sufficient"><b><?php echo $SCLanguages['please_choose'].$SCLanguages['payment'];?></b>:</p>
@@ -136,4 +149,4 @@
 	
   </div>
   <br />
-<?php echo $this->element('news', array('cache'=>array('time'=> "+24 hour",'key'=>'news'.$template_style)));?>
+<?php echo $this->element('news', array('cache'=>array('time'=> "+0 hour",'key'=>'news'.$template_style)));?>

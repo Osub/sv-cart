@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 3261 2009-07-23 05:38:53Z huangbo $
+ * $Id: index.ctp 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $javascript->link('calendar');?>
@@ -62,11 +62,25 @@
         <p class="title order_list">
         	<span class="order_number"><br /><?php echo $v['Order']['order_code']?></span>
             <span class="order_time"><br /><?php echo $v['Order']['created']?></span>
-            <span class="order_menny"><br /><?php echo $svshow->price_format($v['Order']['total'],$SVConfigs['price_format']);?>	
+            <span class="order_menny"><br />
+            <?//php echo $svshow->price_format($v['Order']['total'],$SVConfigs['price_format']);?>	
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($v['Order']['total']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($v['Order']['total'],$this->data['configs']['price_format']);?>	
+			<?php }?>            
+            
             <?php $all_price+=$v['Order']['total'];?>
 			</span>
             <span class="order_menny"><br />
-			<?php echo $svshow->price_format($v['Order']['need_paid'],$SVConfigs['price_format']);?>
+			<?//php echo $svshow->price_format($v['Order']['need_paid'],$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($v['Order']['need_paid']*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($v['Order']['need_paid'],$this->data['configs']['price_format']);?>	
+			<?php }?>     				
+				
+				
       		<?php $need_paid+=($v['Order']['need_paid']);?>
             </span>
             <span class="order_estate"><br />
@@ -139,10 +153,24 @@
         	<span class="order_number">&nbsp;</span>
             <span class="order_time">&nbsp;</span>
             <span class="order_menny">
-			<?php echo $svshow->price_format($all_price,$SVConfigs['price_format']);?>
+			<?//php echo $svshow->price_format($all_price,$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($all_price*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($all_price,$this->data['configs']['price_format']);?>	
+			<?php }?>     				
+				
+				
 			</span>
             <span class="order_menny">
-			<?php echo $svshow->price_format($need_paid,$SVConfigs['price_format']);?>
+			<?//php echo $svshow->price_format($need_paid,$SVConfigs['price_format']);?>
+			<?php if(isset($this->data['configs']['currencies_setting']) && $this->data['configs']['currencies_setting'] == 1 && $session->check('currencies') && $session->check('Config.locale') && isset($this->data['currencies'][$session->read('currencies')])){?>
+				<?php echo $svshow->price_format($need_paid*$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['rate'],$this->data['currencies'][$session->read('currencies')][$session->read('Config.locale')]['Currency']['format']);?>	
+			<?php }else{?>
+				<?php echo $svshow->price_format($need_paid,$this->data['configs']['price_format']);?>	
+			<?php }?>    				
+				
+				
             </span>
             <span class="order_estate"><?php echo $SCLanguages['unpaid']?>(<?php echo $no_paid?>)/<?php echo $SCLanguages['waitting_for_confirm']?>(<?php echo $no_confirm?>)</span>
             <span class="handel">&nbsp;</span></p>		    	
@@ -165,7 +193,7 @@
 </div>
 <?php echo $this->element('calendar', array('cache'=>'+0 hour'));?>
   <br /><br />
-<?php echo $this->element('news', array('cache'=>array('time'=> "+24 hour",'key'=>'news'.$template_style)));?>
+<?php echo $this->element('news', array('cache'=>array('time'=> "+0 hour",'key'=>'news'.$template_style)));?>
 <script>/*
 function GoPage(pagecount){
 var goPage=document.getElementById('go_page').value;

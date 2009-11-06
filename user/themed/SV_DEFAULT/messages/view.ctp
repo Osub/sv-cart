@@ -13,21 +13,21 @@
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?><h1 class="headers"><span class="l"></span><span class="r"></span><b><?php echo $SCLanguages['my_message']?></b></h1>
-<div id="Edit_box">
-  <div id="Edit_info">
+<div class="Edit_box">
+  <div class="Edit_info">
   <p class="note"><?php printf($SCLanguages['totally_records_unpaid'],$total);?></p>
   <?php if(isset($my_messages) && sizeof($my_messages)>0){?>
   <?php foreach($my_messages as $k=>$v){?>
-  <div id="user_msg">
+  <div class="user_msg">
   	<p class="msg_title"><span class="title"><?php echo $v['UserMessage']['type_name']?>： <?php echo $v['UserMessage']['msg_title']?>    
   	   <?if($v['UserMessage']['type'] == 'O' && isset($v['Order'])){?><?php echo $systemresource_info['type']['O']?>:<?php echo $html->link($v['Order']['Order']['order_code'],'/orders/'.$v['Order']['Order']['id'],array(),false,false)?><?}?> 
   	   <?if($v['UserMessage']['type'] == 'P' && isset($v['Product'])){?><?php echo $systemresource_info['type']['P']?>:<?php echo $html->link($v['Product']['ProductI18n']['name'],$server_host.$cart_webroot.'products/'.$v['Product']['Product']['id'],array(),false,false)?><?}?> 
   	      <font color="#A7A9A8"><?php echo $v['UserMessage']['created']?></font></span></p>
-    <p class="msg_txt"><span><?php echo $v['UserMessage']['msg_content']?></span></p>
+    <p class="msg_txt"><span><?php echo $v['UserMessage']['msg_content']?></span>  &nbsp;</p>
   </div>
   <?php if(isset($v['Reply']) && sizeof($v['Reply'])>0){?>
      <?php foreach($v['Reply'] as $key=>$val){?>
-  <div id="user_msg">
+  <div class="user_msg">
   	<p class="msg_title"><span class="title"><?php echo $SCLanguages['reply'];?>：<?php echo $val['UserMessage']['msg_title']?> <font color="#A7A9A8"><?php echo $val['UserMessage']['created']?></font></span></p>
     <p class="msg_txt"><span><?php echo $val['UserMessage']['msg_content']?></span></p>
   </div>
@@ -81,7 +81,7 @@
 </div>
 </div>
 
-<?php echo $this->element('news', array('cache'=>array('time'=> "+24 hour",'key'=>'news'.$template_style)));?>
+<?php echo $this->element('news', array('cache'=>array('time'=> "+0 hour",'key'=>'news'.$template_style)));?>
 <script>
 function form1_onsubmit(){
    var Title=document.getElementById('title').value;

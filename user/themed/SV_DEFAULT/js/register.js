@@ -199,6 +199,7 @@ function register_submit(){
 }
 
 function check_input(column){
+	in_check_input ++;
 	if(column == 'all'){
 		var sUrl = webroot_dir+"check_all/";
 		var name = document.getElementById('name').value;
@@ -234,6 +235,7 @@ function check_input(column){
 			//alert("Invalid data");
 			alert(o.responseText);
 		} 
+		in_check_input --;
 		if(result.column == "all"){			
 			if(result.error_type == ""){
 				document.user_info.submit();

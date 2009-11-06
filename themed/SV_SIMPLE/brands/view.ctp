@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: view.ctp 3053 2009-07-17 11:59:14Z huangbo $
+ * $Id: view.ctp 3296 2009-07-24 07:19:59Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
@@ -41,7 +41,7 @@
 <?php echo $svshow->price_format($v['Product']['shop_price'],$SVConfigs['price_format']);?>	
 <?php }?></p>
 	
-		<div class="buy">
+		<div class="action">
 	<?php if(isset($_SESSION['User'])){?>
 		<?php echo $html->link($SCLanguages['favorite'],$server_host.$user_webroot."favorites/add/p/".$v['Product']['id'],"",false,false)?>
 		<?php }?>

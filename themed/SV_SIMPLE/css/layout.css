@@ -8,7 +8,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: layout.css 3124 2009-07-21 02:27:57Z huangbo $
+ * $Id: layout.css 3296 2009-07-24 07:19:59Z huangbo $
 *****************************************************************************/
 body{
 	margin: 0 auto;font-size:.75em;
@@ -143,6 +143,11 @@ ul.table_cell li{
 .tips a{
 	text-decoration:underline;
 }
+.tips input{font-size:100%;overflow:visidle;}
+.succeed img{
+	margin:-15px 15px 0 0;vertical-align:middle;position:relative;
+}
+
 /*=========================header==========================*/
 .header{
 	width:980px;margin:0 auto;margin-bottom:10px;min-height:74px;height:100%;
@@ -262,6 +267,7 @@ ul#categories li:hover ul,ul#categories li.over ul {
 .list{
 	padding:0 0 0 22px;
 }
+* html .list{height:100%;}
 .list li{
 	margin:6px 0;padding-left:14px;
 }
@@ -295,10 +301,10 @@ ul#categories li:hover ul,ul#categories li.over ul {
 .products li .name{
 	margin:8px 0 0 0;
 }
-.products li .buy{
-	text-align:center;
+.products li .action{
+	text-align:center;margin-top:5px;
 }
-.products li .buy a:hover{
+.products li .action a:hover{
 	text-decoration:underline;
 }
 /* CategoryProduct */
@@ -501,7 +507,7 @@ ul.history .price{
 }
 .order_table p{margin:5px 0;}
 .order_table .table_row{
-	padding:1px 10px 0;margin:0;
+	padding:1px 10px 2px;margin:0;
 }
 .order_table .table_cell{
 	

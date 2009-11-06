@@ -17,7 +17,7 @@
   <div id="new_friend_box" style="width:320px;">
   <div class="hd">
   <h2 class="add-addresses" style="*line-height:15px;">
-<span class="left"><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."title_l.png":"title_l.png")?></span>
+<span class="left"><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."title_l.gif":"title_l.gif")?></span>
 <span><?php echo $SCLanguages['create'].$SCLanguages['friend'].$SCLanguages['group']?></span>
 	<a class="close" href="javascript:close_friends_message();" id="close"></a>
 </h2></div>
@@ -30,15 +30,11 @@
 		<ul class="list" style="margin:0;width:auto;">
 		<li>
 		<dd class="l"><?php echo $SCLanguages['group']?><?php echo $SCLanguages['apellation']?>：</dd>
-		<dt style="padding-top:2px;*padding-top:0;"><input type="text"  name="data[UserFriendCat][cat_name]" id="UserFriendCatCatName"/></dt>
-		<dt class="submits">
-		<span  class="float_l"><input style="vertical-align:top" type="button" name="Submit2" value="<?php echo $SCLanguages['confirm']?>"  onclick="javascript:submit_insertcat();"/></span> &nbsp;<font color="red" >*</font></dt>
-		</li>
-			<li>
-		<dd class="l"></dd>
-		<dt style="padding-top:2px;*padding-top:0;"><font color="red" id="cat_error_msg"></font></dt>
-		<dt class="submits">
+		<dt style="padding-top:2px;*padding-top:0;"><input type="text"  name="data[UserFriendCat][cat_name]" id="UserFriendCatCatName" style="width:150px;"/>
+		<p style="padding-top:4px;color:red;" id="cat_error_msg"></p>
 		</dt>
+		<dt class="submits">
+		<span  class="float_l"><input style="vertical-align:top;border:none" type="button" name="Submit2" value="<?php echo $SCLanguages['confirm']?>"  onclick="javascript:submit_insertcat();"/></span></dt>
 		</li>
 		</ul>
 	</div>

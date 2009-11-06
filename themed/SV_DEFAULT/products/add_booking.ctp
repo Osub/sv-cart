@@ -9,10 +9,10 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: add_booking.ctp 2535 2009-07-02 11:34:51Z huangbo $
+ * $Id: add_booking.ctp 3779 2009-08-19 10:40:08Z huangbo $
 *****************************************************************************/
 ob_start();?>
-<div id="loginout">
+<div id="loginout" class="loginout">
 	<h1><b style="font-size:14px"><?php echo $SCLanguages['booking'];?></b></h1>
 	<div class="border_side">
 	<p class="login-alettr">

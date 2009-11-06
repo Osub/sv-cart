@@ -9,36 +9,31 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 2583 2009-07-04 07:02:59Z huangbo $
+ * $Id: index.ctp 4820 2009-10-09 12:22:53Z huangbo $
 *****************************************************************************/
 ?>
-<div class="Balance_alltitle"><span><?php echo $SCLanguages['checkout_center'];?></span></div>
+<div class="checkout_box">
+<h1 class="headers"><span class="l"></span><span class="r"></span><?php echo $SCLanguages['checkout_center'];?></h1>
     <!--您购买的商品-->
-    
-    
-<div id="globalBalance">
-	
-	
+<div id="globalBalance" class="border" style="border-bottom:none;margin-top:3px;">
 	<?php if(isset($msg)){?>
-	<p class="succeed">
+	<br /><br /><br />
+	<p class="succeed" style="padding:0;text-align:center;">
 	<?php if(isset($fail)){?>
-	<?php echo $html->image(isset($img_style_url)?$img_style_url."/"."warning_img.gif":"warning_img.gif",array("align"=>"middle","alt"=>$msg))?>
+	<?php echo $html->image(isset($img_style_url)?$img_style_url."/"."warning_img.gif":"warning_img.gif",array("alt"=>$msg))?>
 	<?php }else{?>
-	<?php echo $html->image(isset($img_style_url)?$img_style_url."/"."icon-10.gif":"icon-10.gif",array("align"=>"middle","alt"=>$msg))?>
+	<?php echo $html->image(isset($img_style_url)?$img_style_url."/"."icon-10.gif":"icon-10.gif",array("alt"=>$msg))?>
 	<?php }?>
-	<b class="succeed"><?php echo $msg?></b></p>	
+	<strong><?php echo $msg?></strong></p>	
 	
 	<br />
-	<p class="back_home"><span class="green_btns">
-	<?php echo $html->link($SCLanguages['return'].$SCLanguages['home'],"/",array(),false,false);?></span>
+	<p class="back_home">
+	<?php echo $html->link($SCLanguages['return'].$SCLanguages['home'],"/",array('class'=>'color_4'),false,false);?>
+	<?php echo $html->link($SCLanguages['return'].$SCLanguages['user_center'],$user_webroot,array('class'=>'color_4'),false,false);?>
 	</p>
-    <p class="back_home"><span class="green_btns">
-	<?php echo $html->link($SCLanguages['return'].$SCLanguages['user_center'],$user_webroot,array(),false,false);?>
-	</span></p>
 	<?php }?>
     <br />
-    <p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."succeed02_img.gif":"succeed02_img.gif")?></p>
-    	
-    	
 </div>
+    <p><?php echo $html->image(isset($img_style_url)?$img_style_url."/"."succeed02_img.gif":"succeed02_img.gif",array("width"=>"100%"))?></p>
 <!--您购买的商品End-->
+</div>

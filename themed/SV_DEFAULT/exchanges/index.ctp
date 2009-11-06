@@ -9,11 +9,11 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: index.ctp 3225 2009-07-22 10:59:01Z huangbo $
+ * $Id: index.ctp 3391 2009-07-29 10:42:51Z huangbo $
 *****************************************************************************/
 ?>
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 <?php echo $this->element('exchange_products_list', array('cache'=>'+0 hour'));?>
 <?php echo $this->element('pagers', array('cache'=>'+0 hour'));?>
 <br /> 
-<?php echo $this->element('news', array('cache'=>array('time'=> "+24 hour",'key'=>'news'.$template_style)));?>
+<?php echo $this->element('news', array('cache'=>array('time'=> "+0 hour",'key'=>'news'.$template_style)));?>

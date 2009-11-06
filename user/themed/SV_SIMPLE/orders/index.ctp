@@ -115,27 +115,25 @@
 			<?php }?>
 			<span><?php echo $html->link($html->image(isset($img_style_url)?$img_style_url."/".'icon_view.gif':'icon_view.gif',array("align"=>"middle")),"/orders/".$v['Order']['id'],array("target"=>"_blank"),false,false);?></span>
 			<?php if($v['Order']['status'] < 2 && $v['Order']['payment_status'] != 2  && $v['Order']['payment_status'] != 2){?>
-            <a href="javascript:order_pay(<?php echo $v['Order']['id']?>,<?php echo $v['Order']['status']?>,'<?php echo $SCLanguages['order_not_paid'];?>');">
-            <span><?php echo $html->image(isset($img_style_url)?$img_style_url."/".'icon_copy.gif':'icon_copy.gif',array("align"=>"middle"))?></span>
-            </a>
+            	<?php echo $html->link('<span>'.$html->image(isset($img_style_url)?$img_style_url."/".'icon_copy.gif':'icon_copy.gif',array("align"=>"middle")).'<span>','/orders/order_pay/'.$v['Order']['id'],array(),false,false)?>            	
             <?php }?>
             
             <?php if($v['Order']['status'] < 2 && $v['Order']['payment_status'] != 2 && $v['Order']['payment_status'] != 1 && $v['Order']['payment_id'] != 2){?>
-            <a href="javascript:layer_dialog_show(<?php echo $v['Order']['id']?>,'<?php echo $SCLanguages['if_cancel_order']?>',3,'<?php echo $SCLanguages['confirm']?>','<?php echo $SCLanguages['cancel']?>');"><span><?php $html->image(isset($img_style_url)?$img_style_url."/".'icon_trash.gif':'icon_trash.gif',array("align"=>"middle"))?></span></a>
+            	<?php echo $html->link('<span>'.$html->image(isset($img_style_url)?$img_style_url."/".'icon_trash.gif':'icon_trash.gif',array("align"=>"middle")).'<span>','/orders/cancle_order/'.$v['Order']['id'],array(),false,false)?>
             <?php }?>
             	
             <?php if($v['Order']['status'] < 2 && $v['Order']['payment_status'] == 2 && $v['Order']['shipping_status'] == 1){?>
-            <a href="javascript:confirm_order(<?php echo $v['Order']['id']?>)">
-            <span><?php echo $SCLanguages['confirm']?></span>
-            </a>
+            	<?php echo $html->link('<span>'.$SCLanguages['confirm'].'<span>','/orders/confirm_order/'.$v['Order']['id'],array(),false,false)?>
             <?php }?>
             </li>
            </ul>
 		    <?php }?>
 		    <?php }else{?> 
         	<div class="not">
-		<?php echo $html->image(isset($img_style_url)?$img_style_url."/".'warning_img.gif':'warning_img.gif',array("align"=>"middle"))?><strong><?php echo $SCLanguages['no_order']?></strong></div>
-   	 	 <?php }?>
+        	<br />
+			<?php echo $html->image(isset($img_style_url)?$img_style_url."/".'warning_img.gif':'warning_img.gif',array("align"=>"middle"))?><strong><?php echo $SCLanguages['no_order']?></strong></div>
+        	<br />
+      	 	 <?php }?>
    	 	
    </div>
 <div id="pager">

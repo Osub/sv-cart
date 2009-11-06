@@ -9,9 +9,10 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: pagers.ctp 2550 2009-07-03 06:35:49Z tangyu $
+ * $Id: pagers.ctp 3507 2009-08-06 10:52:06Z tangyu $
 *****************************************************************************/
 ?>
+<?php if($paging['pageCount']>1){?>
     <p>
 <?php 
     if($pagination->setPaging($paging)): 
@@ -34,6 +35,9 @@
 		<span><input type="text" name="go_page" id="go_page"/></span><?php echo $SCLanguages['page'];?>
     	<?php echo $html->link($html->image(isset($img_style_url)?$img_style_url."/".'to_page.gif':'to_page.gif'),"javascript:GoPage({$paging['pageCount']})",'',false,false)?>
   </p>
+  	  <?php }?>
+  	  
+  	  
 <script>/*
 function GoPage(pagecount){
 var goPage=document.getElementById('go_page').value;

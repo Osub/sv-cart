@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: view.ctp 3113 2009-07-20 11:14:34Z huangbo $
+ * $Id: view.ctp 4366 2009-09-18 09:49:37Z huangbo $
 *****************************************************************************/
 ?>
 <?php $javascript->link('../js/common.js');?>
@@ -48,20 +48,26 @@ echo $html->div('picc',$html->image("/img/product_default.jpg",array("id"=>"img1
 		<?//php echo $SCLanguages['undefined'];?>
 		<?php }?></dd></dl>
 			<?php //pr($format_product_attributes);?>
-			<?php if(isset($format_product_attributes) && sizeof($format_product_attributes)>0){?>
+			<?php if(isset($format_product_attributes) && sizeof($format_product_attributes)>0 && $this->data['configs']['products_attribute_show_type'] == '1'){?>
 				<?$fpa=0;?>
 			<?php foreach($format_product_attributes as $k=>$v){?>
-				<?if(sizeof($v)>1){?>
-				<dl><dt><?php echo $product_attributes_name[$k];?>:</dt>
-				<dd>
-					<select  name="attributes_<?php echo $fpa?>" id="attributes_<?php echo $fpa?>"><?php foreach($v as $kk=>$vv){?>
-						<option value="<?php echo $vv['id']?>"><?php echo $vv['value']?>  
-						<?php //=$svshow->price_format($vv['price'],$SVConfigs['price_format']);?>	
-							</option>
-					<?php }?></select>
-						<?$fpa++;?>
-					<?}?>	
-				</dd></dl>
+				<?php if(isset($product_attributes_name[$k]['name']) && $product_attributes_name[$k]['type'] == "buy"){?>
+					<dl><dt><?php echo $product_attributes_name[$k]['name'];?>:</dt>
+					<dd>
+					<?if(sizeof($v)>1){?>
+						<select  name="attributes_<?php echo $fpa?>" id="attributes_<?php echo $fpa?>"><?php foreach($v as $kk=>$vv){?>
+							<option value="<?php echo $vv['id']?>"><?php echo $vv['value']?>  
+							<?php //=$svshow->price_format($vv['price'],$SVConfigs['price_format']);?>	
+								</option>
+						<?php }?></select>
+							<?$fpa++;?>
+						<?}else{?>
+							<?php foreach($v as $kk=>$vv){?>
+								<?php echo $vv['value']?>
+							<?php }?>
+						<?php }?>
+					</dd></dl>
+				<?php }?>	
 			<?php }}?>
 		<?php }?>		    	
     <div class="buy_handle">
@@ -89,18 +95,35 @@ echo $html->div('picc',$html->image("/img/product_default.jpg",array("id"=>"img1
 	</li>
 	</ul>
 	<?php }?>
-			<?php if(isset($format_product_attributes) && sizeof($format_product_attributes)>0){?>
+			<?php if(isset($format_product_attributes) && sizeof($format_product_attributes)>0 && $this->data['configs']['products_attribute_show_type'] == '1'){?>
 			<?php foreach($format_product_attributes as $k=>$v){?>
+				
+			<?php if(isset($product_attributes_name[$k]['name']) && $product_attributes_name[$k]['type'] == "basic"){?>
+					<ul class="table_cell table_row">
+					<li class="title"><?php echo $product_attributes_name[$k]['name'];?></li>
 					<?if(sizeof($v)==1){?>
-				<ul class="table_cell table_row">
-				<li class="title"><?php echo $product_attributes_name[$k];?></li>
 						<li class="description"><?php foreach($v as $kk=>$vv){?><?php echo $vv['value']?><?}?></li>
-				</ul>
-					<?}?>	
+					<?}else{?>
+						<li class="description"><select name="basic_<?php echo $kk?>"><?php foreach($v as $kk=>$vv){?><option value=""><?php echo $vv['value']?></option><?}?></select></li>
+					<?php }?>	
+					</ul>
+			<?}?>						
 			<?php }}?>		
 		
-		
-		
+			<?php if(isset($format_product_attributes) && sizeof($format_product_attributes)>0 && $this->data['configs']['products_attribute_show_type'] == '1'){?>
+			<?php foreach($format_product_attributes as $k=>$v){?>
+					
+			<?php if(isset($product_attributes_name[$k]['name']) && $product_attributes_name[$k]['type'] == "special"){?>
+					<ul class="table_cell table_row">
+					<li class="title"><?php echo $product_attributes_name[$k]['name'];?></li>
+					<?if(sizeof($v)==1){?>
+						<li class="description"><?php foreach($v as $kk=>$vv){?><?php echo $vv['value']?><?}?></li>
+					<?}else{?>
+						<li class="description"><select name="basic_<?php echo $kk?>"><?php foreach($v as $kk=>$vv){?><option value=""><?php echo $vv['value']?></option><?}?></select></li>
+					<?php }?>	
+					</ul>
+			<?}?>						
+			<?php }}?>			
 	<?php if(isset($info['ProductI18n']['description']) && !empty($info['ProductI18n']['description'])){?>
 	<ul class="table_cell table_row">
 	<li class="title"><?php echo $SCLanguages['detail'].$SCLanguages['description'];?></li>

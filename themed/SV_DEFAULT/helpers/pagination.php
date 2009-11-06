@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: pagination.php 728 2009-04-17 08:01:06Z huangbo $
+ * $Id: pagination.php 3493 2009-08-05 11:14:12Z tangyu $
 *****************************************************************************/
 
 class PaginationHelper extends Helper  
@@ -165,7 +165,7 @@ class PaginationHelper extends Helper
         { 
              if($i == $this->_pageDetails['page']) 
              { 
-                $text = '<em>'.$i.'</em>'; 
+                $text = '<strong>'.$i.'</strong>'; 
              } 
              else 
              { 

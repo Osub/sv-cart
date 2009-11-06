@@ -23,8 +23,6 @@
         	<p><?php echo $SCLanguages['level_is']?>：<?php echo $user_rank;?></p>
                 <?php if($SVConfigs['enable_members_mail_verify'] == 1){?><?php if($user_info['User']['verify_status'] != 1){?><p class="atte"><?php echo $SCLanguages['not_passed_email_approval']?>&nbsp;
     			<a href="javascript:verify_email('<?php echo  $user_info['User']['email'];?>',<?php echo  $user_info['User']['id'];?>)"><?php echo $SCLanguages['resend_Email_for_approval']?></a></p><?php }?><?php }?>
-            	<?=$html->link($SCLanguages['resend_Email_for_approval'],"/",array(),false,false);?>
-            
             </div>
             <div class="affiche">
             	<?php if(isset($SVConfigs['user_center_notice'])){?><p>*<?php echo $SCLanguages['user_center'].$SCLanguages['notices']?>* <?php echo $SVConfigs['user_center_notice'];?></p><?php }?>

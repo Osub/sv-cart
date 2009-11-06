@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: pagination.php 2703 2009-07-08 11:54:52Z huangbo $
+ * $Id: pagination.php 3493 2009-08-05 11:14:12Z tangyu $
 *****************************************************************************/
 
 class PaginationHelper extends Helper  
@@ -60,7 +60,7 @@ class PaginationHelper extends Helper
                 { 
                     if($OriginalValue == $value) 
                     { 
-                        $t .= '<em>'.$value.'</em>'.$separator; 
+                        $t .= '<strong>'.$value.'</strong>'.$separator; 
                     } 
                     else 
                     { 
@@ -114,7 +114,7 @@ class PaginationHelper extends Helper
 
     function pageNumbers($separator=null,$escapeTitle=true,$spacerLower="...",$spacerUpper="...") 
     { 
-        if (empty($this->_pageDetails) || $this->_pageDetails['pageCount'] == 1) { return "<em>1</em>"; } 
+        if (empty($this->_pageDetails) || $this->_pageDetails['pageCount'] == 1) { return "<strong>1</strong>"; } 
         $total = $this->_pageDetails['pageCount']; 
         $max = $this->maxPages; 
         $span = $this->pageSpan; 
@@ -165,7 +165,7 @@ class PaginationHelper extends Helper
         { 
              if($i == $this->_pageDetails['page']) 
              { 
-                $text = '<em>'.$i.'</em>'; 
+                $text = '<strong>'.$i.'</strong>'; 
              } 
              else 
              { 

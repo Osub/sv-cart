@@ -9,10 +9,10 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: ur_here.ctp 2485 2009-06-30 11:33:00Z huangbo $
+ * $Id: ur_here.ctp 3673 2009-08-17 09:57:45Z huangbo $
 *****************************************************************************/
 ?>
-<div id="ur_here"><?php echo $SCLanguages['location'];?><?php echo $SCLanguages['colon'];?>
+<div id="ur_here" style="display:none;"><?php echo $SCLanguages['location'];?><?php echo $SCLanguages['colon'];?>
 <?php if(isset($locations) && sizeof($locations)>0){
 	$count=sizeof($locations);
 	foreach($locations as $k=>$v){

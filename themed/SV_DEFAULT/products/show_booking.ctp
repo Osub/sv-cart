@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: show_booking.ctp 2535 2009-07-02 11:34:51Z huangbo $
+ * $Id: show_booking.ctp 3949 2009-08-31 07:34:05Z huangbo $
 *****************************************************************************/
 ob_start();?>	
 <?php if($result['type'] == 0){?>
@@ -21,7 +21,7 @@ ob_start();?>
 </div>
 
 
-<div id="Edit_box" style="width:658px;background:#fff;margin-top:0;">
+<div class="Edit_box" style="width:658px;background:#fff;margin-top:0;">
 	<div id="Edit_info" style="width:658px;">
 		<div id="comments">
 			<div class="outstock" id="user_comment" style="width:658px;float:none;">
@@ -34,11 +34,11 @@ ob_start();?>
 				<dt><?php echo $product_info['Product']['code']?></dt>
 			</dl>			
 			<dl>
-				<dd id="user_name" ><?php echo $SCLanguages['quantity'];?></dd>
+				<dd><?php echo $SCLanguages['quantity'];?></dd>
 				<dt><input name="data['bookings']['product_number']" id="product_number" onKeyUp="is_int(this);" class="green_border" value="">&nbsp;<span id="product_number_span" style="color:red">*</span></dt>
 			</dl>
 			<dl>
-				<dd id="user_name" ><?php echo $SCLanguages['connect_person'];?></dd>
+				<dd><?php echo $SCLanguages['connect_person'];?></dd>
 				<dt><input name="data['bookings']['contact_man']" id="contact_man" class="green_border"  value="">&nbsp;<span id="contact_man_span" style="color:red">*</span></dt>
 			</dl>
 			<dl>
@@ -46,7 +46,7 @@ ob_start();?>
 				<dt><input name="data['bookings']['email']" id="email" class="green_border" value="">&nbsp;<span id="email_span" style="color:red">*</span></dt>
 			</dl>
 			<dl>
-				<dd id="user_name" ><?php echo $SCLanguages['telephone'];?></dd>
+				<dd><?php echo $SCLanguages['telephone'];?></dd>
 				<dt><input name="data['bookings']['telephone']" class="green_border" id="telephone" onKeyUp="is_int(this);" value="">&nbsp;<span id="telephone_span" style="color:red">*</span></dt>
 			</dl>
 			</div>
@@ -66,7 +66,7 @@ ob_start();?>
 </div>
 </div>
 <?php }else{?>
-<div id="loginout">
+<div id="loginout" class="loginout">
 	<h1><b style="font-size:14px"><?php echo $SCLanguages['booking'];?></b></h1>
 	<div class="border_side">
 	<p class="login-alettr">

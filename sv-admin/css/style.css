@@ -11,7 +11,7 @@ ul {
 	padding: 0px; display: block; font-weight: normal; font-size: 12px;margin: 0px; border-style: none;  list-style-type: none;
 }
 li {
-	padding:0px; display: block;font-weight: normal; font-size: 12px; margin:0px; border-style: none;   list-style-type: none;
+	padding:0px;font-weight: normal; font-size: 12px; margin:0px; border-style: none;   list-style-type: none;
 }
 dl {
 	padding-right: 0px; display: block; padding-left: 0px; font-weight: normal; font-size: 12px;padding-bottom: 0px; margin: 0px; border-top-style: none; padding-top: 0px; border-right-style: none; border-left-style: none; list-style-type: none; border-bottom-style: none
@@ -63,6 +63,7 @@ font-size:12px;overflow-y:scroll;
 	margin-top:-5px;
 }
 .float_l{float:left;}
+.float_r{float:right;}
 .no_border_input{vertical-align:middle;border:0;margin:0 0 0 0;}
 .green{color:#1FA550;}
 .green_2{color:#216339;}

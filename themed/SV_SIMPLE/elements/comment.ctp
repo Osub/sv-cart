@@ -9,10 +9,9 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: comment.ctp 3124 2009-07-21 02:27:57Z huangbo $
+ * $Id: comment.ctp 3949 2009-08-31 07:34:05Z huangbo $
 *****************************************************************************/
 ?>
-<?php echo $javascript->link('comment');?>
 <!--评论框显示开始-->
 <div id="add_comment" class="cont">
 <span class="left_up">&nbsp;</span><span class="right_up">&nbsp;</span>
@@ -45,11 +44,7 @@
 		<input type='hidden' name='data[Comment][type]' id="CommentType" value ="<?php echo $type;?>" />
 		<input type='hidden' name='data[Comment][type_id]' id="CommentTypeId" value ="<?php echo $id;?>" />
 		
-		<?php if(isset($SVConfigs['use_ajax']) && $SVConfigs['use_ajax'] == 0){?>
 		<span class="button float_left"><a href="javascript:form_comment();"><?php echo $SCLanguages['submit'];?></a></span>
-		<?php }else{?>
-		<span class="button float_left"><a href="javascript:submit_comment();"><?php echo $SCLanguages['submit'];?></a></span>
-		<?php }?>
 		<span class="button float_left"><a href="javascript:document.add_comment.reset();"><?php echo $SCLanguages['reset'];?></a></span>
 		</div>
 	</div>

@@ -38,7 +38,7 @@
       </dd> 
       <dd>&nbsp;&nbsp;<?php echo $SCLanguages['please_enter'].$SCLanguages['username'];?><span id="name_msg"></span> </dd>
        </li>
-  </ul>
+  </ul><br />
   <div id="Personal_info" style="display:none;">
   <ul style="margin-top:0;">
     <li><b><font color="#FF9000"><?php echo $SCLanguages['please_enter'].$SCLanguages['security_answer']?></font></b></li>

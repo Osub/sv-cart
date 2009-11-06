@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: category.ctp 3134 2009-07-21 06:45:45Z huangbo $
+ * $Id: category.ctp 4333 2009-09-17 10:46:57Z huangbo $
 *****************************************************************************/
 ?>
 <!--商品分类显示开始-->
@@ -26,39 +26,53 @@
 		$first_v_url = str_replace(" ","-",$first_v['CategoryI18n']['name']);
 		$first_v_url = str_replace("/","-",$first_v_url);
 		?>
-
+		<?if(isset($first_v['Category']['is_new']) && $first_v['Category']['is_new'] == "1"){
+			$first_v_name = $first_v['CategoryI18n']['name']." ".$html->image('cat_new.gif');
+		 }else{
+		 	$first_v_name = $first_v['CategoryI18n']['name'];
+		  }?>
 <?php if(isset($first_v['SubCategory']) && sizeof($first_v['SubCategory'])>0){?>
-	<?php if($SVConfigs['use_sku']==1){?>
-	<?php echo $html->link($first_v['CategoryI18n']['name'],"/categories/".$first_v['Category']['id']."/".$first_v_url."/0/",array("class"=>"over"),false,false);?>
+	<?php if($SVConfigs['category_link_type']==1){?>
+	<?php echo $html->link($first_v_name,"/categories/".$first_v['Category']['id']."/".$first_v_url."/0/",array("class"=>"over"),false,false);?>
 	<?php }else{?>
-	<?php echo $html->link($first_v['CategoryI18n']['name'],"/categories/".$first_v['Category']['id'],array("class"=>"over"),false,false);?>
+	<?php echo $html->link($first_v_name,"/categories/".$first_v['Category']['id'],array("class"=>"over"),false,false);?>
 	<?php }?>
 <?php }else{?>
-	<?php if($SVConfigs['use_sku']==1){?>
-	<?php echo $html->link($first_v['CategoryI18n']['name'],"/categories/".$first_v['Category']['id']."/".$first_v_url,array("class"=>"normal"),false,false);?>
+	<?php if($SVConfigs['category_link_type']==1){?>
+	<?php echo $html->link($first_v_name,"/categories/".$first_v['Category']['id']."/".$first_v_url,array("class"=>"normal"),false,false);?>
 	<?php }else{?>
-	<?php echo $html->link($first_v['CategoryI18n']['name'],"/categories/".$first_v['Category']['id'],array("class"=>"normal"),false,false);?>
+	<?php echo $html->link($first_v_name,"/categories/".$first_v['Category']['id'],array("class"=>"normal"),false,false);?>
 	<?php }?>
 <?php }?>
 <?php if(isset($first_v['SubCategory']) && sizeof($first_v['SubCategory'])>0){?>
-<div class="svcartmenu"><?php echo $html->image(isset($img_style_url)?$img_style_url."/".'LeftsubNav_top.gif':'LeftsubNav_top.gif',array("alt"=>"", "align"=>"left"))?><div class="bd Sub_bd"><ul class="secend_muen" style="padding-bottom:0;">
+<div class="svcartmenu opacity"><?php echo $html->image(isset($img_style_url)?$img_style_url."/".'LeftsubNav_top.gif':'LeftsubNav_top.gif',array("alt"=>"", "align"=>"left"))?><div class="bd Sub_bd"><ul class="secend_muen" style="padding-bottom:0;">
 <?php foreach($first_v['SubCategory'] as $second_k=>$second_v){?>
+		<?if(isset($first_v['Category']['is_new']) && $first_v['Category']['is_new'] == "1"){
+			$second_v_name = $second_v['CategoryI18n']['name']." ".$html->image('cat_new.gif');
+		 }else{
+		 	$second_v_name = $second_v['CategoryI18n']['name'];
+		  }?>
 <li class="svcartmenuitem No_bg first-of-type">
 	<?php 
 	$second_v_url = str_replace(" ","-",$second_v['CategoryI18n']['name']);
 	$second_v_url = str_replace("/","-",$second_v_url);
 	?>
-	<?php if($SVConfigs['use_sku']==1){?>
-	<?php echo $html->link($second_v['CategoryI18n']['name'],"/categories/".$second_v['Category']['id']."/".$first_v_url."/".$second_v_url,array(),false,false);?>
+	<?php if($SVConfigs['category_link_type']==1){?>
+	<?php echo $html->link($second_v_name,"/categories/".$second_v['Category']['id']."/".$first_v_url."/".$second_v_url,array(),false,false);?>
 	<?php }else{?>
-	<?php echo $html->link($second_v['CategoryI18n']['name'],"/categories/".$second_v['Category']['id'],array(),false,false);?>
+	<?php echo $html->link($second_v_name,"/categories/".$second_v['Category']['id'],array(),false,false);?>
 	<?php }?>
 <?php if(isset($second_v['SubCategory']) && sizeof($second_v['SubCategory'])>0){?>
 <div class="svcartmenu">
 <p><?php echo $html->image(isset($img_style_url)?$img_style_url."/".'LeftsubNav_top.gif':'LeftsubNav_top.gif',array("alt"=>""))?></p>
 <div class="bd Sub_bd"><ul class="secend_muen" style="padding-bottom:0;">
 <?php foreach($second_v['SubCategory'] as $third_k=>$third_v){?>
-<li class="svcartmenuitem No_bg"><?php echo $html->link($third_v['CategoryI18n']['name'],"/categories/".$third_v['Category']['id'],"",false,false);?></li>
+		<?if(isset($first_v['Category']['is_new']) && $first_v['Category']['is_new'] == "1"){
+			$third_v_name = $third_v['CategoryI18n']['name']." ".$html->image('cat_new.gif');
+		 }else{
+		 	$third_v_name = $third_v['CategoryI18n']['name'];
+		  }?>	
+<li class="svcartmenuitem No_bg"><?php echo $html->link($third_v_name,"/categories/".$third_v['Category']['id'],"",false,false);?></li>
 <?php }?></ul></div>
 <p><?php echo $html->image(isset($img_style_url)?$img_style_url."/".'LeftsubNav_bottom.gif':'LeftsubNav_bottom.gif',array("alt"=>""))?></p>
 </div>

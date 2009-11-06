@@ -9,11 +9,11 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: add_note.ctp 2485 2009-06-30 11:33:00Z huangbo $
+ * $Id: add_note.ctp 3779 2009-08-19 10:40:08Z huangbo $
 *****************************************************************************/
 ob_start();?>
 <?php if ($result['type'] == 0){?>
-
+<?php echo $this->element('cart_products', array('cache'=>'+0 hour'));?>
 <?php }else{?>
 <?php echo $SCLanguages['add_remark_failed']?>
 <?php }?>

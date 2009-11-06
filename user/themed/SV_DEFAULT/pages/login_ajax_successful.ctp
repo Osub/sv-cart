@@ -9,13 +9,13 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: login_ajax_successful.ctp 3134 2009-07-21 06:45:45Z huangbo $
+ * $Id: login_ajax_successful.ctp 3779 2009-08-19 10:40:08Z huangbo $
 *****************************************************************************/
 
 if(isset($user_info)){
 ob_start();?>
 <iframe style="display:none" src="user/pages/uclogin/<?php echo $uid;?>" > </iframe> 
-<div id="loginout">
+<div id="loginout" class="loginout">
 		<h1><b><?php echo $SCLanguages['user_log_in_successfully'];?></b></h1>
 	<div style="border-left:1px solid #909592;border-right:1px solid #909592;background:#fff">
 		<p class="login-alettr">
@@ -23,7 +23,7 @@ ob_start();?>
 	
 	<b><?php echo $SCLanguages['welcome'];?>，<?php echo $user_info['User']['name']; ?>！</b> <br /></p>
 		<p class="btns">
-			<?php echo $html->link($html->image(isset($img_style_url)?$img_style_url."/".'loginout-btn_right.gif':'loginout-btn_right.gif').$SCLanguages['continue'],"javascript:window.location.reload();","",false,false);?>
+		<?php if(isset($back_url)){?><?php echo $html->link($html->image(isset($img_style_url)?$img_style_url."/".'loginout-btn_right.gif':'loginout-btn_right.gif').$SCLanguages['confirm'],"{$back_url}","",false,false);?><?php }else{?><?php echo $html->link($html->image(isset($img_style_url)?$img_style_url."/".'loginout-btn_right.gif':'loginout-btn_right.gif').$SCLanguages['continue'],"javascript:window.location.reload();","",false,false);?><?php }?>
 			<?php echo $html->link($html->image(isset($img_style_url)?$img_style_url."/".'loginout-btn_right.gif':'loginout-btn_right.gif').$SCLanguages['user_center'],"/","",false,false);?>
 			<?php echo $html->link($html->image(isset($img_style_url)?$img_style_url."/".'loginout-btn_right.gif':'loginout-btn_right.gif').$SCLanguages['home'],$server_host.$cart_webroot,"",false,false);?>
 		</p>

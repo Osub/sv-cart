@@ -9,7 +9,7 @@
  *不允许对程序代码以任何形式任何目的的再发布。
  *===========================================================================
  * $开发: 上海实玮$
- * $Id: view1.ctp 3225 2009-07-22 10:59:01Z huangbo $
+ * $Id: view1.ctp 3949 2009-08-31 07:34:05Z huangbo $
 *****************************************************************************/
 ?>
 <style type="text/css">
@@ -22,7 +22,7 @@
 <?php echo $this->element('ur_here', array('cache'=>'+0 hour'));?>
 	<div id="Products_box">
     	<h1><b><?php echo $topic['TopicI18n']['title']; ?></b></h1>
-        <div id="Edit_box">
+        <div class="Edit_box">
   <div id="article_info">
     
   <p class="note article_title">
@@ -72,7 +72,7 @@
 </div><!--相关商品End-->
 <?php } ?>    		
 </div>
-<?php echo $this->element('news', array('cache'=>array('time'=> "+24 hour",'key'=>'news'.$template_style)));?>
+<?php echo $this->element('news', array('cache'=>array('time'=> "+0 hour",'key'=>'news'.$template_style)));?>
 
 <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
 
